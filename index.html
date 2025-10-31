@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>SP500 Film Simulator</title>
+
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SP500">
+    <meta name="theme-color" content="#c0c0c0">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-180.png">
+
+    <!-- Pixel Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, select, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
+            font-size: 16px !important;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            transition: none;
+        }
+
+        /* Light mode (default) */
+        :root {
+            --bg-primary: #c0c0c0;
+            --bg-secondary: #d8cecb;
+            --border-light: #fff;
+            --border-dark: #808080;
+            --text-primary: #000;
+            --accent: #027e7e;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            --bg-primary: #202020;
+            --bg-secondary: #2a2a2a;
+            --border-light: #606060;
+            --border-dark: #000000;
+            --text-primary: #e8e8e8;
+            --accent: #00a8a8;
+        }
+
+        /* Force header to always be Fuji turquoise with white text */
+        body.dark-mode .header {
+            background: #00a8a8 !important;
+        }
+
+        body.dark-mode .header-title,
+        body.dark-mode .icon-btn {
+            color: #fff !important;
+        }
+
+        body.preview-active {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* === RETRO 3D BUTTON STYLE === */
+        .btn-3d {
+            position: relative;
+            background: var(--bg-primary);
+            border: none;
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
+            border-bottom: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light);
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-weight: bold;
+            transition: none;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
+            z-index: -1;
+            transform: rotate(180deg);
+        }
+
+        .btn-3d:active {
+            transform: translate(1px, 1px);
+        }
+
+        .btn-3d.active {
+            background: #d0d0d0;
+        }
+
+        body.dark-mode .btn-3d.active {
+            background: #3a3a3a;
+        }
+
+        .btn-primary-3d {
+            background: var(--accent);
+            color: #fff;
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
+            border-bottom: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light);
+        }
+
+        .btn-primary-3d::before {
+            background: var(--bg-secondary);
+        }
+
+        /* === HEADER === */
+        .header {
+            background: #00a8a8; /* Fuji turquoise */
+            border-bottom: none;
+            padding-top: env(safe-area-inset-top); /* Extend turquoise above notch */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 44px; /* iOS standard nav bar height */
+            padding: 0 16px;
+        }
+
+        .header-title {
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff; /* White text on turquoise */
+        }
+
+        .icon-btn {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 8px;
+            background: transparent;
+            border: none;
+            font-size: 8px;
+            cursor: pointer;
+            color: #fff; /* White text on turquoise header */
+            font-family: 'Press Start 2P', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+
+
+        /* === UPLOAD SECTION === */
+        .upload-section {
+            padding: 40px 20px;
+            text-align: center;
+            display: none;
+            background: #00a8a8; /* Fuji turquoise */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-section.active {
+            display: flex;
+        }
+
+        .upload-content {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .upload-area {
+            border: none;
+            border-top: 4px solid #404040;
+            border-left: 4px solid #404040;
+            border-bottom: 4px solid #d0d0d0;
+            border-right: 4px solid #d0d0d0;
+            padding: 60px 20px;
+            margin: 20px 0;
+            background: #f0f0f0;
+            cursor: pointer;
+            position: relative;
+            box-shadow: inset 0 0 0 2px #808080;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #404040;
+        }
+
+        .upload-text {
+            font-size: 12px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #202020;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* === IMAGE PREVIEW === */
+        .preview-section {
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh; /* Use dynamic viewport height on mobile */
+            background: #c0c0c0;
+            z-index: 10;
+        }
+
+        .preview-section.active {
+            display: flex;
+        }
+
+        .preview-container {
+            flex: 1;
+            position: relative;
+            background: #424242;
+            border: none;
+            border-top: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            overflow: hidden;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .preview-canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            cursor: pointer;
+            margin: auto;
+            transform-origin: center center;
+        }
+
+        /* Dark mode preview */
+        body.dark-mode .preview-container {
+            background: #2a2a2a;
+        }
+
+
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+            display: none;
+            z-index: 10;
+        }
+
+        .status-indicator.active {
+            display: block;
+            animation: pulse 0.5s ease-in-out 3;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Fullscreen mode */
+        .preview-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
+            background: #000 !important;
+            border: none;
+            padding: 0;
+        }
+
+        .preview-container.fullscreen .preview-canvas {
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+
+
+        /* === FILMSTRIP NAV === */
+        .filmstrip-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border-top: 2px solid var(--border-light);
+            border-bottom: 2px solid var(--border-dark);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .frame-counter {
+            font-size: 14px;
+            letter-spacing: 1px;
+            min-width: 80px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .save-btn {
+            padding: 12px 24px;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* === MODE BUTTONS === */
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            background: var(--bg-primary);
+        }
+
+        .mode-btn {
+            padding: 10px 4px;
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            min-height: 52px;
+        }
+
+        .btn-label {
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .btn-value {
+            font-size: 9px;
+            font-weight: bold;
+            opacity: 0.7;
+            line-height: 1;
+        }
+
+        .mode-btn.active .btn-value {
+            opacity: 1;
+        }
+
+        /* === UTILITY BAR (MODE BUTTONS + CONTROLS) === */
+        .utility-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom); /* iOS home indicator space */
+        }
+
+        /* === CONTROLS === */
+        .controls {
+            padding: 12px 0 16px 0;
+            background: var(--bg-primary);
+            min-height: 180px;
+            overflow: hidden;
+        }
+
+        /* Control Menus */
+        .control-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 0 12px;
+        }
+
+        .menu-option {
+            padding: 16px 12px;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        /* Film Box Style Tabs */
+        .film-boxes {
+            /* Uses gap from .control-menu */
+        }
+
+        .film-box {
+            padding: 12px 8px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .film-box-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .film-brand {
+            font-size: 6px;
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+        }
+
+        .film-name {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+        }
+
+        .film-strength {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            opacity: 1;
+        }
+
+        .film-hint {
+            font-size: 5px;
+            opacity: 0.5;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hide strength/hint on inactive boxes */
+        .film-box:not(.active) .film-strength,
+        .film-box:not(.active) .film-hint {
+            display: none;
+        }
+
+        /* Film-specific colors - maximum contrast for accessibility */
+        .film-c41 {
+            background: #c09462 !important; /* Darker tan for excellent contrast */
+            color: #1a0a00 !important; /* Very dark text for maximum readability */
+        }
+
+        .film-c41::before {
+            background: #ac804e !important;
+        }
+
+        .film-e6 {
+            background: #c03a1a !important; /* Darker orange for better contrast */
+            color: #ffffff !important; /* White text */
+        }
+
+        .film-e6::before {
+            background: #ac2a0a !important;
+        }
+
+        .film-bw {
+            background: #2a2a2a !important; /* Very dark gray */
+            color: #ffffff !important; /* Pure white for maximum contrast */
+        }
+
+        .film-bw::before {
+            background: #1a1a1a !important;
+        }
+
+        /* Tone Box Style - Similar to film boxes */
+        .tone-boxes {
+            grid-template-columns: repeat(3, 1fr);
+            /* Uses gap from .control-menu */
+        }
+
+        .tone-box {
+            padding: 12px 8px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tone-name {
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        /* Tone-specific colors - high contrast for accessibility */
+        .tone-soft {
+            background: #8a8a8a !important; /* Neutral gray */
+            color: #ffffff !important; /* White text for maximum contrast */
+        }
+
+        .tone-soft::before {
+            background: #707070 !important;
+        }
+
+        .tone-hard {
+            background: #ac5e72 !important; /* Darker pink */
+            color: #ffffff !important; /* White text for maximum contrast */
+        }
+
+        .tone-hard::before {
+            background: #984a5e !important;
+        }
+
+        .tone-shadow-soft {
+            background: #5a4a6a !important; /* Darker purple */
+            color: #f0e0f0 !important; /* Brighter text */
+        }
+
+        .tone-shadow-soft::before {
+            background: #4a3a5a !important;
+        }
+
+        .tone-shadow-hard {
+            background: #3a2a4a !important; /* Darker purple */
+            color: #f0e0f0 !important; /* Brighter text */
+        }
+
+        .tone-shadow-hard::before {
+            background: #2a1a3a !important;
+        }
+
+        .tone-highlight {
+            background: #ccc080 !important; /* Darker yellow for better contrast */
+            color: #2a1a00 !important; /* Very dark text */
+        }
+
+        .tone-highlight::before {
+            background: #b8ac6c !important;
+        }
+
+        /* Slider label */
+        .slider-label {
+            font-size: 8px;
+            text-align: center;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        /* Control Sliders */
+        .control-slider {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        .slider-display {
+            background: #fff;
+            border-top: 2px solid var(--border-dark);
+            border-left: 2px solid var(--border-dark);
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        body.dark-mode .slider-display {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .slider-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .slider-btn {
+            padding: 12px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* CMY Controls */
+        .cmy-controls {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        .cmy-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .cmy-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .cmy-value {
+            background: #fff;
+            border-top: 2px solid var(--border-dark);
+            border-left: 2px solid var(--border-dark);
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 11px;
+            min-width: 40px;
+        }
+
+        body.dark-mode .cmy-value {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .color-bar {
+            width: 100%;
+            height: 3px;
+        }
+
+        .cmy-buttons {
+            display: flex;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .cmy-btn {
+            padding: 6px 10px;
+            font-size: 10px;
+            flex: 1;
+        }
+
+        /* === LOADING === */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(192, 192, 192, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-text {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .pixel-box {
+            width: 200px;
+            height: 20px;
+            border: 2px solid #000;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pixel-fill {
+            height: 100%;
+            background: #027e7e;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 10px;
+            }
+
+            .mode-btn {
+                font-size: 8px;
+                padding: 10px 4px;
+            }
+
+            .control-label {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Upload Section -->
+    <div class="upload-section active" id="uploadSection">
+        <div class="upload-content">
+            <h1 style="font-size: 18px; margin-bottom: 30px; letter-spacing: 3px; color: #fff;">FRONTIER LAB</h1>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-text" style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">LOAD FILM</div>
+                <div class="upload-text">TAP TO UPLOAD</div>
+                <div class="upload-text">1-36 PHOTOS</div>
+                <div class="upload-text" style="font-size: 9px; margin-top: 12px;">JPG • PNG • HEIC</div>
+            </div>
+
+            <p style="font-size: 9px; margin-top: 30px; line-height: 1.8; color: #fff; opacity: 0.9; max-width: 400px;">
+                Professional film emulation with authentic Frontier SP-3000 scanner characteristics.
+                Apply C41, E6, and B&W presets. Adjust CMY+D, tone curves, bloom, and grain.
+            </p>
+
+            <input
+                type="file"
+                id="fileInput"
+                class="file-input"
+                accept="image/*,image/heic,image/heif"
+                multiple
+            />
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section" id="previewSection">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <button class="icon-btn" id="backBtn">&lt; UPLOAD</button>
+                <div class="header-title" id="filename">IMAGE_001.JPG</div>
+                <button class="icon-btn" id="darkModeToggle">DARK</button>
+            </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="preview-container" id="previewContainer">
+            <canvas id="previewCanvas" class="preview-canvas"></canvas>
+            <div class="status-indicator" id="statusIndicator"></div>
+        </div>
+
+        <!-- Filmstrip Navigation -->
+        <div class="filmstrip-nav">
+            <div class="nav-controls">
+                <button class="btn-3d nav-btn" id="prevBtn">←</button>
+                <div class="frame-counter" id="frameCounter">1/1</div>
+                <button class="btn-3d nav-btn" id="nextBtn">→</button>
+            </div>
+            <button class="btn-3d btn-primary-3d save-btn" id="saveBtn">SAVE</button>
+        </div>
+
+        <!-- Utility Bar (Mode Buttons + Controls) -->
+        <div class="utility-bar">
+        <!-- Mode Buttons -->
+        <div class="mode-buttons">
+            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">
+                <span class="btn-label">COLOR</span>
+                <span class="btn-value" id="colorValue">NONE</span>
+            </button>
+            <button class="btn-3d mode-btn" id="cmyBtn" data-mode="cmy">
+                <span class="btn-label">CMY</span>
+                <span class="btn-value" id="cmyValue">0</span>
+            </button>
+            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">
+                <span class="btn-label">SOFT</span>
+                <span class="btn-value" id="softValue">STD</span>
+            </button>
+            <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">
+                <span class="btn-label">BLOOM</span>
+                <span class="btn-value" id="bloomValue">0</span>
+            </button>
+            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">
+                <span class="btn-label">GRAIN</span>
+                <span class="btn-value" id="grainValue">0</span>
+            </button>
+        </div>
+
+        <!-- Dynamic Controls (shown based on active button) -->
+        <div class="controls" id="controls">
+            <!-- Color Options Menu - Film Box Style with Swipeable Strength -->
+            <div class="control-menu film-boxes" id="colorMenu" style="display: none;">
+                <button class="btn-3d film-box active" data-colormode="none">
+                    <div class="film-box-content">
+                        <div class="film-name">STANDARD</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-c41" data-colormode="portra400">
+                    <div class="film-box-content">
+                        <div class="film-name">C41</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-e6" data-colormode="ektachrome">
+                    <div class="film-box-content">
+                        <div class="film-name">E6</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-bw" data-colormode="trix400">
+                    <div class="film-box-content">
+                        <div class="film-name">B&W</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- SOFT Mode Options Menu - Tone Graphics -->
+            <div class="control-menu tone-boxes" id="softMenu" style="display: none;">
+                <button class="btn-3d tone-box" data-softmode="STANDARD">
+                    <div class="tone-name">STD</div>
+                </button>
+                <button class="btn-3d tone-box tone-soft" data-softmode="SOFT">
+                    <div class="tone-name">SOFT</div>
+                </button>
+                <button class="btn-3d tone-box tone-hard" data-softmode="HARD">
+                    <div class="tone-name">HARD</div>
+                </button>
+                <button class="btn-3d tone-box tone-shadow-soft" data-softmode="SHADOW SOFT">
+                    <div class="tone-name">SHDW<br/>SOFT</div>
+                </button>
+                <button class="btn-3d tone-box tone-shadow-hard" data-softmode="SHADOW HARD">
+                    <div class="tone-name">SHDW<br/>HARD</div>
+                </button>
+                <button class="btn-3d tone-box tone-highlight" data-softmode="HIGHLIGHT SOFT">
+                    <div class="tone-name">HI<br/>SOFT</div>
+                </button>
+            </div>
+
+            <!-- CMY + Density Controls -->
+            <div class="cmy-controls" id="cmyControls" style="display: none;">
+                <div class="cmy-grid">
+                    <div class="cmy-item">
+                        <div class="cmy-value" id="cyanDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #00ffff, #00ffff); height: 3px; margin: 4px 0;"></div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="cyan" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="cyan" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-value" id="magentaDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #ff00ff, #ff00ff); height: 3px; margin: 4px 0;"></div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="magenta" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="magenta" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-value" id="yellowDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #ffff00, #ffff00); height: 3px; margin: 4px 0;"></div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="yellow" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="yellow" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-value" id="densityDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #333, #333); height: 3px; margin: 4px 0;"></div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="density" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="density" data-dir="+">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloom Controls -->
+            <div class="control-slider" id="bloomControls" style="display: none;">
+                <div class="slider-display" id="bloomDisplay">0</div>
+                <div class="slider-buttons">
+                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="-">-</button>
+                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="+">+</button>
+                </div>
+            </div>
+
+            <!-- Grain Controls -->
+            <div class="control-slider" id="grainControls" style="display: none;">
+                <div class="slider-display" id="grainDisplay">0</div>
+                <div class="slider-buttons">
+                    <button class="btn-3d slider-btn" data-control="grain" data-dir="-">-</button>
+                    <button class="btn-3d slider-btn" data-control="grain" data-dir="+">+</button>
+                </div>
+            </div>
+        </div>
+        </div> <!-- End utility-bar -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-text" id="loadingText">PROCESSING...</div>
+        <div class="pixel-box">
+            <div class="pixel-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // STATE MANAGEMENT
+        // ========================================
+
+        const state = {
+            photos: [],
+            currentIndex: 0,
+            activeControl: null,  // which button is active
+            defaultSettings: {
+                colorMode: 'none',       // none, portra400, trix400, ektachrome
+                presetStrength: 100,     // 0-100 (percentage)
+                softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
+                bloom: 0,                // 0-20
+                grain: 0,                // 0-10
+                cyan: 0,                 // -10 to +10
+                magenta: 0,              // -10 to +10
+                yellow: 0,               // -10 to +10
+                density: 0               // -10 to +10
+            },
+            zoom: {
+                scale: 1,
+                translateX: 0,
+                translateY: 0
+            }
+        };
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+
+        function haptic(type = 'light') {
+            if ('vibrate' in navigator) {
+                const patterns = { light: 10, medium: 20, heavy: 50, success: [10, 50, 10] };
+                navigator.vibrate(patterns[type] || patterns.light);
+            }
+        }
+
+        function showLoading(text = 'PROCESSING...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        // ========================================
+        // FILE UPLOAD
+        // ========================================
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            await handleFiles(files);
+        });
+
+        async function handleFiles(files) {
+            if (files.length === 0) return;
+            if (files.length > 36) {
+                alert('MAX 36 PHOTOS');
+                return;
+            }
+
+            showLoading('LOADING...');
+
+            try {
+                state.photos = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    updateProgress((i / files.length) * 100);
+
+                    const imageData = await loadImage(files[i]);
+
+                    state.photos.push({
+                        original: imageData,
+                        processed: null,
+                        filename: files[i].name,
+                        settings: { ...state.defaultSettings }
+                    });
+                }
+
+                updateProgress(100);
+
+                // Switch to preview mode
+                document.getElementById('uploadSection').classList.remove('active');
+                document.getElementById('previewSection').classList.add('active');
+                document.body.classList.add('preview-active');
+
+                // Reset scroll position
+                window.scrollTo(0, 0);
+
+                // Process first photo with default settings
+                processCurrentPhoto();
+                updateUI();
+                setupZoom();
+
+                haptic('success');
+            } catch (err) {
+                console.error('Error loading files:', err);
+                alert('ERROR LOADING');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ========================================
+        // UI RENDERING
+        // ========================================
+
+        function renderPreview() {
+            const photo = state.photos[state.currentIndex];
+            if (!photo) return;
+
+            const canvas = document.getElementById('previewCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const imageData = photo.processed || photo.original;
+
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            ctx.putImageData(imageData, 0, 0);
+
+            // Apply zoom transform (no translate offset needed since canvas uses flexbox centering)
+            const zoom = state.zoom;
+            canvas.style.transform = `translate(${zoom.translateX}px, ${zoom.translateY}px) scale(${zoom.scale})`;
+
+            document.getElementById('filename').textContent = photo.filename.toUpperCase();
+            document.getElementById('frameCounter').textContent = `${state.currentIndex + 1}/${state.photos.length}`;
+        }
+
+        function updateUI() {
+            const settings = state.photos[state.currentIndex].settings;
+
+            // Hide all control panels
+            document.getElementById('colorMenu').style.display = 'none';
+            document.getElementById('softMenu').style.display = 'none';
+            document.getElementById('cmyControls').style.display = 'none';
+            document.getElementById('bloomControls').style.display = 'none';
+            document.getElementById('grainControls').style.display = 'none';
+
+            // Show active control panel
+            if (state.activeControl === 'color') {
+                document.getElementById('colorMenu').style.display = 'grid';
+            } else if (state.activeControl === 'soft') {
+                document.getElementById('softMenu').style.display = 'grid';
+            } else if (state.activeControl === 'cmy') {
+                document.getElementById('cmyControls').style.display = 'block';
+            } else if (state.activeControl === 'bloom') {
+                document.getElementById('bloomControls').style.display = 'block';
+            } else if (state.activeControl === 'grain') {
+                document.getElementById('grainControls').style.display = 'block';
+            }
+
+            // Update color menu options
+            document.querySelectorAll('[data-colormode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.colormode === settings.colorMode);
+            });
+
+            // Update soft menu options
+            document.querySelectorAll('[data-softmode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.softmode === settings.softMode);
+            });
+
+            // Update COLOR button value and active state
+            const colorNames = {
+                'none': 'STD',
+                'portra400': 'C41',
+                'trix400': 'B&W',
+                'ektachrome': 'E6'
+            };
+            const colorBtn = document.getElementById('colorBtn');
+            document.getElementById('colorValue').textContent = colorNames[settings.colorMode] || 'STD';
+            colorBtn.classList.toggle('active', state.activeControl === 'color' || settings.colorMode !== 'none');
+
+            // Update CMY button value and active state
+            const cmyBtn = document.getElementById('cmyBtn');
+            const cmyActive = settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0;
+            const cmyTotal = Math.abs(settings.cyan) + Math.abs(settings.magenta) + Math.abs(settings.yellow) + Math.abs(settings.density);
+            document.getElementById('cmyValue').textContent = cmyActive ? cmyTotal : '0';
+            cmyBtn.classList.toggle('active', state.activeControl === 'cmy' || cmyActive);
+
+            // Update SOFT button value and active state
+            const softBtn = document.getElementById('softBtn');
+            const softShort = {
+                'STANDARD': 'STD',
+                'SOFT': 'SFT',
+                'HARD': 'HRD',
+                'SHADOW SOFT': 'S-SF',
+                'SHADOW HARD': 'S-HD',
+                'HIGHLIGHT SOFT': 'H-SF'
+            };
+            document.getElementById('softValue').textContent = softShort[settings.softMode] || 'STD';
+            softBtn.classList.toggle('active', state.activeControl === 'soft' || settings.softMode !== 'STANDARD');
+
+            // Update BLOOM button value and active state
+            const bloomBtn = document.getElementById('bloomBtn');
+            document.getElementById('bloomValue').textContent = settings.bloom;
+            bloomBtn.classList.toggle('active', state.activeControl === 'bloom' || settings.bloom > 0);
+
+            // Update GRAIN button value and active state
+            const grainBtn = document.getElementById('grainBtn');
+            document.getElementById('grainValue').textContent = settings.grain.toFixed(1);
+            grainBtn.classList.toggle('active', state.activeControl === 'grain' || settings.grain > 0);
+
+            // Update slider displays
+            document.getElementById('bloomDisplay').textContent = settings.bloom;
+            document.getElementById('grainDisplay').textContent = settings.grain.toFixed(1);
+
+            // Update film box strength displays
+            document.querySelectorAll('.film-strength').forEach(el => {
+                el.textContent = `${settings.presetStrength}%`;
+            });
+
+            // Update CMY displays
+            document.getElementById('cyanDisplay').textContent = settings.cyan > 0 ? `+${settings.cyan}` : settings.cyan;
+            document.getElementById('magentaDisplay').textContent = settings.magenta > 0 ? `+${settings.magenta}` : settings.magenta;
+            document.getElementById('yellowDisplay').textContent = settings.yellow > 0 ? `+${settings.yellow}` : settings.yellow;
+            document.getElementById('densityDisplay').textContent = settings.density > 0 ? `+${settings.density}` : settings.density;
+
+            // Update navigation button states
+            document.getElementById('prevBtn').disabled = state.currentIndex === 0;
+            document.getElementById('nextBtn').disabled = state.currentIndex === state.photos.length - 1;
+        }
+
+        // Pinch to zoom and tap to preview original
+        function setupZoom() {
+            const canvas = document.getElementById('previewCanvas');
+            const container = canvas.parentElement;
+
+            let initialDistance = 0;
+            let initialScale = 1;
+            let lastTouchX = 0;
+            let lastTouchY = 0;
+            let touchStartTime = 0;
+            let touchMoved = false;
+            let showingOriginal = false;
+
+            container.addEventListener('touchstart', (e) => {
+                touchStartTime = Date.now();
+                touchMoved = false;
+
+                if (e.touches.length === 2) {
+                    // Pinch zoom
+                    initialDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    initialScale = state.zoom.scale;
+                } else if (e.touches.length === 1 && state.zoom.scale > 1) {
+                    // Pan
+                    lastTouchX = e.touches[0].pageX;
+                    lastTouchY = e.touches[0].pageY;
+                }
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                touchMoved = true;
+
+                if (e.touches.length === 2) {
+                    // Pinch zoom
+                    e.preventDefault();
+                    const currentDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    const scale = initialScale * (currentDistance / initialDistance);
+                    state.zoom.scale = Math.max(1, Math.min(4, scale));
+                    // Update transform directly for instant feedback
+                    updateZoomTransform();
+                } else if (e.touches.length === 1 && state.zoom.scale > 1) {
+                    // Pan
+                    e.preventDefault();
+                    const dx = e.touches[0].pageX - lastTouchX;
+                    const dy = e.touches[0].pageY - lastTouchY;
+                    state.zoom.translateX += dx;
+                    state.zoom.translateY += dy;
+                    lastTouchX = e.touches[0].pageX;
+                    lastTouchY = e.touches[0].pageY;
+                    // Update transform directly for instant feedback
+                    updateZoomTransform();
+                }
+            });
+
+            container.addEventListener('touchend', (e) => {
+                const touchDuration = Date.now() - touchStartTime;
+
+                // Short tap without movement = toggle original/edited (works at any zoom level)
+                if (!touchMoved && touchDuration < 200 && e.touches.length === 0) {
+                    toggleOriginal();
+                }
+            });
+
+            // Double tap to reset zoom
+            let lastTap = 0;
+            container.addEventListener('dblclick', (e) => {
+                state.zoom = { scale: 1, translateX: 0, translateY: 0 };
+                updateZoomTransform();
+            });
+
+            // Fast zoom transform update without re-rendering
+            function updateZoomTransform() {
+                const canvas = document.getElementById('previewCanvas');
+                const zoom = state.zoom;
+                canvas.style.transform = `translate(${zoom.translateX}px, ${zoom.translateY}px) scale(${zoom.scale})`;
+            }
+
+            // Toggle original/edited view
+            function toggleOriginal() {
+                if (showingOriginal) return; // Already showing original
+
+                showingOriginal = true;
+                const photo = state.photos[state.currentIndex];
+
+                // Show original
+                const canvas = document.getElementById('previewCanvas');
+                const ctx = canvas.getContext('2d');
+                ctx.putImageData(photo.original, 0, 0);
+
+                // Show pulsing indicator
+                const indicator = document.getElementById('statusIndicator');
+                indicator.classList.add('active');
+
+                // After 3 pulses (1.5 seconds), switch back to edited
+                setTimeout(() => {
+                    indicator.classList.remove('active');
+                    showingOriginal = false;
+
+                    // Show edited version
+                    const imageData = photo.processed || photo.original;
+                    ctx.putImageData(imageData, 0, 0);
+                }, 1500);
+            }
+        }
+
+        // ========================================
+        // IMAGE PROCESSING
+        // ========================================
+
+        function processImage(imageData, settings) {
+            const output = new ImageData(
+                new Uint8ClampedArray(imageData.data),
+                imageData.width,
+                imageData.height
+            );
+
+            // Apply color mode (film stock)
+            switch (settings.colorMode) {
+                case 'none':
+                    // No film stock processing
+                    break;
+                case 'portra400':
+                    applyPortra400(output);
+                    break;
+                case 'trix400':
+                    applyTriX(output);
+                    break;
+                case 'ektachrome':
+                    applyEktachrome(output);
+                    break;
+            }
+
+            // Apply CMY + Density
+            if (settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0) {
+                applyCMY(output, settings.cyan, settings.magenta, settings.yellow, settings.density);
+            }
+
+            // Apply soft mode (tone curves)
+            switch (settings.softMode) {
+                case 'STANDARD':
+                    // No adjustment
+                    break;
+                case 'SOFT':
+                    applySoftContrast(output);
+                    break;
+                case 'HARD':
+                    applyHardContrast(output);
+                    break;
+                case 'SHADOW SOFT':
+                    applyShadowSoft(output);
+                    break;
+                case 'SHADOW HARD':
+                    applyShadowHard(output);
+                    break;
+                case 'HIGHLIGHT SOFT':
+                    applyHighlightSoft(output);
+                    break;
+            }
+
+            // Apply bloom (0-20 range)
+            if (settings.bloom > 0) {
+                applyBloom(output, settings.bloom);
+            }
+
+            // Apply grain (0-10 range, film-specific)
+            if (settings.grain > 0) {
+                applyRealisticGrain(output, settings.grain, settings.colorMode || 'none');
+            }
+
+            return output;
+        }
+
+        function applyCMY(imageData, cyan, magenta, yellow, density) {
+            const data = imageData.data;
+
+            // Convert CMY adjustments to RGB shifts
+            // CMY range: -10 to +10, subdued effect
+            const cyanShift = -cyan * 5;      // More cyan = less red (50 max shift)
+            const magentaShift = -magenta * 5; // More magenta = less green
+            const yellowShift = -yellow * 5;   // More yellow = less blue
+            const densityShift = -density * 8; // More density = darker (80 max shift)
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Apply CMY shifts
+                data[i] = Math.min(255, Math.max(0, data[i] + cyanShift + densityShift));         // Red
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + magentaShift + densityShift)); // Green
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + yellowShift + densityShift));  // Blue
+            }
+        }
+
+        function applyPortra400(imageData) {
+            // Kodak Portra 400: Warm, natural skin tones, medium contrast
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Color shift: warmth +8, red bias, desaturated blues
+                r = r * 1.08 + 8;  // Red bias + warmth
+                g = g * 1.02;      // Slight green enhancement
+                b = b * 0.95;      // Reduce blue (warmer)
+
+                // Overall saturation boost
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                r = gray + 1.15 * (r - gray);
+                g = gray + 1.15 * (g - gray);
+                b = gray + 1.15 * (b - gray);
+
+                // Shadow lift (+5) and slight highlight compression (-2)
+                const lum = (r + g + b) / 3;
+                if (lum < 128) {
+                    const lift = 5 * (1 - lum / 128);
+                    r += lift;
+                    g += lift;
+                    b += lift;
+                } else {
+                    const compress = 2 * ((lum - 128) / 127);
+                    r -= compress;
+                    g -= compress;
+                    b -= compress;
+                }
+
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
+            }
+        }
+
+        function applyTriX(imageData) {
+            // Kodak Tri-X 400: High contrast B&W, iconic street photography film
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                // Convert to grayscale (standard luminance formula)
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+
+                // Moderate gamma and contrast for classic B&W look
+                let val = gray / 255;
+                val = Math.pow(val, 0.85); // Moderate gamma for tonal depth
+
+                // Apply moderate contrast boost
+                val = ((val - 0.5) * 1.3) + 0.5; // +30% contrast (balanced)
+                val = Math.max(0, Math.min(1, val)); // Clamp
+
+                // Subtle S-curve for classic film character
+                if (val < 0.5) {
+                    val = 0.5 * Math.pow(val * 2, 1.15); // Gentle shadow darkening
+                } else {
+                    val = 1 - 0.5 * Math.pow((1 - val) * 2, 1.15); // Gentle highlight lift
+                }
+
+                const finalGray = val * 255;
+
+                data[i] = finalGray;
+                data[i + 1] = finalGray;
+                data[i + 2] = finalGray;
+            }
+        }
+
+        function applyEktachrome(imageData) {
+            // Kodak Ektachrome E100: Vivid saturated slide film, punchy colors
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Color shifts: Red +5, Blue +8, Green 0
+                r = r + 5;
+                b = b + 8;
+
+                // High saturation (1.4x)
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                r = gray + 1.4 * (r - gray);
+                g = gray + 1.4 * (g - gray);
+                b = gray + 1.4 * (b - gray);
+
+                // Contrast +15
+                r = ((r / 255 - 0.5) * 1.15 + 0.5) * 255;
+                g = ((g / 255 - 0.5) * 1.15 + 0.5) * 255;
+                b = ((b / 255 - 0.5) * 1.15 + 0.5) * 255;
+
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
+            }
+        }
+
+        function applySoftContrast(imageData) {
+            // SOFT: Compress both shadows and highlights (S-curve flatten)
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Softer S-curve: reduce contrast globally
+                    // Use a gentler power curve (0.8 lifts shadows, compresses highlights)
+                    if (val < 0.5) {
+                        val = 0.5 * Math.pow(val * 2, 0.8);
+                    } else {
+                        val = 1 - 0.5 * Math.pow((1 - val) * 2, 0.8);
+                    }
+
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyShadowSoft(imageData) {
+            // SHADOW SOFT: Lift shadows only, maintain highlights
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Apply lift to shadows (below 0.5)
+                    if (val < 0.5) {
+                        // Lift shadows using a curve
+                        val = val + (0.5 - val) * 0.25; // 25% lift
+                    }
+                    // Highlights unchanged
+
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyHighlightSoft(imageData) {
+            // HIGHLIGHT SOFT: Compress highlights only, maintain shadows
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Apply compression to highlights (above 0.5)
+                    if (val > 0.5) {
+                        // Compress highlights using a curve
+                        val = 0.5 + (val - 0.5) * 0.75; // 25% compression
+                    }
+                    // Shadows unchanged
+
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyHardContrast(imageData) {
+            // HARD: Boost contrast globally (opposite of SOFT)
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Aggressive S-curve: increase contrast globally (1.2 crushes shadows, blows highlights)
+                    if (val < 0.5) {
+                        val = 0.5 * Math.pow(val * 2, 1.2);
+                    } else {
+                        val = 1 - 0.5 * Math.pow((1 - val) * 2, 1.2);
+                    }
+
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyShadowHard(imageData) {
+            // SHADOW HARD: Crush shadows (opposite of SHADOW SOFT)
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Apply crush to shadows (below 0.5)
+                    if (val < 0.5) {
+                        // Crush shadows using a curve
+                        val = val - (0.5 - val) * 0.25; // 25% crush
+                    }
+                    // Highlights unchanged
+
+                    data[i + c] = Math.max(0, val * 255);
+                }
+            }
+        }
+
+        function applyBloom(imageData, intensity) {
+            if (intensity === 0) return;
+
+            const width = imageData.width;
+            const height = imageData.height;
+            const data = imageData.data;
+
+            // Moderate clarity reduction for subtle softening
+            const clarityReduction = Math.floor(intensity * 0.3); // 0-6 pixel softening (reduced)
+            if (clarityReduction > 0) {
+                const softened = separableGaussianBlur(data, width, height, clarityReduction);
+                const clarityMix = 0.3 + (intensity / 40); // 0.3-0.8 mix (gentler)
+                for (let i = 0; i < data.length; i += 4) {
+                    // Apply gentle softening to bright areas
+                    const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    const clarityFactor = lum > 160 ? Math.min(1, clarityMix * (lum - 160) / 95) : 0;
+                    data[i] = data[i] * (1 - clarityFactor) + softened[i] * clarityFactor;
+                    data[i + 1] = data[i + 1] * (1 - clarityFactor) + softened[i + 1] * clarityFactor;
+                    data[i + 2] = data[i + 2] * (1 - clarityFactor) + softened[i + 2] * clarityFactor;
+                }
+            }
+
+            // Extract highlights - VERY GENTLE extraction for seamless fade
+            const highlights = new Uint8ClampedArray(data.length);
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                if (lum > 160) { // Higher threshold for more selective glow
+                    const factor = (lum - 160) / 95; // 0-1 for 160-255
+                    // Very gentle extraction with gradual falloff for seamless blend
+                    const softFactor = Math.pow(factor, 1.4) * 0.4; // Much gentler extraction
+                    highlights[i] = data[i] * softFactor;
+                    highlights[i + 1] = data[i + 1] * softFactor;
+                    highlights[i + 2] = data[i + 2] * softFactor;
+                }
+            }
+
+            // Massive blur radius for ultra-smooth, seamless spread
+            const radius = Math.max(10, Math.floor(intensity * 6.0)); // 10-120 pixel radius (huge spread)
+            const blurred = separableGaussianBlur(highlights, width, height, radius);
+
+            // Gentle blend for dreamy, seamless glow that fades naturally
+            const blendStrength = 0.6 + (intensity / 20); // 0.6-1.6 range (much gentler)
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
+                data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
+                data[i + 2] = Math.min(255, data[i + 2] + blurred[i + 2] * blendStrength);
+            }
+        }
+
+        function separableGaussianBlur(data, width, height, radius) {
+            const output = new Uint8ClampedArray(data.length);
+            const temp = new Uint8ClampedArray(data.length);
+
+            // Generate 1D gaussian kernel
+            const kernel = [];
+            const sigma = radius / 2;
+            let sum = 0;
+            for (let i = -radius; i <= radius; i++) {
+                const val = Math.exp(-(i * i) / (2 * sigma * sigma));
+                kernel.push(val);
+                sum += val;
+            }
+            // Normalize
+            for (let i = 0; i < kernel.length; i++) {
+                kernel[i] /= sum;
+            }
+
+            // Horizontal pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let k = -radius; k <= radius; k++) {
+                        const nx = Math.min(width - 1, Math.max(0, x + k));
+                        const idx = (y * width + nx) * 4;
+                        const weight = kernel[k + radius];
+                        r += data[idx] * weight;
+                        g += data[idx + 1] * weight;
+                        b += data[idx + 2] * weight;
+                    }
+                    const idx = (y * width + x) * 4;
+                    temp[idx] = r;
+                    temp[idx + 1] = g;
+                    temp[idx + 2] = b;
+                }
+            }
+
+            // Vertical pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let k = -radius; k <= radius; k++) {
+                        const ny = Math.min(height - 1, Math.max(0, y + k));
+                        const idx = (ny * width + x) * 4;
+                        const weight = kernel[k + radius];
+                        r += temp[idx] * weight;
+                        g += temp[idx + 1] * weight;
+                        b += temp[idx + 2] * weight;
+                    }
+                    const idx = (y * width + x) * 4;
+                    output[idx] = r;
+                    output[idx + 1] = g;
+                    output[idx + 2] = b;
+                    output[idx + 3] = 255;
+                }
+            }
+
+            return output;
+        }
+
+        function applyRealisticGrain(imageData, intensity, filmStock) {
+            const data = imageData.data;
+
+            // Film-specific grain characteristics
+            let grainSize, grainStrength, lumWeighting;
+
+            if (filmStock === 'portra400') {
+                // Portra 400: Medium grain, low visibility, smooth
+                grainSize = 1.5;
+                grainStrength = intensity * 12; // Scale 0-10 to 0-120 (much more visible)
+                lumWeighting = 'shadows'; // More grain in shadows
+            } else if (filmStock === 'trix400') {
+                // Tri-X 400: Large chunky grain, high contrast, very visible
+                grainSize = 2.5;
+                grainStrength = intensity * 18; // Scale 0-10 to 0-180 (very heavy)
+                lumWeighting = 'midtones'; // More grain in midtones for B&W
+            } else if (filmStock === 'ektachrome') {
+                // Ektachrome: Very fine grain, minimal, tight
+                grainSize = 1.0;
+                grainStrength = intensity * 8; // Scale 0-10 to 0-80 (more visible)
+                lumWeighting = 'uniform'; // Even distribution
+            } else {
+                // Default (none): Medium grain
+                grainSize = 1.5;
+                grainStrength = intensity * 12;
+                lumWeighting = 'uniform';
+            }
+
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                const lumNorm = lum / 255;
+
+                // Calculate luminance factor based on film
+                let lumFactor = 1;
+                if (lumWeighting === 'shadows') {
+                    // More grain in shadows
+                    lumFactor = 1.5 - lumNorm;
+                } else if (lumWeighting === 'midtones') {
+                    // More grain in midtones (peak at 50% gray)
+                    lumFactor = 1 - Math.abs(lumNorm - 0.5) * 2;
+                } else {
+                    // Uniform
+                    lumFactor = 1;
+                }
+
+                // Calculate final grain amount
+                const grainAmount = grainStrength * lumFactor * grainSize;
+
+                // Apply monochrome grain only (no color noise)
+                const noise = (Math.random() - 0.5) * grainAmount;
+                data[i] = Math.min(255, Math.max(0, data[i] + noise));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+            }
+        }
+
+        // Immediate processing with requestAnimationFrame for smooth, lightning-fast updates
+        let processingFrame = null;
+        function processCurrentPhoto() {
+            cancelAnimationFrame(processingFrame);
+            processingFrame = requestAnimationFrame(() => {
+                const photo = state.photos[state.currentIndex];
+                photo.processed = processImage(photo.original, photo.settings);
+                renderPreview();
+            });
+        }
+
+        // ========================================
+        // EVENT HANDLERS
+        // ========================================
+
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            if (confirm('RETURN TO UPLOAD?')) {
+                location.reload();
+            }
+        });
+
+        // Dark mode toggle
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+            haptic('light');
+        });
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Navigation
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (state.currentIndex > 0) {
+                // Copy current settings to previous photo
+                const currentSettings = { ...state.photos[state.currentIndex].settings };
+
+                state.currentIndex--;
+
+                // Apply settings to previous photo if it hasn't been edited yet
+                if (!state.photos[state.currentIndex].processed) {
+                    state.photos[state.currentIndex].settings = currentSettings;
+                    processCurrentPhoto();
+                }
+
+                renderPreview();
+                updateUI();
+                haptic('light');
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (state.currentIndex < state.photos.length - 1) {
+                // Copy current settings to next photo
+                const currentSettings = { ...state.photos[state.currentIndex].settings };
+
+                state.currentIndex++;
+
+                // Auto-apply settings to next photo
+                state.photos[state.currentIndex].settings = currentSettings;
+                processCurrentPhoto();
+
+                renderPreview();
+                updateUI();
+                haptic('light');
+            }
+        });
+
+        // COLOR button - opens film stock menu
+        document.getElementById('colorBtn').addEventListener('click', () => {
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'color';
+            updateUI();
+            haptic('light');
+        });
+
+        // CMY button - opens CMY controls
+        document.getElementById('cmyBtn').addEventListener('click', () => {
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'cmy';
+            updateUI();
+            haptic('light');
+        });
+
+        // SOFT button - opens soft mode menu
+        document.getElementById('softBtn').addEventListener('click', () => {
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'soft';
+            updateUI();
+            haptic('light');
+        });
+
+        // Soft mode menu options
+        document.querySelectorAll('[data-softmode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.photos[state.currentIndex].settings.softMode = btn.dataset.softmode;
+                // Keep menu open after selection
+                updateUI();
+                processCurrentPhoto();
+                haptic('medium');
+            });
+        });
+
+        // BLOOM button - opens bloom controls
+        document.getElementById('bloomBtn').addEventListener('click', () => {
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'bloom';
+            updateUI();
+            haptic('light');
+        });
+
+        // GRAIN button - opens grain controls
+        document.getElementById('grainBtn').addEventListener('click', () => {
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'grain';
+            updateUI();
+            haptic('light');
+        });
+
+        // Color mode menu options with swipe-to-adjust strength
+        document.querySelectorAll('[data-colormode]').forEach(btn => {
+            let touchStartX = 0;
+            let touchStartStrength = 0;
+            let isSwiping = false;
+
+            btn.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartStrength = state.photos[state.currentIndex].settings.presetStrength;
+                isSwiping = false;
+            });
+
+            btn.addEventListener('touchmove', (e) => {
+                const colorMode = btn.dataset.colormode;
+                // Only allow strength adjustment on actual presets (not "none")
+                if (colorMode === 'none') return;
+
+                const touchX = e.touches[0].clientX;
+                const deltaX = touchX - touchStartX;
+
+                // If moved more than 10px, it's a swipe
+                if (Math.abs(deltaX) > 10) {
+                    e.preventDefault();
+                    isSwiping = true;
+
+                    // Adjust strength: 1px = 0.5%
+                    const strengthDelta = Math.round(deltaX * 0.5);
+                    const newStrength = Math.max(0, Math.min(100, touchStartStrength + strengthDelta));
+
+                    state.photos[state.currentIndex].settings.presetStrength = newStrength;
+                    updateUI();
+                    processCurrentPhoto();
+                }
+            });
+
+            btn.addEventListener('touchend', (e) => {
+                // If it was a swipe, don't trigger click
+                if (isSwiping) {
+                    haptic('medium');
+                    return;
+                }
+
+                // Otherwise, treat as a click to select preset
+                state.photos[state.currentIndex].settings.colorMode = btn.dataset.colormode;
+                updateUI();
+                processCurrentPhoto();
+                haptic('medium');
+            });
+
+            // Fallback for mouse/click (no swiping)
+            btn.addEventListener('click', (e) => {
+                // Only trigger if not a touch device (touchend handles it)
+                if (!('ontouchstart' in window)) {
+                    state.photos[state.currentIndex].settings.colorMode = btn.dataset.colormode;
+                    updateUI();
+                    processCurrentPhoto();
+                    haptic('medium');
+                }
+            });
+        });
+
+        // Slider buttons with hold-to-slide
+        let holdInterval = null;
+        let holdTimeout = null;
+
+        document.querySelectorAll('.slider-btn').forEach(btn => {
+            const control = btn.dataset.control;
+            const dir = btn.dataset.dir === '+' ? 1 : -1;
+
+            // Click/tap
+            btn.addEventListener('click', () => {
+                adjustControl(control, dir);
+            });
+
+            // Hold to slide
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+
+                // Single adjustment
+                adjustControl(control, dir);
+
+                // Start holding after 300ms
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        adjustControl(control, dir * 2); // Faster when holding
+                    }, 100);
+                }, 300);
+            });
+
+            btn.addEventListener('touchend', () => {
+                clearTimeout(holdTimeout);
+                clearInterval(holdInterval);
+            });
+
+            btn.addEventListener('touchcancel', () => {
+                clearTimeout(holdTimeout);
+                clearInterval(holdInterval);
+            });
+        });
+
+        function adjustControl(control, dir) {
+            const settings = state.photos[state.currentIndex].settings;
+
+            if (control === 'bloom') {
+                // Bloom: 0-20 range, increment by 1
+                settings.bloom = Math.max(0, Math.min(20, settings.bloom + dir));
+            } else if (control === 'grain') {
+                // Grain: 0-10 range, increment by 0.5 for more subtle steps
+                settings.grain = Math.max(0, Math.min(10, settings.grain + (dir * 0.5)));
+            } else if (control === 'cyan') {
+                // Cyan: -10 to +10 range, increment by 1
+                settings.cyan = Math.max(-10, Math.min(10, settings.cyan + dir));
+            } else if (control === 'magenta') {
+                // Magenta: -10 to +10 range, increment by 1
+                settings.magenta = Math.max(-10, Math.min(10, settings.magenta + dir));
+            } else if (control === 'yellow') {
+                // Yellow: -10 to +10 range, increment by 1
+                settings.yellow = Math.max(-10, Math.min(10, settings.yellow + dir));
+            } else if (control === 'density') {
+                // Density: -10 to +10 range, increment by 1
+                settings.density = Math.max(-10, Math.min(10, settings.density + dir));
+            }
+
+            updateUI();
+            processCurrentPhoto();
+            haptic('light');
+        }
+
+        // CMY button event listeners
+        document.querySelectorAll('.cmy-btn').forEach(btn => {
+            const control = btn.dataset.control;
+            const dir = btn.dataset.dir === '+' ? 1 : -1;
+
+            btn.addEventListener('click', () => {
+                adjustControl(control, dir);
+            });
+        });
+
+        // Save button
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const photo = state.photos[state.currentIndex];
+            if (!photo.processed) {
+                processCurrentPhoto();
+            }
+
+            const canvas = document.createElement('canvas');
+            const imageData = photo.processed || photo.original;
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(imageData, 0, 0);
+
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], photo.filename, { type: 'image/jpeg' });
+
+                if (navigator.share && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file] });
+                        haptic('success');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            downloadFile(blob, photo.filename);
+                        }
+                    }
+                } else {
+                    downloadFile(blob, photo.filename);
+                }
+            }, 'image/jpeg', 0.95);
+        });
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW error:', err));
+            });
+        }
+    </script>
+</body>
+</html>
