@@ -359,6 +359,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .frame-counter {
@@ -366,6 +372,7 @@
             letter-spacing: 1px;
             min-width: 80px;
             text-align: center;
+            color: var(--text-primary);
         }
 
         .save-btn {
@@ -1196,6 +1203,10 @@
             document.getElementById('magentaDisplay').textContent = settings.magenta > 0 ? `+${settings.magenta}` : settings.magenta;
             document.getElementById('yellowDisplay').textContent = settings.yellow > 0 ? `+${settings.yellow}` : settings.yellow;
             document.getElementById('densityDisplay').textContent = settings.density > 0 ? `+${settings.density}` : settings.density;
+
+            // Update navigation button states
+            document.getElementById('prevBtn').disabled = state.currentIndex === 0;
+            document.getElementById('nextBtn').disabled = state.currentIndex === state.photos.length - 1;
         }
 
         // Pinch to zoom and tap to preview original
