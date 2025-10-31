@@ -1,8 +1,8 @@
 {
   "name": "SP500 Film Simulator",
   "short_name": "SP500",
-  "description": "Professional Fuji Frontier SP500 film scanner editing experience for your photos",
-  "start_url": "/sp500.html",
+  "description": "Retro Fuji Frontier SP500 film scanner editing experience for your photos",
+  "start_url": "/sp500-retro.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#4fd1c5",

@@ -1,132 +1,122 @@
-# Leica Rangefinder Camera Web App
+# SP500 Film Simulator
 
-A professional Leica-style rangefinder camera web app optimized for iPhone Safari, featuring authentic film stock emulation and real rangefinder focusing mechanics.
+A retro-styled Fuji Frontier SP500 film scanner simulator for your iPhone. Upload photos from your camera roll and apply professional film lab processing effects with an authentic 8-bit aesthetic.
 
 ## Features
 
 ### Core Functionality
-- **Real-time Film Stock Emulation**: 6 authentic film stocks with color grading
-  - Kodak Portra 400 (warm, natural colors)
-  - Kodak Portra 800 (warmer, higher grain)
-  - Kodak Tri-X 400 (classic B&W, high contrast)
-  - Ilford HP5 Plus (B&W with fine grain)
-  - Cinestill 800T (tungsten-balanced, cool tones)
-  - Kodak Gold 200 (warm, vibrant)
+- **Upload Photos**: Load 1-36 photos from your camera roll
+- **Professional Film Processing**: Real-time color grading and film effects
+- **Batch Processing**: Process entire rolls of film at once
+- **Export to Photos**: Save processed images directly to your Photos library
+- **Retro Interface**: Pixel font and retro gray beige aesthetic with light/dark modes
 
-- **Authentic Rangefinder Patch**: Split-image focusing system
-  - Double image overlay effect
-  - Ghost image offset when out of focus
-  - Swipe on video to adjust focus
-  - Yellow/gold tint on rangefinder patch
-  - Images align when in focus
+### Film Processing Controls
 
-- **Manual Controls**:
-  - Lens selection: 35mm, 50mm, 90mm (digital zoom)
-  - Aperture: f/2, f/2.8, f/4, f/5.6, f/8
-  - Frame counter (counts down from 36)
+#### Color Modes
+- **STD**: Standard color (no film emulation)
+- **C41**: Kodak Portra 400 color negative film
+- **B&W**: Kodak Tri-X 400 black & white film
+- **E6**: Ektachrome slide film
 
-- **Focus Peaking**: Optional red overlay highlighting sharp edges
+#### CMY Color Correction
+Professional Fuji Frontier-style color correction:
+- **Cyan**: -50 to +50
+- **Magenta**: -50 to +50
+- **Yellow**: -50 to +50
+- **Density**: -50 to +50 (overall exposure)
+
+#### Contrast Modes
+- **Standard**: Normal contrast
+- **Soft**: Reduced contrast for gentle look
+- **Hard**: Increased contrast for dramatic look
+- **Shadow Soft**: Lift shadows while preserving highlights
+- **Shadow Hard**: Crush shadows for deeper blacks
+- **Highlight Soft**: Roll off highlights smoothly
+
+#### Special Effects
+- **Bloom**: 0-100 (halation effect around highlights)
+- **Grain**: 0.0-5.0 (film grain intensity)
 
 ### User Interface
-- Clean minimal Leica-inspired design
-- Black bars top and bottom for cinematic feel
-- Film window with yellow pill display
-- Real-time exposure information
-- Light meter indicator
-- Large centered shutter button
-- Thumbnail preview of last photo
-- Slide-up settings panel
+- Pixel font aesthetic (Press Start 2P)
+- Retro 3D button style
+- Horizontal filmstrip navigation
+- Before/after toggle
+- Pinch-to-zoom on canvas
+- Frame counter (shows current photo / total)
+- Fuji turquoise accent color
 
 ## How to Use
 
 ### Getting Started
-1. Open `index.html` in iPhone Safari
-2. Tap "Enable Camera" to grant camera permissions
-3. Camera feed will appear with film effects applied
+1. Open `sp500-retro.html` in iPhone Safari
+2. Install as PWA (Add to Home Screen) for best experience
+3. Tap "TAP TO SELECT" to upload photos
 
-### Taking Photos
-1. **Compose**: Frame your shot
-2. **Focus**: Swipe left/right on the video feed to adjust focus
-   - Watch the rangefinder patch - ghost image slides into alignment when in focus
-3. **Shoot**: Tap the white shutter button
-4. Photo is automatically downloaded to your device
+### Processing Photos
+1. **Upload**: Select 1-36 photos from your camera roll
+2. **Navigate**: Swipe through filmstrip at bottom to switch photos
+3. **Adjust**: Use control buttons to adjust color, contrast, and effects
+   - **COLOR**: Switch between film stocks (STD/C41/B&W/E6)
+   - **CMY**: Fine-tune colors with professional color correction
+   - **SOFT**: Adjust contrast curves
+   - **BLOOM**: Add halation glow around highlights
+   - **GRAIN**: Add film grain texture
+4. **Compare**: Toggle BEFORE/AFTER to see original vs processed
+5. **Export**: Tap "SAVE TO PHOTOS" to export all processed images
 
-### Changing Film Stocks
-- Swipe left/right on the **film window** (yellow pill at bottom)
-- Or swipe left/right on the **film name** (top right corner)
-- Current film: Portra 400 (default)
-
-### Adjusting Settings
-1. Tap "MENU" button (bottom right)
-2. Toggle features:
-   - **Rangefinder Patch**: Enable/disable split-image focusing aid
-   - **Focus Peaking**: Highlight sharp edges in red
-3. Select lens focal length (35/50/90mm)
-4. Select aperture (f/2 - f/8)
-5. Tap "×" to close settings
+### Navigation Controls
+- **Filmstrip**: Tap thumbnails to switch between photos
+- **Arrow Buttons**: Navigate previous/next photo
+- **Pinch**: Zoom in/out on main canvas
+- **Pan**: Drag to move zoomed image
+- **Reset Zoom**: Tap canvas once to reset zoom
 
 ## Film Stock Characteristics
 
-### Kodak Portra 400
-- Warm, natural skin tones
-- Fine grain
-- Excellent for portraits and everyday photography
+### C41 (Portra 400)
+- Warm, natural colors
+- Smooth skin tones
+- Subtle grain
+- Perfect for portraits and everyday photography
 
-### Kodak Portra 800
-- Warmer tones than 400
-- More visible grain
-- Great for low light and indoor shooting
-
-### Kodak Tri-X 400
+### B&W (Tri-X 400)
 - Classic black & white
 - High contrast
 - Visible grain structure
 - Legendary street photography film
 
-### Ilford HP5 Plus
-- Black & white with fine grain
-- Medium contrast
-- Versatile for all conditions
-
-### Cinestill 800T
-- Tungsten-balanced (cool tones)
-- High saturation
-- Signature halation effect
-- Perfect for night and indoor tungsten lighting
-
-### Kodak Gold 200
-- Warm, golden tones
-- High saturation
-- Vibrant colors
-- Classic consumer film look
+### E6 (Ektachrome)
+- Vibrant, saturated colors
+- Cool tones
+- High sharpness
+- Perfect for landscapes and product photography
 
 ## Technical Details
 
-### Camera Implementation
-- Uses Canvas API for real-time image processing
-- WebRTC MediaStream for camera access
-- 60fps rendering pipeline
-- Hardware-accelerated when available
+### Processing Pipeline
+- Canvas API for real-time image processing
+- Hardware-accelerated rendering
+- Per-photo settings storage
+- Batch export to camera roll
 
-### Rangefinder Mechanics
-- Captures two overlapping images from video feed
-- Horizontal offset simulates focus distance
-- Touch gestures control ghost image alignment
-- Yellow tint applied to match authentic rangefinder patches
+### Color Processing
+Each film mode applies unique color transformations:
+- **C41**: Warm color shift, green shadows, smooth highlight rolloff
+- **B&W**: Desaturation with contrast boost and grain
+- **E6**: Cool color shift, high saturation, punchy shadows
 
-### Focus Peaking
-- Real-time Sobel edge detection
-- Red overlay on high-contrast edges
-- Helps manual focusing on complex subjects
+### CMY Correction
+Professional film lab color correction:
+- Cyan: Shifts green ↔ red
+- Magenta: Shifts green ↔ magenta
+- Yellow: Shifts blue ↔ yellow
+- Density: Overall brightness adjustment
 
-### Film Grading
-Each film stock applies unique color transformations:
-- Color temperature adjustment (warmth/coolness)
-- Saturation boosting or desaturation (B&W)
-- Contrast curves
-- Brightness compensation
-- Film grain simulation
-- RGB channel tinting
+### Special Effects
+- **Bloom**: Gaussian blur applied to highlights only, creates halation glow
+- **Grain**: Procedural noise overlay with adjustable intensity
 
 ## Compatibility
 
@@ -136,52 +126,45 @@ Each film stock applies unique color transformations:
 - Safari browser
 
 ### Requirements
-- Modern browser with WebRTC support
-- Camera access permissions
-- Touch screen for gestures
+- Modern browser with Canvas API support
+- Photo library access permissions
 
 ## Controls Summary
 
 | Action | Gesture |
 |--------|---------|
-| Focus adjustment | Swipe left/right on video |
-| Change film stock | Swipe left/right on film window/name |
-| Take photo | Tap shutter button |
-| Open settings | Tap MENU button |
-| Close settings | Tap × button |
+| Upload photos | Tap "TAP TO SELECT" |
+| Navigate photos | Tap filmstrip thumbnails or arrow buttons |
+| Toggle film mode | Tap COLOR button, select mode |
+| Adjust CMY | Tap CMY button, use sliders |
+| Change contrast | Tap SOFT button, select mode |
+| Add bloom/grain | Tap BLOOM/GRAIN buttons, use sliders |
+| Compare before/after | Tap BEFORE/AFTER button |
+| Zoom canvas | Pinch to zoom, drag to pan, tap to reset |
+| Export photos | Tap SAVE TO PHOTOS |
+| Reset all settings | Tap RESET button |
+| Change theme | Tap moon/sun icon (top right) |
 
 ## Tips for Best Results
 
-1. **Lighting**: Film stocks look best in natural light
-2. **Focus**: Use rangefinder patch for precise focusing
-3. **Composition**: Remember the rule of thirds
-4. **Film Selection**:
-   - Portra for portraits and skin tones
-   - Tri-X for street photography
-   - Cinestill for night scenes
-   - Gold for warm, vibrant scenes
+1. **Start with Film Mode**: Choose your film stock first (C41/B&W/E6)
+2. **Fine-tune with CMY**: Use subtle adjustments (-10 to +10) for natural looks
+3. **Experiment with Bloom**: Try 10-30 for subtle halation, 50+ for dreamy looks
+4. **Add Grain**: Keep between 0.5-2.0 for authentic film texture
+5. **Use Soft Modes**: Shadow Soft is great for lifting dark photos
+6. **Before/After Toggle**: Always compare to avoid over-processing
 
-## Future Enhancements
-
-Potential features for future versions:
-- Manual exposure control
-- ISO simulation
-- More film stocks (Fuji, Agfa)
-- Photo gallery
-- EXIF data preservation
-- Double exposure mode
-- Time-lapse capability
-
-## Credits
+## Technical Implementation
 
 Built with modern web technologies:
 - HTML5 Canvas API
-- WebRTC MediaStream API
-- CSS3 with safe area support
+- Web File API for photo upload
+- CSS3 with CSS custom properties for theming
 - Vanilla JavaScript (no frameworks)
+- PWA manifest for installability
 
-Inspired by authentic Leica M-series rangefinder cameras and traditional film photography.
+Inspired by the legendary Fuji Frontier SP500 film scanner used in professional photo labs worldwide.
 
 ---
 
-**Note**: This is a simulation. While the app faithfully recreates film aesthetics and rangefinder mechanics, actual results may vary from real film cameras. For best results, use in good lighting conditions and take time to compose your shots thoughtfully.
+**Note**: This is a simulation of professional film scanning equipment. While the app faithfully recreates film processing effects and color grading workflows, results are artistic interpretations rather than chemically-accurate film reproductions.
