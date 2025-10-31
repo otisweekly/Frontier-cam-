@@ -306,13 +306,32 @@
         }
 
         .mode-btn {
-            padding: 12px 4px;
+            padding: 14px 6px;
             font-size: 8px;
             letter-spacing: 0.5px;
             text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-height: 60px;
+        }
+
+        .btn-label {
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .btn-value {
+            font-size: 10px;
+            font-weight: bold;
+            opacity: 0.7;
+            line-height: 1;
+        }
+
+        .mode-btn.active .btn-value {
+            opacity: 1;
         }
 
         /* === CONTROLS === */
@@ -521,11 +540,26 @@
 
         <!-- Mode Buttons -->
         <div class="mode-buttons">
-            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">COLOR</button>
-            <button class="btn-3d mode-btn" id="cmyBtn" data-mode="cmy">CMY</button>
-            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">SOFT</button>
-            <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">BLOOM</button>
-            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">GRAIN</button>
+            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">
+                <span class="btn-label">COLOR</span>
+                <span class="btn-value" id="colorValue">NONE</span>
+            </button>
+            <button class="btn-3d mode-btn" id="cmyBtn" data-mode="cmy">
+                <span class="btn-label">CMY</span>
+                <span class="btn-value" id="cmyValue">0</span>
+            </button>
+            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">
+                <span class="btn-label">SOFT</span>
+                <span class="btn-value" id="softValue">STD</span>
+            </button>
+            <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">
+                <span class="btn-label">BLOOM</span>
+                <span class="btn-value" id="bloomValue">0</span>
+            </button>
+            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">
+                <span class="btn-label">GRAIN</span>
+                <span class="btn-value" id="grainValue">0</span>
+            </button>
         </div>
 
         <!-- Dynamic Controls (shown based on active button) -->
@@ -788,37 +822,43 @@
                 btn.classList.toggle('active', btn.dataset.colormode === settings.colorMode);
             });
 
-            // Update COLOR button label and active state
+            // Update COLOR button value and active state
             const colorNames = {
-                'none': 'COLOR',
-                'portra400': 'PORTRA',
-                'trix400': 'TRI-X',
-                'ektachrome': 'EKTAR'
+                'none': 'NONE',
+                'portra400': 'P400',
+                'trix400': 'TRIX',
+                'ektachrome': 'EKTA'
             };
             const colorBtn = document.getElementById('colorBtn');
-            colorBtn.textContent = colorNames[settings.colorMode] || 'COLOR';
+            document.getElementById('colorValue').textContent = colorNames[settings.colorMode] || 'NONE';
             colorBtn.classList.toggle('active', state.activeControl === 'color' || settings.colorMode !== 'none');
 
-            // Update CMY button active state
+            // Update CMY button value and active state
             const cmyBtn = document.getElementById('cmyBtn');
             const cmyActive = settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0;
+            const cmyTotal = Math.abs(settings.cyan) + Math.abs(settings.magenta) + Math.abs(settings.yellow) + Math.abs(settings.density);
+            document.getElementById('cmyValue').textContent = cmyActive ? cmyTotal : '0';
             cmyBtn.classList.toggle('active', state.activeControl === 'cmy' || cmyActive);
 
-            // Update SOFT button label and active state
+            // Update SOFT button value and active state
             const softBtn = document.getElementById('softBtn');
-            softBtn.textContent = settings.softMode;
+            const softShort = {
+                'STANDARD': 'STD',
+                'SOFT': 'SFT',
+                'SHADOW SOFT': 'SHAD',
+                'HIGHLIGHT SOFT': 'HIGH'
+            };
+            document.getElementById('softValue').textContent = softShort[settings.softMode] || 'STD';
             softBtn.classList.toggle('active', settings.softMode !== 'STANDARD');
 
-            // Update BLOOM button label and active state
+            // Update BLOOM button value and active state
             const bloomBtn = document.getElementById('bloomBtn');
-            const bloomText = settings.bloom > 0 ? `+${settings.bloom}` : 'BLOOM';
-            bloomBtn.textContent = bloomText;
+            document.getElementById('bloomValue').textContent = settings.bloom;
             bloomBtn.classList.toggle('active', state.activeControl === 'bloom' || settings.bloom > 0);
 
-            // Update GRAIN button label and active state
+            // Update GRAIN button value and active state
             const grainBtn = document.getElementById('grainBtn');
-            const grainText = settings.grain > 0 ? `+${settings.grain}` : 'GRAIN';
-            grainBtn.textContent = grainText;
+            document.getElementById('grainValue').textContent = settings.grain;
             grainBtn.classList.toggle('active', state.activeControl === 'grain' || settings.grain > 0);
 
             // Update slider displays
@@ -1172,11 +1212,11 @@
 
         function applyBloom(imageData, intensity) {
             // Bloom effect: Extract highlights, blur, and blend back
-            // Intensity 0-20 maps to radius 0-30 (softer, more blurred)
+            // Optimized single-pass bloom to prevent freezing
             const width = imageData.width;
             const height = imageData.height;
             const data = imageData.data;
-            const radius = Math.floor(intensity * 1.5); // 0-30 pixel radius for softer bloom
+            const radius = Math.max(1, Math.floor(intensity * 1.2)); // 0-24 pixel radius
 
             if (radius === 0) return;
 
@@ -1193,12 +1233,11 @@
                 }
             }
 
-            // Multiple blur passes for smoother gaussian-like effect
-            let blurred = boxBlur(highlights, width, height, radius);
-            blurred = boxBlur(blurred, width, height, Math.floor(radius / 2)); // Second pass
+            // Single optimized blur pass
+            const blurred = boxBlurOptimized(highlights, width, height, radius);
 
             // Blend blurred highlights back (additive)
-            const blendStrength = 0.5; // 50% blend for subtler effect
+            const blendStrength = 0.6; // 60% blend
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
@@ -1206,19 +1245,19 @@
             }
         }
 
-        function boxBlur(data, width, height, radius) {
-            // Fast box blur approximation
+        function boxBlurOptimized(data, width, height, radius) {
+            // Optimized box blur with reduced radius for performance
             const output = new Uint8ClampedArray(data.length);
-            const diameter = radius * 2 + 1;
-            const divisor = diameter * diameter;
+            const maxRadius = Math.min(radius, 10); // Cap radius at 10 for performance
 
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     let r = 0, g = 0, b = 0, count = 0;
 
-                    // Sample box around pixel
-                    for (let dy = -radius; dy <= radius; dy++) {
-                        for (let dx = -radius; dx <= radius; dx++) {
+                    // Sample box around pixel with step for large radii
+                    const step = maxRadius > 5 ? 2 : 1;
+                    for (let dy = -maxRadius; dy <= maxRadius; dy += step) {
+                        for (let dx = -maxRadius; dx <= maxRadius; dx += step) {
                             const nx = x + dx;
                             const ny = y + dy;
 
@@ -1299,10 +1338,15 @@
             }
         }
 
+        // Debounce processing to prevent freezing on rapid clicks
+        let processingTimeout = null;
         function processCurrentPhoto() {
-            const photo = state.photos[state.currentIndex];
-            photo.processed = processImage(photo.original, photo.settings);
-            renderPreview();
+            clearTimeout(processingTimeout);
+            processingTimeout = setTimeout(() => {
+                const photo = state.photos[state.currentIndex];
+                photo.processed = processImage(photo.original, photo.settings);
+                renderPreview();
+            }, 50); // 50ms debounce for smooth but responsive updates
         }
 
         // ========================================
