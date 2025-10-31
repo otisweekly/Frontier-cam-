@@ -464,10 +464,10 @@
 
         <!-- Mode Buttons -->
         <div class="mode-buttons">
-            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">COLOR</button>
+            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">PORTRA</button>
             <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">STANDARD</button>
             <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">BLOOM</button>
-            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">GRAIN (+5)</button>
+            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">GRAIN</button>
         </div>
 
         <!-- Dynamic Controls (shown based on active button) -->
@@ -490,7 +490,7 @@
 
             <!-- Grain Controls -->
             <div class="control-slider" id="grainControls" style="display: none;">
-                <div class="slider-display" id="grainDisplay">5</div>
+                <div class="slider-display" id="grainDisplay">0</div>
                 <div class="slider-buttons">
                     <button class="btn-3d slider-btn" data-control="grain" data-dir="-">▼</button>
                     <button class="btn-3d slider-btn" data-control="grain" data-dir="+">▲</button>
@@ -520,7 +520,7 @@
                 colorMode: 'portra400',  // portra400, trix400, ektachrome
                 softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
                 bloom: 0,                // 0-20
-                grain: 5                 // 0-10 (default 5 = medium)
+                grain: 0                 // 0-10 (default 0 = no grain)
             },
             zoom: {
                 scale: 1,
@@ -597,7 +597,8 @@
                 document.getElementById('uploadSection').classList.remove('active');
                 document.getElementById('previewSection').classList.add('active');
 
-                renderPreview();
+                // Process first photo with default settings
+                processCurrentPhoto();
                 updateUI();
                 setupZoom();
 
@@ -673,29 +674,44 @@
                 document.getElementById('grainControls').style.display = 'block';
             }
 
-            // Update mode buttons active state
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.mode === state.activeControl);
-            });
-
             // Update color menu options
             document.querySelectorAll('[data-colormode]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.colormode === settings.colorMode);
             });
 
-            // Update SOFT button label (cycles through states)
-            document.getElementById('softBtn').textContent = settings.softMode;
-            document.getElementById('softBtn').classList.toggle('active', settings.softMode !== 'STANDARD');
+            // Update COLOR button label and active state
+            const colorNames = {
+                'portra400': 'PORTRA',
+                'trix400': 'TRI-X',
+                'ektachrome': 'EKTAR'
+            };
+            const colorBtn = document.getElementById('colorBtn');
+            colorBtn.textContent = colorNames[settings.colorMode] || 'COLOR';
+            // Active if panel is open OR if non-default film
+            colorBtn.classList.toggle('active', state.activeControl === 'color');
 
-            // Update BLOOM button label
+            // Update SOFT button label and active state
+            const softBtn = document.getElementById('softBtn');
+            softBtn.textContent = settings.softMode;
+            // Active if panel is open OR if non-standard mode
+            softBtn.classList.toggle('active', settings.softMode !== 'STANDARD');
+
+            // Update BLOOM button label and active state
+            const bloomBtn = document.getElementById('bloomBtn');
             const bloomText = settings.bloom > 0 ? `BLOOM (+${settings.bloom})` : 'BLOOM';
-            document.getElementById('bloomBtn').textContent = bloomText;
-            document.getElementById('bloomBtn').classList.toggle('active', settings.bloom > 0);
+            bloomBtn.textContent = bloomText;
+            // Active if panel is open OR if bloom > 0
+            bloomBtn.classList.toggle('active', state.activeControl === 'bloom' || settings.bloom > 0);
 
-            // Update GRAIN button label
-            const grainText = settings.grain > 0 ? `GRAIN (+${settings.grain})` : 'GRAIN';
-            document.getElementById('grainBtn').textContent = grainText;
-            document.getElementById('grainBtn').classList.toggle('active', settings.grain !== 5);
+            // Update GRAIN button label and active state
+            const grainBtn = document.getElementById('grainBtn');
+            let grainText = 'GRAIN';
+            if (settings.grain > 0) {
+                grainText = `GRAIN (+${settings.grain})`;
+            }
+            grainBtn.textContent = grainText;
+            // Active if panel is open OR if grain > 0
+            grainBtn.classList.toggle('active', state.activeControl === 'grain' || settings.grain > 0);
 
             // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
@@ -1085,18 +1101,18 @@
 
             if (filmStock === 'portra400') {
                 // Portra 400: Medium grain, low visibility, smooth
-                grainSize = 1.0;
-                grainStrength = intensity * 3; // Scale 0-10 to 0-30
+                grainSize = 1.5;
+                grainStrength = intensity * 12; // Scale 0-10 to 0-120 (much more visible)
                 lumWeighting = 'shadows'; // More grain in shadows
             } else if (filmStock === 'trix400') {
                 // Tri-X 400: Large chunky grain, high contrast, very visible
-                grainSize = 2.0;
-                grainStrength = intensity * 5; // Scale 0-10 to 0-50 (heavier)
+                grainSize = 2.5;
+                grainStrength = intensity * 18; // Scale 0-10 to 0-180 (very heavy)
                 lumWeighting = 'midtones'; // More grain in midtones for B&W
             } else if (filmStock === 'ektachrome') {
                 // Ektachrome: Very fine grain, minimal, tight
-                grainSize = 0.5;
-                grainStrength = intensity * 2; // Scale 0-10 to 0-20 (lighter)
+                grainSize = 1.0;
+                grainStrength = intensity * 8; // Scale 0-10 to 0-80 (more visible)
                 lumWeighting = 'uniform'; // Even distribution
             }
 
