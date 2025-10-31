@@ -466,6 +466,70 @@
             background: #3a3a3a !important;
         }
 
+        /* Tone Box Style - Similar to film boxes */
+        .tone-boxes {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .tone-box {
+            padding: 12px 8px;
+            min-height: 50px;
+        }
+
+        .tone-name {
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        /* Tone-specific colors */
+        .tone-soft {
+            background: #9ab8d4 !important;
+            color: #1a2a3a !important;
+        }
+
+        .tone-soft::before {
+            background: #86a4c0 !important;
+        }
+
+        .tone-hard {
+            background: #d4869a !important;
+            color: #3a1a2a !important;
+        }
+
+        .tone-hard::before {
+            background: #c07286 !important;
+        }
+
+        .tone-shadow-soft {
+            background: #6a5a7a !important;
+            color: #e0d0e0 !important;
+        }
+
+        .tone-shadow-soft::before {
+            background: #5a4a6a !important;
+        }
+
+        .tone-shadow-hard {
+            background: #4a3a5a !important;
+            color: #e0d0e0 !important;
+        }
+
+        .tone-shadow-hard::before {
+            background: #3a2a4a !important;
+        }
+
+        .tone-highlight {
+            background: #f4e8a8 !important;
+            color: #4a3a1a !important;
+        }
+
+        .tone-highlight::before {
+            background: #e0d494 !important;
+        }
+
         /* Slider label */
         .slider-label {
             font-size: 8px;
@@ -723,12 +787,26 @@
                 </button>
             </div>
 
-            <!-- SOFT Mode Options Menu -->
-            <div class="control-menu" id="softMenu" style="display: none;">
-                <button class="btn-3d menu-option active" data-softmode="STANDARD">STANDARD</button>
-                <button class="btn-3d menu-option" data-softmode="SOFT">SOFT</button>
-                <button class="btn-3d menu-option" data-softmode="SHADOW SOFT">SHADOW SOFT</button>
-                <button class="btn-3d menu-option" data-softmode="HIGHLIGHT SOFT">HIGHLIGHT SOFT</button>
+            <!-- SOFT Mode Options Menu - Tone Graphics -->
+            <div class="control-menu tone-boxes" id="softMenu" style="display: none;">
+                <button class="btn-3d tone-box" data-softmode="STANDARD">
+                    <div class="tone-name">STD</div>
+                </button>
+                <button class="btn-3d tone-box tone-soft" data-softmode="SOFT">
+                    <div class="tone-name">SOFT</div>
+                </button>
+                <button class="btn-3d tone-box tone-hard" data-softmode="HARD">
+                    <div class="tone-name">HARD</div>
+                </button>
+                <button class="btn-3d tone-box tone-shadow-soft" data-softmode="SHADOW SOFT">
+                    <div class="tone-name">SHDW<br/>SOFT</div>
+                </button>
+                <button class="btn-3d tone-box tone-shadow-hard" data-softmode="SHADOW HARD">
+                    <div class="tone-name">SHDW<br/>HARD</div>
+                </button>
+                <button class="btn-3d tone-box tone-highlight" data-softmode="HIGHLIGHT SOFT">
+                    <div class="tone-name">HI<br/>SOFT</div>
+                </button>
             </div>
 
             <!-- CMY + Density Controls -->
@@ -1013,8 +1091,10 @@
             const softShort = {
                 'STANDARD': 'STD',
                 'SOFT': 'SFT',
-                'SHADOW SOFT': 'SHAD',
-                'HIGHLIGHT SOFT': 'HIGH'
+                'HARD': 'HRD',
+                'SHADOW SOFT': 'S-SF',
+                'SHADOW HARD': 'S-HD',
+                'HIGHLIGHT SOFT': 'H-SF'
             };
             document.getElementById('softValue').textContent = softShort[settings.softMode] || 'STD';
             softBtn.classList.toggle('active', state.activeControl === 'soft' || settings.softMode !== 'STANDARD');
@@ -1182,14 +1262,6 @@
                     break;
             }
 
-            // Apply preset strength if needed (blend with original)
-            if (settings.colorMode !== 'none' && settings.presetStrength < 100) {
-                const strength = settings.presetStrength / 100;
-                for (let i = 0; i < output.data.length; i++) {
-                    output.data[i] = imageData.data[i] + (output.data[i] - imageData.data[i]) * strength;
-                }
-            }
-
             // Apply CMY + Density
             if (settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0) {
                 applyCMY(output, settings.cyan, settings.magenta, settings.yellow, settings.density);
@@ -1203,8 +1275,14 @@
                 case 'SOFT':
                     applySoftContrast(output);
                     break;
+                case 'HARD':
+                    applyHardContrast(output);
+                    break;
                 case 'SHADOW SOFT':
                     applyShadowSoft(output);
+                    break;
+                case 'SHADOW HARD':
+                    applyShadowHard(output);
                     break;
                 case 'HIGHLIGHT SOFT':
                     applyHighlightSoft(output);
@@ -1443,6 +1521,44 @@
             }
         }
 
+        function applyHardContrast(imageData) {
+            // HARD: Boost contrast globally (opposite of SOFT)
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Aggressive S-curve: increase contrast globally
+                    if (val < 0.5) {
+                        val = 0.5 * Math.pow(val * 2, 0.8);
+                    } else {
+                        val = 1 - 0.5 * Math.pow((1 - val) * 2, 0.8);
+                    }
+
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyShadowHard(imageData) {
+            // SHADOW HARD: Crush shadows (opposite of SHADOW SOFT)
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    // Apply crush to shadows (below 0.5)
+                    if (val < 0.5) {
+                        // Crush shadows using a curve
+                        val = val - (0.5 - val) * 0.25; // 25% crush
+                    }
+                    // Highlights unchanged
+
+                    data[i + c] = Math.max(0, val * 255);
+                }
+            }
+        }
+
         function applyBloom(imageData, intensity) {
             if (intensity === 0) return;
 
@@ -1450,38 +1566,41 @@
             const height = imageData.height;
             const data = imageData.data;
 
-            // Clarity reduction - subtle overall softening scales with bloom intensity
-            const clarityReduction = Math.floor(intensity * 0.15); // 0-3 pixel softening
+            // Minimal clarity reduction - only on heavy highlight areas
+            const clarityReduction = Math.floor(intensity * 0.08); // 0-1.6 pixel softening (reduced)
             if (clarityReduction > 0) {
                 const softened = separableGaussianBlur(data, width, height, clarityReduction);
-                const clarityMix = 0.2 + (intensity / 60); // 0.2-0.53 mix (more subtle)
+                const clarityMix = 0.1 + (intensity / 100); // 0.1-0.3 mix (very subtle)
                 for (let i = 0; i < data.length; i += 4) {
-                    data[i] = data[i] * (1 - clarityMix) + softened[i] * clarityMix;
-                    data[i + 1] = data[i + 1] * (1 - clarityMix) + softened[i + 1] * clarityMix;
-                    data[i + 2] = data[i + 2] * (1 - clarityMix) + softened[i + 2] * clarityMix;
+                    // Only apply clarity reduction to bright areas
+                    const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    const clarityFactor = lum > 180 ? clarityMix : 0;
+                    data[i] = data[i] * (1 - clarityFactor) + softened[i] * clarityFactor;
+                    data[i + 1] = data[i + 1] * (1 - clarityFactor) + softened[i + 1] * clarityFactor;
+                    data[i + 2] = data[i + 2] * (1 - clarityFactor) + softened[i + 2] * clarityFactor;
                 }
             }
 
-            // Extract highlights into separate buffer - Leica glow style (gentle, soft)
+            // Extract highlights into separate buffer - More glow
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 200) { // Higher threshold for more selective bloom
-                    const factor = (lum - 200) / 55; // 0-1 for 200-255
-                    // Softer extraction with square root for gentler falloff
-                    const softFactor = Math.sqrt(factor) * 0.7;
+                if (lum > 190) { // Lower threshold to catch more highlights
+                    const factor = (lum - 190) / 65; // 0-1 for 190-255
+                    // More aggressive extraction for stronger glow
+                    const softFactor = Math.sqrt(factor) * 0.85;
                     highlights[i] = data[i] * softFactor;
                     highlights[i + 1] = data[i + 1] * softFactor;
                     highlights[i + 2] = data[i + 2] * softFactor;
                 }
             }
 
-            // Wide gaussian blur for that dreamy Leica spread
-            const radius = Math.max(3, Math.floor(intensity * 1.8)); // 0-36 pixel radius
+            // Wide gaussian blur for dreamy glow spread
+            const radius = Math.max(4, Math.floor(intensity * 2.2)); // 0-44 pixel radius (increased)
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Gentle blend for soft, low-contrast Leica glow
-            const blendStrength = 0.4 + (intensity / 40); // 0.4-0.9 range (much gentler)
+            // Stronger blend for more glow
+            const blendStrength = 0.5 + (intensity / 30); // 0.5-1.17 range (increased)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
