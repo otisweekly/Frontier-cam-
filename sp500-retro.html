@@ -144,14 +144,17 @@
 
         /* === HEADER === */
         .header {
+            background: #00a8a8; /* Fuji turquoise */
+            border-bottom: none;
+            padding-top: env(safe-area-inset-top); /* Extend turquoise above notch */
+        }
+
+        .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
             height: 44px; /* iOS standard nav bar height */
             padding: 0 16px;
-            padding-top: env(safe-area-inset-top); /* iOS safe area */
-            background: #00a8a8; /* Fuji turquoise */
-            border-bottom: none;
         }
 
         .header-title {
@@ -815,9 +818,11 @@
     <div class="preview-section" id="previewSection">
         <!-- Header -->
         <div class="header">
-            <button class="icon-btn" id="backBtn">&lt; UPLOAD</button>
-            <div class="header-title" id="filename">IMAGE_001.JPG</div>
-            <button class="icon-btn" id="darkModeToggle">DARK <span class="dark-mode-icon">🌙</span></button>
+            <div class="header-content">
+                <button class="icon-btn" id="backBtn">&lt; UPLOAD</button>
+                <div class="header-title" id="filename">IMAGE_001.JPG</div>
+                <button class="icon-btn" id="darkModeToggle">DARK <span class="dark-mode-icon">🌙</span></button>
+            </div>
         </div>
 
         <!-- Image Preview -->
