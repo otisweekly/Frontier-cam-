@@ -287,20 +287,24 @@
             position: absolute;
             top: 32px;
             right: 32px;
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff;
-            border: 2px solid #fff;
-            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: none;
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
+            border-bottom: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light);
             padding: 8px 12px;
-            font-size: 10px;
+            font-size: 16px;
             cursor: pointer;
             z-index: 20;
             font-family: 'Press Start 2P', monospace;
             letter-spacing: 0.5px;
+            line-height: 1;
         }
 
         .fullscreen-btn:active {
-            background: rgba(0, 0, 0, 0.8);
+            transform: translate(1px, 1px);
         }
 
         /* Status indicator */
@@ -353,8 +357,8 @@
         }
 
         .preview-container.fullscreen .fullscreen-btn {
-            top: calc(env(safe-area-inset-top, 0px) + 12px);
-            right: 12px;
+            top: calc(env(safe-area-inset-top, 0px) + 16px);
+            right: 16px;
         }
 
         /* === FILMSTRIP NAV === */
