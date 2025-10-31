@@ -84,6 +84,8 @@
             border: none;
             border-top: 2px solid var(--border-light);
             border-left: 2px solid var(--border-light);
+            border-bottom: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-dark);
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
             font-weight: bold;
@@ -122,6 +124,8 @@
             color: #fff;
             border-top: 2px solid var(--border-light);
             border-left: 2px solid var(--border-light);
+            border-bottom: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-dark);
         }
 
         .btn-primary-3d::before {
@@ -133,16 +137,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 24px;
-            padding-top: calc(16px + env(safe-area-inset-top));
-            background: var(--bg-primary);
-            border-bottom: 2px solid var(--border-dark);
+            height: 44px; /* iOS standard nav bar height */
+            padding: 0 16px;
+            padding-top: env(safe-area-inset-top); /* iOS safe area */
+            background: #00a8a8; /* Fuji turquoise */
+            border-bottom: none;
         }
 
         .header-title {
-            font-size: 12px;
+            font-size: 11px;
             letter-spacing: 1px;
             text-transform: uppercase;
+            color: #fff; /* White text on turquoise */
         }
 
         .icon-btn {
@@ -153,7 +159,7 @@
             border: none;
             font-size: 8px;
             cursor: pointer;
-            color: var(--text-primary);
+            color: #fff; /* White text on turquoise header */
             font-family: 'Press Start 2P', monospace;
         }
 
@@ -244,9 +250,7 @@
             background: #424242;
             border: 2px solid #808080;
             overflow: hidden;
-            min-height: 45vh; /* Preview height, scales with screen */
-            max-height: 50vh; /* Don't get too tall */
-            margin: 12px 0; /* Margin above and below photo */
+            margin: 0; /* No margin needed */
         }
 
         .preview-canvas {
@@ -254,8 +258,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 95%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 100%;
             width: auto;
             height: auto;
             cursor: pointer;
@@ -368,6 +372,16 @@
 
         .mode-btn.active .btn-value {
             opacity: 1;
+        }
+
+        /* === UTILITY BAR (MODE BUTTONS + CONTROLS) === */
+        .utility-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            z-index: 100;
         }
 
         /* === CONTROLS === */
@@ -744,6 +758,8 @@
             <button class="btn-3d btn-primary-3d save-btn" id="saveBtn">SAVE</button>
         </div>
 
+        <!-- Utility Bar (Mode Buttons + Controls) -->
+        <div class="utility-bar">
         <!-- Mode Buttons -->
         <div class="mode-buttons">
             <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">
@@ -878,6 +894,7 @@
                 </div>
             </div>
         </div>
+        </div> <!-- End utility-bar -->
     </div>
 
     <!-- Loading Overlay -->
