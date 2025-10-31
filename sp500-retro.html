@@ -72,6 +72,16 @@
             --accent: #00b8b8;
         }
 
+        /* Force header to always be Fuji turquoise with white text */
+        body.dark-mode .header {
+            background: #00a8a8 !important;
+        }
+
+        body.dark-mode .header-title,
+        body.dark-mode .icon-btn {
+            color: #fff !important;
+        }
+
         body.preview-active {
             overflow: hidden;
             height: 100vh;
@@ -83,9 +93,9 @@
             background: var(--bg-primary);
             border: none;
             border-top: 2px solid var(--border-light);
-            border-left: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
             border-bottom: 2px solid var(--border-dark);
-            border-right: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light);
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
             font-weight: bold;
@@ -100,7 +110,7 @@
             right: -2px;
             bottom: -2px;
             background: var(--bg-secondary);
-            border-top: 2px solid var(--border-dark);
+            border-top: 2px solid var(--border-light);
             border-left: 2px solid var(--border-dark);
             z-index: -1;
             transform: rotate(180deg);
@@ -123,9 +133,9 @@
             background: var(--accent);
             color: #fff;
             border-top: 2px solid var(--border-light);
-            border-left: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-dark);
             border-bottom: 2px solid var(--border-dark);
-            border-right: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light);
         }
 
         .btn-primary-3d::before {
@@ -157,7 +167,7 @@
             padding: 0 8px;
             background: transparent;
             border: none;
-            font-size: 8px;
+            font-size: 20px;
             cursor: pointer;
             color: #fff; /* White text on turquoise header */
             font-family: 'Press Start 2P', monospace;
@@ -1545,11 +1555,11 @@
             const height = imageData.height;
             const data = imageData.data;
 
-            // Minimal clarity reduction - only on heavy highlight areas
-            const clarityReduction = Math.floor(intensity * 0.08); // 0-1.6 pixel softening (reduced)
+            // Enhanced clarity reduction for softer, glowier highlights
+            const clarityReduction = Math.floor(intensity * 0.15); // 0-3 pixel softening (increased)
             if (clarityReduction > 0) {
                 const softened = separableGaussianBlur(data, width, height, clarityReduction);
-                const clarityMix = 0.1 + (intensity / 100); // 0.1-0.3 mix (very subtle)
+                const clarityMix = 0.2 + (intensity / 50); // 0.2-0.6 mix (more pronounced)
                 for (let i = 0; i < data.length; i += 4) {
                     // Only apply clarity reduction to bright areas
                     const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
@@ -1560,26 +1570,26 @@
                 }
             }
 
-            // Extract highlights into separate buffer - More glow
+            // Extract highlights into separate buffer - More aggressive
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 190) { // Lower threshold to catch more highlights
-                    const factor = (lum - 190) / 65; // 0-1 for 190-255
-                    // More aggressive extraction for stronger glow
-                    const softFactor = Math.sqrt(factor) * 0.85;
+                if (lum > 170) { // Lower threshold to catch more highlights
+                    const factor = (lum - 170) / 85; // 0-1 for 170-255
+                    // More aggressive extraction for stronger, brighter glow
+                    const softFactor = Math.sqrt(factor) * 0.95;
                     highlights[i] = data[i] * softFactor;
                     highlights[i + 1] = data[i + 1] * softFactor;
                     highlights[i + 2] = data[i + 2] * softFactor;
                 }
             }
 
-            // Wide gaussian blur for dreamy glow spread
-            const radius = Math.max(4, Math.floor(intensity * 2.2)); // 0-44 pixel radius (increased)
+            // Wide gaussian blur for maximum dreamy glow spread
+            const radius = Math.max(4, Math.floor(intensity * 3.0)); // 0-60 pixel radius (increased)
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Stronger blend for more glow
-            const blendStrength = 0.5 + (intensity / 30); // 0.5-1.17 range (increased)
+            // Much stronger blend for intense glow
+            const blendStrength = 0.7 + (intensity / 20); // 0.7-1.7 range (significantly increased)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
