@@ -266,6 +266,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .preview-canvas {
@@ -277,10 +278,15 @@
             cursor: pointer;
         }
 
+        /* Dark mode preview */
+        body.dark-mode .preview-container {
+            background: #2a2a2a;
+        }
+
         .fullscreen-btn {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 32px;
+            right: 32px;
             background: rgba(0, 0, 0, 0.6);
             color: #fff;
             border: 2px solid #fff;
@@ -336,8 +342,9 @@
             right: 0;
             bottom: 0;
             z-index: 200;
-            background: #000;
+            background: #000 !important;
             border: none;
+            padding: 0;
         }
 
         .preview-container.fullscreen .preview-canvas {
@@ -346,7 +353,7 @@
         }
 
         .preview-container.fullscreen .fullscreen-btn {
-            top: env(safe-area-inset-top, 12px);
+            top: calc(env(safe-area-inset-top, 0px) + 12px);
             right: 12px;
         }
 
