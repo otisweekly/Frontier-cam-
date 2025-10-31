@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>SP500 Film Simulator</title>
+
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SP500">
+    <meta name="theme-color" content="#000000">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-180.png">
+
+    <style>
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, select, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
+            font-size: 16px !important; /* Prevent iOS zoom on focus */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        /* === LAYOUT === */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* === HEADER === */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(77, 209, 197, 0.2);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4fd1c5;
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: transparent;
+            color: #4fd1c5;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:active {
+            background: rgba(77, 209, 197, 0.2);
+        }
+
+        /* === UPLOAD SECTION === */
+        .upload-section {
+            padding: 40px 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .upload-section.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 2px dashed #4fd1c5;
+            border-radius: 16px;
+            padding: 60px 20px;
+            margin: 20px 0;
+            background: rgba(77, 209, 197, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: rgba(77, 209, 197, 0.1);
+            border-color: #4fd1c5;
+        }
+
+        .upload-area.dragover {
+            background: rgba(77, 209, 197, 0.15);
+            border-color: #4fd1c5;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #4fd1c5;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* === IMAGE PREVIEW === */
+        .preview-section {
+            display: none;
+            flex-direction: column;
+            height: calc(100vh - 60px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        }
+
+        .preview-section.active {
+            display: flex;
+        }
+
+        .preview-container {
+            flex: 1;
+            position: relative;
+            background: #111;
+            overflow: hidden;
+            touch-action: pan-y pinch-zoom;
+        }
+
+        .preview-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+
+        .frame-counter {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4fd1c5;
+        }
+
+        .before-after-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid #4fd1c5;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4fd1c5;
+            cursor: pointer;
+        }
+
+        /* === FILMSTRIP === */
+        .filmstrip {
+            background: #111;
+            padding: 12px 0;
+            border-top: 1px solid rgba(77, 209, 197, 0.2);
+            border-bottom: 1px solid rgba(77, 209, 197, 0.2);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        .filmstrip::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filmstrip-inner {
+            display: inline-flex;
+            gap: 8px;
+            padding: 0 20px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .thumbnail.active {
+            border-color: #4fd1c5;
+            box-shadow: 0 0 12px rgba(77, 209, 197, 0.5);
+        }
+
+        .thumbnail:hover {
+            opacity: 0.8;
+        }
+
+        /* === CONTROLS === */
+        .controls {
+            background: #000;
+            padding: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .control-group {
+            margin-bottom: 24px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #4fd1c5;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Select / Dropdown */
+        select {
+            width: 100%;
+            height: 44px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            padding: 0 12px;
+            font-size: 16px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234fd1c5' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .radio-option {
+            flex: 1;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option label {
+            display: block;
+            height: 44px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: #4fd1c5;
+            color: #000;
+            border-color: #4fd1c5;
+        }
+
+        /* Sliders */
+        .slider-container {
+            margin-bottom: 16px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slider-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .slider-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4fd1c5;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 44px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #4fd1c5;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #4fd1c5;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 44px;
+            padding: 0 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-container:hover {
+            background: #222;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #4fd1c5;
+        }
+
+        .checkbox-label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4fd1c5 0%, #38b2ac 100%);
+            color: #000;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #4fd1c5;
+            border: 1px solid #4fd1c5;
+        }
+
+        .btn-secondary:active {
+            background: rgba(77, 209, 197, 0.1);
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        /* === LOADING === */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #333;
+            border-top-color: #4fd1c5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #4fd1c5;
+        }
+
+        .progress-bar {
+            width: 80%;
+            max-width: 300px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4fd1c5 0%, #38b2ac 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* === RESPONSIVE === */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>SP500</h1>
+        <div class="header-actions">
+            <button class="icon-btn" id="resetBtn" title="Reset Settings">↻</button>
+            <button class="icon-btn" id="infoBtn" title="Info">ⓘ</button>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="upload-section active" id="uploadSection">
+        <div class="container">
+            <h2 style="font-size: 24px; margin-bottom: 12px;">Fuji Frontier SP500</h2>
+            <p style="opacity: 0.7; margin-bottom: 32px;">Professional film scanner editing experience</p>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Upload Photos</div>
+                <div class="upload-subtext">Tap to select 1-36 photos from your camera roll</div>
+                <div class="upload-subtext" style="margin-top: 8px; font-size: 12px;">Supports JPG, PNG, HEIC</div>
+            </div>
+
+            <input
+                type="file"
+                id="fileInput"
+                class="file-input"
+                accept="image/*,image/heic,image/heif"
+                multiple
+            />
+
+            <div style="margin-top: 40px; padding: 20px; background: rgba(77, 209, 197, 0.05); border-radius: 12px; text-align: left;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #4fd1c5;">Features:</h3>
+                <ul style="font-size: 14px; opacity: 0.8; line-height: 1.8; list-style-position: inside;">
+                    <li>Professional tone curve adjustments</li>
+                    <li>CMY color correction (subtractive color model)</li>
+                    <li>Hypertone dodging simulation</li>
+                    <li>Portra 400 film grain emulation</li>
+                    <li>Batch processing up to 36 photos</li>
+                    <li>Export to camera roll or ZIP download</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section" id="previewSection">
+        <!-- Image Preview -->
+        <div class="preview-container" id="previewContainer">
+            <canvas id="previewCanvas" class="preview-canvas"></canvas>
+            <div class="frame-counter" id="frameCounter">1 / 1</div>
+            <button class="before-after-toggle" id="beforeAfterBtn">TAP FOR BEFORE</button>
+        </div>
+
+        <!-- Filmstrip -->
+        <div class="filmstrip" id="filmstrip">
+            <div class="filmstrip-inner" id="filmstripInner">
+                <!-- Thumbnails will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls" id="controls">
+            <div class="control-group">
+                <label class="control-label">TONE ADJUSTMENT</label>
+                <select id="toneSelect">
+                    <option value="standard">Standard</option>
+                    <option value="all_hard">All Hard</option>
+                    <option value="all_soft">All Soft</option>
+                    <option value="highlight_hard">Highlight Hard</option>
+                    <option value="highlight_soft">Highlight Soft</option>
+                    <option value="shadow_hard">Shadow Hard</option>
+                    <option value="shadow_soft">Shadow Soft</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">HYPERTONE</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="hypertone" id="hypertone_off" value="off" checked>
+                        <label for="hypertone_off">OFF</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="hypertone" id="hypertone_m1" value="mode1">
+                        <label for="hypertone_m1">M1</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="hypertone" id="hypertone_m2" value="mode2">
+                        <label for="hypertone_m2">M2</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">DENSITY</label>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Exposure</span>
+                        <span class="slider-value" id="densityValue">0</span>
+                    </div>
+                    <input type="range" id="densitySlider" min="-50" max="50" value="0" step="1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">COLOR CORRECTION (CMY)</label>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Cyan</span>
+                        <span class="slider-value" id="cyanValue">0</span>
+                    </div>
+                    <input type="range" id="cyanSlider" min="-20" max="20" value="0" step="1">
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Magenta</span>
+                        <span class="slider-value" id="magentaValue">0</span>
+                    </div>
+                    <input type="range" id="magentaSlider" min="-20" max="20" value="0" step="1">
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Yellow</span>
+                        <span class="slider-value" id="yellowValue">0</span>
+                    </div>
+                    <input type="range" id="yellowSlider" min="-20" max="20" value="0" step="1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">SHARPNESS</label>
+                <select id="sharpnessSelect">
+                    <option value="low3">Low 3</option>
+                    <option value="low2">Low 2</option>
+                    <option value="low1">Low 1</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="high1">High 1</option>
+                    <option value="high2">High 2</option>
+                    <option value="high3">High 3</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">SATURATION</label>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Color Intensity</span>
+                        <span class="slider-value" id="saturationValue">100</span>
+                    </div>
+                    <input type="range" id="saturationSlider" min="0" max="200" value="100" step="1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="grainCheckbox" checked>
+                    <label for="grainCheckbox" class="checkbox-label">Portra 400 Film Grain</label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="processAllBtn">
+                <span>⚡</span>
+                <span>PROCESS ALL</span>
+            </button>
+
+            <div class="button-row">
+                <button class="btn btn-secondary" id="resetCurrentBtn">Reset</button>
+                <button class="btn btn-secondary" id="copyToAllBtn">Copy to All</button>
+            </div>
+
+            <button class="btn btn-secondary" id="exportBtn" style="margin-top: 12px;">
+                <span>💾</span>
+                <span>EXPORT PHOTOS</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // STATE MANAGEMENT
+        // ========================================
+
+        const state = {
+            photos: [],           // Array of {original, processed, thumbnail, settings}
+            currentIndex: 0,
+            showingBefore: false,
+            defaultSettings: {
+                tone: 'standard',
+                hypertone: 'off',
+                density: 0,
+                cyan: 0,
+                magenta: 0,
+                yellow: 0,
+                sharpness: 'normal',
+                saturation: 100,
+                grain: true
+            }
+        };
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+
+        function haptic(type = 'light') {
+            if ('vibrate' in navigator) {
+                const patterns = {
+                    light: 10,
+                    medium: 20,
+                    heavy: 50,
+                    success: [10, 50, 10]
+                };
+                navigator.vibrate(patterns[type] || patterns.light);
+            }
+        }
+
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        // ========================================
+        // FILE UPLOAD & HANDLING
+        // ========================================
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            await handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            await handleFiles(files);
+        });
+
+        async function handleFiles(files) {
+            if (files.length === 0) return;
+            if (files.length > 36) {
+                alert('Maximum 36 photos allowed');
+                return;
+            }
+
+            showLoading('Loading photos...');
+
+            try {
+                state.photos = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    updateProgress((i / files.length) * 100);
+
+                    let file = files[i];
+
+                    // Convert HEIC if needed
+                    if (file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic')) {
+                        try {
+                            // Note: HEIC conversion would require heic2any library
+                            // For now, we'll just load as-is and let browser handle it
+                            console.log('HEIC file detected:', file.name);
+                        } catch (err) {
+                            console.error('HEIC conversion failed:', err);
+                        }
+                    }
+
+                    const imageData = await loadImage(file);
+                    const thumbnail = await createThumbnail(imageData);
+
+                    state.photos.push({
+                        original: imageData,
+                        processed: null,
+                        thumbnail: thumbnail,
+                        settings: { ...state.defaultSettings }
+                    });
+                }
+
+                updateProgress(100);
+
+                // Show preview section
+                document.getElementById('uploadSection').classList.remove('active');
+                document.getElementById('previewSection').classList.add('active');
+
+                // Render UI
+                renderFilmstrip();
+                renderPreview();
+                updateControls();
+
+                haptic('success');
+            } catch (err) {
+                console.error('Error loading files:', err);
+                alert('Error loading photos. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Create canvas with image
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function createThumbnail(imageData) {
+            const canvas = document.createElement('canvas');
+            const size = 60;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Create temp canvas with original image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = imageData.width;
+            tempCanvas.height = imageData.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.putImageData(imageData, 0, 0);
+
+            // Draw scaled down
+            const scale = Math.max(size / imageData.width, size / imageData.height);
+            const w = imageData.width * scale;
+            const h = imageData.height * scale;
+            const x = (size - w) / 2;
+            const y = (size - h) / 2;
+
+            ctx.drawImage(tempCanvas, x, y, w, h);
+
+            return canvas.toDataURL('image/jpeg', 0.7);
+        }
+
+        // ========================================
+        // UI RENDERING
+        // ========================================
+
+        function renderFilmstrip() {
+            const container = document.getElementById('filmstripInner');
+            container.innerHTML = '';
+
+            state.photos.forEach((photo, index) => {
+                const img = document.createElement('img');
+                img.src = photo.thumbnail;
+                img.className = 'thumbnail' + (index === state.currentIndex ? ' active' : '');
+                img.addEventListener('click', () => {
+                    state.currentIndex = index;
+                    renderFilmstrip();
+                    renderPreview();
+                    updateControls();
+                    haptic('light');
+                });
+                container.appendChild(img);
+            });
+        }
+
+        function renderPreview() {
+            const photo = state.photos[state.currentIndex];
+            if (!photo) return;
+
+            const canvas = document.getElementById('previewCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Show original or processed
+            const imageData = state.showingBefore ? photo.original : (photo.processed || photo.original);
+
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            ctx.putImageData(imageData, 0, 0);
+
+            // Update counter
+            document.getElementById('frameCounter').textContent =
+                `${state.currentIndex + 1} / ${state.photos.length}`;
+        }
+
+        function updateControls() {
+            const settings = state.photos[state.currentIndex].settings;
+
+            document.getElementById('toneSelect').value = settings.tone;
+            document.querySelector(`input[name="hypertone"][value="${settings.hypertone}"]`).checked = true;
+            document.getElementById('densitySlider').value = settings.density;
+            document.getElementById('densityValue').textContent = settings.density;
+            document.getElementById('cyanSlider').value = settings.cyan;
+            document.getElementById('cyanValue').textContent = settings.cyan;
+            document.getElementById('magentaSlider').value = settings.magenta;
+            document.getElementById('magentaValue').textContent = settings.magenta;
+            document.getElementById('yellowSlider').value = settings.yellow;
+            document.getElementById('yellowValue').textContent = settings.yellow;
+            document.getElementById('sharpnessSelect').value = settings.sharpness;
+            document.getElementById('saturationSlider').value = settings.saturation;
+            document.getElementById('saturationValue').textContent = settings.saturation;
+            document.getElementById('grainCheckbox').checked = settings.grain;
+        }
+
+        // ========================================
+        // IMAGE PROCESSING
+        // ========================================
+
+        function processImage(imageData, settings) {
+            // Clone the image data
+            const output = new ImageData(
+                new Uint8ClampedArray(imageData.data),
+                imageData.width,
+                imageData.height
+            );
+
+            // Apply processing pipeline
+            applyFrontierProfile(output);
+            applyToneCurve(output, settings.tone);
+            applyHypertone(output, settings.hypertone);
+            applyDensity(output, settings.density);
+            applyCMY(output, settings.cyan, settings.magenta, settings.yellow);
+            applySaturation(output, settings.saturation);
+            if (settings.grain) applyGrain(output);
+            applySharpness(output, settings.sharpness);
+
+            return output;
+        }
+
+        function applyFrontierProfile(imageData) {
+            // Fuji Frontier color science
+            // Warmer whites, enhanced reds, rich blues
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Warm color temperature (+5-10K)
+                r = r * 1.05;
+                g = g * 1.02;
+                b = b * 0.98;
+
+                // Enhanced reds (skin tones)
+                if (r > g && r > b) {
+                    r = r * 1.08;
+                }
+
+                // Rich blues
+                if (b > r && b > g) {
+                    b = b * 1.05;
+                }
+
+                // Slight magenta in shadows
+                const lum = (r + g + b) / 3;
+                if (lum < 80) {
+                    r = r * 1.02;
+                    b = b * 1.02;
+                }
+
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
+            }
+        }
+
+        function applyToneCurve(imageData, tone) {
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+
+                    switch (tone) {
+                        case 'all_hard':
+                            val = Math.pow(val, 0.85); // Steeper S-curve
+                            break;
+                        case 'all_soft':
+                            val = Math.pow(val, 1.15); // Gentler curve
+                            break;
+                        case 'highlight_hard':
+                            if (val > 0.5) {
+                                val = 0.5 + (val - 0.5) * 1.3;
+                            }
+                            break;
+                        case 'highlight_soft':
+                            if (val > 0.5) {
+                                val = 0.5 + (val - 0.5) * 0.7;
+                            }
+                            break;
+                        case 'shadow_hard':
+                            if (val < 0.5) {
+                                val = val * 0.8;
+                            }
+                            break;
+                        case 'shadow_soft':
+                            if (val < 0.5) {
+                                val = val * 1.2;
+                            }
+                            break;
+                    }
+
+                    data[i + c] = Math.min(255, Math.max(0, val * 255));
+                }
+            }
+        }
+
+        function applyHypertone(imageData, mode) {
+            if (mode === 'off') return;
+
+            const data = imageData.data;
+            const strength = mode === 'mode1' ? 0.15 : 0.3;
+
+            // Calculate average luminance
+            let avgLum = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                avgLum += (data[i] + data[i + 1] + data[i + 2]) / 3;
+            }
+            avgLum /= (data.length / 4);
+
+            // Adjust pixels based on relationship to average
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                const diff = lum - avgLum;
+                const adjustment = -diff * strength;
+
+                data[i] += adjustment;
+                data[i + 1] += adjustment;
+                data[i + 2] += adjustment;
+
+                data[i] = Math.min(255, Math.max(0, data[i]));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1]));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2]));
+            }
+        }
+
+        function applyDensity(imageData, density) {
+            const data = imageData.data;
+            const factor = 1 + (density / 100); // -50 to +50 = 0.5 to 1.5
+
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, Math.max(0, data[i] * factor));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] * factor));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] * factor));
+            }
+        }
+
+        function applyCMY(imageData, c, m, y) {
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Convert to CMY
+                let cyan = 255 - r;
+                let magenta = 255 - g;
+                let yellow = 255 - b;
+
+                // Apply adjustments (each step = ~2.5 units)
+                cyan += c * 2.5;
+                magenta += m * 2.5;
+                yellow += y * 2.5;
+
+                // Clamp
+                cyan = Math.min(255, Math.max(0, cyan));
+                magenta = Math.min(255, Math.max(0, magenta));
+                yellow = Math.min(255, Math.max(0, yellow));
+
+                // Convert back to RGB
+                data[i] = Math.min(255, Math.max(0, 255 - cyan));
+                data[i + 1] = Math.min(255, Math.max(0, 255 - magenta));
+                data[i + 2] = Math.min(255, Math.max(0, 255 - yellow));
+            }
+        }
+
+        function applySaturation(imageData, saturation) {
+            const data = imageData.data;
+            const factor = saturation / 100;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+
+                data[i] = Math.min(255, Math.max(0, gray + factor * (r - gray)));
+                data[i + 1] = Math.min(255, Math.max(0, gray + factor * (g - gray)));
+                data[i + 2] = Math.min(255, Math.max(0, gray + factor * (b - gray)));
+            }
+        }
+
+        function applyGrain(imageData) {
+            const data = imageData.data;
+            const intensity = 0.015;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+                // More grain in shadows
+                const grainAmount = intensity * (1 - lum / 255) * 255;
+                const noise = (Math.random() - 0.5) * grainAmount;
+
+                data[i] += noise;
+                data[i + 1] += noise;
+                data[i + 2] += noise;
+
+                data[i] = Math.min(255, Math.max(0, data[i]));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1]));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2]));
+            }
+        }
+
+        function applySharpness(imageData, sharpness) {
+            const levels = {
+                'low3': 0.3,
+                'low2': 0.5,
+                'low1': 0.7,
+                'normal': 1.0,
+                'high1': 1.3,
+                'high2': 1.6,
+                'high3': 2.0
+            };
+
+            const amount = levels[sharpness] || 1.0;
+            if (amount === 1.0) return;
+
+            // Simple unsharp mask
+            const data = imageData.data;
+            const w = imageData.width;
+            const h = imageData.height;
+            const original = new Uint8ClampedArray(data);
+
+            for (let y = 1; y < h - 1; y++) {
+                for (let x = 1; x < w - 1; x++) {
+                    for (let c = 0; c < 3; c++) {
+                        const i = (y * w + x) * 4 + c;
+
+                        const center = original[i];
+                        const avg = (
+                            original[i - 4] + original[i + 4] +
+                            original[i - w * 4] + original[i + w * 4]
+                        ) / 4;
+
+                        const sharpened = center + amount * (center - avg);
+                        data[i] = Math.min(255, Math.max(0, sharpened));
+                    }
+                }
+            }
+        }
+
+        // ========================================
+        // EVENT HANDLERS
+        // ========================================
+
+        // Control changes
+        document.getElementById('toneSelect').addEventListener('change', (e) => {
+            state.photos[state.currentIndex].settings.tone = e.target.value;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.querySelectorAll('input[name="hypertone"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                state.photos[state.currentIndex].settings.hypertone = e.target.value;
+                processCurrentPhoto();
+                haptic('light');
+            });
+        });
+
+        document.getElementById('densitySlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            state.photos[state.currentIndex].settings.density = val;
+            document.getElementById('densityValue').textContent = val;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('cyanSlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            state.photos[state.currentIndex].settings.cyan = val;
+            document.getElementById('cyanValue').textContent = val;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('magentaSlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            state.photos[state.currentIndex].settings.magenta = val;
+            document.getElementById('magentaValue').textContent = val;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('yellowSlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            state.photos[state.currentIndex].settings.yellow = val;
+            document.getElementById('yellowValue').textContent = val;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('sharpnessSelect').addEventListener('change', (e) => {
+            state.photos[state.currentIndex].settings.sharpness = e.target.value;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('saturationSlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            state.photos[state.currentIndex].settings.saturation = val;
+            document.getElementById('saturationValue').textContent = val;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        document.getElementById('grainCheckbox').addEventListener('change', (e) => {
+            state.photos[state.currentIndex].settings.grain = e.target.checked;
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        function processCurrentPhoto() {
+            const photo = state.photos[state.currentIndex];
+            photo.processed = processImage(photo.original, photo.settings);
+            state.showingBefore = false;
+            renderPreview();
+        }
+
+        // Before/After toggle
+        document.getElementById('beforeAfterBtn').addEventListener('click', () => {
+            state.showingBefore = !state.showingBefore;
+            document.getElementById('beforeAfterBtn').textContent =
+                state.showingBefore ? 'TAP FOR AFTER' : 'TAP FOR BEFORE';
+            renderPreview();
+            haptic('medium');
+        });
+
+        // Swipe navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.getElementById('previewContainer').addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.getElementById('previewContainer').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const minDistance = 50;
+            const distance = touchStartX - touchEndX;
+
+            if (Math.abs(distance) > minDistance) {
+                if (distance > 0 && state.currentIndex < state.photos.length - 1) {
+                    // Swipe left - next photo
+                    state.currentIndex++;
+                    renderFilmstrip();
+                    renderPreview();
+                    updateControls();
+                    haptic('light');
+                } else if (distance < 0 && state.currentIndex > 0) {
+                    // Swipe right - previous photo
+                    state.currentIndex--;
+                    renderFilmstrip();
+                    renderPreview();
+                    updateControls();
+                    haptic('light');
+                }
+            }
+        }
+
+        // Reset current
+        document.getElementById('resetCurrentBtn').addEventListener('click', () => {
+            state.photos[state.currentIndex].settings = { ...state.defaultSettings };
+            state.photos[state.currentIndex].processed = null;
+            updateControls();
+            renderPreview();
+            haptic('medium');
+        });
+
+        // Copy to all
+        document.getElementById('copyToAllBtn').addEventListener('click', () => {
+            const currentSettings = state.photos[state.currentIndex].settings;
+            state.photos.forEach(photo => {
+                photo.settings = { ...currentSettings };
+                photo.processed = null;
+            });
+            alert('Settings copied to all photos!');
+            haptic('success');
+        });
+
+        // Process all
+        document.getElementById('processAllBtn').addEventListener('click', async () => {
+            showLoading('Processing all photos...');
+
+            try {
+                for (let i = 0; i < state.photos.length; i++) {
+                    updateProgress((i / state.photos.length) * 100);
+                    const photo = state.photos[i];
+                    photo.processed = processImage(photo.original, photo.settings);
+
+                    // Allow UI to update
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+
+                updateProgress(100);
+                renderPreview();
+                haptic('success');
+                alert('All photos processed!');
+            } catch (err) {
+                console.error('Processing error:', err);
+                alert('Error processing photos');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Export
+        document.getElementById('exportBtn').addEventListener('click', async () => {
+            if (!state.photos.some(p => p.processed)) {
+                alert('Please process photos first');
+                return;
+            }
+
+            showLoading('Preparing export...');
+
+            try {
+                const processedPhotos = state.photos.filter(p => p.processed);
+
+                if (processedPhotos.length === 1) {
+                    // Single photo - use Web Share API
+                    await exportSinglePhoto(processedPhotos[0].processed);
+                } else {
+                    // Multiple photos - download as files
+                    await exportMultiplePhotos(processedPhotos);
+                }
+
+                haptic('success');
+            } catch (err) {
+                console.error('Export error:', err);
+                alert('Error exporting photos');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        async function exportSinglePhoto(imageData) {
+            const canvas = document.createElement('canvas');
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(imageData, 0, 0);
+
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'sp500_frame_001.jpg', { type: 'image/jpeg' });
+
+                if (navigator.share && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'SP500 Processed Photo',
+                            text: 'Frame 1'
+                        });
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            downloadFile(blob, 'sp500_frame_001.jpg');
+                        }
+                    }
+                } else {
+                    downloadFile(blob, 'sp500_frame_001.jpg');
+                }
+            }, 'image/jpeg', 0.95);
+        }
+
+        async function exportMultiplePhotos(photos) {
+            for (let i = 0; i < photos.length; i++) {
+                const canvas = document.createElement('canvas');
+                const imageData = photos[i].processed;
+                canvas.width = imageData.width;
+                canvas.height = imageData.height;
+                const ctx = canvas.getContext('2d');
+                ctx.putImageData(imageData, 0, 0);
+
+                await new Promise(resolve => {
+                    canvas.toBlob((blob) => {
+                        const frameNum = String(i + 1).padStart(3, '0');
+                        downloadFile(blob, `sp500_frame_${frameNum}.jpg`);
+                        resolve();
+                    }, 'image/jpeg', 0.95);
+                });
+
+                // Small delay between downloads
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Start over with new photos?')) {
+                location.reload();
+            }
+        });
+
+        // Info button
+        document.getElementById('infoBtn').addEventListener('click', () => {
+            alert('Fuji Frontier SP500 Film Scanner Simulator\n\n' +
+                  'Professional photo editing with authentic film lab controls.\n\n' +
+                  '• Upload 1-36 photos\n' +
+                  '• Apply Frontier color science\n' +
+                  '• Adjust tone, color, grain\n' +
+                  '• Export to camera roll\n\n' +
+                  'Swipe left/right to navigate photos.');
+        });
+
+        // ========================================
+        // SERVICE WORKER REGISTRATION
+        // ========================================
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.log('SW error:', err));
+            });
+        }
+    </script>
+</body>
+</html>

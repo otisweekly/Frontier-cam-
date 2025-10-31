@@ -1,0 +1,32 @@
+{
+  "name": "SP500 Film Simulator",
+  "short_name": "SP500",
+  "description": "Professional Fuji Frontier SP500 film scanner editing experience for your photos",
+  "start_url": "/sp500.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#4fd1c5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["photo", "utilities", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "390x844",
+      "type": "image/png"
+    }
+  ]
+}
