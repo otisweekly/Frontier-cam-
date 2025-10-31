@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>SP500 Film Simulator</title>
+
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SP500">
+    <meta name="theme-color" content="#c0c0c0">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-180.png">
+
+    <!-- Pixel Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, select, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
+            font-size: 16px !important;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #c0c0c0;
+            color: #000;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* === RETRO 3D BUTTON STYLE === */
+        .btn-3d {
+            position: relative;
+            background: #c0c0c0;
+            border: none;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-weight: bold;
+            transition: all 0.1s;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: #d8cecb;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            z-index: -1;
+            transform: rotate(180deg);
+        }
+
+        .btn-3d:active {
+            transform: translate(1px, 1px);
+        }
+
+        .btn-3d.active {
+            background: #fff;
+        }
+
+        .btn-primary-3d {
+            background: #027e7e;
+            color: #fff;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+        }
+
+        .btn-primary-3d::before {
+            background: #d8cecb;
+        }
+
+        /* === HEADER === */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: #c0c0c0;
+            border-bottom: 2px solid #808080;
+        }
+
+        .header-title {
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* === UPLOAD SECTION === */
+        .upload-section {
+            padding: 40px 20px;
+            text-align: center;
+            display: none;
+            background: #c0c0c0;
+            min-height: 100vh;
+        }
+
+        .upload-section.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 4px dashed #808080;
+            padding: 60px 20px;
+            margin: 20px 0;
+            background: #fff;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid #808080;
+            z-index: -1;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 12px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* === IMAGE PREVIEW === */
+        .preview-section {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            background: #c0c0c0;
+        }
+
+        .preview-section.active {
+            display: flex;
+        }
+
+        .preview-container {
+            flex: 1;
+            position: relative;
+            background: #424242;
+            border: 2px solid #808080;
+            overflow: hidden;
+        }
+
+        .preview-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+
+        /* === FILMSTRIP NAV === */
+        .filmstrip-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frame-counter {
+            font-size: 14px;
+            letter-spacing: 1px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .save-btn {
+            padding: 12px 24px;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* === MODE BUTTONS === */
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: #c0c0c0;
+        }
+
+        .mode-btn {
+            padding: 12px 8px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* === CONTROLS === */
+        .controls {
+            padding: 24px;
+            background: #c0c0c0;
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* Custom Slider */
+        .slider-control {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-display {
+            background: #fff;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .slider-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .slider-btn {
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* === LOADING === */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(192, 192, 192, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-text {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .pixel-box {
+            width: 200px;
+            height: 20px;
+            border: 2px solid #000;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pixel-fill {
+            height: 100%;
+            background: #027e7e;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 10px;
+            }
+
+            .mode-btn {
+                font-size: 8px;
+                padding: 10px 4px;
+            }
+
+            .control-label {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Upload Section -->
+    <div class="upload-section active" id="uploadSection">
+        <h1 style="font-size: 16px; margin-bottom: 20px; letter-spacing: 2px;">SP500 FILM SCANNER</h1>
+        <p style="font-size: 10px; margin-bottom: 30px; line-height: 1.6;">PROFESSIONAL FRONTIER EMULATION</p>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">TAP TO UPLOAD</div>
+            <div class="upload-text">1-36 PHOTOS</div>
+            <div class="upload-text" style="font-size: 9px; margin-top: 12px;">JPG • PNG • HEIC</div>
+        </div>
+
+        <input
+            type="file"
+            id="fileInput"
+            class="file-input"
+            accept="image/*,image/heic,image/heif"
+            multiple
+        />
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section" id="previewSection">
+        <!-- Header -->
+        <div class="header">
+            <button class="icon-btn" id="backBtn">←</button>
+            <div class="header-title" id="filename">IMAGE_001.JPG</div>
+            <button class="icon-btn" id="menuBtn">☰</button>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="preview-container">
+            <canvas id="previewCanvas" class="preview-canvas"></canvas>
+        </div>
+
+        <!-- Filmstrip Navigation -->
+        <div class="filmstrip-nav">
+            <div class="nav-controls">
+                <button class="btn-3d nav-btn" id="prevBtn">←</button>
+                <div class="frame-counter" id="frameCounter">1/1</div>
+                <button class="btn-3d nav-btn" id="nextBtn">→</button>
+            </div>
+            <button class="btn-3d btn-primary-3d save-btn" id="saveBtn">SAVE</button>
+        </div>
+
+        <!-- Mode Buttons -->
+        <div class="mode-buttons">
+            <button class="btn-3d mode-btn active" data-mode="color">COLOR</button>
+            <button class="btn-3d mode-btn" data-mode="soft">SOFT</button>
+            <button class="btn-3d mode-btn" data-mode="bloom">BLOOM</button>
+            <button class="btn-3d mode-btn" data-mode="grain">GRAIN</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-row">
+                <div class="slider-control">
+                    <label class="control-label">DENSITY</label>
+                    <div class="slider-display" id="densityDisplay">0</div>
+                    <div class="slider-buttons">
+                        <button class="btn-3d slider-btn" data-slider="density" data-dir="-">-</button>
+                        <button class="btn-3d slider-btn" data-slider="density" data-dir="+">+</button>
+                    </div>
+                </div>
+
+                <div class="slider-control">
+                    <label class="control-label">GRAIN</label>
+                    <div class="slider-display" id="grainDisplay">50</div>
+                    <div class="slider-buttons">
+                        <button class="btn-3d slider-btn" data-slider="grain" data-dir="-">-</button>
+                        <button class="btn-3d slider-btn" data-slider="grain" data-dir="+">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-3d btn-primary-3d" id="processAllBtn" style="width: 100%; padding: 16px; font-size: 12px; letter-spacing: 1px; margin-top: 12px;">
+                PROCESS ALL
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-text" id="loadingText">PROCESSING...</div>
+        <div class="pixel-box">
+            <div class="pixel-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // STATE MANAGEMENT
+        // ========================================
+
+        const state = {
+            photos: [],
+            currentIndex: 0,
+            defaultSettings: {
+                mode: 'color',  // color, soft, bloom, grain
+                density: 0,     // -50 to +50
+                grainIntensity: 50  // 0-100
+            }
+        };
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+
+        function haptic(type = 'light') {
+            if ('vibrate' in navigator) {
+                const patterns = { light: 10, medium: 20, heavy: 50, success: [10, 50, 10] };
+                navigator.vibrate(patterns[type] || patterns.light);
+            }
+        }
+
+        function showLoading(text = 'PROCESSING...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        // ========================================
+        // FILE UPLOAD
+        // ========================================
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            await handleFiles(files);
+        });
+
+        async function handleFiles(files) {
+            if (files.length === 0) return;
+            if (files.length > 36) {
+                alert('MAX 36 PHOTOS');
+                return;
+            }
+
+            showLoading('LOADING...');
+
+            try {
+                state.photos = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    updateProgress((i / files.length) * 100);
+
+                    const imageData = await loadImage(files[i]);
+
+                    state.photos.push({
+                        original: imageData,
+                        processed: null,
+                        filename: files[i].name,
+                        settings: { ...state.defaultSettings }
+                    });
+                }
+
+                updateProgress(100);
+
+                document.getElementById('uploadSection').classList.remove('active');
+                document.getElementById('previewSection').classList.add('active');
+
+                renderPreview();
+                updateUI();
+
+                haptic('success');
+            } catch (err) {
+                console.error('Error loading files:', err);
+                alert('ERROR LOADING');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ========================================
+        // UI RENDERING
+        // ========================================
+
+        function renderPreview() {
+            const photo = state.photos[state.currentIndex];
+            if (!photo) return;
+
+            const canvas = document.getElementById('previewCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const imageData = photo.processed || photo.original;
+
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            ctx.putImageData(imageData, 0, 0);
+
+            document.getElementById('filename').textContent = photo.filename.toUpperCase();
+            document.getElementById('frameCounter').textContent = `${state.currentIndex + 1}/${state.photos.length}`;
+        }
+
+        function updateUI() {
+            const settings = state.photos[state.currentIndex].settings;
+
+            // Update mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === settings.mode);
+            });
+
+            // Update displays
+            document.getElementById('densityDisplay').textContent = settings.density;
+            document.getElementById('grainDisplay').textContent = settings.grainIntensity;
+        }
+
+        // ========================================
+        // IMAGE PROCESSING
+        // ========================================
+
+        function processImage(imageData, settings) {
+            const output = new ImageData(
+                new Uint8ClampedArray(imageData.data),
+                imageData.width,
+                imageData.height
+            );
+
+            // Apply mode-specific processing
+            switch (settings.mode) {
+                case 'color':
+                    applyPortra400(output);
+                    break;
+                case 'soft':
+                    applyPortra400(output);
+                    applySoftContrast(output);
+                    break;
+                case 'bloom':
+                    applyPortra400(output);
+                    applyBloom(output);
+                    break;
+                case 'grain':
+                    applyPortra400(output);
+                    break;
+            }
+
+            // Apply density
+            applyDensity(output, settings.density);
+
+            // Apply grain
+            if (settings.grainIntensity > 0) {
+                applyRealisticGrain(output, settings.grainIntensity);
+            }
+
+            return output;
+        }
+
+        function applyPortra400(imageData) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Portra 400: warm, natural
+                r *= 1.05;
+                g *= 1.02;
+                b *= 0.98;
+
+                data[i] = Math.min(255, r);
+                data[i + 1] = Math.min(255, g);
+                data[i + 2] = Math.min(255, b);
+            }
+        }
+
+        function applySoftContrast(imageData) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    let val = data[i + c] / 255;
+                    val = Math.pow(val, 1.15); // Gentler curve
+                    data[i + c] = Math.min(255, val * 255);
+                }
+            }
+        }
+
+        function applyBloom(imageData) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                if (lum > 180) {
+                    const boost = (lum - 180) / 75 * 20;
+                    data[i] = Math.min(255, data[i] + boost);
+                    data[i + 1] = Math.min(255, data[i + 1] + boost);
+                    data[i + 2] = Math.min(255, data[i + 2] + boost);
+                }
+            }
+        }
+
+        function applyDensity(imageData, density) {
+            const data = imageData.data;
+            const factor = 1 + (density / 100);
+
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, Math.max(0, data[i] * factor));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] * factor));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] * factor));
+            }
+        }
+
+        function applyRealisticGrain(imageData, intensity) {
+            const data = imageData.data;
+            const grainStrength = intensity / 100 * 0.03;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+                // More grain in shadows
+                const lumFactor = 1 - (lum / 255);
+                const grainAmount = grainStrength * lumFactor * 255;
+
+                // Chromatic grain (separate for each channel)
+                const noiseR = (Math.random() - 0.5) * grainAmount;
+                const noiseG = (Math.random() - 0.5) * grainAmount * 0.9;
+                const noiseB = (Math.random() - 0.5) * grainAmount * 1.1;
+
+                data[i] = Math.min(255, Math.max(0, data[i] + noiseR));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noiseG));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noiseB));
+            }
+        }
+
+        function processCurrentPhoto() {
+            const photo = state.photos[state.currentIndex];
+            photo.processed = processImage(photo.original, photo.settings);
+            renderPreview();
+        }
+
+        // ========================================
+        // EVENT HANDLERS
+        // ========================================
+
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            if (confirm('RETURN TO UPLOAD?')) {
+                location.reload();
+            }
+        });
+
+        // Navigation
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                renderPreview();
+                updateUI();
+                haptic('light');
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (state.currentIndex < state.photos.length - 1) {
+                state.currentIndex++;
+                renderPreview();
+                updateUI();
+                haptic('light');
+            }
+        });
+
+        // Mode buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.photos[state.currentIndex].settings.mode = btn.dataset.mode;
+                updateUI();
+                processCurrentPhoto();
+                haptic('light');
+            });
+        });
+
+        // Slider buttons
+        document.querySelectorAll('.slider-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const slider = btn.dataset.slider;
+                const dir = btn.dataset.dir === '+' ? 1 : -1;
+                const settings = state.photos[state.currentIndex].settings;
+
+                if (slider === 'density') {
+                    settings.density = Math.max(-50, Math.min(50, settings.density + dir * 5));
+                } else if (slider === 'grain') {
+                    settings.grainIntensity = Math.max(0, Math.min(100, settings.grainIntensity + dir * 10));
+                }
+
+                updateUI();
+                processCurrentPhoto();
+                haptic('light');
+            });
+        });
+
+        // Process all
+        document.getElementById('processAllBtn').addEventListener('click', async () => {
+            showLoading('PROCESSING...');
+
+            try {
+                for (let i = 0; i < state.photos.length; i++) {
+                    updateProgress((i / state.photos.length) * 100);
+                    const photo = state.photos[i];
+                    photo.processed = processImage(photo.original, photo.settings);
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+
+                updateProgress(100);
+                renderPreview();
+                haptic('success');
+                alert('COMPLETE!');
+            } catch (err) {
+                console.error('Processing error:', err);
+                alert('ERROR');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Save button
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const photo = state.photos[state.currentIndex];
+            if (!photo.processed) {
+                processCurrentPhoto();
+            }
+
+            const canvas = document.createElement('canvas');
+            const imageData = photo.processed || photo.original;
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(imageData, 0, 0);
+
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], photo.filename, { type: 'image/jpeg' });
+
+                if (navigator.share && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file] });
+                        haptic('success');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            downloadFile(blob, photo.filename);
+                        }
+                    }
+                } else {
+                    downloadFile(blob, photo.filename);
+                }
+            }, 'image/jpeg', 0.95);
+        });
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW error:', err));
+            });
+        }
+    </script>
+</body>
+</html>
