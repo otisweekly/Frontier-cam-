@@ -1599,41 +1599,41 @@
             const height = imageData.height;
             const data = imageData.data;
 
-            // Enhanced clarity reduction for softer, glowier highlights
-            const clarityReduction = Math.floor(intensity * 0.15); // 0-3 pixel softening (increased)
+            // Maximum clarity reduction for much softer highlights
+            const clarityReduction = Math.floor(intensity * 0.25); // 0-5 pixel softening (much more)
             if (clarityReduction > 0) {
                 const softened = separableGaussianBlur(data, width, height, clarityReduction);
-                const clarityMix = 0.2 + (intensity / 50); // 0.2-0.6 mix (more pronounced)
+                const clarityMix = 0.4 + (intensity / 25); // 0.4-1.2 mix (very strong softening)
                 for (let i = 0; i < data.length; i += 4) {
-                    // Only apply clarity reduction to bright areas
+                    // Apply clarity reduction to all bright areas
                     const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                    const clarityFactor = lum > 180 ? clarityMix : 0;
+                    const clarityFactor = lum > 150 ? Math.min(1, clarityMix * (lum - 150) / 105) : 0;
                     data[i] = data[i] * (1 - clarityFactor) + softened[i] * clarityFactor;
                     data[i + 1] = data[i + 1] * (1 - clarityFactor) + softened[i + 1] * clarityFactor;
                     data[i + 2] = data[i + 2] * (1 - clarityFactor) + softened[i + 2] * clarityFactor;
                 }
             }
 
-            // Extract highlights into separate buffer - More aggressive
+            // Extract highlights into separate buffer - Very aggressive
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 170) { // Lower threshold to catch more highlights
-                    const factor = (lum - 170) / 85; // 0-1 for 170-255
-                    // More aggressive extraction for stronger, brighter glow
-                    const softFactor = Math.sqrt(factor) * 0.95;
+                if (lum > 150) { // Even lower threshold for maximum glow coverage
+                    const factor = (lum - 150) / 105; // 0-1 for 150-255
+                    // Maximum extraction for ultra-strong, bright glow
+                    const softFactor = Math.pow(factor, 0.7) * 1.2; // More extraction
                     highlights[i] = data[i] * softFactor;
                     highlights[i + 1] = data[i + 1] * softFactor;
                     highlights[i + 2] = data[i + 2] * softFactor;
                 }
             }
 
-            // Wide gaussian blur for maximum dreamy glow spread
-            const radius = Math.max(4, Math.floor(intensity * 3.0)); // 0-60 pixel radius (increased)
+            // Ultra-wide gaussian blur for maximum dreamy glow spread
+            const radius = Math.max(6, Math.floor(intensity * 4.0)); // 6-80 pixel radius (much larger)
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Much stronger blend for intense glow
-            const blendStrength = 0.7 + (intensity / 20); // 0.7-1.7 range (significantly increased)
+            // Maximum blend strength for ultra-intense glow
+            const blendStrength = 1.0 + (intensity / 12); // 1.0-2.67 range (extreme glow)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
