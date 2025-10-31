@@ -19,7 +19,7 @@
     <!-- Pixel Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
         /* === RESET & BASE === */
@@ -40,15 +40,36 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #c0c0c0;
-            color: #000;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             overflow-x: hidden;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Light mode (default) */
+        :root {
+            --bg-primary: #c0c0c0;
+            --bg-secondary: #d8cecb;
+            --border-light: #fff;
+            --border-dark: #808080;
+            --text-primary: #000;
+            --accent: #027e7e;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --border-light: #3a3a3a;
+            --border-dark: #0a0a0a;
+            --text-primary: #e0e0e0;
+            --accent: #00b8b8;
         }
 
         body.preview-active {
@@ -56,43 +77,55 @@
             height: 100vh;
         }
 
-        /* === MODERN BUTTON STYLE === */
+        /* === RETRO 3D BUTTON STYLE === */
         .btn-3d {
             position: relative;
-            background: #c0c0c0;
-            border: 1px solid #999;
-            border-radius: 6px;
+            background: var(--bg-primary);
+            border: none;
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-light);
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            transition: all 0.15s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Press Start 2P', monospace;
+            font-weight: bold;
+            transition: none;
         }
 
-        .btn-3d:hover {
-            background: #d0d0d0;
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--border-dark);
+            border-left: 2px solid var(--border-dark);
+            z-index: -1;
+            transform: rotate(180deg);
         }
 
         .btn-3d:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transform: translate(1px, 1px);
         }
 
         .btn-3d.active {
             background: #fff;
-            border-color: #027e7e;
-            box-shadow: 0 0 0 2px rgba(2,126,126,0.2);
+        }
+
+        body.dark-mode .btn-3d.active {
+            background: #2a2a2a;
+            border-color: var(--accent);
         }
 
         .btn-primary-3d {
-            background: #027e7e;
+            background: var(--accent);
             color: #fff;
-            border: none;
-            box-shadow: 0 3px 8px rgba(2,126,126,0.3);
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-light);
         }
 
-        .btn-primary-3d:hover {
-            background: #03918;
+        .btn-primary-3d::before {
+            background: var(--bg-secondary);
         }
 
         /* === HEADER === */
@@ -102,14 +135,13 @@
             justify-content: space-between;
             padding: 16px 24px;
             padding-top: calc(16px + env(safe-area-inset-top));
-            background: #c0c0c0;
-            border-bottom: 1px solid #999;
+            background: var(--bg-primary);
+            border-bottom: 2px solid var(--border-dark);
         }
 
         .header-title {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 12px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -118,9 +150,13 @@
             height: 40px;
             background: transparent;
             border: none;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
-            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
         }
 
         /* === UPLOAD SECTION === */
@@ -296,50 +332,43 @@
         .mode-buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 1px;
-            background: #999;
-            border-top: 1px solid #999;
+            gap: 0;
+            background: var(--bg-primary);
         }
 
         .mode-btn {
-            padding: 14px 8px;
-            font-size: 9px;
-            letter-spacing: 0.3px;
+            padding: 12px 4px;
+            font-size: 7px;
+            letter-spacing: 0.5px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            min-height: 64px;
-            border-radius: 0;
-            border: none;
-            box-shadow: none;
+            gap: 4px;
+            min-height: 58px;
         }
 
         .btn-label {
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
+            font-size: 7px;
+            letter-spacing: 0.5px;
             line-height: 1.2;
-            text-transform: uppercase;
         }
 
         .btn-value {
-            font-size: 11px;
-            font-weight: 700;
-            opacity: 0.6;
+            font-size: 9px;
+            font-weight: bold;
+            opacity: 0.7;
             line-height: 1;
         }
 
         .mode-btn.active .btn-value {
             opacity: 1;
-            color: #027e7e;
         }
 
         /* === CONTROLS === */
         .controls {
             padding: 16px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
-            background: #c0c0c0;
+            background: var(--bg-primary);
             min-height: 200px;
             overflow: hidden;
         }
@@ -348,16 +377,14 @@
         .control-menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .menu-option {
             padding: 16px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
+            font-size: 9px;
+            letter-spacing: 0.5px;
             text-align: center;
-            border-radius: 8px;
         }
 
         /* Control Sliders */
@@ -368,27 +395,30 @@
 
         .slider-display {
             background: #fff;
-            border: 1px solid #999;
-            border-radius: 8px;
-            padding: 16px;
+            border-top: 2px solid var(--border-dark);
+            border-left: 2px solid var(--border-dark);
+            padding: 12px;
             text-align: center;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        body.dark-mode .slider-display {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .slider-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .slider-btn {
-            padding: 14px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 12px;
+            font-size: 14px;
             text-align: center;
-            border-radius: 8px;
         }
 
         /* CMY Controls */
@@ -400,7 +430,7 @@
         .cmy-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 8px;
         }
 
         .cmy-item {
@@ -412,18 +442,22 @@
 
         .cmy-value {
             background: #fff;
-            border: 1px solid #999;
-            border-radius: 4px;
-            padding: 8px;
+            border-top: 2px solid var(--border-dark);
+            border-left: 2px solid var(--border-dark);
+            padding: 6px 8px;
             text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            min-width: 44px;
+            font-size: 11px;
+            min-width: 40px;
+        }
+
+        body.dark-mode .cmy-value {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .color-bar {
             width: 100%;
-            border-radius: 2px;
+            height: 3px;
         }
 
         .cmy-buttons {
@@ -433,11 +467,9 @@
         }
 
         .cmy-btn {
-            padding: 8px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 6px 10px;
+            font-size: 10px;
             flex: 1;
-            border-radius: 4px;
         }
 
         /* === LOADING === */
@@ -528,7 +560,7 @@
         <div class="header">
             <button class="icon-btn" id="backBtn">←</button>
             <div class="header-title" id="filename">IMAGE_001.JPG</div>
-            <button class="icon-btn" id="menuBtn">☰</button>
+            <button class="icon-btn" id="darkModeToggle">☀</button>
         </div>
 
         <!-- Image Preview -->
@@ -1236,23 +1268,95 @@
         }
 
         function applyBloom(imageData, intensity) {
-            // Simple fast bloom: just boost highlights without expensive blur
-            const data = imageData.data;
-            const bloomStrength = intensity / 20; // 0-1 range
+            if (intensity === 0) return;
 
+            const width = imageData.width;
+            const height = imageData.height;
+            const data = imageData.data;
+
+            // Extract highlights into separate buffer
+            const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-
-                // Only affect highlights (200+)
                 if (lum > 200) {
-                    const factor = ((lum - 200) / 55) * bloomStrength; // 0-1
-                    const boost = factor * 40; // Max 40 brightness boost
-
-                    data[i] = Math.min(255, data[i] + boost);
-                    data[i + 1] = Math.min(255, data[i + 1] + boost);
-                    data[i + 2] = Math.min(255, data[i + 2] + boost);
+                    const factor = (lum - 200) / 55; // 0-1 for 200-255
+                    highlights[i] = data[i] * factor;
+                    highlights[i + 1] = data[i + 1] * factor;
+                    highlights[i + 2] = data[i + 2] * factor;
                 }
             }
+
+            // Fast separable gaussian blur on highlights
+            const radius = Math.max(2, Math.floor(intensity * 0.8)); // 0-16 pixel radius
+            const blurred = separableGaussianBlur(highlights, width, height, radius);
+
+            // Blend blurred highlights back (additive)
+            const blendStrength = 0.7 + (intensity / 40); // 0.7-1.2 range
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
+                data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
+                data[i + 2] = Math.min(255, data[i + 2] + blurred[i + 2] * blendStrength);
+            }
+        }
+
+        function separableGaussianBlur(data, width, height, radius) {
+            const output = new Uint8ClampedArray(data.length);
+            const temp = new Uint8ClampedArray(data.length);
+
+            // Generate 1D gaussian kernel
+            const kernel = [];
+            const sigma = radius / 2;
+            let sum = 0;
+            for (let i = -radius; i <= radius; i++) {
+                const val = Math.exp(-(i * i) / (2 * sigma * sigma));
+                kernel.push(val);
+                sum += val;
+            }
+            // Normalize
+            for (let i = 0; i < kernel.length; i++) {
+                kernel[i] /= sum;
+            }
+
+            // Horizontal pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let k = -radius; k <= radius; k++) {
+                        const nx = Math.min(width - 1, Math.max(0, x + k));
+                        const idx = (y * width + nx) * 4;
+                        const weight = kernel[k + radius];
+                        r += data[idx] * weight;
+                        g += data[idx + 1] * weight;
+                        b += data[idx + 2] * weight;
+                    }
+                    const idx = (y * width + x) * 4;
+                    temp[idx] = r;
+                    temp[idx + 1] = g;
+                    temp[idx + 2] = b;
+                }
+            }
+
+            // Vertical pass
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0;
+                    for (let k = -radius; k <= radius; k++) {
+                        const ny = Math.min(height - 1, Math.max(0, y + k));
+                        const idx = (ny * width + x) * 4;
+                        const weight = kernel[k + radius];
+                        r += temp[idx] * weight;
+                        g += temp[idx + 1] * weight;
+                        b += temp[idx + 2] * weight;
+                    }
+                    const idx = (y * width + x) * 4;
+                    output[idx] = r;
+                    output[idx + 1] = g;
+                    output[idx + 2] = b;
+                    output[idx + 3] = 255;
+                }
+            }
+
+            return output;
         }
 
         function applyRealisticGrain(imageData, intensity, filmStock) {
@@ -1332,6 +1436,22 @@
                 location.reload();
             }
         });
+
+        // Dark mode toggle
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('darkModeToggle').textContent = isDark ? '🌙' : '☀';
+            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+            haptic('light');
+        });
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            const toggle = document.getElementById('darkModeToggle');
+            if (toggle) toggle.textContent = '🌙';
+        }
 
         // Navigation
         document.getElementById('prevBtn').addEventListener('click', () => {
