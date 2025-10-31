@@ -464,10 +464,10 @@
 
         <!-- Mode Buttons -->
         <div class="mode-buttons">
-            <button class="btn-3d mode-btn active" data-mode="color">COLOR</button>
-            <button class="btn-3d mode-btn" data-mode="soft">SOFT</button>
-            <button class="btn-3d mode-btn" data-mode="bloom">BLOOM</button>
-            <button class="btn-3d mode-btn" data-mode="grain">GRAIN</button>
+            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">COLOR</button>
+            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">STANDARD</button>
+            <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">BLOOM</button>
+            <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">GRAIN (+5)</button>
         </div>
 
         <!-- Dynamic Controls (shown based on active button) -->
@@ -475,16 +475,8 @@
             <!-- Color Options Menu -->
             <div class="control-menu" id="colorMenu" style="display: none;">
                 <button class="btn-3d menu-option active" data-colormode="portra400">PORTRA 400</button>
-                <button class="btn-3d menu-option" data-colormode="trix">TRI-X (B&W)</button>
+                <button class="btn-3d menu-option" data-colormode="trix400">TRI-X (B&W)</button>
                 <button class="btn-3d menu-option" data-colormode="ektachrome">EKTACHROME</button>
-            </div>
-
-            <!-- Soft Options Menu -->
-            <div class="control-menu" id="softMenu" style="display: none;">
-                <button class="btn-3d menu-option active" data-softmode="standard">STANDARD</button>
-                <button class="btn-3d menu-option" data-softmode="soft">SOFT</button>
-                <button class="btn-3d menu-option" data-softmode="shadowsoft">SHADOW SOFT</button>
-                <button class="btn-3d menu-option" data-softmode="highlightsoft">HIGHLIGHT SOFT</button>
             </div>
 
             <!-- Bloom Controls -->
@@ -498,7 +490,7 @@
 
             <!-- Grain Controls -->
             <div class="control-slider" id="grainControls" style="display: none;">
-                <div class="slider-display" id="grainDisplay">50</div>
+                <div class="slider-display" id="grainDisplay">5</div>
                 <div class="slider-buttons">
                     <button class="btn-3d slider-btn" data-control="grain" data-dir="-">▼</button>
                     <button class="btn-3d slider-btn" data-control="grain" data-dir="+">▲</button>
@@ -525,10 +517,10 @@
             currentIndex: 0,
             activeControl: null,  // which button is active
             defaultSettings: {
-                colorMode: 'portra400',  // portra400, trix, ektachrome
-                softMode: 'standard',    // standard, soft, shadowsoft, highlightsoft
-                bloom: 0,                // 0-100
-                grainIntensity: 50       // 0-100
+                colorMode: 'portra400',  // portra400, trix400, ektachrome
+                softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
+                bloom: 0,                // 0-20
+                grain: 5                 // 0-10 (default 5 = medium)
             },
             zoom: {
                 scale: 1,
@@ -669,37 +661,45 @@
 
             // Hide all control panels
             document.getElementById('colorMenu').style.display = 'none';
-            document.getElementById('softMenu').style.display = 'none';
             document.getElementById('bloomControls').style.display = 'none';
             document.getElementById('grainControls').style.display = 'none';
 
             // Show active control panel
             if (state.activeControl === 'color') {
                 document.getElementById('colorMenu').style.display = 'grid';
-            } else if (state.activeControl === 'soft') {
-                document.getElementById('softMenu').style.display = 'grid';
             } else if (state.activeControl === 'bloom') {
                 document.getElementById('bloomControls').style.display = 'block';
             } else if (state.activeControl === 'grain') {
                 document.getElementById('grainControls').style.display = 'block';
             }
 
-            // Update mode buttons
+            // Update mode buttons active state
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.mode === state.activeControl);
             });
 
-            // Update menu options
+            // Update color menu options
             document.querySelectorAll('[data-colormode]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.colormode === settings.colorMode);
             });
-            document.querySelectorAll('[data-softmode]').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.softmode === settings.softMode);
-            });
 
-            // Update displays
+            // Update SOFT button label (cycles through states)
+            document.getElementById('softBtn').textContent = settings.softMode;
+            document.getElementById('softBtn').classList.toggle('active', settings.softMode !== 'STANDARD');
+
+            // Update BLOOM button label
+            const bloomText = settings.bloom > 0 ? `BLOOM (+${settings.bloom})` : 'BLOOM';
+            document.getElementById('bloomBtn').textContent = bloomText;
+            document.getElementById('bloomBtn').classList.toggle('active', settings.bloom > 0);
+
+            // Update GRAIN button label
+            const grainText = settings.grain > 0 ? `GRAIN (+${settings.grain})` : 'GRAIN';
+            document.getElementById('grainBtn').textContent = grainText;
+            document.getElementById('grainBtn').classList.toggle('active', settings.grain !== 5);
+
+            // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
-            document.getElementById('grainDisplay').textContent = settings.grainIntensity;
+            document.getElementById('grainDisplay').textContent = settings.grain;
         }
 
         // Pinch to zoom and tap to preview original
@@ -819,7 +819,7 @@
                 case 'portra400':
                     applyPortra400(output);
                     break;
-                case 'trix':
+                case 'trix400':
                     applyTriX(output);
                     break;
                 case 'ektachrome':
@@ -827,63 +827,89 @@
                     break;
             }
 
-            // Apply soft mode
+            // Apply soft mode (tone curves)
             switch (settings.softMode) {
-                case 'standard':
+                case 'STANDARD':
                     // No adjustment
                     break;
-                case 'soft':
+                case 'SOFT':
                     applySoftContrast(output);
                     break;
-                case 'shadowsoft':
+                case 'SHADOW SOFT':
                     applyShadowSoft(output);
                     break;
-                case 'highlightsoft':
+                case 'HIGHLIGHT SOFT':
                     applyHighlightSoft(output);
                     break;
             }
 
-            // Apply bloom
+            // Apply bloom (0-20 range)
             if (settings.bloom > 0) {
                 applyBloom(output, settings.bloom);
             }
 
-            // Apply grain
-            if (settings.grainIntensity > 0) {
-                applyRealisticGrain(output, settings.grainIntensity);
+            // Apply grain (0-10 range, film-specific)
+            if (settings.grain > 0) {
+                applyRealisticGrain(output, settings.grain, settings.colorMode);
             }
 
             return output;
         }
 
         function applyPortra400(imageData) {
+            // Kodak Portra 400: Warm, natural skin tones, medium contrast
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];
                 let g = data[i + 1];
                 let b = data[i + 2];
 
-                // Portra 400: warm, natural
-                r *= 1.05;
-                g *= 1.02;
-                b *= 0.98;
+                // Color shift: warmth +8, red bias, desaturated blues
+                r = r * 1.08 + 8;  // Red bias + warmth
+                g = g * 1.02;      // Slight green enhancement
+                b = b * 0.95;      // Reduce blue (warmer)
 
-                data[i] = Math.min(255, r);
-                data[i + 1] = Math.min(255, g);
-                data[i + 2] = Math.min(255, b);
+                // Overall saturation boost
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                r = gray + 1.15 * (r - gray);
+                g = gray + 1.15 * (g - gray);
+                b = gray + 1.15 * (b - gray);
+
+                // Shadow lift (+5) and slight highlight compression (-2)
+                const lum = (r + g + b) / 3;
+                if (lum < 128) {
+                    const lift = 5 * (1 - lum / 128);
+                    r += lift;
+                    g += lift;
+                    b += lift;
+                } else {
+                    const compress = 2 * ((lum - 128) / 127);
+                    r -= compress;
+                    g -= compress;
+                    b -= compress;
+                }
+
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
             }
         }
 
         function applyTriX(imageData) {
-            // Kodak Tri-X B&W: high contrast, chunky grain
+            // Kodak Tri-X 400: High contrast B&W, iconic street photography film
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                // Convert to grayscale
+                // Convert to grayscale (standard luminance formula)
                 const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
 
-                // High contrast curve
+                // Contrast +25 and gamma 0.85 for punchy B&W look
                 let val = gray / 255;
-                val = Math.pow(val, 0.8); // Increase contrast
+                val = Math.pow(val, 0.85); // Gamma adjustment for contrast
+
+                // Apply contrast boost
+                val = ((val - 0.5) * 1.25) + 0.5; // +25% contrast
+                val = Math.max(0, Math.min(1, val)); // Clamp
+
                 const finalGray = val * 255;
 
                 data[i] = finalGray;
@@ -893,23 +919,27 @@
         }
 
         function applyEktachrome(imageData) {
-            // Ektachrome: vivid, saturated slide film
+            // Kodak Ektachrome E100: Vivid saturated slide film, punchy colors
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];
                 let g = data[i + 1];
                 let b = data[i + 2];
 
-                // Boost saturation and contrast
+                // Color shifts: Red +5, Blue +8, Green 0
+                r = r + 5;
+                b = b + 8;
+
+                // High saturation (1.4x)
                 const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-                const satBoost = 1.3;
+                r = gray + 1.4 * (r - gray);
+                g = gray + 1.4 * (g - gray);
+                b = gray + 1.4 * (b - gray);
 
-                r = gray + satBoost * (r - gray);
-                g = gray + satBoost * (g - gray);
-                b = gray + satBoost * (b - gray);
-
-                // Slight cool cast
-                b *= 1.05;
+                // Contrast +15
+                r = ((r / 255 - 0.5) * 1.15 + 0.5) * 255;
+                g = ((g / 255 - 0.5) * 1.15 + 0.5) * 255;
+                b = ((b / 255 - 0.5) * 1.15 + 0.5) * 255;
 
                 data[i] = Math.min(255, Math.max(0, r));
                 data[i + 1] = Math.min(255, Math.max(0, g));
@@ -918,81 +948,195 @@
         }
 
         function applySoftContrast(imageData) {
-            // Both shadows and highlights soft
+            // SOFT: Compress both shadows and highlights (S-curve flatten)
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 for (let c = 0; c < 3; c++) {
                     let val = data[i + c] / 255;
-                    val = Math.pow(val, 1.15); // Gentler curve
+
+                    // Softer S-curve: reduce contrast globally
+                    // Use a gentler power curve
+                    if (val < 0.5) {
+                        val = 0.5 * Math.pow(val * 2, 1.2);
+                    } else {
+                        val = 1 - 0.5 * Math.pow((1 - val) * 2, 1.2);
+                    }
+
                     data[i + c] = Math.min(255, val * 255);
                 }
             }
         }
 
         function applyShadowSoft(imageData) {
-            // Lift shadows only
+            // SHADOW SOFT: Lift shadows only, maintain highlights
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 for (let c = 0; c < 3; c++) {
-                    let val = data[i + c];
-                    if (val < 128) {
-                        val = val + (128 - val) * 0.2; // Lift shadows
+                    let val = data[i + c] / 255;
+
+                    // Apply lift to shadows (below 0.5)
+                    if (val < 0.5) {
+                        // Lift shadows using a curve
+                        val = val + (0.5 - val) * 0.25; // 25% lift
                     }
-                    data[i + c] = Math.min(255, val);
+                    // Highlights unchanged
+
+                    data[i + c] = Math.min(255, val * 255);
                 }
             }
         }
 
         function applyHighlightSoft(imageData) {
-            // Soften highlights only
+            // HIGHLIGHT SOFT: Compress highlights only, maintain shadows
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 for (let c = 0; c < 3; c++) {
-                    let val = data[i + c];
-                    if (val > 128) {
-                        val = 128 + (val - 128) * 0.8; // Reduce highlights
+                    let val = data[i + c] / 255;
+
+                    // Apply compression to highlights (above 0.5)
+                    if (val > 0.5) {
+                        // Compress highlights using a curve
+                        val = 0.5 + (val - 0.5) * 0.75; // 25% compression
                     }
-                    data[i + c] = Math.min(255, val);
+                    // Shadows unchanged
+
+                    data[i + c] = Math.min(255, val * 255);
                 }
             }
         }
 
         function applyBloom(imageData, intensity) {
-            // Bloom effect on highlights - more visible
+            // Bloom effect: Extract highlights, blur, and blend back
+            // Intensity 0-20 maps to radius 0-10
+            const width = imageData.width;
+            const height = imageData.height;
             const data = imageData.data;
-            const bloomStrength = intensity / 100;
+            const radius = Math.floor(intensity / 2); // 0-10 pixel radius
 
+            if (radius === 0) return;
+
+            // Extract highlights (threshold ~200)
+            const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                // Lower threshold and stronger effect
-                if (lum > 150) {
-                    const boost = (lum - 150) / 105 * 60 * bloomStrength;
-                    data[i] = Math.min(255, data[i] + boost);
-                    data[i + 1] = Math.min(255, data[i + 1] + boost);
-                    data[i + 2] = Math.min(255, data[i + 2] + boost);
+                if (lum > 200) {
+                    const factor = (lum - 200) / 55; // 0-1 for 200-255
+                    highlights[i] = data[i] * factor;
+                    highlights[i + 1] = data[i + 1] * factor;
+                    highlights[i + 2] = data[i + 2] * factor;
+                    highlights[i + 3] = 255;
                 }
+            }
+
+            // Simple box blur on highlights (fast approximation)
+            const blurred = boxBlur(highlights, width, height, radius);
+
+            // Blend blurred highlights back (additive)
+            const blendStrength = 0.6; // 60% blend
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
+                data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
+                data[i + 2] = Math.min(255, data[i + 2] + blurred[i + 2] * blendStrength);
             }
         }
 
-        function applyRealisticGrain(imageData, intensity) {
+        function boxBlur(data, width, height, radius) {
+            // Fast box blur approximation
+            const output = new Uint8ClampedArray(data.length);
+            const diameter = radius * 2 + 1;
+            const divisor = diameter * diameter;
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0, count = 0;
+
+                    // Sample box around pixel
+                    for (let dy = -radius; dy <= radius; dy++) {
+                        for (let dx = -radius; dx <= radius; dx++) {
+                            const nx = x + dx;
+                            const ny = y + dy;
+
+                            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                const idx = (ny * width + nx) * 4;
+                                r += data[idx];
+                                g += data[idx + 1];
+                                b += data[idx + 2];
+                                count++;
+                            }
+                        }
+                    }
+
+                    const idx = (y * width + x) * 4;
+                    output[idx] = r / count;
+                    output[idx + 1] = g / count;
+                    output[idx + 2] = b / count;
+                    output[idx + 3] = 255;
+                }
+            }
+
+            return output;
+        }
+
+        function applyRealisticGrain(imageData, intensity, filmStock) {
             const data = imageData.data;
-            const grainStrength = intensity / 100 * 0.08; // Increased from 0.03 to 0.08
+
+            // Film-specific grain characteristics
+            let grainSize, grainStrength, lumWeighting;
+
+            if (filmStock === 'portra400') {
+                // Portra 400: Medium grain, low visibility, smooth
+                grainSize = 1.0;
+                grainStrength = intensity * 3; // Scale 0-10 to 0-30
+                lumWeighting = 'shadows'; // More grain in shadows
+            } else if (filmStock === 'trix400') {
+                // Tri-X 400: Large chunky grain, high contrast, very visible
+                grainSize = 2.0;
+                grainStrength = intensity * 5; // Scale 0-10 to 0-50 (heavier)
+                lumWeighting = 'midtones'; // More grain in midtones for B&W
+            } else if (filmStock === 'ektachrome') {
+                // Ektachrome: Very fine grain, minimal, tight
+                grainSize = 0.5;
+                grainStrength = intensity * 2; // Scale 0-10 to 0-20 (lighter)
+                lumWeighting = 'uniform'; // Even distribution
+            }
 
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                const lumNorm = lum / 255;
 
-                // More grain in shadows
-                const lumFactor = 1 - (lum / 255);
-                const grainAmount = grainStrength * lumFactor * 255;
+                // Calculate luminance factor based on film
+                let lumFactor = 1;
+                if (lumWeighting === 'shadows') {
+                    // More grain in shadows
+                    lumFactor = 1.5 - lumNorm;
+                } else if (lumWeighting === 'midtones') {
+                    // More grain in midtones (peak at 50% gray)
+                    lumFactor = 1 - Math.abs(lumNorm - 0.5) * 2;
+                } else {
+                    // Uniform
+                    lumFactor = 1;
+                }
 
-                // Chromatic grain (separate for each channel)
-                const noiseR = (Math.random() - 0.5) * grainAmount;
-                const noiseG = (Math.random() - 0.5) * grainAmount * 0.9;
-                const noiseB = (Math.random() - 0.5) * grainAmount * 1.1;
+                // Calculate final grain amount
+                const grainAmount = grainStrength * lumFactor * grainSize;
 
-                data[i] = Math.min(255, Math.max(0, data[i] + noiseR));
-                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noiseG));
-                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noiseB));
+                // Apply grain
+                if (filmStock === 'trix400') {
+                    // B&W: Monochrome grain
+                    const noise = (Math.random() - 0.5) * grainAmount;
+                    data[i] = Math.min(255, Math.max(0, data[i] + noise));
+                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+                } else {
+                    // Color: Chromatic grain (different per channel)
+                    const noiseR = (Math.random() - 0.5) * grainAmount;
+                    const noiseG = (Math.random() - 0.5) * grainAmount * 0.9;
+                    const noiseB = (Math.random() - 0.5) * grainAmount * 1.1;
+
+                    data[i] = Math.min(255, Math.max(0, data[i] + noiseR));
+                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noiseG));
+                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noiseB));
+                }
             }
         }
 
@@ -1050,37 +1194,56 @@
             }
         });
 
-        // Mode buttons - toggle controls
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
+        // COLOR button - opens film stock menu
+        document.getElementById('colorBtn').addEventListener('click', () => {
+            if (state.activeControl === 'color') {
+                state.activeControl = null; // Close if already open
+            } else {
+                state.activeControl = 'color'; // Open menu
+            }
+            updateUI();
+            haptic('light');
+        });
 
-                // Toggle active control
-                if (state.activeControl === mode) {
-                    state.activeControl = null; // Close if already open
-                } else {
-                    state.activeControl = mode; // Open new control
-                }
+        // SOFT button - cycles through tone adjustments
+        document.getElementById('softBtn').addEventListener('click', () => {
+            const softModes = ['STANDARD', 'SOFT', 'SHADOW SOFT', 'HIGHLIGHT SOFT'];
+            const currentIndex = softModes.indexOf(state.photos[state.currentIndex].settings.softMode);
+            const nextIndex = (currentIndex + 1) % softModes.length;
 
-                updateUI();
-                haptic('light');
-            });
+            state.photos[state.currentIndex].settings.softMode = softModes[nextIndex];
+            updateUI();
+            processCurrentPhoto();
+            haptic('light');
+        });
+
+        // BLOOM button - opens bloom controls
+        document.getElementById('bloomBtn').addEventListener('click', () => {
+            if (state.activeControl === 'bloom') {
+                state.activeControl = null; // Close if already open
+            } else {
+                state.activeControl = 'bloom'; // Open controls
+            }
+            updateUI();
+            haptic('light');
+        });
+
+        // GRAIN button - opens grain controls
+        document.getElementById('grainBtn').addEventListener('click', () => {
+            if (state.activeControl === 'grain') {
+                state.activeControl = null; // Close if already open
+            } else {
+                state.activeControl = 'grain'; // Open controls
+            }
+            updateUI();
+            haptic('light');
         });
 
         // Color mode menu options
         document.querySelectorAll('[data-colormode]').forEach(btn => {
             btn.addEventListener('click', () => {
                 state.photos[state.currentIndex].settings.colorMode = btn.dataset.colormode;
-                updateUI();
-                processCurrentPhoto();
-                haptic('medium');
-            });
-        });
-
-        // Soft mode menu options
-        document.querySelectorAll('[data-softmode]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                state.photos[state.currentIndex].settings.softMode = btn.dataset.softmode;
+                state.activeControl = null; // Close menu after selection
                 updateUI();
                 processCurrentPhoto();
                 haptic('medium');
@@ -1130,9 +1293,11 @@
             const settings = state.photos[state.currentIndex].settings;
 
             if (control === 'bloom') {
-                settings.bloom = Math.max(0, Math.min(100, settings.bloom + dir * 5));
+                // Bloom: 0-20 range, increment by 1
+                settings.bloom = Math.max(0, Math.min(20, settings.bloom + dir));
             } else if (control === 'grain') {
-                settings.grainIntensity = Math.max(0, Math.min(100, settings.grainIntensity + dir * 5));
+                // Grain: 0-10 range, increment by 1
+                settings.grain = Math.max(0, Math.min(10, settings.grain + dir));
             }
 
             updateUI();
