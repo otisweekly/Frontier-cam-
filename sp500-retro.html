@@ -652,10 +652,10 @@
                 softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
                 bloom: 0,                // 0-20
                 grain: 0,                // 0-10
-                cyan: 0,                 // -50 to +50
-                magenta: 0,              // -50 to +50
-                yellow: 0,               // -50 to +50
-                density: 0               // -50 to +50
+                cyan: 0,                 // -10 to +10
+                magenta: 0,              // -10 to +10
+                yellow: 0,               // -10 to +10
+                density: 0               // -10 to +10
             },
             zoom: {
                 scale: 1,
@@ -1047,11 +1047,11 @@
             const data = imageData.data;
 
             // Convert CMY adjustments to RGB shifts
-            // CMY range: -50 to +50, map to pixel adjustments
-            const cyanShift = -cyan * 2.55;    // More cyan = less red
-            const magentaShift = -magenta * 2.55; // More magenta = less green
-            const yellowShift = -yellow * 2.55;   // More yellow = less blue
-            const densityShift = -density * 2.55; // More density = darker overall
+            // CMY range: -10 to +10, subdued effect
+            const cyanShift = -cyan * 5;      // More cyan = less red (50 max shift)
+            const magentaShift = -magenta * 5; // More magenta = less green
+            const yellowShift = -yellow * 5;   // More yellow = less blue
+            const densityShift = -density * 8; // More density = darker (80 max shift)
 
             for (let i = 0; i < data.length; i += 4) {
                 // Apply CMY shifts
@@ -1211,75 +1211,23 @@
         }
 
         function applyBloom(imageData, intensity) {
-            // Bloom effect: Extract highlights, blur, and blend back
-            // Optimized single-pass bloom to prevent freezing
-            const width = imageData.width;
-            const height = imageData.height;
+            // Simple fast bloom: just boost highlights without expensive blur
             const data = imageData.data;
-            const radius = Math.max(1, Math.floor(intensity * 1.2)); // 0-24 pixel radius
+            const bloomStrength = intensity / 20; // 0-1 range
 
-            if (radius === 0) return;
-
-            // Extract highlights (threshold ~200)
-            const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+                // Only affect highlights (200+)
                 if (lum > 200) {
-                    const factor = (lum - 200) / 55; // 0-1 for 200-255
-                    highlights[i] = data[i] * factor;
-                    highlights[i + 1] = data[i + 1] * factor;
-                    highlights[i + 2] = data[i + 2] * factor;
-                    highlights[i + 3] = 255;
+                    const factor = ((lum - 200) / 55) * bloomStrength; // 0-1
+                    const boost = factor * 40; // Max 40 brightness boost
+
+                    data[i] = Math.min(255, data[i] + boost);
+                    data[i + 1] = Math.min(255, data[i + 1] + boost);
+                    data[i + 2] = Math.min(255, data[i + 2] + boost);
                 }
             }
-
-            // Single optimized blur pass
-            const blurred = boxBlurOptimized(highlights, width, height, radius);
-
-            // Blend blurred highlights back (additive)
-            const blendStrength = 0.6; // 60% blend
-            for (let i = 0; i < data.length; i += 4) {
-                data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
-                data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
-                data[i + 2] = Math.min(255, data[i + 2] + blurred[i + 2] * blendStrength);
-            }
-        }
-
-        function boxBlurOptimized(data, width, height, radius) {
-            // Optimized box blur with reduced radius for performance
-            const output = new Uint8ClampedArray(data.length);
-            const maxRadius = Math.min(radius, 10); // Cap radius at 10 for performance
-
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    let r = 0, g = 0, b = 0, count = 0;
-
-                    // Sample box around pixel with step for large radii
-                    const step = maxRadius > 5 ? 2 : 1;
-                    for (let dy = -maxRadius; dy <= maxRadius; dy += step) {
-                        for (let dx = -maxRadius; dx <= maxRadius; dx += step) {
-                            const nx = x + dx;
-                            const ny = y + dy;
-
-                            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                                const idx = (ny * width + nx) * 4;
-                                r += data[idx];
-                                g += data[idx + 1];
-                                b += data[idx + 2];
-                                count++;
-                            }
-                        }
-                    }
-
-                    const idx = (y * width + x) * 4;
-                    output[idx] = r / count;
-                    output[idx + 1] = g / count;
-                    output[idx + 2] = b / count;
-                    output[idx + 3] = 255;
-                }
-            }
-
-            return output;
         }
 
         function applyRealisticGrain(imageData, intensity, filmStock) {
@@ -1513,17 +1461,17 @@
                 // Grain: 0-10 range, increment by 1
                 settings.grain = Math.max(0, Math.min(10, settings.grain + dir));
             } else if (control === 'cyan') {
-                // Cyan: -50 to +50 range, increment by 5
-                settings.cyan = Math.max(-50, Math.min(50, settings.cyan + (dir * 5)));
+                // Cyan: -10 to +10 range, increment by 1
+                settings.cyan = Math.max(-10, Math.min(10, settings.cyan + dir));
             } else if (control === 'magenta') {
-                // Magenta: -50 to +50 range, increment by 5
-                settings.magenta = Math.max(-50, Math.min(50, settings.magenta + (dir * 5)));
+                // Magenta: -10 to +10 range, increment by 1
+                settings.magenta = Math.max(-10, Math.min(10, settings.magenta + dir));
             } else if (control === 'yellow') {
-                // Yellow: -50 to +50 range, increment by 5
-                settings.yellow = Math.max(-50, Math.min(50, settings.yellow + (dir * 5)));
+                // Yellow: -10 to +10 range, increment by 1
+                settings.yellow = Math.max(-10, Math.min(10, settings.yellow + dir));
             } else if (control === 'density') {
-                // Density: -50 to +50 range, increment by 5
-                settings.density = Math.max(-50, Math.min(50, settings.density + (dir * 5)));
+                // Density: -10 to +10 range, increment by 1
+                settings.density = Math.max(-10, Math.min(10, settings.density + dir));
             }
 
             updateUI();
