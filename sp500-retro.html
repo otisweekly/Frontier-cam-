@@ -181,14 +181,6 @@
             transform: scale(0.95);
         }
 
-        .dark-mode-icon {
-            opacity: 0.3;
-            transition: opacity 0.3s ease;
-        }
-
-        body.dark-mode .dark-mode-icon {
-            opacity: 1;
-        }
 
         /* === UPLOAD SECTION === */
         .upload-section {
@@ -213,34 +205,30 @@
         }
 
         .upload-area {
-            border: 4px dashed #808080;
+            border: none;
+            border-top: 4px solid #404040;
+            border-left: 4px solid #404040;
+            border-bottom: 4px solid #d0d0d0;
+            border-right: 4px solid #d0d0d0;
             padding: 60px 20px;
             margin: 20px 0;
-            background: #fff;
+            background: #f0f0f0;
             cursor: pointer;
             position: relative;
-        }
-
-        .upload-area::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            right: -4px;
-            bottom: -4px;
-            border: 2px solid #808080;
-            z-index: -1;
+            box-shadow: inset 0 0 0 2px #808080;
         }
 
         .upload-icon {
             font-size: 48px;
             margin-bottom: 16px;
+            color: #404040;
         }
 
         .upload-text {
             font-size: 12px;
             margin-bottom: 12px;
             line-height: 1.6;
+            color: #202020;
         }
 
         .file-input {
@@ -793,7 +781,7 @@
             <h1 style="font-size: 18px; margin-bottom: 30px; letter-spacing: 3px; color: #fff;">FRONTIER LAB</h1>
 
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📸</div>
+                <div class="upload-text" style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">LOAD FILM</div>
                 <div class="upload-text">TAP TO UPLOAD</div>
                 <div class="upload-text">1-36 PHOTOS</div>
                 <div class="upload-text" style="font-size: 9px; margin-top: 12px;">JPG • PNG • HEIC</div>
@@ -821,7 +809,7 @@
             <div class="header-content">
                 <button class="icon-btn" id="backBtn">&lt; UPLOAD</button>
                 <div class="header-title" id="filename">IMAGE_001.JPG</div>
-                <button class="icon-btn" id="darkModeToggle">DARK <span class="dark-mode-icon">🌙</span></button>
+                <button class="icon-btn" id="darkModeToggle">DARK</button>
             </div>
         </div>
 
