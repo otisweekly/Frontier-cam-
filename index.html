@@ -86,8 +86,12 @@
         .filename { font-size:13px; font-weight:600; letter-spacing:0.5px; }
         .header-right { font-size:24px; cursor:pointer; padding:0 5px; font-weight:700; }
 
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden; min-height:0; }
+        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden; min-height:0; position:relative; }
         #canvas { max-width:100%; max-height:100%; object-fit:contain; }
+        #videoPreview { max-width:100%; max-height:100%; object-fit:contain; display:none; }
+        .video-controls { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:none; gap:10px; background:rgba(0,0,0,0.7); padding:10px; border-radius:4px; }
+        .video-controls.active { display:flex; }
+        .video-control-btn { width:40px; height:40px; background:#fff; border:2px solid #000; border-radius:4px; cursor:pointer; font-size:16px; }
 
         .edit-footer { background:#8C8C8C; padding:8px; display:flex; flex-direction:column; gap:8px; position:fixed; bottom:0; left:0; right:0; max-height:none; overflow:visible; }
 
@@ -155,7 +159,7 @@
         <div>
             <div class="upload-label">UPLOAD PHOTO OR VIDEO</div>
             <label for="fileInput" class="upload-btn"><span>≡</span></label>
-            <input type="file" id="fileInput" accept="image/*" multiple>
+            <input type="file" id="fileInput" accept="image/*,video/*" multiple>
         </div>
     </div>
 
@@ -171,6 +175,10 @@
         </div>
         <div class="canvas-container">
             <canvas id="canvas"></canvas>
+            <video id="videoPreview" playsinline></video>
+            <div class="video-controls" id="videoControls">
+                <button class="video-control-btn" onclick="togglePlayPause()">▶</button>
+            </div>
         </div>
         <div class="edit-footer">
             <div class="footer-top">
@@ -273,19 +281,23 @@
     </div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false};
         function setStatus(s){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready');wait.classList.toggle('active',s!=='ready');}
 
         // Initial status light animation
         setTimeout(()=>{setStatus('ready');},1000);
 
-        document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img});}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
+        document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const isVideo=file.type.startsWith('video/');if(isVideo){const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise(r=>{video.onloadedmetadata=r;});state.photos.push({name:file.name,video:video,videoUrl:videoUrl,isVideo:true});}else{const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img,isVideo:false});}}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
 
         function prevPhoto(){if(state.currentIndex>0){state.currentIndex--;renderPhoto();}}
         function nextPhoto(){if(state.currentIndex<state.photos.length-1){state.currentIndex++;renderPhoto();}}
         function backToUpload(){document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#3897AF';}
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const c=document.getElementById('canvas'),ctx=c.getContext('2d',{alpha:false});c.width=p.image.width;c.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,c.width,c.height);state.renderPending=false;});}
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoEl=document.getElementById('videoPreview'),videoControls=document.getElementById('videoControls');if(p.isVideo){canvas.style.display='none';videoEl.style.display='block';videoControls.classList.add('active');videoEl.src=p.videoUrl;state.videoMode=true;setupVideoProcessing(p.video);}else{canvas.style.display='block';videoEl.style.display='none';videoControls.classList.remove('active');state.videoMode=false;const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);}state.renderPending=false;});}
+
+        function setupVideoProcessing(video){const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{alpha:false}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;const processFrame=()=>{if(!state.videoMode||videoEl.paused)return;ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);requestAnimationFrame(processFrame);};videoEl.addEventListener('play',processFrame);}
+
+        function togglePlayPause(){const video=document.getElementById('videoPreview'),btn=event.target;if(video.paused){video.play();btn.textContent='⏸';state.videoPlaying=true;}else{video.pause();btn.textContent='▶';state.videoPlaying=false;}}
 
         function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyTone(d,state.settings.tone);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);}
 
@@ -311,7 +323,9 @@
 
         function adjustCMYK(ch,d){const chs={c:'cyan',m:'magenta',y:'yellow',k:'black'},k=chs[ch];const displayId=k==='black'?'density':k;state.settings[k]=Math.max(-50,Math.min(50,state.settings[k]+d));document.getElementById(displayId+'Value').textContent=state.settings[k];renderPhoto();}
 
-        function savePhoto(){const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${state.photos[state.currentIndex].name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}
+        function savePhoto(){const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${p.name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}}
+
+        async function exportVideo(){alert('Processing video with effects... This may take a moment.');const p=state.photos[state.currentIndex],video=p.video;const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{alpha:false});canvas.width=video.videoWidth;canvas.height=video.videoHeight;const stream=canvas.captureStream(30);const mediaRecorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9',videoBitsPerSecond:8000000});const chunks=[];mediaRecorder.ondataavailable=e=>chunks.push(e.data);mediaRecorder.onstop=()=>{const blob=new Blob(chunks,{type:'video/webm'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`frontier_${p.name.replace(/\.[^/.]+$/,'')}.webm`;a.click();URL.revokeObjectURL(url);alert('Video export complete!');};mediaRecorder.start();video.currentTime=0;video.play();const processVideoFrame=()=>{if(video.ended||video.paused){mediaRecorder.stop();video.pause();return;}ctx.drawImage(video,0,0);applyEffects(ctx,canvas.width,canvas.height);requestAnimationFrame(processVideoFrame);};video.addEventListener('play',processVideoFrame,{once:true});}
 
         function togglePreview(){const modal=document.getElementById('previewModal')||createPreviewModal();if(modal.style.display==='flex'){modal.style.display='none';}else{const img=document.getElementById('previewImg');img.src=document.getElementById('canvas').toDataURL();modal.style.display='flex';}}
         function createPreviewModal(){const m=document.createElement('div');m.id='previewModal';m.style.cssText='display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;align-items:center;justify-content:center;';m.onclick=()=>m.style.display='none';const img=document.createElement('img');img.id='previewImg';img.style.cssText='max-width:100%;max-height:100%;object-fit:contain;';m.appendChild(img);document.body.appendChild(m);return m;}
