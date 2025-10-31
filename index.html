@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Frontier Digital Processor</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Frontier">
+    <meta name="theme-color" content="#3897AF">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #3897AF;
+            color: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #uploadSection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+        #uploadSection.hidden { display: none; }
+        .scanner-top {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(180deg, #5AACBF 0%, #3897AF 100%);
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+        .vent-line {
+            width: 100%;
+            height: 4px;
+            background: #2A7A8C;
+            border-radius: 2px;
+        }
+        .scanner-body {
+            width: 100%;
+            background: #3897AF;
+            padding: 30px 20px;
+            border-radius: 0 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+        .logo-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            width: 198px;
+            height: auto;
+        }
+        .status-lights {
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .status-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #0A5A6C;
+            opacity: 0.3;
+        }
+        .status-light.active {
+            opacity: 1;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .status-light.green {
+            background: #4ADE80;
+            color: #4ADE80;
+        }
+        .status-light.red {
+            background: #EF4444;
+            color: #EF4444;
+        }
+        .upload-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #EEEDF0;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .upload-btn {
+            width: 100px;
+            height: 50px;
+            background: #D4CEC8;
+            border: 3px solid #000;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.1s;
+        }
+        .upload-btn:active { transform: scale(0.98); }
+        #fileInput { display: none; }
+        #editSection {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: #8C8C8C;
+        }
+        #editSection.active { display: flex; }
+        .edit-header {
+            background: #000;
+            color: #fff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 50px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .gallery-btn {
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .gallery-btn img {
+            width: 100%;
+            height: 100%;
+            filter: invert(1);
+        }
+        .filename {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .header-right {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        #canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .edit-footer {
+            background: #8C8C8C;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            background: #B3B3B3;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-btn {
+            width: 32px;
+            height: 32px;
+            background: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 18px;
+        }
+        .photo-counter {
+            font-size: 16px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+        .save-btn {
+            padding: 12px 24px;
+            background: #3897AF;
+            border: 2px solid #000;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .control-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .control-tab {
+            padding: 10px 12px;
+            background: #B3B3B3;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .control-tab.active {
+            background: #000;
+            color: #fff;
+        }
+        .expanded-controls {
+            display: none;
+            padding: 12px;
+            background: #B3B3B3;
+            border: 2px solid #000;
+            border-radius: 4px;
+        }
+        .expanded-controls.active { display: block; }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        .profile-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .preset-btn {
+            padding: 10px 6px;
+            background: #D4D4D4;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+        .preset-btn.active {
+            background: #000;
+            color: #fff;
+        }
+        .slider-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .slider-btn {
+            width: 40px;
+            height: 40px;
+            background: #D4D4D4;
+            border: 2px solid #000;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        .slider-value {
+            min-width: 50px;
+            padding: 10px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .cmyk-sliders {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .cmyk-slider {
+            padding: 8px;
+            border-radius: 4px;
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .cmyk-slider.cyan { background: #00FFFF; }
+        .cmyk-slider.magenta { background: #FF00FF; }
+        .cmyk-slider.yellow { background: #FFFF00; }
+        .cmyk-slider.black { background: #666666; }
+        .cmyk-slider .slider-btn { width: 100%; height: 32px; }
+        .cmyk-slider .slider-value { width: 100%; padding: 8px 4px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="uploadSection">
+        <div class="scanner-top">
+            <div class="vent-line"></div>
+            <div class="vent-line"></div>
+            <div class="vent-line"></div>
+            <div class="vent-line"></div>
+            <div class="vent-line"></div>
+        </div>
+        <div class="scanner-body">
+            <div class="logo-container">
+                <img src="Logo.svg" alt="Frontier">
+                <div class="status-lights">
+                    <div class="status-light green active" id="statusReady"></div>
+                    <div class="status-light red" id="statusWait"></div>
+                </div>
+            </div>
+            <div>
+                <div class="upload-label">UPLOAD PHOTO OR VIDEO</div>
+                <label for="fileInput" class="upload-btn"><span>≡</span></label>
+                <input type="file" id="fileInput" accept="image/*" multiple>
+            </div>
+        </div>
+    </div>
+    <div id="editSection">
+        <div class="edit-header">
+            <div class="header-left">
+                <button class="gallery-btn" onclick="backToUpload()">
+                    <img src="Gallery viewe.svg" alt="Gallery">
+                </button>
+                <div class="filename" id="filename">PHOTO.JPG</div>
+            </div>
+            <div class="header-right">⋮</div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="edit-footer">
+            <div class="footer-top">
+                <div class="action-buttons">
+                    <button class="action-btn">Preview</button>
+                    <button class="action-btn">Dark Mode</button>
+                    <button class="action-btn">Copy</button>
+                </div>
+                <div class="nav-controls">
+                    <button class="nav-btn" onclick="prevPhoto()">◀</button>
+                    <div class="photo-counter" id="photoCounter">1/36</div>
+                    <button class="nav-btn" onclick="nextPhoto()">▶</button>
+                    <button class="save-btn" onclick="savePhoto()">SAVE</button>
+                </div>
+            </div>
+            <div class="control-tabs">
+                <button class="control-tab" onclick="toggleControl('profile')">
+                    <span id="profileValue">NONE</span>
+                    PROFILE
+                </button>
+                <button class="control-tab" onclick="toggleControl('tone')">
+                    <span id="toneValue">SHOW-S</span>
+                    TONE
+                </button>
+                <button class="control-tab" onclick="toggleControl('bloom')">
+                    <span>3</span>
+                    BLOOM
+                </button>
+                <button class="control-tab" onclick="toggleControl('grain')">
+                    <span>2</span>
+                    GRAIN
+                </button>
+            </div>
+            <div class="expanded-controls" id="profileControl">
+                <div class="profile-buttons">
+                    <button class="preset-btn active" onclick="setProfile('none')">NONE</button>
+                    <button class="preset-btn" onclick="setProfile('portra')">PORTRA</button>
+                    <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
+                    <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
+                </div>
+            </div>
+            <div class="expanded-controls" id="toneControl">
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="setTone('none')">NONE</button>
+                    <button class="preset-btn" onclick="setTone('high-soft')">HIGH SOFT</button>
+                    <button class="preset-btn" onclick="setTone('high-hard')">HIGH HARD</button>
+                    <button class="preset-btn" onclick="setTone('show-soft')">SHOW SOFT</button>
+                    <button class="preset-btn" onclick="setTone('show-hard')">SHOW HARD</button>
+                </div>
+            </div>
+            <div class="expanded-controls" id="bloomControl">
+                <div class="slider-control">
+                    <button class="slider-btn" onclick="adjustBloom(-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                    <div class="slider-value" id="bloomValue">3</div>
+                    <button class="slider-btn" onclick="adjustBloom(1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                </div>
+            </div>
+            <div class="expanded-controls" id="grainControl">
+                <div class="slider-control">
+                    <button class="slider-btn" onclick="adjustGrain(-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                    <div class="slider-value" id="grainValue">2</div>
+                    <button class="slider-btn" onclick="adjustGrain(1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                </div>
+            </div>
+            <div class="cmyk-sliders">
+                <div class="cmyk-slider cyan">
+                    <button class="slider-btn" onclick="adjustCMYK('c',1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                    <div class="slider-value" id="cyanValue">0</div>
+                    <button class="slider-btn" onclick="adjustCMYK('c',-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                </div>
+                <div class="cmyk-slider magenta">
+                    <button class="slider-btn" onclick="adjustCMYK('m',1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                    <div class="slider-value" id="magentaValue">2</div>
+                    <button class="slider-btn" onclick="adjustCMYK('m',-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                </div>
+                <div class="cmyk-slider yellow">
+                    <button class="slider-btn" onclick="adjustCMYK('y',1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                    <div class="slider-value" id="yellowValue">0</div>
+                    <button class="slider-btn" onclick="adjustCMYK('y',-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                </div>
+                <div class="cmyk-slider black">
+                    <button class="slider-btn" onclick="adjustCMYK('k',1)">
+                        <img src="Arrow up.svg" alt="+">
+                    </button>
+                    <div class="slider-value" id="blackValue">1</div>
+                    <button class="slider-btn" onclick="adjustCMYK('k',-1)">
+                        <img src="Arrow down.svg" alt="-">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const state = {photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'show-hard',bloom:3,grain:2,cyan:0,magenta:2,yellow:0,black:1}};
+        function setStatus(s){document.getElementById('statusReady').classList.toggle('active',s==='ready');document.getElementById('statusWait').classList.toggle('active',s!=='ready');}
+        document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img});}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
+        function prevPhoto(){if(state.currentIndex>0){state.currentIndex--;renderPhoto();}}
+        function nextPhoto(){if(state.currentIndex<state.photos.length-1){state.currentIndex++;renderPhoto();}}
+        function backToUpload(){document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#3897AF';}
+        function renderPhoto(){const p=state.photos[state.currentIndex];if(!p)return;document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const c=document.getElementById('canvas'),ctx=c.getContext('2d');c.width=p.image.width;c.height=p.image.height;ctx.drawImage(p.image,0,0);applyEffects(ctx,c.width,c.height);}
+        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyTone(d,state.settings.tone);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);}
+        function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.1+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95);}else if(p==='slide'){const gr=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-gr)*0.5-10);g=Math.min(255,g+(g-gr)*0.5);b=Math.min(255,b+(b-gr)*0.5+10);}else if(p==='bw'){const gr=0.299*r+0.587*g+0.114*b,c=(gr-128)*1.2+128;r=g=b=Math.max(0,Math.min(255,c));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
+        function applyCMYK(d,s){const cA=s.cyan/50,mA=s.magenta/50,yA=s.yellow/50,kA=s.black/50;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA*50));g=Math.max(0,Math.min(255,g+cA*25));b=Math.max(0,Math.min(255,b+cA*25));r=Math.max(0,Math.min(255,r+mA*25));g=Math.max(0,Math.min(255,g-mA*50));b=Math.max(0,Math.min(255,b+mA*25));r=Math.max(0,Math.min(255,r+yA*25));g=Math.max(0,Math.min(255,g+yA*25));b=Math.max(0,Math.min(255,b-yA*50));const dF=1-kA*0.3;r*=dF;g*=dF;b*=dF;d[i]=r;d[i+1]=g;d[i+2]=b;}}
+        function applyTone(d,t){if(t==='none')return;const curves={'high-soft':{shadows:1.2,highlights:0.9},'high-hard':{shadows:1.3,highlights:1.1},'show-soft':{shadows:1.1,highlights:0.85},'show-hard':{shadows:1.15,highlights:0.95}},cv=curves[t];if(!cv)return;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3,f=lum<128?cv.shadows:cv.highlights;d[i]=Math.max(0,Math.min(255,d[i]*f));d[i+1]=Math.max(0,Math.min(255,d[i+1]*f));d[i+2]=Math.max(0,Math.min(255,d[i+2]*f));}}
+        function applyBloom(ctx,w,h,int){const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*2}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/20;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
+        function applyGrain(d,int){for(let i=0;i<d.length;i+=4){const n=(Math.random()-0.5)*int*20;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function toggleControl(c){['profile','tone','bloom','grain'].forEach(ct=>{const el=document.getElementById(ct+'Control');el.classList.toggle('active',ct===c&&!el.classList.contains('active'));});}
+        function setProfile(p){state.settings.profile=p;document.getElementById('profileValue').textContent=p.toUpperCase();document.querySelectorAll('#profileControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','portra','slide','bw'][i]===p));renderPhoto();}
+        function setTone(t){state.settings.tone=t;const lb={'none':'NONE','high-soft':'H-SFT','high-hard':'H-HRD','show-soft':'S-SFT','show-hard':'S-HRD'};document.getElementById('toneValue').textContent=lb[t];document.querySelectorAll('#toneControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','high-soft','high-hard','show-soft','show-hard'][i]===t));renderPhoto();}
+        function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValue').textContent=state.settings.bloom;renderPhoto();}
+        function adjustGrain(d){state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValue').textContent=state.settings.grain;renderPhoto();}
+        function adjustCMYK(ch,d){const chs={c:'cyan',m:'magenta',y:'yellow',k:'black'},k=chs[ch];state.settings[k]=Math.max(-50,Math.min(50,state.settings[k]+d));document.getElementById(k+'Value').textContent=state.settings[k];renderPhoto();}
+        function savePhoto(){const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${state.photos[state.currentIndex].name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}
+    </script>
+</body>
+</html>

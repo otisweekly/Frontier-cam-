@@ -1,6 +1,6 @@
-# SP500 Film Simulator
+# Frontier Digital Processor
 
-A retro-styled Fuji Frontier SP500 film scanner simulator for your iPhone. Upload photos from your camera roll and apply professional film lab processing effects with an authentic 8-bit aesthetic.
+A retro-styled professional film scanning and color grading processor for iPhone. Upload photos from your camera roll and apply authentic film lab processing effects with a beautiful 8-bit retro interface.
 
 ## Features
 
@@ -44,90 +44,21 @@ Professional Fuji Frontier-style color correction:
 - Horizontal filmstrip navigation
 - Before/after toggle
 - Pinch-to-zoom on canvas
-- Frame counter (shows current photo / total)
+- Frame counter (current photo / total)
 - Fuji turquoise accent color
 
-## How to Use
+## Quick Start
 
-### Getting Started
-1. Open `sp500-retro.html` in iPhone Safari
-2. Install as PWA (Add to Home Screen) for best experience
-3. Tap "TAP TO SELECT" to upload photos
+### Installation
+1. Open `index.html` in iPhone Safari
+2. Tap Share → Add to Home Screen
+3. Launch from home screen for full PWA experience
 
-### Processing Photos
-1. **Upload**: Select 1-36 photos from your camera roll
-2. **Navigate**: Swipe through filmstrip at bottom to switch photos
-3. **Adjust**: Use control buttons to adjust color, contrast, and effects
-   - **COLOR**: Switch between film stocks (STD/C41/B&W/E6)
-   - **CMY**: Fine-tune colors with professional color correction
-   - **SOFT**: Adjust contrast curves
-   - **BLOOM**: Add halation glow around highlights
-   - **GRAIN**: Add film grain texture
-4. **Compare**: Toggle BEFORE/AFTER to see original vs processed
-5. **Export**: Tap "SAVE TO PHOTOS" to export all processed images
-
-### Navigation Controls
-- **Filmstrip**: Tap thumbnails to switch between photos
-- **Arrow Buttons**: Navigate previous/next photo
-- **Pinch**: Zoom in/out on main canvas
-- **Pan**: Drag to move zoomed image
-- **Reset Zoom**: Tap canvas once to reset zoom
-
-## Film Stock Characteristics
-
-### C41 (Portra 400)
-- Warm, natural colors
-- Smooth skin tones
-- Subtle grain
-- Perfect for portraits and everyday photography
-
-### B&W (Tri-X 400)
-- Classic black & white
-- High contrast
-- Visible grain structure
-- Legendary street photography film
-
-### E6 (Ektachrome)
-- Vibrant, saturated colors
-- Cool tones
-- High sharpness
-- Perfect for landscapes and product photography
-
-## Technical Details
-
-### Processing Pipeline
-- Canvas API for real-time image processing
-- Hardware-accelerated rendering
-- Per-photo settings storage
-- Batch export to camera roll
-
-### Color Processing
-Each film mode applies unique color transformations:
-- **C41**: Warm color shift, green shadows, smooth highlight rolloff
-- **B&W**: Desaturation with contrast boost and grain
-- **E6**: Cool color shift, high saturation, punchy shadows
-
-### CMY Correction
-Professional film lab color correction:
-- Cyan: Shifts green ↔ red
-- Magenta: Shifts green ↔ magenta
-- Yellow: Shifts blue ↔ yellow
-- Density: Overall brightness adjustment
-
-### Special Effects
-- **Bloom**: Gaussian blur applied to highlights only, creates halation glow
-- **Grain**: Procedural noise overlay with adjustable intensity
-
-## Compatibility
-
-### Recommended
-- iPhone 11 or newer
-- iOS 14+
-- Safari browser
-
-### Requirements
-- Modern browser with Canvas API support
-- Photo library access permissions
+### Basic Usage
+1. **Upload**: Tap "TAP TO SELECT" and choose photos
+2. **Edit**: Use COLOR, CMY, SOFT, BLOOM, GRAIN controls
+3. **Navigate**: Swipe filmstrip to switch between photos
+4. **Export**: Tap "SAVE TO PHOTOS" when done
 
 ## Controls Summary
 
@@ -135,36 +66,73 @@ Professional film lab color correction:
 |--------|---------|
 | Upload photos | Tap "TAP TO SELECT" |
 | Navigate photos | Tap filmstrip thumbnails or arrow buttons |
-| Toggle film mode | Tap COLOR button, select mode |
-| Adjust CMY | Tap CMY button, use sliders |
-| Change contrast | Tap SOFT button, select mode |
-| Add bloom/grain | Tap BLOOM/GRAIN buttons, use sliders |
-| Compare before/after | Tap BEFORE/AFTER button |
-| Zoom canvas | Pinch to zoom, drag to pan, tap to reset |
-| Export photos | Tap SAVE TO PHOTOS |
-| Reset all settings | Tap RESET button |
-| Change theme | Tap moon/sun icon (top right) |
+| Toggle film mode | Tap COLOR button |
+| Adjust colors | Tap CMY button, use sliders |
+| Change contrast | Tap SOFT button |
+| Add effects | Tap BLOOM/GRAIN buttons |
+| Compare | Tap BEFORE/AFTER button |
+| Zoom | Pinch to zoom, drag to pan, tap to reset |
+| Export | Tap SAVE TO PHOTOS |
+| Reset | Tap RESET button |
+| Toggle theme | Tap moon/sun icon |
 
-## Tips for Best Results
+## Technical Details
 
-1. **Start with Film Mode**: Choose your film stock first (C41/B&W/E6)
-2. **Fine-tune with CMY**: Use subtle adjustments (-10 to +10) for natural looks
-3. **Experiment with Bloom**: Try 10-30 for subtle halation, 50+ for dreamy looks
-4. **Add Grain**: Keep between 0.5-2.0 for authentic film texture
-5. **Use Soft Modes**: Shadow Soft is great for lifting dark photos
-6. **Before/After Toggle**: Always compare to avoid over-processing
+- **Framework**: Vanilla JavaScript (no dependencies)
+- **Rendering**: HTML5 Canvas API with hardware acceleration
+- **PWA**: Full offline support with service worker
+- **Deployment**: Static files, works on any host
 
-## Technical Implementation
+## Setup Notes
 
-Built with modern web technologies:
-- HTML5 Canvas API
-- Web File API for photo upload
-- CSS3 with CSS custom properties for theming
-- Vanilla JavaScript (no frameworks)
-- PWA manifest for installability
+### Icons Required
+You'll need to add PWA icons:
+- `icon-192.png` (192x192)
+- `icon-512.png` (512x512)
+
+### Deployment
+The app is ready to deploy to:
+- **Netlify**: Just drag/drop the folder
+- **Vercel**: Connect git repo
+- **GitHub Pages**: Enable in repo settings
+- **Any static host**: Upload all files
+
+## Project Structure
+
+```
+frontier-digital-processor/
+├── index.html          # Main application
+├── manifest.json       # PWA configuration
+├── sw.js              # Service worker
+├── netlify.toml       # Netlify config
+├── vercel.json        # Vercel config
+├── README.md          # This file
+└── .gitignore         # Git ignore rules
+```
+
+## Browser Support
+
+### Recommended
+- iPhone 11 or newer
+- iOS 14+
+- Safari browser
+
+### Requirements
+- Modern browser with Canvas API
+- Photo library access
+- Touch screen
+
+## Development
+
+This is a single-page application with no build process. To modify:
+1. Edit `index.html` directly
+2. Test in Safari on iPhone
+3. Deploy updated file
+
+## Credits
 
 Inspired by the legendary Fuji Frontier SP500 film scanner used in professional photo labs worldwide.
 
 ---
 
-**Note**: This is a simulation of professional film scanning equipment. While the app faithfully recreates film processing effects and color grading workflows, results are artistic interpretations rather than chemically-accurate film reproductions.
+**Made with ♥ for film photography enthusiasts**

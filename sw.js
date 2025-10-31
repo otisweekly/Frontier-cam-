@@ -1,9 +1,10 @@
-// SP500 Film Simulator - Service Worker
+// Frontier Digital Processor - Service Worker
 // Provides offline support and caching for better PWA performance
 
-const CACHE_NAME = 'sp500-v1';
+const CACHE_NAME = 'frontier-v1';
 const urlsToCache = [
-  '/sp500.html',
+  '/',
+  '/index.html',
   '/manifest.json'
 ];
 
@@ -88,9 +89,6 @@ self.addEventListener('fetch', (event) => {
           })
           .catch((err) => {
             console.error('[SW] Fetch failed:', err);
-
-            // Could return a custom offline page here
-            // return caches.match('/offline.html');
           });
       })
   );
