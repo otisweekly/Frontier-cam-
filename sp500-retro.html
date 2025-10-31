@@ -418,9 +418,24 @@
             letter-spacing: 0.5px;
         }
 
-        .film-iso {
-            font-size: 7px;
-            opacity: 0.8;
+        .film-strength {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            opacity: 1;
+        }
+
+        .film-hint {
+            font-size: 5px;
+            opacity: 0.5;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hide strength/hint on inactive boxes */
+        .film-box:not(.active) .film-strength,
+        .film-box:not(.active) .film-hint {
+            display: none;
         }
 
         /* Film-specific colors - solid, simple */
@@ -678,7 +693,7 @@
 
         <!-- Dynamic Controls (shown based on active button) -->
         <div class="controls" id="controls">
-            <!-- Color Options Menu - Film Box Style -->
+            <!-- Color Options Menu - Film Box Style with Swipeable Strength -->
             <div class="control-menu film-boxes" id="colorMenu" style="display: none;">
                 <button class="btn-3d film-box active" data-colormode="none">
                     <div class="film-box-content">
@@ -688,28 +703,24 @@
                 <button class="btn-3d film-box film-c41" data-colormode="portra400">
                     <div class="film-box-content">
                         <div class="film-name">C41</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
                     </div>
                 </button>
                 <button class="btn-3d film-box film-e6" data-colormode="ektachrome">
                     <div class="film-box-content">
                         <div class="film-name">E6</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
                     </div>
                 </button>
                 <button class="btn-3d film-box film-bw" data-colormode="trix400">
                     <div class="film-box-content">
                         <div class="film-name">B&W</div>
+                        <div class="film-strength">100%</div>
+                        <div class="film-hint">← SWIPE →</div>
                     </div>
                 </button>
-            </div>
-
-            <!-- Preset Strength Control -->
-            <div class="control-slider" id="presetControls" style="display: none;">
-                <div class="slider-label">STRENGTH</div>
-                <div class="slider-display" id="presetDisplay">100%</div>
-                <div class="slider-buttons">
-                    <button class="btn-3d slider-btn" data-control="preset" data-dir="-">-</button>
-                    <button class="btn-3d slider-btn" data-control="preset" data-dir="+">+</button>
-                </div>
             </div>
 
             <!-- SOFT Mode Options Menu -->
@@ -951,7 +962,6 @@
 
             // Hide all control panels
             document.getElementById('colorMenu').style.display = 'none';
-            document.getElementById('presetControls').style.display = 'none';
             document.getElementById('softMenu').style.display = 'none';
             document.getElementById('cmyControls').style.display = 'none';
             document.getElementById('bloomControls').style.display = 'none';
@@ -960,10 +970,6 @@
             // Show active control panel
             if (state.activeControl === 'color') {
                 document.getElementById('colorMenu').style.display = 'grid';
-                // Show preset strength if a preset is selected
-                if (settings.colorMode !== 'none') {
-                    document.getElementById('presetControls').style.display = 'block';
-                }
             } else if (state.activeControl === 'soft') {
                 document.getElementById('softMenu').style.display = 'grid';
             } else if (state.activeControl === 'cmy') {
@@ -1026,7 +1032,11 @@
             // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
             document.getElementById('grainDisplay').textContent = settings.grain;
-            document.getElementById('presetDisplay').textContent = `${settings.presetStrength}%`;
+
+            // Update film box strength displays
+            document.querySelectorAll('.film-strength').forEach(el => {
+                el.textContent = `${settings.presetStrength}%`;
+            });
 
             // Update CMY displays
             document.getElementById('cyanDisplay').textContent = settings.cyan > 0 ? `+${settings.cyan}` : settings.cyan;
@@ -1156,21 +1166,28 @@
                 imageData.height
             );
 
-            // Apply color mode (film stock) with strength
-            const presetStrength = settings.presetStrength / 100; // Convert to 0-1 range
+            // Apply color mode (film stock)
             switch (settings.colorMode) {
                 case 'none':
                     // No film stock processing
                     break;
                 case 'portra400':
-                    applyPortra400(output, presetStrength);
+                    applyPortra400(output);
                     break;
                 case 'trix400':
-                    applyTriX(output, presetStrength);
+                    applyTriX(output);
                     break;
                 case 'ektachrome':
-                    applyEktachrome(output, presetStrength);
+                    applyEktachrome(output);
                     break;
+            }
+
+            // Apply preset strength if needed (blend with original)
+            if (settings.colorMode !== 'none' && settings.presetStrength < 100) {
+                const strength = settings.presetStrength / 100;
+                for (let i = 0; i < output.data.length; i++) {
+                    output.data[i] = imageData.data[i] + (output.data[i] - imageData.data[i]) * strength;
+                }
             }
 
             // Apply CMY + Density
@@ -1225,19 +1242,15 @@
             }
         }
 
-        function applyPortra400(imageData, strength = 1.0) {
+        function applyPortra400(imageData) {
             // Kodak Portra 400: Authentic Frontier SP-3000 characteristics
             // Key: Natural skin tones with slight warmth
             const data = imageData.data;
 
             for (let i = 0; i < data.length; i += 4) {
-                const origR = data[i];
-                const origG = data[i + 1];
-                const origB = data[i + 2];
-
-                let r = origR;
-                let g = origG;
-                let b = origB;
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
 
                 // Get hue for skin tone protection
                 const max = Math.max(r, g, b);
@@ -1314,23 +1327,18 @@
                 g = gray + saturation * (g - gray);
                 b = gray + saturation * (b - gray);
 
-                // Blend between original and processed based on strength
-                data[i] = Math.min(255, Math.max(0, origR + (r - origR) * strength));
-                data[i + 1] = Math.min(255, Math.max(0, origG + (g - origG) * strength));
-                data[i + 2] = Math.min(255, Math.max(0, origB + (b - origB) * strength));
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
             }
         }
 
-        function applyTriX(imageData, strength = 1.0) {
+        function applyTriX(imageData) {
             // Kodak Tri-X 400: High contrast B&W, iconic street photography film
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                const origR = data[i];
-                const origG = data[i + 1];
-                const origB = data[i + 2];
-
                 // Convert to grayscale (standard luminance formula)
-                const gray = 0.299 * origR + 0.587 * origG + 0.114 * origB;
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
 
                 // Contrast +25 and gamma 0.85 for punchy B&W look
                 let val = gray / 255;
@@ -1342,24 +1350,19 @@
 
                 const finalGray = val * 255;
 
-                // Blend between original and processed based on strength
-                data[i] = origR + (finalGray - origR) * strength;
-                data[i + 1] = origG + (finalGray - origG) * strength;
-                data[i + 2] = origB + (finalGray - origB) * strength;
+                data[i] = finalGray;
+                data[i + 1] = finalGray;
+                data[i + 2] = finalGray;
             }
         }
 
-        function applyEktachrome(imageData, strength = 1.0) {
+        function applyEktachrome(imageData) {
             // Kodak Ektachrome E100: Vivid saturated slide film, punchy colors
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                const origR = data[i];
-                const origG = data[i + 1];
-                const origB = data[i + 2];
-
-                let r = origR;
-                let g = origG;
-                let b = origB;
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
 
                 // Color shifts: Red +5, Blue +8, Green 0
                 r = r + 5;
@@ -1376,10 +1379,9 @@
                 g = ((g / 255 - 0.5) * 1.15 + 0.5) * 255;
                 b = ((b / 255 - 0.5) * 1.15 + 0.5) * 255;
 
-                // Blend between original and processed based on strength
-                data[i] = Math.min(255, Math.max(0, origR + (r - origR) * strength));
-                data[i + 1] = Math.min(255, Math.max(0, origG + (g - origG) * strength));
-                data[i + 2] = Math.min(255, Math.max(0, origB + (b - origB) * strength));
+                data[i] = Math.min(255, Math.max(0, r));
+                data[i + 1] = Math.min(255, Math.max(0, g));
+                data[i + 2] = Math.min(255, Math.max(0, b));
             }
         }
 
@@ -1452,7 +1454,7 @@
             const clarityReduction = Math.floor(intensity * 0.15); // 0-3 pixel softening
             if (clarityReduction > 0) {
                 const softened = separableGaussianBlur(data, width, height, clarityReduction);
-                const clarityMix = 0.3 + (intensity / 50); // 0.3-0.7 mix
+                const clarityMix = 0.2 + (intensity / 60); // 0.2-0.53 mix (more subtle)
                 for (let i = 0; i < data.length; i += 4) {
                     data[i] = data[i] * (1 - clarityMix) + softened[i] * clarityMix;
                     data[i + 1] = data[i + 1] * (1 - clarityMix) + softened[i + 1] * clarityMix;
@@ -1460,24 +1462,26 @@
                 }
             }
 
-            // Extract highlights into separate buffer (lower threshold for more bloom)
+            // Extract highlights into separate buffer - Leica glow style (gentle, soft)
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 180) { // Lower threshold from 200 to catch more highlights
-                    const factor = (lum - 180) / 75; // 0-1 for 180-255
-                    highlights[i] = data[i] * factor;
-                    highlights[i + 1] = data[i + 1] * factor;
-                    highlights[i + 2] = data[i + 2] * factor;
+                if (lum > 200) { // Higher threshold for more selective bloom
+                    const factor = (lum - 200) / 55; // 0-1 for 200-255
+                    // Softer extraction with square root for gentler falloff
+                    const softFactor = Math.sqrt(factor) * 0.7;
+                    highlights[i] = data[i] * softFactor;
+                    highlights[i + 1] = data[i + 1] * softFactor;
+                    highlights[i + 2] = data[i + 2] * softFactor;
                 }
             }
 
-            // Much stronger gaussian blur on highlights for aggressive spreading
-            const radius = Math.max(3, Math.floor(intensity * 2.0)); // 0-40 pixel radius (was 0.8)
+            // Wide gaussian blur for that dreamy Leica spread
+            const radius = Math.max(3, Math.floor(intensity * 1.8)); // 0-36 pixel radius
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Stronger blend for more aggressive bloom spreading
-            const blendStrength = 0.9 + (intensity / 25); // 0.9-1.7 range (was 0.7-1.2)
+            // Gentle blend for soft, low-contrast Leica glow
+            const blendStrength = 0.4 + (intensity / 40); // 0.4-0.9 range (much gentler)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
@@ -1678,33 +1682,24 @@
 
         // COLOR button - opens film stock menu
         document.getElementById('colorBtn').addEventListener('click', () => {
-            if (state.activeControl === 'color') {
-                state.activeControl = null; // Close if already open
-            } else {
-                state.activeControl = 'color'; // Open menu
-            }
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'color';
             updateUI();
             haptic('light');
         });
 
         // CMY button - opens CMY controls
         document.getElementById('cmyBtn').addEventListener('click', () => {
-            if (state.activeControl === 'cmy') {
-                state.activeControl = null; // Close if already open
-            } else {
-                state.activeControl = 'cmy'; // Open controls
-            }
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'cmy';
             updateUI();
             haptic('light');
         });
 
         // SOFT button - opens soft mode menu
         document.getElementById('softBtn').addEventListener('click', () => {
-            if (state.activeControl === 'soft') {
-                state.activeControl = null; // Close if already open
-            } else {
-                state.activeControl = 'soft'; // Open menu
-            }
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'soft';
             updateUI();
             haptic('light');
         });
@@ -1713,7 +1708,7 @@
         document.querySelectorAll('[data-softmode]').forEach(btn => {
             btn.addEventListener('click', () => {
                 state.photos[state.currentIndex].settings.softMode = btn.dataset.softmode;
-                state.activeControl = null; // Close menu after selection
+                // Keep menu open after selection
                 updateUI();
                 processCurrentPhoto();
                 haptic('medium');
@@ -1722,34 +1717,78 @@
 
         // BLOOM button - opens bloom controls
         document.getElementById('bloomBtn').addEventListener('click', () => {
-            if (state.activeControl === 'bloom') {
-                state.activeControl = null; // Close if already open
-            } else {
-                state.activeControl = 'bloom'; // Open controls
-            }
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'bloom';
             updateUI();
             haptic('light');
         });
 
         // GRAIN button - opens grain controls
         document.getElementById('grainBtn').addEventListener('click', () => {
-            if (state.activeControl === 'grain') {
-                state.activeControl = null; // Close if already open
-            } else {
-                state.activeControl = 'grain'; // Open controls
-            }
+            // Stay open if already open, only close when different tab selected
+            state.activeControl = 'grain';
             updateUI();
             haptic('light');
         });
 
-        // Color mode menu options
+        // Color mode menu options with swipe-to-adjust strength
         document.querySelectorAll('[data-colormode]').forEach(btn => {
-            btn.addEventListener('click', () => {
+            let touchStartX = 0;
+            let touchStartStrength = 0;
+            let isSwiping = false;
+
+            btn.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartStrength = state.photos[state.currentIndex].settings.presetStrength;
+                isSwiping = false;
+            });
+
+            btn.addEventListener('touchmove', (e) => {
+                const colorMode = btn.dataset.colormode;
+                // Only allow strength adjustment on actual presets (not "none")
+                if (colorMode === 'none') return;
+
+                const touchX = e.touches[0].clientX;
+                const deltaX = touchX - touchStartX;
+
+                // If moved more than 10px, it's a swipe
+                if (Math.abs(deltaX) > 10) {
+                    e.preventDefault();
+                    isSwiping = true;
+
+                    // Adjust strength: 1px = 0.5%
+                    const strengthDelta = Math.round(deltaX * 0.5);
+                    const newStrength = Math.max(0, Math.min(100, touchStartStrength + strengthDelta));
+
+                    state.photos[state.currentIndex].settings.presetStrength = newStrength;
+                    updateUI();
+                    processCurrentPhoto();
+                }
+            });
+
+            btn.addEventListener('touchend', (e) => {
+                // If it was a swipe, don't trigger click
+                if (isSwiping) {
+                    haptic('medium');
+                    return;
+                }
+
+                // Otherwise, treat as a click to select preset
                 state.photos[state.currentIndex].settings.colorMode = btn.dataset.colormode;
-                state.activeControl = null; // Close menu after selection
                 updateUI();
                 processCurrentPhoto();
                 haptic('medium');
+            });
+
+            // Fallback for mouse/click (no swiping)
+            btn.addEventListener('click', (e) => {
+                // Only trigger if not a touch device (touchend handles it)
+                if (!('ontouchstart' in window)) {
+                    state.photos[state.currentIndex].settings.colorMode = btn.dataset.colormode;
+                    updateUI();
+                    processCurrentPhoto();
+                    haptic('medium');
+                }
             });
         });
 
@@ -1795,10 +1834,7 @@
         function adjustControl(control, dir) {
             const settings = state.photos[state.currentIndex].settings;
 
-            if (control === 'preset') {
-                // Preset strength: 0-100 range, increment by 5
-                settings.presetStrength = Math.max(0, Math.min(100, settings.presetStrength + (dir * 5)));
-            } else if (control === 'bloom') {
+            if (control === 'bloom') {
                 // Bloom: 0-20 range, increment by 1
                 settings.bloom = Math.max(0, Math.min(20, settings.bloom + dir));
             } else if (control === 'grain') {
