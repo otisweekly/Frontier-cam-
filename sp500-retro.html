@@ -146,13 +146,15 @@
         }
 
         .icon-btn {
-            width: 40px;
+            min-width: 40px;
             height: 40px;
+            padding: 0 8px;
             background: transparent;
             border: none;
-            font-size: 18px;
+            font-size: 8px;
             cursor: pointer;
             color: var(--text-primary);
+            font-family: 'Press Start 2P', monospace;
         }
 
         .icon-btn:active {
@@ -389,73 +391,64 @@
 
         /* Film Box Style Tabs */
         .film-boxes {
-            gap: 12px;
+            gap: 8px;
         }
 
         .film-box {
-            padding: 0;
-            overflow: hidden;
-            min-height: 80px;
+            padding: 12px 8px;
+            min-height: 60px;
         }
 
         .film-box-content {
-            padding: 12px 8px;
-            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
         }
 
         .film-brand {
-            font-size: 7px;
-            opacity: 0.8;
-            letter-spacing: 1px;
+            font-size: 6px;
+            opacity: 0.7;
+            letter-spacing: 0.5px;
         }
 
         .film-name {
-            font-size: 11px;
+            font-size: 9px;
             letter-spacing: 0.5px;
-            font-weight: bold;
         }
 
         .film-iso {
-            font-size: 8px;
-            opacity: 0.9;
+            font-size: 7px;
+            opacity: 0.8;
         }
 
-        /* Film-specific colors */
-        .film-portra {
-            background: linear-gradient(135deg, #f4d4a8 0%, #e8b88a 100%) !important;
-            color: #5a3a2a !important;
+        /* Film-specific colors - solid, simple */
+        .film-c41 {
+            background: #e8be9a !important;
+            color: #3a2a1a !important;
         }
 
-        .film-portra::before {
-            background: linear-gradient(135deg, #e8c89a 0%, #d4a876 100%) !important;
+        .film-c41::before {
+            background: #d4aa86 !important;
         }
 
-        .film-trix {
-            background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%) !important;
+        .film-e6 {
+            background: #e85a3a !important;
             color: #ffffff !important;
         }
 
-        .film-trix::before {
-            background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%) !important;
+        .film-e6::before {
+            background: #d4462a !important;
         }
 
-        .film-ektar {
-            background: linear-gradient(135deg, #ff6b4a 0%, #d4563a 100%) !important;
-            color: #ffffff !important;
+        .film-bw {
+            background: #4a4a4a !important;
+            color: #e0e0e0 !important;
         }
 
-        .film-ektar::before {
-            background: linear-gradient(135deg, #e8573a 0%, #c4462a 100%) !important;
-        }
-
-        .film-box.active {
-            border-top: 3px solid var(--accent);
-            border-left: 3px solid var(--accent);
+        .film-bw::before {
+            background: #3a3a3a !important;
         }
 
         /* Slider label */
@@ -640,7 +633,7 @@
         <div class="header">
             <button class="icon-btn" id="backBtn">←</button>
             <div class="header-title" id="filename">IMAGE_001.JPG</div>
-            <button class="icon-btn" id="darkModeToggle">☀</button>
+            <button class="icon-btn" id="darkModeToggle">LIGHT</button>
         </div>
 
         <!-- Image Preview -->
@@ -688,27 +681,23 @@
             <!-- Color Options Menu - Film Box Style -->
             <div class="control-menu film-boxes" id="colorMenu" style="display: none;">
                 <button class="btn-3d film-box active" data-colormode="none">
-                    <div class="film-box-content">NONE</div>
-                </button>
-                <button class="btn-3d film-box film-portra" data-colormode="portra400">
                     <div class="film-box-content">
-                        <div class="film-brand">KODAK</div>
-                        <div class="film-name">PORTRA</div>
-                        <div class="film-iso">400</div>
+                        <div class="film-name">STANDARD</div>
                     </div>
                 </button>
-                <button class="btn-3d film-box film-trix" data-colormode="trix400">
+                <button class="btn-3d film-box film-c41" data-colormode="portra400">
                     <div class="film-box-content">
-                        <div class="film-brand">KODAK</div>
-                        <div class="film-name">TRI-X</div>
-                        <div class="film-iso">400</div>
+                        <div class="film-name">C41</div>
                     </div>
                 </button>
-                <button class="btn-3d film-box film-ektar" data-colormode="ektachrome">
+                <button class="btn-3d film-box film-e6" data-colormode="ektachrome">
                     <div class="film-box-content">
-                        <div class="film-brand">KODAK</div>
-                        <div class="film-name">EKTAR</div>
-                        <div class="film-iso">100</div>
+                        <div class="film-name">E6</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-bw" data-colormode="trix400">
+                    <div class="film-box-content">
+                        <div class="film-name">B&W</div>
                     </div>
                 </button>
             </div>
@@ -997,13 +986,13 @@
 
             // Update COLOR button value and active state
             const colorNames = {
-                'none': 'NONE',
-                'portra400': 'P400',
-                'trix400': 'TRIX',
-                'ektachrome': 'EKTA'
+                'none': 'STD',
+                'portra400': 'C41',
+                'trix400': 'B&W',
+                'ektachrome': 'E6'
             };
             const colorBtn = document.getElementById('colorBtn');
-            document.getElementById('colorValue').textContent = colorNames[settings.colorMode] || 'NONE';
+            document.getElementById('colorValue').textContent = colorNames[settings.colorMode] || 'STD';
             colorBtn.classList.toggle('active', state.activeControl === 'color' || settings.colorMode !== 'none');
 
             // Update CMY button value and active state
@@ -1638,7 +1627,7 @@
         document.getElementById('darkModeToggle').addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('darkModeToggle').textContent = isDark ? '🌙' : '☀';
+            document.getElementById('darkModeToggle').textContent = isDark ? 'DARK' : 'LIGHT';
             localStorage.setItem('darkMode', isDark ? 'true' : 'false');
             haptic('light');
         });
@@ -1647,7 +1636,7 @@
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
             const toggle = document.getElementById('darkModeToggle');
-            if (toggle) toggle.textContent = '🌙';
+            if (toggle) toggle.textContent = 'DARK';
         }
 
         // Navigation
