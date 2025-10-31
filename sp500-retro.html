@@ -1326,24 +1326,36 @@
             const height = imageData.height;
             const data = imageData.data;
 
-            // Extract highlights into separate buffer
+            // Clarity reduction - subtle overall softening scales with bloom intensity
+            const clarityReduction = Math.floor(intensity * 0.15); // 0-3 pixel softening
+            if (clarityReduction > 0) {
+                const softened = separableGaussianBlur(data, width, height, clarityReduction);
+                const clarityMix = 0.3 + (intensity / 50); // 0.3-0.7 mix
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = data[i] * (1 - clarityMix) + softened[i] * clarityMix;
+                    data[i + 1] = data[i + 1] * (1 - clarityMix) + softened[i + 1] * clarityMix;
+                    data[i + 2] = data[i + 2] * (1 - clarityMix) + softened[i + 2] * clarityMix;
+                }
+            }
+
+            // Extract highlights into separate buffer (lower threshold for more bloom)
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 200) {
-                    const factor = (lum - 200) / 55; // 0-1 for 200-255
+                if (lum > 180) { // Lower threshold from 200 to catch more highlights
+                    const factor = (lum - 180) / 75; // 0-1 for 180-255
                     highlights[i] = data[i] * factor;
                     highlights[i + 1] = data[i + 1] * factor;
                     highlights[i + 2] = data[i + 2] * factor;
                 }
             }
 
-            // Fast separable gaussian blur on highlights
-            const radius = Math.max(2, Math.floor(intensity * 0.8)); // 0-16 pixel radius
+            // Much stronger gaussian blur on highlights for aggressive spreading
+            const radius = Math.max(3, Math.floor(intensity * 2.0)); // 0-40 pixel radius (was 0.8)
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Blend blurred highlights back (additive)
-            const blendStrength = 0.7 + (intensity / 40); // 0.7-1.2 range
+            // Stronger blend for more aggressive bloom spreading
+            const blendStrength = 0.9 + (intensity / 25); // 0.9-1.7 range (was 0.7-1.2)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
