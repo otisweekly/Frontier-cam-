@@ -56,72 +56,84 @@
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
         body { font-family:'PP Fuji',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#3897AF; overflow:hidden; width:100vw; height:100vh; position:fixed; }
 
-        /* UPLOAD SCREEN - Simplified */
-        #uploadSection { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100vh; padding:40px 20px; }
+        /* UPLOAD SCREEN - Updated to match Figma */
+        #uploadSection { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100vh; padding:40px 20px; background:#3897AF; position:relative; }
         #uploadSection.hidden { display:none; }
-        .logo-container { position:relative; margin-bottom:40px; }
-        .logo-container img { width:min(250px, 70vw); height:auto; }
-        .status-lights { position:absolute; right:-30px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:8px; }
-        .status-light { width:10px; height:10px; border-radius:50%; border:2px solid #0A5A6C; opacity:0.3; }
-        .status-light.active { opacity:1; box-shadow:0 0 10px currentColor; }
+        #uploadSection::before { content:''; position:absolute; top:20px; left:50%; transform:translateX(-50%); width:min(320px, 85vw); height:60px; background:linear-gradient(to bottom, #0A5A6C 0%, #0A5A6C 8px, transparent 8px, transparent 16px, #0A5A6C 16px, #0A5A6C 24px, transparent 24px, transparent 32px, #0A5A6C 32px, #0A5A6C 40px, transparent 40px, transparent 48px, #0A5A6C 48px, #0A5A6C 56px, transparent 56px); border-radius:20px 20px 0 0; }
+        .logo-container { position:relative; margin-bottom:40px; padding:40px 50px; border:4px solid #0A5A6C; border-radius:20px; background:rgba(10, 90, 108, 0.2); display:flex; flex-direction:column; align-items:center; gap:8px; }
+        .logo-container::before { content:'DIGITAL PROCESSOR'; font-size:10px; font-weight:700; color:#EEEDF0; letter-spacing:1.5px; }
+        .logo-container img { width:min(280px, 75vw); height:auto; }
+        .status-lights { position:absolute; right:15px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; }
+        .status-light { width:12px; height:12px; border-radius:50%; border:2px solid #0A5A6C; opacity:0.4; }
+        .status-light.active { opacity:1; box-shadow:0 0 12px currentColor; }
         .status-light.green { background:#4ADE80; color:#4ADE80; }
         .status-light.red { background:#EF4444; color:#EF4444; }
-        .upload-label { font-size:10px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:10px; text-align:center; }
-        .upload-btn { width:100px; height:50px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:24px; display:flex; align-items:center; justify-content:center; }
+        .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
+        .upload-btn { width:140px; height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; }
+        .upload-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
         #fileInput { display:none; }
 
         /* EDIT SCREEN - Mobile Optimized */
         #editSection { display:none; flex-direction:column; width:100vw; height:100vh; background:#8C8C8C; position:fixed; top:0; left:0; }
         #editSection.active { display:flex; }
 
-        .edit-header { background:#000; color:#fff; padding:12px 15px; display:flex; align-items:center; justify-content:space-between; min-height:50px; }
-        .header-left { display:flex; align-items:center; gap:10px; }
-        .gallery-btn { width:28px; height:28px; background:none; border:none; cursor:pointer; padding:2px; }
-        .gallery-btn img { width:100%; filter:invert(1); }
-        .filename { font-size:13px; font-weight:500; }
-        .header-right { font-size:20px; cursor:pointer; padding:0 5px; }
+        .edit-header { background:#000; color:#fff; padding:12px 15px; display:flex; align-items:center; justify-content:space-between; min-height:50px; box-shadow:0 2px 4px rgba(0,0,0,0.3); }
+        .header-left { display:flex; align-items:center; gap:12px; }
+        .gallery-btn { width:30px; height:30px; background:#fff; border:2px solid #000; border-radius:4px; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; }
+        .gallery-btn img { width:100%; filter:none; }
+        .filename { font-size:13px; font-weight:600; letter-spacing:0.5px; }
+        .header-right { font-size:24px; cursor:pointer; padding:0 5px; font-weight:700; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden; min-height:0; }
         #canvas { max-width:100%; max-height:100%; object-fit:contain; }
 
-        .edit-footer { background:#8C8C8C; padding:10px 12px; display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; }
+        .edit-footer { background:#8C8C8C; padding:8px; display:flex; flex-direction:column; gap:8px; position:fixed; bottom:0; left:0; right:0; max-height:none; overflow:visible; }
 
-        .footer-top { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-        .action-buttons { display:flex; gap:8px; flex:1; min-width:0; }
-        .action-btn { padding:8px 12px; background:#B3B3B3; border:2px solid #000; border-radius:4px; font-size:10px; font-weight:600; cursor:pointer; text-transform:uppercase; white-space:nowrap; }
+        .footer-top { display:flex; align-items:stretch; justify-content:space-between; gap:8px; height:40px; }
+        .action-buttons { display:flex; gap:4px; flex:1; min-width:0; }
+        .action-btn { padding:0 8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:8px; font-weight:700; cursor:pointer; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 0 #000; transition:all 0.05s; display:flex; align-items:center; justify-content:center; }
+        .action-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
 
-        .nav-controls { display:flex; align-items:center; gap:8px; }
-        .nav-btn { width:32px; height:32px; background:#000; border:none; border-radius:4px; cursor:pointer; color:#fff; font-size:16px; flex-shrink:0; }
-        .photo-counter { font-size:14px; font-weight:600; min-width:50px; text-align:center; }
-        .save-btn { padding:10px 20px; background:#3897AF; border:2px solid #000; border-radius:4px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; }
+        .nav-controls { display:flex; align-items:stretch; gap:4px; }
+        .nav-btn { width:40px; background:#000; border:2px solid #000; border-radius:3px; cursor:pointer; color:#fff; font-size:14px; flex-shrink:0; box-shadow:0 2px 0 #555; transition:all 0.05s; display:flex; align-items:center; justify-content:center; }
+        .nav-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #555; }
+        .photo-counter { font-size:12px; font-weight:700; min-width:40px; text-align:center; display:flex; align-items:center; justify-content:center; }
+        .save-btn { padding:0 16px; background:#3897AF; border:2px solid #000; border-radius:3px; color:#fff; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 2px 0 #0A5A6C; transition:all 0.05s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
+        .save-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #0A5A6C; }
 
-        .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:5px; }
-        .control-tab { padding:8px 6px; background:#B3B3B3; border:2px solid #000; border-radius:4px; font-size:9px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
+        .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
+        .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #000; transition:all 0.05s; justify-content:center; align-items:center; }
         .control-tab.active { background:#000; color:#fff; }
-        .control-tab-value { font-size:10px; }
+        .control-tab:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
+        .control-tab-value { font-size:9px; font-weight:700; }
 
-        .expanded-controls { display:none; padding:12px; background:#B3B3B3; border:2px solid #000; border-radius:4px; margin-top:8px; }
+        .expanded-controls { display:none; padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
         .expanded-controls.active { display:block; }
 
-        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
-        .preset-btn { padding:10px 4px; background:#D4D4D4; border:2px solid #000; border-radius:4px; font-size:9px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; }
+        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; height:40px; }
+        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
+        .preset-btn { background:#D4D4D4; border:2px solid #000; border-radius:3px; font-size:8px; font-weight:700; cursor:pointer; text-align:center; line-height:1.1; box-shadow:0 2px 0 #000; transition:all 0.05s; display:flex; align-items:center; justify-content:center; padding:2px; }
         .preset-btn.active { background:#000; color:#fff; }
+        .preset-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
 
-        .slider-control { display:flex; align-items:center; justify-content:center; gap:10px; }
-        .slider-btn { width:44px; height:44px; background:#D4D4D4; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .slider-btn img { width:22px; height:22px; }
-        .slider-value { min-width:60px; padding:12px 10px; background:#fff; border:2px solid #000; border-radius:4px; font-size:20px; font-weight:700; text-align:center; }
+        .slider-control { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+        .slider-btn { height:70px; background:#D4D4D4; border:2px solid #000; border-radius:3px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 0 #000; transition:all 0.05s; font-size:24px; font-weight:700; }
+        .slider-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
+        .slider-value { height:70px; background:#fff; border:2px solid #000; border-radius:3px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.2); }
 
-        .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
-        .cmyk-slider { padding:6px; border-radius:4px; border:2px solid #000; display:flex; flex-direction:column; gap:4px; }
-        .cmyk-slider.cyan { background:#00FFFF; }
-        .cmyk-slider.magenta { background:#FF00FF; }
-        .cmyk-slider.yellow { background:#FFFF00; }
-        .cmyk-slider.black { background:#666666; }
-        .cmyk-slider .slider-btn { width:100%; height:30px; }
-        .cmyk-slider .slider-btn img { width:16px; height:16px; }
-        .cmyk-slider .slider-value { width:100%; padding:6px 4px; font-size:15px; min-width:0; }
+        .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:4px; }
+        .cmyk-slider { display:flex; flex-direction:column; gap:3px; align-items:stretch; }
+        .cmyk-btn-large { height:40px; background:#D4D4D4; border:2px solid #000; border-radius:3px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 2px 0 #000; transition:all 0.05s; }
+        .cmyk-btn-large:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
+        .cmyk-value { height:40px; background:#fff; border:2px solid #000; border-radius:3px; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 3px rgba(0,0,0,0.2); }
+        .cmyk-color-bar { height:6px; border-radius:2px; border:1px solid #000; }
+        .cmyk-color-bar.cyan { background:#00FFFF; }
+        .cmyk-color-bar.magenta { background:#FF00FF; }
+        .cmyk-color-bar.yellow { background:#FFFF00; }
+        .cmyk-color-bar.black { background:#333; }
+        .cmyk-arrows { display:flex; gap:3px; }
+        .cmyk-arrow-btn { flex:1; height:28px; background:#D4D4D4; border:2px solid #000; border-radius:3px; font-size:12px; cursor:pointer; box-shadow:0 2px 0 #000; transition:all 0.05s; }
+        .cmyk-arrow-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
 
         @media (max-width:360px) {
             .action-btn { font-size:9px; padding:6px 10px; }
@@ -180,15 +192,15 @@
                     <span>PROFILE</span>
                 </button>
                 <button class="control-tab" onclick="toggleControl('tone')">
-                    <span class="control-tab-value" id="toneValue">SHOW-S</span>
+                    <span class="control-tab-value" id="toneValue">NONE</span>
                     <span>TONE</span>
                 </button>
                 <button class="control-tab" onclick="toggleControl('bloom')">
-                    <span class="control-tab-value" id="bloomValue">3</span>
+                    <span class="control-tab-value" id="bloomValue">0</span>
                     <span>BLOOM</span>
                 </button>
                 <button class="control-tab" onclick="toggleControl('grain')">
-                    <span class="control-tab-value" id="grainValue">2</span>
+                    <span class="control-tab-value" id="grainValue">0</span>
                     <span>GRAIN</span>
                 </button>
             </div>
@@ -199,57 +211,77 @@
                     <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
                     <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
                 </div>
-                <div class="cmyk-sliders">
-                    <div class="cmyk-slider cyan">
-                        <button class="slider-btn" onclick="adjustCMYK('c',1)"><img src="Arrow up.svg"></button>
-                        <div class="slider-value" id="cyanValue">0</div>
-                        <button class="slider-btn" onclick="adjustCMYK('c',-1)"><img src="Arrow down.svg"></button>
+                <div class="cmyk-sliders" id="cmykSliders" style="display:none;">
+                    <div class="cmyk-slider">
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('c',-1)">-</button>
+                        <div class="cmyk-value" id="cyanValue">0</div>
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('c',1)">-</button>
+                        <div class="cmyk-color-bar cyan"></div>
+                        <div class="cmyk-arrows">
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('c',-1)">▼</button>
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('c',1)">▲</button>
+                        </div>
                     </div>
-                    <div class="cmyk-slider magenta">
-                        <button class="slider-btn" onclick="adjustCMYK('m',1)"><img src="Arrow up.svg"></button>
-                        <div class="slider-value" id="magentaValue">0</div>
-                        <button class="slider-btn" onclick="adjustCMYK('m',-1)"><img src="Arrow down.svg"></button>
+                    <div class="cmyk-slider">
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('m',-1)">-</button>
+                        <div class="cmyk-value" id="magentaValue">0</div>
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('m',1)">-</button>
+                        <div class="cmyk-color-bar magenta"></div>
+                        <div class="cmyk-arrows">
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('m',-1)">▼</button>
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('m',1)">▲</button>
+                        </div>
                     </div>
-                    <div class="cmyk-slider yellow">
-                        <button class="slider-btn" onclick="adjustCMYK('y',1)"><img src="Arrow up.svg"></button>
-                        <div class="slider-value" id="yellowValue">0</div>
-                        <button class="slider-btn" onclick="adjustCMYK('y',-1)"><img src="Arrow down.svg"></button>
+                    <div class="cmyk-slider">
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('y',-1)">-</button>
+                        <div class="cmyk-value" id="yellowValue">0</div>
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('y',1)">-</button>
+                        <div class="cmyk-color-bar yellow"></div>
+                        <div class="cmyk-arrows">
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('y',-1)">▼</button>
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('y',1)">▲</button>
+                        </div>
                     </div>
-                    <div class="cmyk-slider black">
-                        <button class="slider-btn" onclick="adjustCMYK('k',1)"><img src="Arrow up.svg"></button>
-                        <div class="slider-value" id="blackValue">0</div>
-                        <button class="slider-btn" onclick="adjustCMYK('k',-1)"><img src="Arrow down.svg"></button>
+                    <div class="cmyk-slider">
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('k',-1)">-</button>
+                        <div class="cmyk-value" id="blackValue">0</div>
+                        <button class="cmyk-btn-large" onclick="adjustCMYK('k',1)">-</button>
+                        <div class="cmyk-color-bar black"></div>
+                        <div class="cmyk-arrows">
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('k',-1)">▼</button>
+                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('k',1)">▲</button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="expanded-controls" id="toneControl">
                 <div class="preset-buttons">
-                    <button class="preset-btn" onclick="setTone('none')">NONE</button>
+                    <button class="preset-btn active" onclick="setTone('none')">NONE</button>
                     <button class="preset-btn" onclick="setTone('high-soft')">HIGH<br>SOFT</button>
                     <button class="preset-btn" onclick="setTone('high-hard')">HIGH<br>HARD</button>
-                    <button class="preset-btn active" onclick="setTone('show-soft')">SHOW<br>SOFT</button>
+                    <button class="preset-btn" onclick="setTone('show-soft')">SHOW<br>SOFT</button>
                     <button class="preset-btn" onclick="setTone('show-hard')">SHOW<br>HARD</button>
                 </div>
             </div>
             <div class="expanded-controls" id="bloomControl">
                 <div class="slider-control">
-                    <button class="slider-btn" onclick="adjustBloom(-1)"><img src="Arrow down.svg"></button>
-                    <div class="slider-value" id="bloomValueBig">3</div>
-                    <button class="slider-btn" onclick="adjustBloom(1)"><img src="Arrow up.svg"></button>
+                    <button class="slider-btn" onclick="adjustBloom(-1)">-</button>
+                    <div class="slider-value" id="bloomValueBig">0</div>
+                    <button class="slider-btn" onclick="adjustBloom(1)">-</button>
                 </div>
             </div>
             <div class="expanded-controls" id="grainControl">
                 <div class="slider-control">
-                    <button class="slider-btn" onclick="adjustGrain(-1)"><img src="Arrow down.svg"></button>
-                    <div class="slider-value" id="grainValueBig">2</div>
-                    <button class="slider-btn" onclick="adjustGrain(1)"><img src="Arrow up.svg"></button>
+                    <button class="slider-btn" onclick="adjustGrain(-1)">-</button>
+                    <div class="slider-value" id="grainValueBig">0</div>
+                    <button class="slider-btn" onclick="adjustGrain(1)">-</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'show-soft',bloom:3,grain:2,cyan:0,magenta:0,yellow:0,black:0}};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false};
         function setStatus(s){document.getElementById('statusReady').classList.toggle('active',s==='ready');document.getElementById('statusWait').classList.toggle('active',s!=='ready');}
 
         document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img});}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
@@ -258,7 +290,7 @@
         function nextPhoto(){if(state.currentIndex<state.photos.length-1){state.currentIndex++;renderPhoto();}}
         function backToUpload(){document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#3897AF';}
 
-        function renderPhoto(){const p=state.photos[state.currentIndex];if(!p)return;document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const c=document.getElementById('canvas'),ctx=c.getContext('2d');c.width=p.image.width;c.height=p.image.height;ctx.drawImage(p.image,0,0);applyEffects(ctx,c.width,c.height);}
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const c=document.getElementById('canvas'),ctx=c.getContext('2d',{alpha:false});c.width=p.image.width;c.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,c.width,c.height);state.renderPending=false;});}
 
         function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyTone(d,state.settings.tone);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);}
 
@@ -270,11 +302,11 @@
 
         function applyBloom(ctx,w,h,int){const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*1.5}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/30;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
 
-        function applyGrain(d,int){if(int<1)return;for(let i=0;i<d.length;i+=4){const n=(Math.random()-0.5)*int*8;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*8;for(let i=0;i<d.length;i+=4){const n=(Math.random()-0.5)*strength;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){['profile','tone','bloom','grain'].forEach(ct=>{const el=document.getElementById(ct+'Control');if(ct===c&&!el.classList.contains('active')){el.classList.add('active');state.activeControl=c;}else{el.classList.remove('active');}});document.querySelectorAll('.control-tab').forEach((t,i)=>t.classList.toggle('active',['profile','tone','bloom','grain'][i]===c));}
 
-        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','portra','slide','bw'][i]===p));renderPhoto();}
+        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','portra','slide','bw'][i]===p));document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';renderPhoto();}
 
         function setTone(t){state.settings.tone=t;const lb={none:'NONE','high-soft':'H-SFT','high-hard':'H-HRD','show-soft':'SHOW-S','show-hard':'SHOW-H'};document.getElementById('toneValue').textContent=lb[t];document.querySelectorAll('#toneControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','high-soft','high-hard','show-soft','show-hard'][i]===t));renderPhoto();}
 
@@ -286,8 +318,8 @@
 
         function savePhoto(){const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${state.photos[state.currentIndex].name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}
 
-        function togglePreview(){const modal=document.getElementById('previewModal')||createPreviewModal();modal.style.display=modal.style.display==='flex'?'none':'flex';}
-        function createPreviewModal(){const m=document.createElement('div');m.id='previewModal';m.style.cssText='display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;align-items:center;justify-content:center;';m.onclick=()=>m.style.display='none';const img=document.createElement('img');img.id='previewImg';img.style.cssText='max-width:100%;max-height:100%;object-fit:contain;';m.appendChild(img);document.body.appendChild(m);m.onclick=()=>{img.src=document.getElementById('canvas').toDataURL();m.style.display='flex';};return m;}
+        function togglePreview(){const modal=document.getElementById('previewModal')||createPreviewModal();if(modal.style.display==='flex'){modal.style.display='none';}else{const img=document.getElementById('previewImg');img.src=document.getElementById('canvas').toDataURL();modal.style.display='flex';}}
+        function createPreviewModal(){const m=document.createElement('div');m.id='previewModal';m.style.cssText='display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;align-items:center;justify-content:center;';m.onclick=()=>m.style.display='none';const img=document.createElement('img');img.id='previewImg';img.style.cssText='max-width:100%;max-height:100%;object-fit:contain;';m.appendChild(img);document.body.appendChild(m);return m;}
 
         function toggleDarkMode(){document.body.classList.toggle('dark-mode');const isDark=document.body.classList.contains('dark-mode');document.querySelector('.edit-header').style.background=isDark?'#1a1a1a':'#000';document.querySelector('.edit-footer').style.background=isDark?'#1a1a1a':'#8C8C8C';document.querySelector('.canvas-container').style.background=isDark?'#000':'#8C8C8C';}
 
