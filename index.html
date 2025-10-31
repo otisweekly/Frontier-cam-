@@ -67,7 +67,9 @@
         .status-light { width:12px; height:12px; border-radius:50%; border:2px solid #0A5A6C; opacity:0.4; }
         .status-light.active { opacity:1; box-shadow:0 0 12px currentColor; }
         .status-light.green { background:#4ADE80; color:#4ADE80; }
+        .status-light.green.pulsing { animation:pulse-green 1.5s ease-in-out infinite; }
         .status-light.red { background:#EF4444; color:#EF4444; }
+        @keyframes pulse-green { 0%, 100% { box-shadow:0 0 12px #4ADE80; opacity:1; } 50% { box-shadow:0 0 20px #4ADE80; opacity:0.8; } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
         .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; }
         .upload-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
@@ -146,8 +148,8 @@
         <div class="logo-container">
             <img src="Logo.svg" alt="Frontier">
             <div class="status-lights">
-                <div class="status-light green active" id="statusReady"></div>
-                <div class="status-light red" id="statusWait"></div>
+                <div class="status-light green" id="statusReady"></div>
+                <div class="status-light red active" id="statusWait"></div>
             </div>
         </div>
         <div>
@@ -272,7 +274,10 @@
 
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false};
-        function setStatus(s){document.getElementById('statusReady').classList.toggle('active',s==='ready');document.getElementById('statusWait').classList.toggle('active',s!=='ready');}
+        function setStatus(s){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready');wait.classList.toggle('active',s!=='ready');}
+
+        // Initial status light animation
+        setTimeout(()=>{setStatus('ready');},1000);
 
         document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img});}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
 
