@@ -178,6 +178,15 @@
             transform: scale(0.95);
         }
 
+        .dark-mode-icon {
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        body.dark-mode .dark-mode-icon {
+            opacity: 1;
+        }
+
         /* === UPLOAD SECTION === */
         .upload-section {
             padding: 40px 20px;
@@ -462,7 +471,8 @@
         .control-menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0; /* Full width grid with no gaps */
+            gap: 8px;
+            padding: 0 12px;
         }
 
         .menu-option {
@@ -474,7 +484,7 @@
 
         /* Film Box Style Tabs */
         .film-boxes {
-            gap: 0; /* Full width grid */
+            /* Uses gap from .control-menu */
         }
 
         .film-box {
@@ -555,7 +565,7 @@
         /* Tone Box Style - Similar to film boxes */
         .tone-boxes {
             grid-template-columns: repeat(3, 1fr);
-            gap: 0; /* Full width grid */
+            /* Uses gap from .control-menu */
         }
 
         .tone-box {
@@ -632,6 +642,7 @@
         .control-slider {
             max-width: 300px;
             margin: 0 auto;
+            padding: 0 12px;
         }
 
         .slider-display {
@@ -666,6 +677,7 @@
         .cmy-controls {
             max-width: 400px;
             margin: 0 auto;
+            padding: 0 12px;
         }
 
         .cmy-grid {
@@ -805,7 +817,7 @@
         <div class="header">
             <button class="icon-btn" id="backBtn">&lt; UPLOAD</button>
             <div class="header-title" id="filename">IMAGE_001.JPG</div>
-            <button class="icon-btn" id="darkModeToggle">DARK</button>
+            <button class="icon-btn" id="darkModeToggle">DARK <span class="dark-mode-icon">🌙</span></button>
         </div>
 
         <!-- Image Preview -->
@@ -1463,20 +1475,19 @@
                 // Convert to grayscale (standard luminance formula)
                 const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
 
-                // Aggressive gamma and contrast for punchy, dramatic B&W
+                // Moderate gamma and contrast for classic B&W look
                 let val = gray / 255;
-                val = Math.pow(val, 0.8); // Stronger gamma for deeper shadows
+                val = Math.pow(val, 0.85); // Moderate gamma for tonal depth
 
-                // Apply heavy contrast boost for punchy look
-                val = ((val - 0.5) * 1.45) + 0.5; // +45% contrast (was +25%)
+                // Apply moderate contrast boost
+                val = ((val - 0.5) * 1.3) + 0.5; // +30% contrast (balanced)
                 val = Math.max(0, Math.min(1, val)); // Clamp
 
-                // S-curve for extra punch in midtones
+                // Subtle S-curve for classic film character
                 if (val < 0.5) {
-                    val = val * val * 2; // Darken shadows more aggressively
+                    val = 0.5 * Math.pow(val * 2, 1.15); // Gentle shadow darkening
                 } else {
-                    val = 1 - Math.pow(1 - val, 1.5) * 2; // Brighten highlights
-                    val = Math.min(1, val);
+                    val = 1 - 0.5 * Math.pow((1 - val) * 2, 1.15); // Gentle highlight lift
                 }
 
                 const finalGray = val * 255;
@@ -1821,8 +1832,6 @@
         document.getElementById('darkModeToggle').addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            // Show what you're clicking TO, not what you're IN
-            document.getElementById('darkModeToggle').textContent = isDark ? 'LIGHT' : 'DARK';
             localStorage.setItem('darkMode', isDark ? 'true' : 'false');
             haptic('light');
         });
@@ -1830,8 +1839,6 @@
         // Load dark mode preference
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
-            const toggle = document.getElementById('darkModeToggle');
-            if (toggle) toggle.textContent = 'LIGHT'; // Show what you can switch TO
         }
 
         // Navigation
