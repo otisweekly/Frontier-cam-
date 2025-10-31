@@ -125,8 +125,7 @@
         }
 
         body.dark-mode .btn-3d.active {
-            background: #2a2a2a;
-            border-color: var(--accent);
+            background: #3a3a3a;
         }
 
         .btn-primary-3d {
@@ -1208,12 +1207,12 @@
 
             // Update GRAIN button value and active state
             const grainBtn = document.getElementById('grainBtn');
-            document.getElementById('grainValue').textContent = settings.grain;
+            document.getElementById('grainValue').textContent = settings.grain.toFixed(1);
             grainBtn.classList.toggle('active', state.activeControl === 'grain' || settings.grain > 0);
 
             // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
-            document.getElementById('grainDisplay').textContent = settings.grain;
+            document.getElementById('grainDisplay').textContent = settings.grain.toFixed(1);
 
             // Update film box strength displays
             document.querySelectorAll('.film-strength').forEach(el => {
@@ -2029,8 +2028,8 @@
                 // Bloom: 0-20 range, increment by 1
                 settings.bloom = Math.max(0, Math.min(20, settings.bloom + dir));
             } else if (control === 'grain') {
-                // Grain: 0-10 range, increment by 1
-                settings.grain = Math.max(0, Math.min(10, settings.grain + dir));
+                // Grain: 0-10 range, increment by 0.5 for more subtle steps
+                settings.grain = Math.max(0, Math.min(10, settings.grain + (dir * 0.5)));
             } else if (control === 'cyan') {
                 // Cyan: -10 to +10 range, increment by 1
                 settings.cyan = Math.max(-10, Math.min(10, settings.cyan + dir));
