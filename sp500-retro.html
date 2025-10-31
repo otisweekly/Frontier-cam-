@@ -1163,11 +1163,11 @@
 
         function applyBloom(imageData, intensity) {
             // Bloom effect: Extract highlights, blur, and blend back
-            // Intensity 0-20 maps to radius 0-10
+            // Intensity 0-20 maps to radius 0-30 (softer, more blurred)
             const width = imageData.width;
             const height = imageData.height;
             const data = imageData.data;
-            const radius = Math.floor(intensity / 2); // 0-10 pixel radius
+            const radius = Math.floor(intensity * 1.5); // 0-30 pixel radius for softer bloom
 
             if (radius === 0) return;
 
@@ -1184,11 +1184,12 @@
                 }
             }
 
-            // Simple box blur on highlights (fast approximation)
-            const blurred = boxBlur(highlights, width, height, radius);
+            // Multiple blur passes for smoother gaussian-like effect
+            let blurred = boxBlur(highlights, width, height, radius);
+            blurred = boxBlur(blurred, width, height, Math.floor(radius / 2)); // Second pass
 
             // Blend blurred highlights back (additive)
-            const blendStrength = 0.6; // 60% blend
+            const blendStrength = 0.5; // 50% blend for subtler effect
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
