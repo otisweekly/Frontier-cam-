@@ -47,8 +47,13 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             min-height: 100vh;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            margin: 0;
+            padding: 0;
+        }
+
+        body.preview-active {
+            overflow: hidden;
+            height: 100vh;
         }
 
         /* === RETRO 3D BUTTON STYLE === */
@@ -184,8 +189,16 @@
         .preview-section {
             display: none;
             flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
             height: 100vh;
+            height: 100dvh; /* Use dynamic viewport height on mobile */
             background: #c0c0c0;
+            z-index: 10;
         }
 
         .preview-section.active {
@@ -304,11 +317,9 @@
 
         /* === CONTROLS === */
         .controls {
-            padding: 16px 24px 24px 24px;
+            padding: 16px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
             background: #c0c0c0;
-            height: 200px;
             min-height: 200px;
-            max-height: 200px;
             overflow: hidden;
         }
 
@@ -594,11 +605,13 @@
 
                 updateProgress(100);
 
+                // Switch to preview mode
                 document.getElementById('uploadSection').classList.remove('active');
                 document.getElementById('previewSection').classList.add('active');
+                document.body.classList.add('preview-active');
 
-                // Scroll to top of edit screen
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Reset scroll position
+                window.scrollTo(0, 0);
 
                 // Process first photo with default settings
                 processCurrentPhoto();
