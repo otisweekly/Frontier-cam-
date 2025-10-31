@@ -387,6 +387,86 @@
             text-align: center;
         }
 
+        /* Film Box Style Tabs */
+        .film-boxes {
+            gap: 12px;
+        }
+
+        .film-box {
+            padding: 0;
+            overflow: hidden;
+            min-height: 80px;
+        }
+
+        .film-box-content {
+            padding: 12px 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .film-brand {
+            font-size: 7px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .film-name {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .film-iso {
+            font-size: 8px;
+            opacity: 0.9;
+        }
+
+        /* Film-specific colors */
+        .film-portra {
+            background: linear-gradient(135deg, #f4d4a8 0%, #e8b88a 100%) !important;
+            color: #5a3a2a !important;
+        }
+
+        .film-portra::before {
+            background: linear-gradient(135deg, #e8c89a 0%, #d4a876 100%) !important;
+        }
+
+        .film-trix {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .film-trix::before {
+            background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%) !important;
+        }
+
+        .film-ektar {
+            background: linear-gradient(135deg, #ff6b4a 0%, #d4563a 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .film-ektar::before {
+            background: linear-gradient(135deg, #e8573a 0%, #c4462a 100%) !important;
+        }
+
+        .film-box.active {
+            border-top: 3px solid var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Slider label */
+        .slider-label {
+            font-size: 8px;
+            text-align: center;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
         /* Control Sliders */
         .control-slider {
             max-width: 300px;
@@ -605,12 +685,42 @@
 
         <!-- Dynamic Controls (shown based on active button) -->
         <div class="controls" id="controls">
-            <!-- Color Options Menu -->
-            <div class="control-menu" id="colorMenu" style="display: none;">
-                <button class="btn-3d menu-option active" data-colormode="none">NONE</button>
-                <button class="btn-3d menu-option" data-colormode="portra400">PORTRA</button>
-                <button class="btn-3d menu-option" data-colormode="trix400">TRI-X</button>
-                <button class="btn-3d menu-option" data-colormode="ektachrome">EKTAR</button>
+            <!-- Color Options Menu - Film Box Style -->
+            <div class="control-menu film-boxes" id="colorMenu" style="display: none;">
+                <button class="btn-3d film-box active" data-colormode="none">
+                    <div class="film-box-content">NONE</div>
+                </button>
+                <button class="btn-3d film-box film-portra" data-colormode="portra400">
+                    <div class="film-box-content">
+                        <div class="film-brand">KODAK</div>
+                        <div class="film-name">PORTRA</div>
+                        <div class="film-iso">400</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-trix" data-colormode="trix400">
+                    <div class="film-box-content">
+                        <div class="film-brand">KODAK</div>
+                        <div class="film-name">TRI-X</div>
+                        <div class="film-iso">400</div>
+                    </div>
+                </button>
+                <button class="btn-3d film-box film-ektar" data-colormode="ektachrome">
+                    <div class="film-box-content">
+                        <div class="film-brand">KODAK</div>
+                        <div class="film-name">EKTAR</div>
+                        <div class="film-iso">100</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Preset Strength Control -->
+            <div class="control-slider" id="presetControls" style="display: none;">
+                <div class="slider-label">STRENGTH</div>
+                <div class="slider-display" id="presetDisplay">100%</div>
+                <div class="slider-buttons">
+                    <button class="btn-3d slider-btn" data-control="preset" data-dir="-">-</button>
+                    <button class="btn-3d slider-btn" data-control="preset" data-dir="+">+</button>
+                </div>
             </div>
 
             <!-- SOFT Mode Options Menu -->
@@ -698,6 +808,7 @@
             activeControl: null,  // which button is active
             defaultSettings: {
                 colorMode: 'none',       // none, portra400, trix400, ektachrome
+                presetStrength: 100,     // 0-100 (percentage)
                 softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
                 bloom: 0,                // 0-20
                 grain: 0,                // 0-10
@@ -851,6 +962,7 @@
 
             // Hide all control panels
             document.getElementById('colorMenu').style.display = 'none';
+            document.getElementById('presetControls').style.display = 'none';
             document.getElementById('softMenu').style.display = 'none';
             document.getElementById('cmyControls').style.display = 'none';
             document.getElementById('bloomControls').style.display = 'none';
@@ -859,6 +971,10 @@
             // Show active control panel
             if (state.activeControl === 'color') {
                 document.getElementById('colorMenu').style.display = 'grid';
+                // Show preset strength if a preset is selected
+                if (settings.colorMode !== 'none') {
+                    document.getElementById('presetControls').style.display = 'block';
+                }
             } else if (state.activeControl === 'soft') {
                 document.getElementById('softMenu').style.display = 'grid';
             } else if (state.activeControl === 'cmy') {
@@ -921,6 +1037,7 @@
             // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
             document.getElementById('grainDisplay').textContent = settings.grain;
+            document.getElementById('presetDisplay').textContent = `${settings.presetStrength}%`;
 
             // Update CMY displays
             document.getElementById('cyanDisplay').textContent = settings.cyan > 0 ? `+${settings.cyan}` : settings.cyan;
@@ -1050,19 +1167,20 @@
                 imageData.height
             );
 
-            // Apply color mode (film stock)
+            // Apply color mode (film stock) with strength
+            const presetStrength = settings.presetStrength / 100; // Convert to 0-1 range
             switch (settings.colorMode) {
                 case 'none':
                     // No film stock processing
                     break;
                 case 'portra400':
-                    applyPortra400(output);
+                    applyPortra400(output, presetStrength);
                     break;
                 case 'trix400':
-                    applyTriX(output);
+                    applyTriX(output, presetStrength);
                     break;
                 case 'ektachrome':
-                    applyEktachrome(output);
+                    applyEktachrome(output, presetStrength);
                     break;
             }
 
@@ -1118,15 +1236,19 @@
             }
         }
 
-        function applyPortra400(imageData) {
+        function applyPortra400(imageData, strength = 1.0) {
             // Kodak Portra 400: Authentic Frontier SP-3000 characteristics
             // Key: Natural skin tones with slight warmth
             const data = imageData.data;
 
             for (let i = 0; i < data.length; i += 4) {
-                let r = data[i];
-                let g = data[i + 1];
-                let b = data[i + 2];
+                const origR = data[i];
+                const origG = data[i + 1];
+                const origB = data[i + 2];
+
+                let r = origR;
+                let g = origG;
+                let b = origB;
 
                 // Get hue for skin tone protection
                 const max = Math.max(r, g, b);
@@ -1203,18 +1325,23 @@
                 g = gray + saturation * (g - gray);
                 b = gray + saturation * (b - gray);
 
-                data[i] = Math.min(255, Math.max(0, r));
-                data[i + 1] = Math.min(255, Math.max(0, g));
-                data[i + 2] = Math.min(255, Math.max(0, b));
+                // Blend between original and processed based on strength
+                data[i] = Math.min(255, Math.max(0, origR + (r - origR) * strength));
+                data[i + 1] = Math.min(255, Math.max(0, origG + (g - origG) * strength));
+                data[i + 2] = Math.min(255, Math.max(0, origB + (b - origB) * strength));
             }
         }
 
-        function applyTriX(imageData) {
+        function applyTriX(imageData, strength = 1.0) {
             // Kodak Tri-X 400: High contrast B&W, iconic street photography film
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
+                const origR = data[i];
+                const origG = data[i + 1];
+                const origB = data[i + 2];
+
                 // Convert to grayscale (standard luminance formula)
-                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                const gray = 0.299 * origR + 0.587 * origG + 0.114 * origB;
 
                 // Contrast +25 and gamma 0.85 for punchy B&W look
                 let val = gray / 255;
@@ -1226,19 +1353,24 @@
 
                 const finalGray = val * 255;
 
-                data[i] = finalGray;
-                data[i + 1] = finalGray;
-                data[i + 2] = finalGray;
+                // Blend between original and processed based on strength
+                data[i] = origR + (finalGray - origR) * strength;
+                data[i + 1] = origG + (finalGray - origG) * strength;
+                data[i + 2] = origB + (finalGray - origB) * strength;
             }
         }
 
-        function applyEktachrome(imageData) {
+        function applyEktachrome(imageData, strength = 1.0) {
             // Kodak Ektachrome E100: Vivid saturated slide film, punchy colors
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                let r = data[i];
-                let g = data[i + 1];
-                let b = data[i + 2];
+                const origR = data[i];
+                const origG = data[i + 1];
+                const origB = data[i + 2];
+
+                let r = origR;
+                let g = origG;
+                let b = origB;
 
                 // Color shifts: Red +5, Blue +8, Green 0
                 r = r + 5;
@@ -1255,9 +1387,10 @@
                 g = ((g / 255 - 0.5) * 1.15 + 0.5) * 255;
                 b = ((b / 255 - 0.5) * 1.15 + 0.5) * 255;
 
-                data[i] = Math.min(255, Math.max(0, r));
-                data[i + 1] = Math.min(255, Math.max(0, g));
-                data[i + 2] = Math.min(255, Math.max(0, b));
+                // Blend between original and processed based on strength
+                data[i] = Math.min(255, Math.max(0, origR + (r - origR) * strength));
+                data[i + 1] = Math.min(255, Math.max(0, origG + (g - origG) * strength));
+                data[i + 2] = Math.min(255, Math.max(0, origB + (b - origB) * strength));
             }
         }
 
@@ -1673,7 +1806,10 @@
         function adjustControl(control, dir) {
             const settings = state.photos[state.currentIndex].settings;
 
-            if (control === 'bloom') {
+            if (control === 'preset') {
+                // Preset strength: 0-100 range, increment by 5
+                settings.presetStrength = Math.max(0, Math.min(100, settings.presetStrength + (dir * 5)));
+            } else if (control === 'bloom') {
                 // Bloom: 0-20 range, increment by 1
                 settings.bloom = Math.max(0, Math.min(20, settings.bloom + dir));
             } else if (control === 'grain') {
