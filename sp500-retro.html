@@ -49,7 +49,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: none;
         }
 
         /* Light mode (default) */
@@ -1766,15 +1766,15 @@
             }
         }
 
-        // Debounce processing to prevent freezing on rapid clicks
-        let processingTimeout = null;
+        // Immediate processing with requestAnimationFrame for smooth, lightning-fast updates
+        let processingFrame = null;
         function processCurrentPhoto() {
-            clearTimeout(processingTimeout);
-            processingTimeout = setTimeout(() => {
+            cancelAnimationFrame(processingFrame);
+            processingFrame = requestAnimationFrame(() => {
                 const photo = state.photos[state.currentIndex];
                 photo.processed = processImage(photo.original, photo.settings);
                 renderPreview();
-            }, 50); // 50ms debounce for smooth but responsive updates
+            });
         }
 
         // ========================================
