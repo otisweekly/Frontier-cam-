@@ -597,6 +597,9 @@
                 document.getElementById('uploadSection').classList.remove('active');
                 document.getElementById('previewSection').classList.add('active');
 
+                // Scroll to top of edit screen
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
                 // Process first photo with default settings
                 processCurrentPhoto();
                 updateUI();
