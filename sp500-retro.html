@@ -66,7 +66,7 @@
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
             font-weight: bold;
-            transition: all 0.1s;
+            transition: none;
         }
 
         .btn-3d::before {
@@ -300,15 +300,15 @@
         /* === MODE BUTTONS === */
         .mode-buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 0;
             background: #c0c0c0;
         }
 
         .mode-btn {
-            padding: 12px 8px;
-            font-size: 10px;
-            letter-spacing: 1px;
+            padding: 12px 4px;
+            font-size: 8px;
+            letter-spacing: 0.5px;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -347,11 +347,11 @@
             background: #fff;
             border-top: 2px solid #808080;
             border-left: 2px solid #808080;
-            padding: 16px;
+            padding: 12px;
             text-align: center;
-            font-size: 20px;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
 
         .slider-buttons {
@@ -361,9 +361,55 @@
         }
 
         .slider-btn {
-            padding: 16px;
-            font-size: 20px;
+            padding: 12px;
+            font-size: 14px;
             text-align: center;
+        }
+
+        /* CMY Controls */
+        .cmy-controls {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .cmy-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .cmy-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cmy-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .cmy-value {
+            background: #fff;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 12px;
+            min-width: 40px;
+        }
+
+        .cmy-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .cmy-btn {
+            padding: 6px 10px;
+            font-size: 10px;
+            min-width: 32px;
         }
 
         /* === LOADING === */
@@ -475,8 +521,9 @@
 
         <!-- Mode Buttons -->
         <div class="mode-buttons">
-            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">PORTRA</button>
-            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">STANDARD</button>
+            <button class="btn-3d mode-btn" id="colorBtn" data-mode="color">COLOR</button>
+            <button class="btn-3d mode-btn" id="cmyBtn" data-mode="cmy">CMY</button>
+            <button class="btn-3d mode-btn" id="softBtn" data-mode="soft">SOFT</button>
             <button class="btn-3d mode-btn" id="bloomBtn" data-mode="bloom">BLOOM</button>
             <button class="btn-3d mode-btn" id="grainBtn" data-mode="grain">GRAIN</button>
         </div>
@@ -485,17 +532,56 @@
         <div class="controls" id="controls">
             <!-- Color Options Menu -->
             <div class="control-menu" id="colorMenu" style="display: none;">
-                <button class="btn-3d menu-option active" data-colormode="portra400">PORTRA 400</button>
-                <button class="btn-3d menu-option" data-colormode="trix400">TRI-X (B&W)</button>
-                <button class="btn-3d menu-option" data-colormode="ektachrome">EKTACHROME</button>
+                <button class="btn-3d menu-option active" data-colormode="none">NONE</button>
+                <button class="btn-3d menu-option" data-colormode="portra400">PORTRA</button>
+                <button class="btn-3d menu-option" data-colormode="trix400">TRI-X</button>
+                <button class="btn-3d menu-option" data-colormode="ektachrome">EKTAR</button>
+            </div>
+
+            <!-- CMY + Density Controls -->
+            <div class="cmy-controls" id="cmyControls" style="display: none;">
+                <div class="cmy-grid">
+                    <div class="cmy-item">
+                        <div class="cmy-label">C</div>
+                        <div class="cmy-value" id="cyanDisplay">0</div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="cyan" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="cyan" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-label">M</div>
+                        <div class="cmy-value" id="magentaDisplay">0</div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="magenta" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="magenta" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-label">Y</div>
+                        <div class="cmy-value" id="yellowDisplay">0</div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="yellow" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="yellow" data-dir="+">+</button>
+                        </div>
+                    </div>
+                    <div class="cmy-item">
+                        <div class="cmy-label">D</div>
+                        <div class="cmy-value" id="densityDisplay">0</div>
+                        <div class="cmy-buttons">
+                            <button class="btn-3d cmy-btn" data-control="density" data-dir="-">-</button>
+                            <button class="btn-3d cmy-btn" data-control="density" data-dir="+">+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Bloom Controls -->
             <div class="control-slider" id="bloomControls" style="display: none;">
                 <div class="slider-display" id="bloomDisplay">0</div>
                 <div class="slider-buttons">
-                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="-">▼</button>
-                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="+">▲</button>
+                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="-">-</button>
+                    <button class="btn-3d slider-btn" data-control="bloom" data-dir="+">+</button>
                 </div>
             </div>
 
@@ -503,8 +589,8 @@
             <div class="control-slider" id="grainControls" style="display: none;">
                 <div class="slider-display" id="grainDisplay">0</div>
                 <div class="slider-buttons">
-                    <button class="btn-3d slider-btn" data-control="grain" data-dir="-">▼</button>
-                    <button class="btn-3d slider-btn" data-control="grain" data-dir="+">▲</button>
+                    <button class="btn-3d slider-btn" data-control="grain" data-dir="-">-</button>
+                    <button class="btn-3d slider-btn" data-control="grain" data-dir="+">+</button>
                 </div>
             </div>
         </div>
@@ -528,10 +614,14 @@
             currentIndex: 0,
             activeControl: null,  // which button is active
             defaultSettings: {
-                colorMode: 'portra400',  // portra400, trix400, ektachrome
+                colorMode: 'none',       // none, portra400, trix400, ektachrome
                 softMode: 'STANDARD',    // STANDARD, SOFT, SHADOW SOFT, HIGHLIGHT SOFT
                 bloom: 0,                // 0-20
-                grain: 0                 // 0-10 (default 0 = no grain)
+                grain: 0,                // 0-10
+                cyan: 0,                 // -50 to +50
+                magenta: 0,              // -50 to +50
+                yellow: 0,               // -50 to +50
+                density: 0               // -50 to +50
             },
             zoom: {
                 scale: 1,
@@ -678,12 +768,15 @@
 
             // Hide all control panels
             document.getElementById('colorMenu').style.display = 'none';
+            document.getElementById('cmyControls').style.display = 'none';
             document.getElementById('bloomControls').style.display = 'none';
             document.getElementById('grainControls').style.display = 'none';
 
             // Show active control panel
             if (state.activeControl === 'color') {
                 document.getElementById('colorMenu').style.display = 'grid';
+            } else if (state.activeControl === 'cmy') {
+                document.getElementById('cmyControls').style.display = 'block';
             } else if (state.activeControl === 'bloom') {
                 document.getElementById('bloomControls').style.display = 'block';
             } else if (state.activeControl === 'grain') {
@@ -697,41 +790,46 @@
 
             // Update COLOR button label and active state
             const colorNames = {
+                'none': 'COLOR',
                 'portra400': 'PORTRA',
                 'trix400': 'TRI-X',
                 'ektachrome': 'EKTAR'
             };
             const colorBtn = document.getElementById('colorBtn');
             colorBtn.textContent = colorNames[settings.colorMode] || 'COLOR';
-            // Active if panel is open OR if non-default film
-            colorBtn.classList.toggle('active', state.activeControl === 'color');
+            colorBtn.classList.toggle('active', state.activeControl === 'color' || settings.colorMode !== 'none');
+
+            // Update CMY button active state
+            const cmyBtn = document.getElementById('cmyBtn');
+            const cmyActive = settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0;
+            cmyBtn.classList.toggle('active', state.activeControl === 'cmy' || cmyActive);
 
             // Update SOFT button label and active state
             const softBtn = document.getElementById('softBtn');
             softBtn.textContent = settings.softMode;
-            // Active if panel is open OR if non-standard mode
             softBtn.classList.toggle('active', settings.softMode !== 'STANDARD');
 
             // Update BLOOM button label and active state
             const bloomBtn = document.getElementById('bloomBtn');
-            const bloomText = settings.bloom > 0 ? `BLOOM (+${settings.bloom})` : 'BLOOM';
+            const bloomText = settings.bloom > 0 ? `+${settings.bloom}` : 'BLOOM';
             bloomBtn.textContent = bloomText;
-            // Active if panel is open OR if bloom > 0
             bloomBtn.classList.toggle('active', state.activeControl === 'bloom' || settings.bloom > 0);
 
             // Update GRAIN button label and active state
             const grainBtn = document.getElementById('grainBtn');
-            let grainText = 'GRAIN';
-            if (settings.grain > 0) {
-                grainText = `GRAIN (+${settings.grain})`;
-            }
+            const grainText = settings.grain > 0 ? `+${settings.grain}` : 'GRAIN';
             grainBtn.textContent = grainText;
-            // Active if panel is open OR if grain > 0
             grainBtn.classList.toggle('active', state.activeControl === 'grain' || settings.grain > 0);
 
             // Update slider displays
             document.getElementById('bloomDisplay').textContent = settings.bloom;
             document.getElementById('grainDisplay').textContent = settings.grain;
+
+            // Update CMY displays
+            document.getElementById('cyanDisplay').textContent = settings.cyan > 0 ? `+${settings.cyan}` : settings.cyan;
+            document.getElementById('magentaDisplay').textContent = settings.magenta > 0 ? `+${settings.magenta}` : settings.magenta;
+            document.getElementById('yellowDisplay').textContent = settings.yellow > 0 ? `+${settings.yellow}` : settings.yellow;
+            document.getElementById('densityDisplay').textContent = settings.density > 0 ? `+${settings.density}` : settings.density;
         }
 
         // Pinch to zoom and tap to preview original
@@ -848,6 +946,9 @@
 
             // Apply color mode (film stock)
             switch (settings.colorMode) {
+                case 'none':
+                    // No film stock processing
+                    break;
                 case 'portra400':
                     applyPortra400(output);
                     break;
@@ -857,6 +958,11 @@
                 case 'ektachrome':
                     applyEktachrome(output);
                     break;
+            }
+
+            // Apply CMY + Density
+            if (settings.cyan !== 0 || settings.magenta !== 0 || settings.yellow !== 0 || settings.density !== 0) {
+                applyCMY(output, settings.cyan, settings.magenta, settings.yellow, settings.density);
             }
 
             // Apply soft mode (tone curves)
@@ -882,10 +988,28 @@
 
             // Apply grain (0-10 range, film-specific)
             if (settings.grain > 0) {
-                applyRealisticGrain(output, settings.grain, settings.colorMode);
+                applyRealisticGrain(output, settings.grain, settings.colorMode || 'none');
             }
 
             return output;
+        }
+
+        function applyCMY(imageData, cyan, magenta, yellow, density) {
+            const data = imageData.data;
+
+            // Convert CMY adjustments to RGB shifts
+            // CMY range: -50 to +50, map to pixel adjustments
+            const cyanShift = -cyan * 2.55;    // More cyan = less red
+            const magentaShift = -magenta * 2.55; // More magenta = less green
+            const yellowShift = -yellow * 2.55;   // More yellow = less blue
+            const densityShift = -density * 2.55; // More density = darker overall
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Apply CMY shifts
+                data[i] = Math.min(255, Math.max(0, data[i] + cyanShift + densityShift));         // Red
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + magentaShift + densityShift)); // Green
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + yellowShift + densityShift));  // Blue
+            }
         }
 
         function applyPortra400(imageData) {
@@ -1130,6 +1254,11 @@
                 grainSize = 1.0;
                 grainStrength = intensity * 8; // Scale 0-10 to 0-80 (more visible)
                 lumWeighting = 'uniform'; // Even distribution
+            } else {
+                // Default (none): Medium grain
+                grainSize = 1.5;
+                grainStrength = intensity * 12;
+                lumWeighting = 'uniform';
             }
 
             for (let i = 0; i < data.length; i += 4) {
@@ -1152,23 +1281,11 @@
                 // Calculate final grain amount
                 const grainAmount = grainStrength * lumFactor * grainSize;
 
-                // Apply grain
-                if (filmStock === 'trix400') {
-                    // B&W: Monochrome grain
-                    const noise = (Math.random() - 0.5) * grainAmount;
-                    data[i] = Math.min(255, Math.max(0, data[i] + noise));
-                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
-                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
-                } else {
-                    // Color: Chromatic grain (different per channel)
-                    const noiseR = (Math.random() - 0.5) * grainAmount;
-                    const noiseG = (Math.random() - 0.5) * grainAmount * 0.9;
-                    const noiseB = (Math.random() - 0.5) * grainAmount * 1.1;
-
-                    data[i] = Math.min(255, Math.max(0, data[i] + noiseR));
-                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noiseG));
-                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noiseB));
-                }
+                // Apply monochrome grain only (no color noise)
+                const noise = (Math.random() - 0.5) * grainAmount;
+                data[i] = Math.min(255, Math.max(0, data[i] + noise));
+                data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+                data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
             }
         }
 
@@ -1232,6 +1349,17 @@
                 state.activeControl = null; // Close if already open
             } else {
                 state.activeControl = 'color'; // Open menu
+            }
+            updateUI();
+            haptic('light');
+        });
+
+        // CMY button - opens CMY controls
+        document.getElementById('cmyBtn').addEventListener('click', () => {
+            if (state.activeControl === 'cmy') {
+                state.activeControl = null; // Close if already open
+            } else {
+                state.activeControl = 'cmy'; // Open controls
             }
             updateUI();
             haptic('light');
@@ -1330,12 +1458,34 @@
             } else if (control === 'grain') {
                 // Grain: 0-10 range, increment by 1
                 settings.grain = Math.max(0, Math.min(10, settings.grain + dir));
+            } else if (control === 'cyan') {
+                // Cyan: -50 to +50 range, increment by 5
+                settings.cyan = Math.max(-50, Math.min(50, settings.cyan + (dir * 5)));
+            } else if (control === 'magenta') {
+                // Magenta: -50 to +50 range, increment by 5
+                settings.magenta = Math.max(-50, Math.min(50, settings.magenta + (dir * 5)));
+            } else if (control === 'yellow') {
+                // Yellow: -50 to +50 range, increment by 5
+                settings.yellow = Math.max(-50, Math.min(50, settings.yellow + (dir * 5)));
+            } else if (control === 'density') {
+                // Density: -50 to +50 range, increment by 5
+                settings.density = Math.max(-50, Math.min(50, settings.density + (dir * 5)));
             }
 
             updateUI();
             processCurrentPhoto();
             haptic('light');
         }
+
+        // CMY button event listeners
+        document.querySelectorAll('.cmy-btn').forEach(btn => {
+            const control = btn.dataset.control;
+            const dir = btn.dataset.dir === '+' ? 1 : -1;
+
+            btn.addEventListener('click', () => {
+                adjustControl(control, dir);
+            });
+        });
 
         // Save button
         document.getElementById('saveBtn').addEventListener('click', async () => {
