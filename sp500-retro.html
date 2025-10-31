@@ -244,6 +244,9 @@
             background: #424242;
             border: 2px solid #808080;
             overflow: hidden;
+            min-height: 60vh; /* Taller preview, scales with screen */
+            max-height: 70vh; /* Don't get too tall on large screens */
+            margin: 12px 0; /* Margin above and below photo */
         }
 
         .preview-canvas {
@@ -369,7 +372,7 @@
 
         /* === CONTROLS === */
         .controls {
-            padding: 16px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
+            padding: 16px 0 calc(24px + env(safe-area-inset-bottom)) 0; /* Remove horizontal padding */
             background: var(--bg-primary);
             min-height: 200px;
             overflow: hidden;
@@ -379,7 +382,7 @@
         .control-menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 0; /* Full width grid with no gaps */
         }
 
         .menu-option {
@@ -391,7 +394,7 @@
 
         /* Film Box Style Tabs */
         .film-boxes {
-            gap: 8px;
+            gap: 0; /* Full width grid */
         }
 
         .film-box {
@@ -441,38 +444,38 @@
             display: none;
         }
 
-        /* Film-specific colors - solid, simple */
+        /* Film-specific colors - improved contrast for accessibility */
         .film-c41 {
-            background: #e8be9a !important;
-            color: #3a2a1a !important;
+            background: #d4a876 !important; /* Darker tan for better contrast */
+            color: #2a1a0a !important; /* Darker text */
         }
 
         .film-c41::before {
-            background: #d4aa86 !important;
+            background: #c09462 !important;
         }
 
         .film-e6 {
-            background: #e85a3a !important;
+            background: #d4462a !important; /* Darker orange */
             color: #ffffff !important;
         }
 
         .film-e6::before {
-            background: #d4462a !important;
+            background: #c03a1a !important;
         }
 
         .film-bw {
-            background: #4a4a4a !important;
-            color: #e0e0e0 !important;
+            background: #3a3a3a !important; /* Darker gray */
+            color: #f0f0f0 !important; /* Brighter text */
         }
 
         .film-bw::before {
-            background: #3a3a3a !important;
+            background: #2a2a2a !important;
         }
 
         /* Tone Box Style - Similar to film boxes */
         .tone-boxes {
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 0; /* Full width grid */
         }
 
         .tone-box {
@@ -490,50 +493,50 @@
             text-align: center;
         }
 
-        /* Tone-specific colors */
+        /* Tone-specific colors - improved contrast */
         .tone-soft {
-            background: #9ab8d4 !important;
-            color: #1a2a3a !important;
+            background: #86a4c0 !important; /* Darker blue */
+            color: #0a1a2a !important; /* Darker text */
         }
 
         .tone-soft::before {
-            background: #86a4c0 !important;
+            background: #7290ac !important;
         }
 
         .tone-hard {
-            background: #d4869a !important;
-            color: #3a1a2a !important;
+            background: #c07286 !important; /* Darker pink */
+            color: #2a0a1a !important; /* Darker text */
         }
 
         .tone-hard::before {
-            background: #c07286 !important;
+            background: #ac5e72 !important;
         }
 
         .tone-shadow-soft {
-            background: #6a5a7a !important;
-            color: #e0d0e0 !important;
+            background: #5a4a6a !important; /* Darker purple */
+            color: #f0e0f0 !important; /* Brighter text */
         }
 
         .tone-shadow-soft::before {
-            background: #5a4a6a !important;
+            background: #4a3a5a !important;
         }
 
         .tone-shadow-hard {
-            background: #4a3a5a !important;
-            color: #e0d0e0 !important;
+            background: #3a2a4a !important; /* Darker purple */
+            color: #f0e0f0 !important; /* Brighter text */
         }
 
         .tone-shadow-hard::before {
-            background: #3a2a4a !important;
+            background: #2a1a3a !important;
         }
 
         .tone-highlight {
-            background: #f4e8a8 !important;
-            color: #4a3a1a !important;
+            background: #e0d494 !important; /* Darker yellow */
+            color: #3a2a0a !important; /* Darker text */
         }
 
         .tone-highlight::before {
-            background: #e0d494 !important;
+            background: #ccc080 !important;
         }
 
         /* Slider label */
