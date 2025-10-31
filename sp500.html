@@ -549,7 +549,7 @@
     <div class="header">
         <h1>SP500</h1>
         <div class="header-actions">
-            <button class="icon-btn" id="resetBtn" title="Reset Settings">↻</button>
+            <button class="icon-btn" id="backBtn" title="Back to Upload">←</button>
             <button class="icon-btn" id="infoBtn" title="Info">ⓘ</button>
         </div>
     </div>
@@ -608,15 +608,11 @@
         <!-- Controls -->
         <div class="controls" id="controls">
             <div class="control-group">
-                <label class="control-label">TONE ADJUSTMENT</label>
+                <label class="control-label">FILM STOCK</label>
                 <select id="toneSelect">
-                    <option value="standard">Standard</option>
-                    <option value="all_hard">All Hard</option>
-                    <option value="all_soft">All Soft</option>
-                    <option value="highlight_hard">Highlight Hard</option>
-                    <option value="highlight_soft">Highlight Soft</option>
-                    <option value="shadow_hard">Shadow Hard</option>
-                    <option value="shadow_soft">Shadow Soft</option>
+                    <option value="portra400">Color (Portra 400)</option>
+                    <option value="trix">B&W (Tri-X 400)</option>
+                    <option value="ektachrome">Slide (Ektachrome)</option>
                 </select>
             </div>
 
@@ -699,9 +695,13 @@
             </div>
 
             <div class="control-group">
-                <div class="checkbox-container">
-                    <input type="checkbox" id="grainCheckbox" checked>
-                    <label for="grainCheckbox" class="checkbox-label">Portra 400 Film Grain</label>
+                <label class="control-label">FILM GRAIN</label>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Grain Intensity</span>
+                        <span class="slider-value" id="grainValue">50%</span>
+                    </div>
+                    <input type="range" id="grainSlider" min="0" max="100" value="50" step="1">
                 </div>
             </div>
 
@@ -741,7 +741,7 @@
             currentIndex: 0,
             showingBefore: false,
             defaultSettings: {
-                tone: 'standard',
+                tone: 'portra400',
                 hypertone: 'off',
                 density: 0,
                 cyan: 0,
@@ -749,7 +749,7 @@
                 yellow: 0,
                 sharpness: 'normal',
                 saturation: 100,
-                grain: true
+                grain: 50  // Changed from boolean to 0-100 intensity
             }
         };
 
