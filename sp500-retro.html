@@ -875,7 +875,8 @@
                     );
                     const scale = initialScale * (currentDistance / initialDistance);
                     state.zoom.scale = Math.max(1, Math.min(4, scale));
-                    renderPreview();
+                    // Update transform directly for instant feedback
+                    updateZoomTransform();
                 } else if (e.touches.length === 1 && state.zoom.scale > 1) {
                     // Pan
                     e.preventDefault();
@@ -885,15 +886,16 @@
                     state.zoom.translateY += dy;
                     lastTouchX = e.touches[0].pageX;
                     lastTouchY = e.touches[0].pageY;
-                    renderPreview();
+                    // Update transform directly for instant feedback
+                    updateZoomTransform();
                 }
             });
 
             container.addEventListener('touchend', (e) => {
                 const touchDuration = Date.now() - touchStartTime;
 
-                // Short tap without movement = toggle original/edited
-                if (!touchMoved && touchDuration < 200 && e.touches.length === 0 && state.zoom.scale === 1) {
+                // Short tap without movement = toggle original/edited (works at any zoom level)
+                if (!touchMoved && touchDuration < 200 && e.touches.length === 0) {
                     toggleOriginal();
                 }
             });
@@ -902,8 +904,15 @@
             let lastTap = 0;
             container.addEventListener('dblclick', (e) => {
                 state.zoom = { scale: 1, translateX: 0, translateY: 0 };
-                renderPreview();
+                updateZoomTransform();
             });
+
+            // Fast zoom transform update without re-rendering
+            function updateZoomTransform() {
+                const canvas = document.getElementById('previewCanvas');
+                const zoom = state.zoom;
+                canvas.style.transform = `translate(-50%, -50%) translate(${zoom.translateX}px, ${zoom.translateY}px) scale(${zoom.scale})`;
+            }
 
             // Toggle original/edited view
             function toggleOriginal() {
