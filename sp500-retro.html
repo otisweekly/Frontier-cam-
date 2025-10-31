@@ -283,29 +283,6 @@
             background: #2a2a2a;
         }
 
-        .fullscreen-btn {
-            position: absolute;
-            top: 32px;
-            right: 32px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: none;
-            border-top: 2px solid var(--border-light);
-            border-left: 2px solid var(--border-dark);
-            border-bottom: 2px solid var(--border-dark);
-            border-right: 2px solid var(--border-light);
-            padding: 8px 12px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 20;
-            font-family: 'Press Start 2P', monospace;
-            letter-spacing: 0.5px;
-            line-height: 1;
-        }
-
-        .fullscreen-btn:active {
-            transform: translate(1px, 1px);
-        }
 
         /* Status indicator */
         .status-indicator {
@@ -356,10 +333,6 @@
             max-height: 100vh;
         }
 
-        .preview-container.fullscreen .fullscreen-btn {
-            top: calc(env(safe-area-inset-top, 0px) + 16px);
-            right: 16px;
-        }
 
         /* === FILMSTRIP NAV === */
         .filmstrip-nav {
@@ -815,7 +788,6 @@
         <!-- Image Preview -->
         <div class="preview-container" id="previewContainer">
             <canvas id="previewCanvas" class="preview-canvas"></canvas>
-            <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
             <div class="status-indicator" id="statusIndicator"></div>
         </div>
 
@@ -1799,24 +1771,6 @@
         document.getElementById('backBtn').addEventListener('click', () => {
             if (confirm('RETURN TO UPLOAD?')) {
                 location.reload();
-            }
-        });
-
-        // Fullscreen button
-        document.getElementById('fullscreenBtn').addEventListener('click', () => {
-            const container = document.getElementById('previewContainer');
-            const btn = document.getElementById('fullscreenBtn');
-
-            if (container.classList.contains('fullscreen')) {
-                // Exit fullscreen
-                container.classList.remove('fullscreen');
-                btn.textContent = '⛶';
-                haptic('light');
-            } else {
-                // Enter fullscreen
-                container.classList.add('fullscreen');
-                btn.textContent = '✕';
-                haptic('light');
             }
         });
 
