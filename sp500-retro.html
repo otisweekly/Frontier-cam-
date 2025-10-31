@@ -1623,41 +1623,41 @@
             const height = imageData.height;
             const data = imageData.data;
 
-            // EXTREME clarity reduction for soft diffusion filter effect
-            const clarityReduction = Math.floor(intensity * 0.4); // 0-8 pixel softening (extreme)
+            // Moderate clarity reduction for subtle softening
+            const clarityReduction = Math.floor(intensity * 0.3); // 0-6 pixel softening (reduced)
             if (clarityReduction > 0) {
                 const softened = separableGaussianBlur(data, width, height, clarityReduction);
-                const clarityMix = 0.6 + (intensity / 20); // 0.6-1.6 mix (extreme softening)
+                const clarityMix = 0.3 + (intensity / 40); // 0.3-0.8 mix (gentler)
                 for (let i = 0; i < data.length; i += 4) {
-                    // Apply heavy softening to all bright areas
+                    // Apply gentle softening to bright areas
                     const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                    const clarityFactor = lum > 140 ? Math.min(1, clarityMix * (lum - 140) / 115) : 0;
+                    const clarityFactor = lum > 160 ? Math.min(1, clarityMix * (lum - 160) / 95) : 0;
                     data[i] = data[i] * (1 - clarityFactor) + softened[i] * clarityFactor;
                     data[i + 1] = data[i + 1] * (1 - clarityFactor) + softened[i + 1] * clarityFactor;
                     data[i + 2] = data[i + 2] * (1 - clarityFactor) + softened[i + 2] * clarityFactor;
                 }
             }
 
-            // Extract highlights - GENTLER extraction for softer glow
+            // Extract highlights - VERY GENTLE extraction for seamless fade
             const highlights = new Uint8ClampedArray(data.length);
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 140) { // Lower threshold for coverage
-                    const factor = (lum - 140) / 115; // 0-1 for 140-255
-                    // Gentler extraction - soft diffusion, not harsh brightness
-                    const softFactor = Math.pow(factor, 0.9) * 0.7; // Much softer
+                if (lum > 160) { // Higher threshold for more selective glow
+                    const factor = (lum - 160) / 95; // 0-1 for 160-255
+                    // Very gentle extraction with gradual falloff for seamless blend
+                    const softFactor = Math.pow(factor, 1.4) * 0.4; // Much gentler extraction
                     highlights[i] = data[i] * softFactor;
                     highlights[i + 1] = data[i + 1] * softFactor;
                     highlights[i + 2] = data[i + 2] * softFactor;
                 }
             }
 
-            // Ultra-wide gaussian blur for maximum dreamy diffusion spread
-            const radius = Math.max(8, Math.floor(intensity * 5.0)); // 8-100 pixel radius (massive)
+            // Massive blur radius for ultra-smooth, seamless spread
+            const radius = Math.max(10, Math.floor(intensity * 6.0)); // 10-120 pixel radius (huge spread)
             const blurred = separableGaussianBlur(highlights, width, height, radius);
 
-            // Strong but not over-the-top blend for soft filmic glow
-            const blendStrength = 1.2 + (intensity / 15); // 1.2-2.53 range (strong but controlled)
+            // Gentle blend for dreamy, seamless glow that fades naturally
+            const blendStrength = 0.6 + (intensity / 20); // 0.6-1.6 range (much gentler)
             for (let i = 0; i < data.length; i += 4) {
                 data[i] = Math.min(255, data[i] + blurred[i] * blendStrength);
                 data[i + 1] = Math.min(255, data[i + 1] + blurred[i + 1] * blendStrength);
