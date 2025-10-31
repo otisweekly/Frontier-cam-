@@ -103,6 +103,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 16px 24px;
+            padding-top: calc(16px + env(safe-area-inset-top));
             background: #c0c0c0;
             border-bottom: 2px solid #808080;
         }
@@ -129,10 +130,19 @@
             display: none;
             background: #c0c0c0;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .upload-section.active {
-            display: block;
+            display: flex;
+        }
+
+        .upload-content {
+            max-width: 500px;
+            width: 100%;
         }
 
         .upload-area {
@@ -296,7 +306,10 @@
         .controls {
             padding: 16px 24px 24px 24px;
             background: #c0c0c0;
-            min-height: 120px;
+            height: 200px;
+            min-height: 200px;
+            max-height: 200px;
+            overflow: hidden;
         }
 
         /* Control Menus */
@@ -403,23 +416,25 @@
 <body>
     <!-- Upload Section -->
     <div class="upload-section active" id="uploadSection">
-        <h1 style="font-size: 16px; margin-bottom: 20px; letter-spacing: 2px;">SP500 FILM SCANNER</h1>
-        <p style="font-size: 10px; margin-bottom: 30px; line-height: 1.6;">PROFESSIONAL FRONTIER EMULATION</p>
+        <div class="upload-content">
+            <h1 style="font-size: 16px; margin-bottom: 20px; letter-spacing: 2px;">SP500 FILM SCANNER</h1>
+            <p style="font-size: 10px; margin-bottom: 30px; line-height: 1.6;">PROFESSIONAL FRONTIER EMULATION</p>
 
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">TAP TO UPLOAD</div>
-            <div class="upload-text">1-36 PHOTOS</div>
-            <div class="upload-text" style="font-size: 9px; margin-top: 12px;">JPG • PNG • HEIC</div>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">TAP TO UPLOAD</div>
+                <div class="upload-text">1-36 PHOTOS</div>
+                <div class="upload-text" style="font-size: 9px; margin-top: 12px;">JPG • PNG • HEIC</div>
+            </div>
+
+            <input
+                type="file"
+                id="fileInput"
+                class="file-input"
+                accept="image/*,image/heic,image/heif"
+                multiple
+            />
         </div>
-
-        <input
-            type="file"
-            id="fileInput"
-            class="file-input"
-            accept="image/*,image/heic,image/heif"
-            multiple
-        />
     </div>
 
     <!-- Preview Section -->
@@ -444,10 +459,7 @@
                 <div class="frame-counter" id="frameCounter">1/1</div>
                 <button class="btn-3d nav-btn" id="nextBtn">→</button>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-3d save-btn" id="applyAllBtn" style="font-size: 10px; padding: 12px 16px;">APPLY→ALL</button>
-                <button class="btn-3d btn-primary-3d save-btn" id="saveBtn">SAVE</button>
-            </div>
+            <button class="btn-3d btn-primary-3d save-btn" id="saveBtn">SAVE</button>
         </div>
 
         <!-- Mode Buttons -->
@@ -946,14 +958,15 @@
         }
 
         function applyBloom(imageData, intensity) {
-            // Bloom effect on highlights
+            // Bloom effect on highlights - more visible
             const data = imageData.data;
             const bloomStrength = intensity / 100;
 
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                if (lum > 180) {
-                    const boost = (lum - 180) / 75 * 30 * bloomStrength;
+                // Lower threshold and stronger effect
+                if (lum > 150) {
+                    const boost = (lum - 150) / 105 * 60 * bloomStrength;
                     data[i] = Math.min(255, data[i] + boost);
                     data[i + 1] = Math.min(255, data[i + 1] + boost);
                     data[i + 2] = Math.min(255, data[i + 2] + boost);
@@ -963,7 +976,7 @@
 
         function applyRealisticGrain(imageData, intensity) {
             const data = imageData.data;
-            const grainStrength = intensity / 100 * 0.03;
+            const grainStrength = intensity / 100 * 0.08; // Increased from 0.03 to 0.08
 
             for (let i = 0; i < data.length; i += 4) {
                 const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
@@ -1126,42 +1139,6 @@
             processCurrentPhoto();
             haptic('light');
         }
-
-        // Save button
-        // Apply to All button
-        document.getElementById('applyAllBtn').addEventListener('click', async () => {
-            const currentSettings = { ...state.photos[state.currentIndex].settings };
-
-            if (!confirm(`APPLY CURRENT SETTINGS TO ALL ${state.photos.length} PHOTOS?`)) {
-                return;
-            }
-
-            showLoading('APPLYING...');
-
-            try {
-                for (let i = 0; i < state.photos.length; i++) {
-                    updateProgress((i / state.photos.length) * 100);
-
-                    // Apply settings to all photos
-                    state.photos[i].settings = { ...currentSettings };
-
-                    // Process each photo
-                    state.photos[i].processed = processImage(state.photos[i].original, state.photos[i].settings);
-
-                    await new Promise(resolve => setTimeout(resolve, 50));
-                }
-
-                updateProgress(100);
-                renderPreview();
-                haptic('success');
-                alert('ALL PHOTOS UPDATED!');
-            } catch (err) {
-                console.error('Apply error:', err);
-                alert('ERROR');
-            } finally {
-                hideLoading();
-            }
-        });
 
         // Save button
         document.getElementById('saveBtn').addEventListener('click', async () => {
