@@ -19,7 +19,7 @@
     <!-- Pixel Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* === RESET & BASE === */
@@ -40,7 +40,7 @@
         }
 
         body {
-            font-family: 'Press Start 2P', 'Courier New', monospace;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #c0c0c0;
             color: #000;
             overflow-x: hidden;
@@ -56,50 +56,43 @@
             height: 100vh;
         }
 
-        /* === RETRO 3D BUTTON STYLE === */
+        /* === MODERN BUTTON STYLE === */
         .btn-3d {
             position: relative;
             background: #c0c0c0;
-            border: none;
-            border-top: 2px solid #fff;
-            border-left: 2px solid #fff;
+            border: 1px solid #999;
+            border-radius: 6px;
             cursor: pointer;
-            font-family: 'Press Start 2P', monospace;
-            font-weight: bold;
-            transition: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .btn-3d::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: -2px;
-            bottom: -2px;
-            background: #d8cecb;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            z-index: -1;
-            transform: rotate(180deg);
+        .btn-3d:hover {
+            background: #d0d0d0;
         }
 
         .btn-3d:active {
-            transform: translate(1px, 1px);
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .btn-3d.active {
             background: #fff;
+            border-color: #027e7e;
+            box-shadow: 0 0 0 2px rgba(2,126,126,0.2);
         }
 
         .btn-primary-3d {
             background: #027e7e;
             color: #fff;
-            border-top: 2px solid #fff;
-            border-left: 2px solid #fff;
+            border: none;
+            box-shadow: 0 3px 8px rgba(2,126,126,0.3);
         }
 
-        .btn-primary-3d::before {
-            background: #d8cecb;
+        .btn-primary-3d:hover {
+            background: #03918;
         }
 
         /* === HEADER === */
@@ -110,12 +103,13 @@
             padding: 16px 24px;
             padding-top: calc(16px + env(safe-area-inset-top));
             background: #c0c0c0;
-            border-bottom: 2px solid #808080;
+            border-bottom: 1px solid #999;
         }
 
         .header-title {
-            font-size: 14px;
-            letter-spacing: 1px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
@@ -126,6 +120,7 @@
             border: none;
             font-size: 20px;
             cursor: pointer;
+            font-weight: 400;
         }
 
         /* === UPLOAD SECTION === */
@@ -301,37 +296,44 @@
         .mode-buttons {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 0;
-            background: #c0c0c0;
+            gap: 1px;
+            background: #999;
+            border-top: 1px solid #999;
         }
 
         .mode-btn {
-            padding: 14px 6px;
-            font-size: 8px;
-            letter-spacing: 0.5px;
+            padding: 14px 8px;
+            font-size: 9px;
+            letter-spacing: 0.3px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            min-height: 60px;
+            gap: 5px;
+            min-height: 64px;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
         }
 
         .btn-label {
-            font-size: 8px;
-            letter-spacing: 0.5px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
             line-height: 1.2;
+            text-transform: uppercase;
         }
 
         .btn-value {
-            font-size: 10px;
-            font-weight: bold;
-            opacity: 0.7;
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.6;
             line-height: 1;
         }
 
         .mode-btn.active .btn-value {
             opacity: 1;
+            color: #027e7e;
         }
 
         /* === CONTROLS === */
@@ -346,14 +348,16 @@
         .control-menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 10px;
         }
 
         .menu-option {
             padding: 16px 12px;
-            font-size: 9px;
-            letter-spacing: 0.5px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
             text-align: center;
+            border-radius: 8px;
         }
 
         /* Control Sliders */
@@ -364,25 +368,27 @@
 
         .slider-display {
             background: #fff;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            padding: 12px;
+            border: 1px solid #999;
+            border-radius: 8px;
+            padding: 16px;
             text-align: center;
-            font-size: 14px;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
         .slider-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
         .slider-btn {
-            padding: 12px;
-            font-size: 14px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
             text-align: center;
+            border-radius: 8px;
         }
 
         /* CMY Controls */
@@ -394,41 +400,44 @@
         .cmy-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            gap: 12px;
         }
 
         .cmy-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-
-        .cmy-label {
-            font-size: 10px;
-            letter-spacing: 1px;
-            font-weight: bold;
+            gap: 2px;
         }
 
         .cmy-value {
             background: #fff;
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            padding: 6px 8px;
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 8px;
             text-align: center;
-            font-size: 12px;
-            min-width: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 44px;
+        }
+
+        .color-bar {
+            width: 100%;
+            border-radius: 2px;
         }
 
         .cmy-buttons {
             display: flex;
             gap: 4px;
+            width: 100%;
         }
 
         .cmy-btn {
-            padding: 6px 10px;
-            font-size: 10px;
-            min-width: 32px;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            flex: 1;
+            border-radius: 4px;
         }
 
         /* === LOADING === */
@@ -572,36 +581,44 @@
                 <button class="btn-3d menu-option" data-colormode="ektachrome">EKTAR</button>
             </div>
 
+            <!-- SOFT Mode Options Menu -->
+            <div class="control-menu" id="softMenu" style="display: none;">
+                <button class="btn-3d menu-option active" data-softmode="STANDARD">STANDARD</button>
+                <button class="btn-3d menu-option" data-softmode="SOFT">SOFT</button>
+                <button class="btn-3d menu-option" data-softmode="SHADOW SOFT">SHADOW SOFT</button>
+                <button class="btn-3d menu-option" data-softmode="HIGHLIGHT SOFT">HIGHLIGHT SOFT</button>
+            </div>
+
             <!-- CMY + Density Controls -->
             <div class="cmy-controls" id="cmyControls" style="display: none;">
                 <div class="cmy-grid">
                     <div class="cmy-item">
-                        <div class="cmy-label">C</div>
                         <div class="cmy-value" id="cyanDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #00ffff, #00ffff); height: 3px; margin: 4px 0;"></div>
                         <div class="cmy-buttons">
                             <button class="btn-3d cmy-btn" data-control="cyan" data-dir="-">-</button>
                             <button class="btn-3d cmy-btn" data-control="cyan" data-dir="+">+</button>
                         </div>
                     </div>
                     <div class="cmy-item">
-                        <div class="cmy-label">M</div>
                         <div class="cmy-value" id="magentaDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #ff00ff, #ff00ff); height: 3px; margin: 4px 0;"></div>
                         <div class="cmy-buttons">
                             <button class="btn-3d cmy-btn" data-control="magenta" data-dir="-">-</button>
                             <button class="btn-3d cmy-btn" data-control="magenta" data-dir="+">+</button>
                         </div>
                     </div>
                     <div class="cmy-item">
-                        <div class="cmy-label">Y</div>
                         <div class="cmy-value" id="yellowDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #ffff00, #ffff00); height: 3px; margin: 4px 0;"></div>
                         <div class="cmy-buttons">
                             <button class="btn-3d cmy-btn" data-control="yellow" data-dir="-">-</button>
                             <button class="btn-3d cmy-btn" data-control="yellow" data-dir="+">+</button>
                         </div>
                     </div>
                     <div class="cmy-item">
-                        <div class="cmy-label">D</div>
                         <div class="cmy-value" id="densityDisplay">0</div>
+                        <div class="color-bar" style="background: linear-gradient(to right, #333, #333); height: 3px; margin: 4px 0;"></div>
                         <div class="cmy-buttons">
                             <button class="btn-3d cmy-btn" data-control="density" data-dir="-">-</button>
                             <button class="btn-3d cmy-btn" data-control="density" data-dir="+">+</button>
@@ -802,6 +819,7 @@
 
             // Hide all control panels
             document.getElementById('colorMenu').style.display = 'none';
+            document.getElementById('softMenu').style.display = 'none';
             document.getElementById('cmyControls').style.display = 'none';
             document.getElementById('bloomControls').style.display = 'none';
             document.getElementById('grainControls').style.display = 'none';
@@ -809,6 +827,8 @@
             // Show active control panel
             if (state.activeControl === 'color') {
                 document.getElementById('colorMenu').style.display = 'grid';
+            } else if (state.activeControl === 'soft') {
+                document.getElementById('softMenu').style.display = 'grid';
             } else if (state.activeControl === 'cmy') {
                 document.getElementById('cmyControls').style.display = 'block';
             } else if (state.activeControl === 'bloom') {
@@ -820,6 +840,11 @@
             // Update color menu options
             document.querySelectorAll('[data-colormode]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.colormode === settings.colorMode);
+            });
+
+            // Update soft menu options
+            document.querySelectorAll('[data-softmode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.softmode === settings.softMode);
             });
 
             // Update COLOR button value and active state
@@ -849,7 +874,7 @@
                 'HIGHLIGHT SOFT': 'HIGH'
             };
             document.getElementById('softValue').textContent = softShort[settings.softMode] || 'STD';
-            softBtn.classList.toggle('active', settings.softMode !== 'STANDARD');
+            softBtn.classList.toggle('active', state.activeControl === 'soft' || settings.softMode !== 'STANDARD');
 
             // Update BLOOM button value and active state
             const bloomBtn = document.getElementById('bloomBtn');
@@ -1367,16 +1392,26 @@
             haptic('light');
         });
 
-        // SOFT button - cycles through tone adjustments
+        // SOFT button - opens soft mode menu
         document.getElementById('softBtn').addEventListener('click', () => {
-            const softModes = ['STANDARD', 'SOFT', 'SHADOW SOFT', 'HIGHLIGHT SOFT'];
-            const currentIndex = softModes.indexOf(state.photos[state.currentIndex].settings.softMode);
-            const nextIndex = (currentIndex + 1) % softModes.length;
-
-            state.photos[state.currentIndex].settings.softMode = softModes[nextIndex];
+            if (state.activeControl === 'soft') {
+                state.activeControl = null; // Close if already open
+            } else {
+                state.activeControl = 'soft'; // Open menu
+            }
             updateUI();
-            processCurrentPhoto();
             haptic('light');
+        });
+
+        // Soft mode menu options
+        document.querySelectorAll('[data-softmode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.photos[state.currentIndex].settings.softMode = btn.dataset.softmode;
+                state.activeControl = null; // Close menu after selection
+                updateUI();
+                processCurrentPhoto();
+                haptic('medium');
+            });
         });
 
         // BLOOM button - opens bloom controls
