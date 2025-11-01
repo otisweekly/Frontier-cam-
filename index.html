@@ -105,7 +105,7 @@
 
         .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; touch-action:manipulation; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
-        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; color:#000; }
+        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:20px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; color:#000; }
         .settings-btn.active { background:#000; color:#fff; }
         .settings-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2); }
         .settings-btn.preview { background:#000; color:#fff; border-color:#000; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
@@ -119,8 +119,8 @@
         .action-group { display:flex; gap:8px; align-items:stretch; margin-left:auto; flex-shrink:0; }
         .nav-btn { width:70px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:20px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:100px; flex:1; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
-        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 28px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:16px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:24px; font-weight:700; min-width:80px; flex:1; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
+        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
@@ -185,9 +185,9 @@
             <img src="Gallery viewe.svg" alt="Gallery">
         </button>
         <div class="top-controls">
-            <button class="settings-btn" onclick="resetSettings()">RESET</button>
-            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()">CMYK</button>
-            <button class="settings-btn preview" onclick="togglePreview()">PREVIEW</button>
+            <button class="settings-btn" onclick="resetSettings()" title="Reset">↻</button>
+            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color">💧</button>
+            <button class="settings-btn preview" onclick="togglePreview()" title="Preview">👁</button>
         </div>
         <div class="canvas-container">
             <canvas id="canvas"></canvas>
