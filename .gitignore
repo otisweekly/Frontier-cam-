@@ -16,3 +16,6 @@ Thumbs.db
 # *.fig
 # *.sketch
 # design-*.png
+
+# Local Netlify folder
+.netlify
