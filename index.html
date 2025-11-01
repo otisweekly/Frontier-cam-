@@ -302,14 +302,14 @@
 
         function toggleControl(c){}
 
-        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';renderPhoto();}
+        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';if(!state.videoMode)renderPhoto();}
 
 
-        function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValue').textContent=state.settings.bloom;document.getElementById('bloomValueBig').textContent=state.settings.bloom;renderPhoto();}
+        function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
 
-        function adjustGrain(d){state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValue').textContent=state.settings.grain;document.getElementById('grainValueBig').textContent=state.settings.grain;renderPhoto();}
+        function adjustGrain(d){state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').textContent=state.settings.grain;if(!state.videoMode)renderPhoto();}
 
-        function adjustCMYK(ch,d){const chs={c:'cyan',m:'magenta',y:'yellow',k:'black'},k=chs[ch];const displayId=k==='black'?'density':k;state.settings[k]=Math.max(-50,Math.min(50,state.settings[k]+d));document.getElementById(displayId+'Value').textContent=state.settings[k];renderPhoto();}
+        function adjustCMYK(ch,d){const chs={c:'cyan',m:'magenta',y:'yellow',k:'black'},k=chs[ch];const displayId=k==='black'?'density':k;state.settings[k]=Math.max(-50,Math.min(50,state.settings[k]+d));document.getElementById(displayId+'Value').textContent=state.settings[k];if(!state.videoMode)renderPhoto();}
 
         function savePhoto(){const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${p.name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}}
 
