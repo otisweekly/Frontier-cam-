@@ -83,8 +83,10 @@
         .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#fff; border:none; border-radius:4px; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
         .gallery-icon img { width:100%; filter:none; }
 
-        .top-controls { position:fixed; top:15px; left:65px; right:15px; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; z-index:150; touch-action:manipulation; }
-        .top-controls .settings-btn { position:relative; }
+        .top-controls { position:fixed; top:15px; right:15px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
+        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:8px; }
+        .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
+        .top-controls .preview img { filter:brightness(0) invert(1); }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; }
         .canvas-container.zoomed { padding:0; }
@@ -113,7 +115,7 @@
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:52px; width:100%; }
         .nav-btn { width:70px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:20px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; font-weight:700; min-width:60px; flex-shrink:0; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:60px; flex-shrink:0; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
         .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex:1; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
@@ -179,10 +181,10 @@
             <img src="Gallery.svg" alt="Gallery">
         </button>
         <div class="top-controls">
-            <button class="settings-btn" onclick="resetSettings()" title="Reset"><img src="Clear.svg" style="width:20px;height:20px;" alt="Reset"></button>
-            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" style="width:20px;height:20px;" alt="CMYK"></button>
-            <button class="settings-btn" onclick="copyToClipboard()" title="Copy"><img src="Copy.svg" style="width:20px;height:20px;" alt="Copy"></button>
-            <button class="settings-btn preview" onclick="togglePreview()" title="Preview"><img src="Preview.svg" style="width:20px;height:20px;" alt="Preview"></button>
+            <button class="settings-btn" onclick="resetSettings()" title="Reset"><img src="Clear.svg" alt="Reset"></button>
+            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
+            <button class="settings-btn" onclick="copyToClipboard()" title="Copy"><img src="Copy.svg" alt="Copy"></button>
+            <button class="settings-btn preview" onclick="togglePreview()" title="Preview"><img src="Preview.svg" alt="Preview"></button>
         </div>
         <div class="canvas-container">
             <canvas id="canvas"></canvas>
