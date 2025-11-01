@@ -269,12 +269,12 @@
         function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);wait.classList.toggle('active',s!=='ready');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
-        // Initial status light animation - steady green, wait 1s, flash green 2x, then pulse green
-        setStatus('ready',false);
+        // Initial status light animation - start red pulsing, wait 1s, flash green 2x, then pulse green
+        setStatus('wait',true);
         setTimeout(()=>{
             let flashCount=0;
             const flashInterval=setInterval(()=>{
-                setStatus(flashCount%2===0?'wait':'ready',false);
+                setStatus(flashCount%2===0?'ready':'wait',false);
                 flashCount++;
                 if(flashCount>=4){
                     clearInterval(flashInterval);
