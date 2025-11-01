@@ -87,24 +87,24 @@
         .filename { font-size:13px; font-weight:600; letter-spacing:0.5px; }
         .header-right { font-size:24px; cursor:pointer; padding:0 5px; font-weight:700; }
 
-        .canvas-container { height:67vh; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden; position:relative; transition:padding 0.3s ease; }
+        .canvas-container { height:75vh; display:flex; align-items:center; justify-content:center; padding:15px; overflow:hidden; position:relative; transition:padding 0.3s ease; }
         .canvas-container.zoomed { padding:0; }
         #canvas { max-width:100%; max-height:100%; object-fit:contain; transition:all 0.3s ease; cursor:pointer; }
-        #canvas.zoomed, #videoCanvas.zoomed { max-width:none; max-height:none; width:100vw; height:67vh; object-fit:cover; }
+        #canvas.zoomed, #videoCanvas.zoomed { max-width:none; max-height:none; width:100vw; height:75vh; object-fit:cover; }
         #videoPreview { position:absolute; opacity:0; pointer-events:none; }
         #videoCanvas { max-width:100%; max-height:100%; object-fit:contain; display:none; cursor:pointer; transition:all 0.3s ease; }
         .video-controls { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:none; gap:10px; background:rgba(0,0,0,0.7); padding:10px; border-radius:4px; }
         .video-controls.active { display:flex; }
         .video-control-btn { width:40px; height:40px; background:#fff; border:2px solid #000; border-radius:4px; cursor:pointer; font-size:16px; }
 
-        .edit-footer { background:#8C8C8C; padding:8px 8px 16px 8px; display:flex; flex-direction:column; gap:8px; position:fixed; bottom:0; left:0; right:0; height:33vh; overflow-y:auto; }
+        .edit-footer { background:#8C8C8C; padding:10px 10px 20px 10px; display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; height:25vh; overflow-y:auto; }
 
         .footer-bottom { width:100%; }
-        .nav-controls { display:flex; align-items:stretch; gap:8px; justify-content:space-between; min-height:44px; }
-        .nav-btn { width:60px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:18px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
+        .nav-controls { display:flex; align-items:stretch; gap:8px; justify-content:space-between; min-height:52px; }
+        .nav-btn { width:70px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:20px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; font-weight:700; min-width:70px; text-align:center; display:flex; align-items:center; justify-content:center; }
-        .save-btn { padding:0 24px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:100px; text-align:center; display:flex; align-items:center; justify-content:center; background:#fff; border:3px solid #000; border-radius:4px; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
+        .save-btn { padding:0 28px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:16px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
@@ -116,15 +116,15 @@
         .expanded-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
         .simple-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
 
-        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:44px; }
-        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:44px; }
-        .preset-btn { background:#D4CEC8; border:3px solid #000; border-radius:4px; font-size:9px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:4px; }
+        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:52px; }
+        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:52px; }
+        .preset-btn { background:#D4CEC8; border:3px solid #000; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:6px; }
         .preset-btn.active { background:#000; color:#fff; }
         .preset-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
 
-        .slider-btn { min-height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; font-size:24px; font-weight:700; }
+        .slider-btn { min-height:52px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; font-size:28px; font-weight:700; }
         .slider-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
-        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:44px; background:#fff; border:3px solid #000; border-radius:4px; font-size:24px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
+        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:52px; background:#fff; border:3px solid #000; border-radius:4px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
 
         .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:4px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
@@ -215,6 +215,7 @@
                     <button class="nav-btn" onclick="prevPhoto()">◀</button>
                     <div class="photo-counter" id="photoCounter">1/36</div>
                     <button class="nav-btn" onclick="nextPhoto()">▶</button>
+                    <button class="save-btn" onclick="copyToClipboard()" style="background:#B3B3B3;">COPY</button>
                     <button class="save-btn" onclick="savePhoto()">SAVE</button>
                 </div>
             </div>
@@ -270,6 +271,8 @@
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
 
         function adjustGrain(d){state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').textContent=state.settings.grain;if(!state.videoMode)renderPhoto();}
+
+        async function copyToClipboard(){const p=state.photos[state.currentIndex];if(p.isVideo){alert('Copy not available for videos. Use SAVE instead.');return;}const c=document.getElementById('canvas');c.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);setStatus('wait');setTimeout(()=>setStatus('ready'),500);}catch(err){alert('Could not copy to clipboard. Try SAVE instead.');}},  'image/png');}
 
         function savePhoto(){const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${p.name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}}
 
