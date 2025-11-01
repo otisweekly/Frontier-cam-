@@ -1,7 +1,11 @@
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M28.0365 24.1091C28.0365 26.2781 26.2782 28.0364 24.1092 28.0364C21.9402 28.0364 20.1819 26.2781 20.1819 24.1091C20.1819 21.9402 21.9402 20.1818 24.1092 20.1818C26.2782 20.1818 28.0365 21.9402 28.0365 24.1091Z" stroke="black" stroke-width="2"/>
-<path d="M29.9999 30L26.886 26.8861" stroke="black" stroke-width="2"/>
-<path d="M16.9092 24.5456H6V6H24.5456V16.9092" stroke="black" stroke-width="2"/>
-<path d="M18.5454 9.8181C17.3403 9.8181 16.3635 10.7949 16.3635 11.9999C16.3635 13.2049 17.3403 14.1818 18.5454 14.1818C19.7504 14.1818 20.7272 13.2049 20.7272 11.9999C20.7272 10.7949 19.7504 9.8181 18.5454 9.8181Z" stroke="black" stroke-width="2"/>
-<path d="M6 22.3637L12.5455 15.8182L17.4547 20.7273" stroke="black" stroke-width="2"/>
+<path d="M20 16V24" stroke="black" stroke-width="3"/>
+<path d="M16 20H24" stroke="black" stroke-width="3"/>
+<path d="M27 20C27 23.866 23.866 27 20 27C16.134 27 13 23.866 13 20C13 16.134 16.134 13 20 13C23.866 13 27 16.134 27 20Z" stroke="black" stroke-width="3"/>
+<path d="M28.9995 29L24.9492 24.9497" stroke="black" stroke-width="3"/>
+<path d="M8 23.5V28H12.5" stroke="black" stroke-width="3"/>
+<path d="M8 14.5V21.5" stroke="black" stroke-width="3"/>
+<path d="M8 12.5V8H12.5" stroke="black" stroke-width="3"/>
+<path d="M14.5 8H21.5" stroke="black" stroke-width="3"/>
+<path d="M23.5 8H28V12.5" stroke="black" stroke-width="3"/>
 </svg>
