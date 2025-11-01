@@ -115,8 +115,8 @@
         .control-tab:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
         .control-tab-value { font-size:9px; font-weight:700; }
 
-        .expanded-controls { display:none; padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
-        .expanded-controls.active { display:block; }
+        .expanded-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
+        .simple-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
 
         .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; height:40px; }
         .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
@@ -197,22 +197,10 @@
                     <button class="save-btn" onclick="savePhoto()">SAVE</button>
                 </div>
             </div>
-            <div class="control-tabs">
-                <button class="control-tab" onclick="toggleControl('profile')">
+            <div class="control-tabs" style="grid-template-columns:1fr;">
+                <button class="control-tab active" onclick="toggleControl('profile')">
                     <span class="control-tab-value" id="profileValue">NONE</span>
                     <span>PROFILE</span>
-                </button>
-                <button class="control-tab" onclick="toggleControl('tone')">
-                    <span class="control-tab-value" id="toneValue">NONE</span>
-                    <span>TONE</span>
-                </button>
-                <button class="control-tab" onclick="toggleControl('bloom')">
-                    <span class="control-tab-value" id="bloomValue">0</span>
-                    <span>BLOOM</span>
-                </button>
-                <button class="control-tab" onclick="toggleControl('grain')">
-                    <span class="control-tab-value" id="grainValue">0</span>
-                    <span>GRAIN</span>
                 </button>
             </div>
             <div class="expanded-controls" id="profileControl">
@@ -262,34 +250,29 @@
                     </div>
                 </div>
             </div>
-            <div class="expanded-controls" id="toneControl">
-                <div class="preset-buttons">
-                    <button class="preset-btn active" onclick="setTone('none')">NONE</button>
-                    <button class="preset-btn" onclick="setTone('high-soft')">HIGH<br>SOFT</button>
-                    <button class="preset-btn" onclick="setTone('high-hard')">HIGH<br>HARD</button>
-                    <button class="preset-btn" onclick="setTone('show-soft')">SHDW<br>SOFT</button>
-                    <button class="preset-btn" onclick="setTone('show-hard')">SHDW<br>HARD</button>
+            <div class="simple-controls" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="font-size:9px;font-weight:700;text-align:center;color:#000;">BLOOM</div>
+                    <div class="slider-control" style="grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustBloom(-1)">-</button>
+                        <div class="slider-value" style="height:50px;font-size:24px;" id="bloomValueBig">0</div>
+                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustBloom(1)">+</button>
+                    </div>
                 </div>
-            </div>
-            <div class="expanded-controls" id="bloomControl">
-                <div class="slider-control">
-                    <button class="slider-btn" onclick="adjustBloom(-1)">-</button>
-                    <div class="slider-value" id="bloomValueBig">0</div>
-                    <button class="slider-btn" onclick="adjustBloom(1)">-</button>
-                </div>
-            </div>
-            <div class="expanded-controls" id="grainControl">
-                <div class="slider-control">
-                    <button class="slider-btn" onclick="adjustGrain(-1)">-</button>
-                    <div class="slider-value" id="grainValueBig">0</div>
-                    <button class="slider-btn" onclick="adjustGrain(1)">-</button>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="font-size:9px;font-weight:700;text-align:center;color:#000;">GRAIN</div>
+                    <div class="slider-control" style="grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustGrain(-1)">-</button>
+                        <div class="slider-value" style="height:50px;font-size:24px;" id="grainValueBig">0</div>
+                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustGrain(1)">+</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',tone:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false};
         function setStatus(s){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready');wait.classList.toggle('active',s!=='ready');}
 
         // Initial status light animation
@@ -307,7 +290,7 @@
 
         function togglePlayPause(){const video=document.getElementById('videoPreview'),btn=event.target;if(video.paused){video.play();btn.textContent='⏸';state.videoPlaying=true;}else{video.pause();btn.textContent='▶';state.videoPlaying=false;}}
 
-        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyTone(d,state.settings.tone);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
+        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
 
         function applyHandycamOverlay(ctx,w,h){const now=new Date();const date=`${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}/${now.getFullYear()}`;const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(10,h-50,200,35);ctx.font='bold 20px monospace';ctx.fillStyle='#fff';ctx.fillText(date,15,h-25);ctx.fillText(time,15,h-8);ctx.fillStyle='#f00';ctx.beginPath();ctx.arc(w-30,h-30,8,0,Math.PI*2);ctx.fill();if(Math.floor(Date.now()/500)%2===0){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.font='bold 16px sans-serif';ctx.fillText('REC',w-70,h-25);}}
 
@@ -317,17 +300,15 @@
 
         function applyCMYK(d,s){const cA=s.cyan/50,mA=s.magenta/50,yA=s.yellow/50,kA=s.black/50;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA*40));g=Math.max(0,Math.min(255,g+cA*20));b=Math.max(0,Math.min(255,b+cA*20));r=Math.max(0,Math.min(255,r+mA*20));g=Math.max(0,Math.min(255,g-mA*40));b=Math.max(0,Math.min(255,b+mA*20));r=Math.max(0,Math.min(255,r+yA*20));g=Math.max(0,Math.min(255,g+yA*20));b=Math.max(0,Math.min(255,b-yA*40));const dF=1-kA*0.25;r*=dF;g*=dF;b*=dF;d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
-        function applyTone(d,t){if(t==='none')return;const curves={'high-soft':{shadows:15,highlights:-8},'high-hard':{shadows:25,highlights:8},'show-soft':{shadows:8,highlights:-12},'show-hard':{shadows:12,highlights:-6}},cv=curves[t];if(!cv)return;for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];const lum=0.299*r+0.587*g+0.114*b;const blend=lum/255;const shadowAdj=cv.shadows*(1-blend);const highlightAdj=cv.highlights*blend;const adj=shadowAdj+highlightAdj;d[i]=Math.max(0,Math.min(255,r+adj));d[i+1]=Math.max(0,Math.min(255,g+adj));d[i+2]=Math.max(0,Math.min(255,b+adj));}}
 
         function applyBloom(ctx,w,h,int){const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*1.5}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/30;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
 
         function applyGrain(d,int){if(int<1)return;const strength=int*5;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
-        function toggleControl(c){['profile','tone','bloom','grain'].forEach(ct=>{const el=document.getElementById(ct+'Control');if(ct===c&&!el.classList.contains('active')){el.classList.add('active');state.activeControl=c;}else{el.classList.remove('active');}});document.querySelectorAll('.control-tab').forEach((t,i)=>t.classList.toggle('active',['profile','tone','bloom','grain'][i]===c));}
+        function toggleControl(c){}
 
         function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';renderPhoto();}
 
-        function setTone(t){state.settings.tone=t;const lb={none:'NONE','high-soft':'H-SFT','high-hard':'H-HRD','show-soft':'SHDW-S','show-hard':'SHDW-H'};document.getElementById('toneValue').textContent=lb[t];document.querySelectorAll('#toneControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','high-soft','high-hard','show-soft','show-hard'][i]===t));renderPhoto();}
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValue').textContent=state.settings.bloom;document.getElementById('bloomValueBig').textContent=state.settings.bloom;renderPhoto();}
 
