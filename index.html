@@ -312,7 +312,7 @@
 
         function applyBloom(ctx,w,h,int){const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*1.5}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/30;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
 
-        function applyGrain(d,int){if(int<1)return;const strength=int*8;for(let i=0;i<d.length;i+=4){const n=(Math.random()-0.5)*strength;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*6;const time=state.videoMode?Date.now()/1000:0;for(let i=0;i<d.length;i+=4){const x=i/4%512;const y=Math.floor(i/4/512);const baseNoise=(Math.sin(x*0.1+time)*Math.cos(y*0.1+time)+1)/2;const randomNoise=Math.random();const organicNoise=(baseNoise*0.3+randomNoise*0.7-0.5)*strength;const colorVar=state.videoMode?(Math.random()-0.5)*strength*0.3:0;d[i]=Math.max(0,Math.min(255,d[i]+organicNoise+colorVar*0.8));d[i+1]=Math.max(0,Math.min(255,d[i+1]+organicNoise+colorVar*0.5));d[i+2]=Math.max(0,Math.min(255,d[i+2]+organicNoise+colorVar));}}
 
         function toggleControl(c){['profile','tone','bloom','grain'].forEach(ct=>{const el=document.getElementById(ct+'Control');if(ct===c&&!el.classList.contains('active')){el.classList.add('active');state.activeControl=c;}else{el.classList.remove('active');}});document.querySelectorAll('.control-tab').forEach((t,i)=>t.classList.toggle('active',['profile','tone','bloom','grain'][i]===c));}
 
