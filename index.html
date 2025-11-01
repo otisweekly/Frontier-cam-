@@ -91,7 +91,6 @@
         .top-controls .settings-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
         .top-controls .preview { background:#000; }
         .top-controls .preview img { filter:brightness(0) invert(1); }
-        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; padding:0 8px; width:auto; min-width:44px; color:#000; -webkit-tap-highlight-color:transparent; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; touch-action:none; }
         #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 330px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; }
@@ -205,7 +204,7 @@
             </svg>
         </button>
         <div class="top-controls">
-            <button class="settings-btn clear-btn" onclick="resetSettings()" title="Reset">CLEAR</button>
+            <button class="settings-btn" onclick="resetSettings(true)" title="Clear"><img src="Clear.svg" alt="Clear"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" onclick="toggleExportMenu()" title="Export"><img src="Copy.svg" alt="Export"></button>
             <button class="settings-btn preview" onclick="togglePreview()" title="Preview"><img src="Preview.svg" alt="Preview"></button>
@@ -301,6 +300,7 @@
             <div class="contact-sheet-header-top">
                 <img src="Logo.svg" alt="Frontier" class="contact-sheet-logo">
                 <div class="contact-sheet-actions">
+                    <button class="contact-sheet-btn" onclick="addMorePhotos()">+ ADD</button>
                     <button class="contact-sheet-btn" id="selectBtn" onclick="toggleSelectMode()">SELECT</button>
                     <button class="contact-sheet-btn" onclick="shareContactSheet()">SHARE</button>
                     <button class="contact-sheet-btn" onclick="toggleContactSheetView()">✕</button>
@@ -311,6 +311,7 @@
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
     </div>
+    <input type="file" id="addMoreInput" accept="image/*,video/*" multiple style="display:none;">
 
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,zoomed:false,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]}};
@@ -409,6 +410,10 @@
         async function shareCurrentPhoto(){haptic();toggleExportMenu();const p=state.photos[state.currentIndex];if(p.isVideo){alert('Share is only available for photos');return;}const c=document.getElementById('canvas');c.toBlob(async b=>{const file=new File([b],`frontier_${p.name}`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Photo'});}catch(err){if(err.name!=='AbortError'){alert('Could not share photo');}}}else{alert('Share not supported on this device');}},'image/jpeg',0.95);}
 
         async function exportContactSheet(){haptic();toggleExportMenu();const photoCount=state.photos.filter(p=>!p.isVideo).length;if(photoCount===0){alert('No photos to export');return;}setStatus('wait');const cols=6,rows=Math.ceil(photoCount/cols),thumbSize=400,margin=20,labelHeight=40,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+60;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);sctx.fillStyle='#fff';sctx.font='bold 24px "PP Neue Bit", monospace';sctx.textAlign='center';sctx.fillText('FRONTIER DIGITAL PROCESSOR',sheetW/2,40);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=photoCount)break;const p=state.photos.filter(p=>!p.isVideo)[photoIndex];const x=margin+col*(thumbSize+margin);const y=60+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);applyEffects(tctx,tempCanvas.width,tempCanvas.height);const aspectRatio=p.image.width/p.image.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#222';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#fff';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='center';sctx.fillText(`${photoIndex+1}`,x+thumbSize/2,y+thumbSize+25);photoIndex++;}}sheet.toBlob(async b=>{const file=new File([b],'frontier_contact_sheet.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Contact Sheet'});setStatus('ready');}catch(err){if(err.name!=='AbortError'){fallbackDownload(b,'contact_sheet.jpg');}setStatus('ready');}}else{fallbackDownload(b,'contact_sheet.jpg');setStatus('ready');}},'image/jpeg',0.92);}
+
+        function addMorePhotos(){haptic();document.getElementById('addMoreInput').click();}
+
+        document.getElementById('addMoreInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length)return;if(state.photos.length+files.length>36){alert('Maximum 36 photos total');return;}setStatus('wait');const uploadTime=new Date();for(let file of files){const isVideo=file.type.startsWith('video/');const defaultSettings={profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};if(isVideo){const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise(r=>{video.onloadedmetadata=r;});state.photos.push({name:file.name,video:video,videoUrl:videoUrl,isVideo:true,uploadTime:uploadTime,settings:{...defaultSettings}});}else{const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img,isVideo:false,uploadTime:uploadTime,settings:{...defaultSettings}});}}populateContactSheet();setStatus('ready');e.target.value='';});
 
         function toggleContactSheetView(){haptic();const view=document.getElementById('contactSheetView');if(view.classList.contains('active')){view.classList.remove('active');state.contactSheet.selectMode=false;state.contactSheet.selected=[];document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectionInfo').style.display='none';}else{populateContactSheet();view.classList.add('active');}}
 
