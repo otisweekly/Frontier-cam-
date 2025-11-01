@@ -269,18 +269,13 @@
         function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);wait.classList.toggle('active',s!=='ready');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
-        // Initial status light animation - start red pulsing, wait 1s, flash green 2x, then pulse green
+        // Initial status light animation - start red pulsing, wait 1s, flash green once, then pulse green
         setStatus('wait',true);
         setTimeout(()=>{
-            let flashCount=0;
-            const flashInterval=setInterval(()=>{
-                setStatus(flashCount%2===0?'ready':'wait',false);
-                flashCount++;
-                if(flashCount>=4){
-                    clearInterval(flashInterval);
-                    setStatus('ready',true);
-                }
-            },150);
+            setStatus('ready',false);
+            setTimeout(()=>{
+                setStatus('ready',true);
+            },300);
         },1000);
 
         // Canvas tap handling
@@ -316,7 +311,7 @@
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){state.currentIndex++;const canvas=document.getElementById('canvas');resetZoom(canvas);resetSettings(true);}}
         function backToUpload(){haptic();document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#3897AF';}
 
-        function renderPhoto(shouldResetZoom=false){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles');canvas.onclick=handleCanvasTap;if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);if(shouldResetZoom)resetZoom(canvas);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles');canvas.onclick=handleCanvasTap;if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
 
         function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0;const targetFPS=18,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval){ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processFrame(0);});}
 
