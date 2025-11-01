@@ -203,7 +203,8 @@
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:26px; font-weight:700; min-width:66px; flex:1; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; user-select:none; -webkit-user-select:none; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:4px 0; }
+        .photo-counter-number { font-size:26px; font-weight:700; line-height:1; }
         .photo-counter-label { font-size:9px; font-weight:700; color:#666; margin-top:2px; letter-spacing:0.5px; }
         .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
@@ -473,7 +474,10 @@
                     <button class="nav-btn gallery" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">
                         <img src="Contact.svg" style="width:28px;height:28px;" alt="Contact Sheet">
                     </button>
-                    <div class="photo-counter" id="photoCounter" onclick="frameCounterOptions()">1/36</div>
+                    <div class="photo-counter" onclick="frameCounterOptions()">
+                        <div class="photo-counter-number" id="photoCounter">1/36</div>
+                        <div class="photo-counter-label">UPLOADS</div>
+                    </div>
                     <button class="nav-btn" onclick="prevPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button class="nav-btn" onclick="nextPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
