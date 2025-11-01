@@ -91,7 +91,7 @@
         .top-controls .settings-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
         .top-controls .preview { background:#000; }
         .top-controls .preview img { filter:brightness(0) invert(1); }
-        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:15px; font-weight:700; padding:0 8px; width:auto; min-width:44px; color:#000; -webkit-tap-highlight-color:transparent; }
+        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; padding:0 8px; width:auto; min-width:44px; color:#000; -webkit-tap-highlight-color:transparent; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; }
         .canvas-container.zoomed { padding:0; }
@@ -116,7 +116,7 @@
         .nav-btn { width:77px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
         .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:66px; flex-shrink:0; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
-        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:15px; font-weight:700; cursor:pointer; flex:1; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
+        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; flex:1; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
@@ -177,7 +177,7 @@
     </div>
 
     <div id="editSection">
-        <button class="gallery-icon" onclick="document.getElementById('fileInput').click()">≡</button>
+        <button class="gallery-icon" onclick="backToUpload()">≡</button>
         <div class="top-controls">
             <button class="settings-btn clear-btn" onclick="resetSettings()" title="Reset">CLEAR</button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
@@ -300,7 +300,7 @@
 
         function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles');canvas.onclick=handleCanvasTap;if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);}state.renderPending=false;});}
 
-        function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null;const processFrame=()=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);animationId=requestAnimationFrame(processFrame);};processFrame();videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);processFrame();});videoEl.addEventListener('loadeddata',()=>{processFrame();});}
+        function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0;const targetFPS=18,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval){ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processFrame(0);});}
 
         function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);}
 
@@ -311,7 +311,7 @@
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,kA=s.black*2.5;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));const dF=1-(kA/100);r=Math.max(0,Math.min(255,r*dF));g=Math.max(0,Math.min(255,g*dF));b=Math.max(0,Math.min(255,b*dF));d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
 
-        function applyBloom(ctx,w,h,int){const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*3}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/15;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
+        function applyBloom(ctx,w,h,int){if(int<1)return;const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*4}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/10;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
 
         function applyGrain(d,int){if(int<1)return;const strength=int*5;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
