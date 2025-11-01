@@ -80,11 +80,11 @@
         #editSection { display:none; flex-direction:column; width:100vw; height:100vh; height:100dvh; background:#8C8C8C; position:fixed; top:0; left:0; }
         #editSection.active { display:flex; }
 
-        .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#fff; border:none; border-radius:4px; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
-        .gallery-icon img { width:100%; filter:none; }
+        .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#fff; border:none; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; font-size:32px; font-weight:700; color:#000; transition:all 0.1s; }
+        .gallery-icon:active { transform:scale(0.95); }
 
         .top-controls { position:fixed; top:15px; right:15px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
-        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:8px; }
+        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:6px; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
         .top-controls .settings-btn:active img { filter:brightness(0) invert(1); }
@@ -105,11 +105,11 @@
 
         .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; touch-action:manipulation; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
-        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#B3B3B3; border:none; border-radius:4px; cursor:pointer; font-size:20px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; color:#000; }
+        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#B3B3B3; border:none; border-radius:4px; cursor:pointer; font-size:20px; font-weight:700; text-align:center; transition:all 0.1s; display:flex; align-items:center; justify-content:center; color:#000; }
         .settings-btn.active { background:#000; color:#fff; }
-        .settings-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2); }
-        .settings-btn.preview { background:#000; color:#fff; border-color:#000; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
-        .settings-btn.preview:active { box-shadow:0 1px 2px rgba(0,0,0,0.2); }
+        .settings-btn:active { transform:scale(0.95); }
+        .settings-btn.preview { background:#000; color:#fff; }
+        .settings-btn.preview:active { transform:scale(0.95); }
         #cmykToggle::after { content:''; position:absolute; top:4px; right:4px; width:8px; height:8px; background:#3897AF; border-radius:50%; opacity:0; transition:opacity 0.2s; box-shadow:0 0 4px rgba(56,151,175,0.8); }
         #cmykToggle.has-settings::after { opacity:1; }
 
@@ -179,9 +179,7 @@
     </div>
 
     <div id="editSection">
-        <button class="gallery-icon" onclick="backToUpload()">
-            <img src="Gallery.svg" alt="Gallery">
-        </button>
+        <button class="gallery-icon" onclick="backToUpload()">≡</button>
         <div class="top-controls">
             <button class="settings-btn" onclick="resetSettings()" title="Reset"><img src="Clear.svg" alt="Reset"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
