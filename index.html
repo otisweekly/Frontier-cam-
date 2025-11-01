@@ -95,19 +95,15 @@
         .video-controls.active { display:flex; }
         .video-control-btn { width:40px; height:40px; background:#fff; border:2px solid #000; border-radius:4px; cursor:pointer; font-size:16px; }
 
-        .edit-footer { background:#8C8C8C; padding:8px; display:flex; flex-direction:column; gap:8px; position:fixed; bottom:0; left:0; right:0; height:33vh; overflow-y:auto; }
+        .edit-footer { background:#8C8C8C; padding:8px 8px 16px 8px; display:flex; flex-direction:column; gap:8px; position:fixed; bottom:0; left:0; right:0; height:33vh; overflow-y:auto; }
 
-        .footer-top { display:flex; align-items:stretch; justify-content:space-between; gap:8px; height:40px; }
-        .action-buttons { display:flex; gap:4px; flex:1; min-width:0; }
-        .action-btn { padding:0 8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:8px; font-weight:700; cursor:pointer; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 0 #000; transition:all 0.05s; display:flex; align-items:center; justify-content:center; }
-        .action-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
-
-        .nav-controls { display:flex; align-items:stretch; gap:8px; justify-content:space-between; }
-        .nav-btn { width:50px; background:#000; border:2px solid #000; border-radius:3px; cursor:pointer; color:#fff; font-size:16px; flex-shrink:0; box-shadow:0 2px 0 #555; transition:all 0.05s; display:flex; align-items:center; justify-content:center; }
-        .nav-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #555; }
-        .photo-counter { font-size:13px; font-weight:700; min-width:60px; text-align:center; display:flex; align-items:center; justify-content:center; }
-        .save-btn { padding:0 20px; background:#3897AF; border:2px solid #000; border-radius:3px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 2px 0 #0A5A6C; transition:all 0.05s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
-        .save-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #0A5A6C; }
+        .footer-bottom { width:100%; }
+        .nav-controls { display:flex; align-items:stretch; gap:8px; justify-content:space-between; min-height:44px; }
+        .nav-btn { width:60px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:18px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
+        .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
+        .photo-counter { font-size:14px; font-weight:700; min-width:70px; text-align:center; display:flex; align-items:center; justify-content:center; }
+        .save-btn { padding:0 24px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
+        .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
         .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #000; transition:all 0.05s; justify-content:center; align-items:center; }
@@ -118,16 +114,15 @@
         .expanded-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
         .simple-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
 
-        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; height:40px; }
-        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
-        .preset-btn { background:#D4D4D4; border:2px solid #000; border-radius:3px; font-size:8px; font-weight:700; cursor:pointer; text-align:center; line-height:1.1; box-shadow:0 2px 0 #000; transition:all 0.05s; display:flex; align-items:center; justify-content:center; padding:2px; }
+        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:44px; }
+        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:44px; }
+        .preset-btn { background:#D4CEC8; border:3px solid #000; border-radius:4px; font-size:9px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:4px; }
         .preset-btn.active { background:#000; color:#fff; }
-        .preset-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
+        .preset-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
 
-        .slider-control { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
-        .slider-btn { height:70px; background:#D4D4D4; border:2px solid #000; border-radius:3px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 0 #000; transition:all 0.05s; font-size:24px; font-weight:700; }
-        .slider-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
-        .slider-value { height:70px; background:#fff; border:2px solid #000; border-radius:3px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.2); }
+        .slider-btn { min-height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; font-size:24px; font-weight:700; }
+        .slider-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
+        .slider-value { min-height:44px; background:#fff; border:3px solid #000; border-radius:4px; font-size:24px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
 
         .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:4px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
@@ -184,50 +179,43 @@
             </div>
         </div>
         <div class="edit-footer">
-            <div class="footer-top">
-                <div class="nav-controls" style="width:100%;">
-                    <button class="nav-btn" onclick="prevPhoto()">◀</button>
-                    <div class="photo-counter" id="photoCounter">1/36</div>
-                    <button class="nav-btn" onclick="nextPhoto()">▶</button>
-                    <button class="save-btn" onclick="savePhoto()">SAVE</button>
-                </div>
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
+                <button class="preset-btn active" onclick="setProfile('none')">NONE</button>
+                <button class="preset-btn" onclick="setProfile('portra')">PORTRA</button>
+                <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
+                <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
             </div>
-            <div class="control-tabs" style="grid-template-columns:1fr;">
-                <button class="control-tab active" onclick="toggleControl('profile')">
-                    <span class="control-tab-value" id="profileValue">NONE</span>
-                    <span>PROFILE</span>
-                </button>
+            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
+                <button class="preset-btn" onclick="setProfile('none')">NONE</button>
+                <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
+                <button class="preset-btn" onclick="setProfile('16mm')">16MM</button>
+                <button class="preset-btn" onclick="setProfile('handycam')">HANDY<br>CAM</button>
+                <button class="preset-btn" onclick="setProfile('nightvision')">NIGHT<br>VISION</button>
             </div>
-            <div class="expanded-controls" id="profileControl">
-                <div class="profile-buttons" style="grid-template-columns:repeat(4,1fr);">
-                    <button class="preset-btn active" onclick="setProfile('none')">NONE</button>
-                    <button class="preset-btn" onclick="setProfile('portra')">PORTRA</button>
-                    <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
-                    <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
-                </div>
-                <div class="profile-buttons" id="videoProfiles" style="grid-template-columns:repeat(4,1fr);display:none;margin-top:4px;">
-                    <button class="preset-btn" onclick="setProfile('16mm')">16MM<br>250D</button>
-                    <button class="preset-btn" onclick="setProfile('handycam')">HANDY<br>CAM</button>
-                    <button class="preset-btn" onclick="setProfile('vhs')">VHS</button>
-                    <button class="preset-btn" onclick="setProfile('nightvision')">NIGHT<br>VISION</button>
-                </div>
-            </div>
-            <div class="simple-controls" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:flex;flex-direction:column;gap:4px;">
                     <div style="font-size:9px;font-weight:700;text-align:center;color:#000;">BLOOM</div>
-                    <div class="slider-control" style="grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustBloom(-1)">-</button>
-                        <div class="slider-value" style="height:50px;font-size:24px;" id="bloomValueBig">0</div>
-                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustBloom(1)">+</button>
+                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" onclick="adjustBloom(-1)">-</button>
+                        <div class="slider-value" id="bloomValueBig">0</div>
+                        <button class="slider-btn" onclick="adjustBloom(1)">+</button>
                     </div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:4px;">
                     <div style="font-size:9px;font-weight:700;text-align:center;color:#000;">GRAIN</div>
-                    <div class="slider-control" style="grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustGrain(-1)">-</button>
-                        <div class="slider-value" style="height:50px;font-size:24px;" id="grainValueBig">0</div>
-                        <button class="slider-btn" style="height:50px;font-size:20px;" onclick="adjustGrain(1)">+</button>
+                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" onclick="adjustGrain(-1)">-</button>
+                        <div class="slider-value" id="grainValueBig">0</div>
+                        <button class="slider-btn" onclick="adjustGrain(1)">+</button>
                     </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="nav-controls">
+                    <button class="nav-btn" onclick="prevPhoto()">◀</button>
+                    <div class="photo-counter" id="photoCounter">1/36</div>
+                    <button class="nav-btn" onclick="nextPhoto()">▶</button>
+                    <button class="save-btn" onclick="savePhoto()">SAVE</button>
                 </div>
             </div>
         </div>
@@ -246,21 +234,19 @@
         function nextPhoto(){if(state.currentIndex<state.photos.length-1){state.currentIndex++;renderPhoto();}}
         function backToUpload(){document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#3897AF';}
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),videoControls=document.getElementById('videoControls');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoControls.classList.add('active');videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;document.getElementById('videoProfiles').style.display='grid';setupVideoProcessing(p.video);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{canvas.style.display='block';videoCanvas.style.display='none';videoControls.classList.remove('active');state.videoMode=false;document.getElementById('videoProfiles').style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);}state.renderPending=false;});}
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('filename').textContent=p.name.toUpperCase();document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),videoControls=document.getElementById('videoControls'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoControls.classList.add('active');videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoProcessing(p.video);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{canvas.style.display='block';videoCanvas.style.display='none';videoControls.classList.remove('active');state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);applyEffects(ctx,canvas.width,canvas.height);}state.renderPending=false;});}
 
-        function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;const processFrame=()=>{if(!state.videoMode)return;ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);requestAnimationFrame(processFrame);};processFrame();videoEl.addEventListener('play',processFrame);videoEl.addEventListener('loadeddata',()=>{processFrame();});}
+        function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null;const processFrame=()=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);animationId=requestAnimationFrame(processFrame);};processFrame();videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);processFrame();});videoEl.addEventListener('loadeddata',()=>{processFrame();});}
 
         function togglePlayPause(){const video=document.getElementById('videoPreview'),btn=event.target;if(video.paused){video.play();btn.textContent='⏸';state.videoPlaying=true;}else{video.pause();btn.textContent='▶';state.videoPlaying=false;}}
 
-        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='vhs'&&state.videoMode)applyVHSOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
+        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
 
         function applyHandycamOverlay(ctx,w,h){const now=new Date();const date=`${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}/${now.getFullYear()}`;const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(10,h-50,200,35);ctx.font='bold 20px monospace';ctx.fillStyle='#fff';ctx.fillText(date,15,h-25);ctx.fillText(time,15,h-8);ctx.fillStyle='#f00';ctx.beginPath();ctx.arc(w-30,h-30,8,0,Math.PI*2);ctx.fill();if(Math.floor(Date.now()/500)%2===0){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.font='bold 16px sans-serif';ctx.fillText('REC',w-70,h-25);}}
 
         function applyNightvisionOverlay(ctx,w,h){for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(0,y,w,1);}}ctx.fillStyle='rgba(0,0,0,0.6)';ctx.beginPath();ctx.arc(w/2,h/2,Math.min(w,h)/2.2,0,Math.PI*2);ctx.rect(w,0,-w,h);ctx.fill('evenodd');ctx.fillStyle='rgba(0,255,0,0.8)';ctx.font='bold 14px monospace';ctx.fillText('NV MODE',15,25);ctx.fillStyle='#0f0';ctx.beginPath();ctx.arc(w-25,25,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,255,0,0.6)';ctx.font='11px monospace';ctx.fillText('IR',w-45,30);}
 
-        function applyVHSOverlay(ctx,w,h){const trackY=(Date.now()/50)%h;for(let y=0;y<h;y+=3){const dist=Math.abs(y-trackY);if(dist<15){const intensity=1-(dist/15);ctx.fillStyle=`rgba(0,0,0,${intensity*0.3})`;ctx.fillRect(0,y,w,2);}}for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.08)';ctx.fillRect(0,y,w,1);}}const now=new Date();const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='bold 16px monospace';ctx.fillText('SP',15,h-20);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px monospace';ctx.fillText(time,50,h-20);}
-
-        function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.08+8);g=Math.min(255,g*1.03+3);b=Math.min(255,b*0.97);}else if(p==='slide'){const L=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-L)*0.7-5);g=Math.min(255,g+(g-L)*0.6);b=Math.min(255,b+(b-L)*0.8+15);}else if(p==='bw'){const L=0.299*r+0.587*g+0.114*b,c=(L-128)*1.15+128;r=g=b=Math.max(0,Math.min(255,c));}else if(p==='16mm'){r=Math.min(255,r*1.12+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95-3);}else if(p==='handycam'){r=Math.min(255,r*1.05);g=Math.min(255,g*0.98-2);b=Math.min(255,b*1.02+3);const sat=0.85;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;}else if(p==='vhs'){const sat=0.7;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;r=Math.min(255,r*0.95+5);g=Math.min(255,g*0.98);b=Math.min(255,b*1.05+8);}else if(p==='nightvision'){const L=0.299*r+0.587*g+0.114*b;const boosted=Math.min(255,L*2.2+35);r=Math.min(255,boosted*0.05);g=Math.min(255,boosted);b=Math.min(255,boosted*0.08);}d[i]=r;d[i+1]=g;d[i+2]=b;}}
+        function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.08+8);g=Math.min(255,g*1.03+3);b=Math.min(255,b*0.97);}else if(p==='slide'){const L=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-L)*0.7-5);g=Math.min(255,g+(g-L)*0.6);b=Math.min(255,b+(b-L)*0.8+15);}else if(p==='bw'){const L=0.299*r+0.587*g+0.114*b,c=(L-128)*1.15+128;r=g=b=Math.max(0,Math.min(255,c));}else if(p==='16mm'){r=Math.min(255,r*1.12+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95-3);}else if(p==='handycam'){r=Math.min(255,r*1.05);g=Math.min(255,g*0.98-2);b=Math.min(255,b*1.02+3);const sat=0.85;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;}else if(p==='nightvision'){const L=0.299*r+0.587*g+0.114*b;const boosted=Math.min(255,L*2.2+35);r=Math.min(255,boosted*0.05);g=Math.min(255,boosted);b=Math.min(255,boosted*0.08);}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
         function applyCMYK(d,s){const cA=s.cyan/50,mA=s.magenta/50,yA=s.yellow/50,kA=s.black/50;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA*40));g=Math.max(0,Math.min(255,g+cA*20));b=Math.max(0,Math.min(255,b+cA*20));r=Math.max(0,Math.min(255,r+mA*20));g=Math.max(0,Math.min(255,g-mA*40));b=Math.max(0,Math.min(255,b+mA*20));r=Math.max(0,Math.min(255,r+yA*20));g=Math.max(0,Math.min(255,g+yA*20));b=Math.max(0,Math.min(255,b-yA*40));const dF=1-kA*0.25;r*=dF;g*=dF;b*=dF;d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
@@ -271,7 +257,7 @@
 
         function toggleControl(c){}
 
-        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION',vhs:'VHS'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';if(!state.videoMode)renderPhoto();}
+        function setProfile(p){state.settings.profile=p;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');if(!state.videoMode)renderPhoto();}
 
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
