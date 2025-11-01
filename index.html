@@ -331,7 +331,7 @@
 
         function applyBloom(ctx,w,h,int){if(int<1)return;const tc=document.createElement('canvas');tc.width=w;tc.height=h;const tctx=tc.getContext('2d');tctx.filter=`blur(${int*6}px)`;tctx.drawImage(ctx.canvas,0,0);ctx.globalCompositeOperation='lighten';ctx.globalAlpha=int/8;ctx.drawImage(tc,0,0);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;}
 
-        function applyGrain(d,int){if(int<1)return;const strength=int*5;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*12;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
