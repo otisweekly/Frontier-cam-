@@ -267,8 +267,8 @@
                     <button class="preset-btn active" onclick="setTone('none')">NONE</button>
                     <button class="preset-btn" onclick="setTone('high-soft')">HIGH<br>SOFT</button>
                     <button class="preset-btn" onclick="setTone('high-hard')">HIGH<br>HARD</button>
-                    <button class="preset-btn" onclick="setTone('show-soft')">SHOW<br>SOFT</button>
-                    <button class="preset-btn" onclick="setTone('show-hard')">SHOW<br>HARD</button>
+                    <button class="preset-btn" onclick="setTone('show-soft')">SHDW<br>SOFT</button>
+                    <button class="preset-btn" onclick="setTone('show-hard')">SHDW<br>HARD</button>
                 </div>
             </div>
             <div class="expanded-controls" id="bloomControl">
@@ -327,7 +327,7 @@
 
         function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';renderPhoto();}
 
-        function setTone(t){state.settings.tone=t;const lb={none:'NONE','high-soft':'H-SFT','high-hard':'H-HRD','show-soft':'SHOW-S','show-hard':'SHOW-H'};document.getElementById('toneValue').textContent=lb[t];document.querySelectorAll('#toneControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','high-soft','high-hard','show-soft','show-hard'][i]===t));renderPhoto();}
+        function setTone(t){state.settings.tone=t;const lb={none:'NONE','high-soft':'H-SFT','high-hard':'H-HRD','show-soft':'SHDW-S','show-hard':'SHDW-H'};document.getElementById('toneValue').textContent=lb[t];document.querySelectorAll('#toneControl .preset-btn').forEach((b,i)=>b.classList.toggle('active',['none','high-soft','high-hard','show-soft','show-hard'][i]===t));renderPhoto();}
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValue').textContent=state.settings.bloom;document.getElementById('bloomValueBig').textContent=state.settings.bloom;renderPhoto();}
 
