@@ -83,7 +83,7 @@
         .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#fff; border:2px solid #000; border-radius:4px; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
         .gallery-icon img { width:100%; filter:none; }
 
-        .top-controls { position:fixed; top:15px; left:65px; right:15px; display:flex; gap:6px; z-index:150; }
+        .top-controls { position:fixed; top:15px; left:65px; right:15px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
         .top-controls .settings-btn { flex:1; position:relative; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding:70px 15px 15px 15px; padding-bottom:calc(15px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; max-height:100%; }
@@ -99,7 +99,7 @@
         .video-control-btn { width:50px; height:50px; background:#000; border:3px solid #fff; border-radius:50%; cursor:pointer; font-size:20px; color:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .video-control-btn:active { transform:scale(0.95); }
 
-        .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; }
+        .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; touch-action:manipulation; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
         .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; color:#000; }
         .settings-btn.active { background:#000; color:#fff; }
@@ -138,7 +138,7 @@
         .slider-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
         .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:52px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); }
 
-        #cmykControls { position:fixed; top:65px; left:15px; right:15px; background:#8C8C8C; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:140; transform:translateY(calc(-100% - 65px)); transition:transform 0.3s ease, opacity 0.3s ease; border-radius:4px; opacity:0; }
+        #cmykControls { position:fixed; top:65px; left:15px; right:15px; background:#8C8C8C; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:140; transform:translateY(calc(-100% - 65px)); transition:transform 0.3s ease, opacity 0.3s ease; border-radius:4px; opacity:0; touch-action:manipulation; }
         #cmykControls.active { transform:translateY(0); opacity:1; }
         .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
