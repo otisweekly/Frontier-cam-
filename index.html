@@ -237,30 +237,30 @@
                 <button class="preset-btn" onclick="setProfile('handycam')">HANDY CAM</button>
                 <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
             </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" onclick="adjustBloom(-1)">-</button>
+                        <div class="slider-value" id="bloomValueBig">0</div>
+                        <button class="slider-btn" onclick="adjustBloom(1)">+</button>
+                    </div>
+                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">BLOOM</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
+                        <button class="slider-btn" onclick="adjustGrain(-1)">-</button>
+                        <div class="slider-value" id="grainValueBig">0</div>
+                        <button class="slider-btn" onclick="adjustGrain(1)">+</button>
+                    </div>
+                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">GRAIN</div>
+                </div>
+            </div>
             <div class="footer-bottom">
                 <div class="nav-controls">
                     <button class="nav-btn" onclick="prevPhoto()"><img src="Arrow down.svg" style="width:20px;height:20px;transform:rotate(90deg);filter:brightness(0) invert(1);" alt="Previous"></button>
                     <div class="photo-counter" id="photoCounter">1/36</div>
                     <button class="nav-btn" onclick="nextPhoto()"><img src="Arrow up.svg" style="width:20px;height:20px;transform:rotate(90deg);filter:brightness(0) invert(1);" alt="Next"></button>
                     <button class="save-btn" onclick="savePhoto()">SAVE</button>
-                </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-                <div style="display:flex;flex-direction:column;gap:4px;">
-                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">BLOOM</div>
-                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                        <button class="slider-btn" onclick="adjustBloom(-1)">-</button>
-                        <div class="slider-value" id="bloomValueBig">0</div>
-                        <button class="slider-btn" onclick="adjustBloom(1)">+</button>
-                    </div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:4px;">
-                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">GRAIN</div>
-                    <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                        <button class="slider-btn" onclick="adjustGrain(-1)">-</button>
-                        <div class="slider-value" id="grainValueBig">0</div>
-                        <button class="slider-btn" onclick="adjustGrain(1)">+</button>
-                    </div>
                 </div>
             </div>
         </div>
