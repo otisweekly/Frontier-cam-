@@ -138,8 +138,8 @@
         .slider-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
         .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:52px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); }
 
-        #cmykControls { position:fixed; top:65px; left:15px; right:15px; background:#8C8C8C; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:140; transform:translateY(-100%); transition:transform 0.3s ease; border-radius:4px; }
-        #cmykControls.active { transform:translateY(0); }
+        #cmykControls { position:fixed; top:65px; left:15px; right:15px; background:#8C8C8C; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:140; transform:translateY(calc(-100% - 65px)); transition:transform 0.3s ease, opacity 0.3s ease; border-radius:4px; opacity:0; }
+        #cmykControls.active { transform:translateY(0); opacity:1; }
         .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
         .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; height:52px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:22px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); }
