@@ -103,7 +103,7 @@
         .nav-controls { display:flex; align-items:stretch; gap:8px; justify-content:space-between; min-height:44px; }
         .nav-btn { width:60px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:18px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
-        .photo-counter { font-size:14px; font-weight:700; min-width:70px; text-align:center; display:flex; align-items:center; justify-content:center; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; font-weight:700; min-width:70px; text-align:center; display:flex; align-items:center; justify-content:center; }
         .save-btn { padding:0 24px; background:#3897AF; border:3px solid #000; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex-shrink:0; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
@@ -124,7 +124,7 @@
 
         .slider-btn { min-height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 #000; transition:all 0.1s; font-size:24px; font-weight:700; }
         .slider-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
-        .slider-value { min-height:44px; background:#fff; border:3px solid #000; border-radius:4px; font-size:24px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
+        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:44px; background:#fff; border:3px solid #000; border-radius:4px; font-size:24px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 3px 6px rgba(0,0,0,0.3); }
 
         .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:4px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
@@ -181,14 +181,12 @@
             </div>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn active" onclick="setProfile('none')">NONE</button>
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('portra')">PORTRA</button>
                 <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
                 <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
             </div>
             <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('none')">NONE</button>
                 <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
                 <button class="preset-btn" onclick="setProfile('16mm')">16MM</button>
                 <button class="preset-btn" onclick="setProfile('handycam')">HANDY<br>CAM</button>
@@ -253,7 +251,7 @@
 
         function applyHandycamOverlay(ctx,w,h){const now=new Date();const date=`${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}/${now.getFullYear()}`;const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(10,h-50,200,35);ctx.font='bold 20px monospace';ctx.fillStyle='#fff';ctx.fillText(date,15,h-25);ctx.fillText(time,15,h-8);ctx.fillStyle='#f00';ctx.beginPath();ctx.arc(w-30,h-30,8,0,Math.PI*2);ctx.fill();if(Math.floor(Date.now()/500)%2===0){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.font='bold 16px sans-serif';ctx.fillText('REC',w-70,h-25);}}
 
-        function applyNightvisionOverlay(ctx,w,h){for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(0,y,w,1);}}ctx.fillStyle='rgba(0,0,0,0.6)';ctx.beginPath();ctx.arc(w/2,h/2,Math.min(w,h)/2.2,0,Math.PI*2);ctx.rect(w,0,-w,h);ctx.fill('evenodd');ctx.fillStyle='rgba(0,255,0,0.8)';ctx.font='bold 14px monospace';ctx.fillText('NV MODE',15,25);ctx.fillStyle='#0f0';ctx.beginPath();ctx.arc(w-25,25,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,255,0,0.6)';ctx.font='11px monospace';ctx.fillText('IR',w-45,30);}
+        function applyNightvisionOverlay(ctx,w,h){for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(0,y,w,1);}}const gradient=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)/3,w/2,h/2,Math.min(w,h)/1.5);gradient.addColorStop(0,'rgba(0,0,0,0)');gradient.addColorStop(0.7,'rgba(0,0,0,0.3)');gradient.addColorStop(1,'rgba(0,0,0,0.8)');ctx.fillStyle=gradient;ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(0,255,0,0.8)';ctx.font='bold 14px monospace';ctx.fillText('NV MODE',15,25);ctx.fillStyle='#0f0';ctx.beginPath();ctx.arc(w-25,25,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,255,0,0.6)';ctx.font='11px monospace';ctx.fillText('IR',w-45,30);}
 
         function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.08+8);g=Math.min(255,g*1.03+3);b=Math.min(255,b*0.97);}else if(p==='slide'){const L=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-L)*0.7-5);g=Math.min(255,g+(g-L)*0.6);b=Math.min(255,b+(b-L)*0.8+15);}else if(p==='bw'){const L=0.299*r+0.587*g+0.114*b,c=(L-128)*1.15+128;r=g=b=Math.max(0,Math.min(255,c));}else if(p==='16mm'){r=Math.min(255,r*1.12+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95-3);}else if(p==='handycam'){r=Math.min(255,r*1.05);g=Math.min(255,g*0.98-2);b=Math.min(255,b*1.02+3);const sat=0.85;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;}else if(p==='nightvision'){const L=0.299*r+0.587*g+0.114*b;const boosted=Math.min(255,L*2.2+35);r=Math.min(255,boosted*0.05);g=Math.min(255,boosted);b=Math.min(255,boosted*0.08);}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
@@ -266,7 +264,7 @@
 
         function toggleControl(c){}
 
-        function setProfile(p){state.settings.profile=p;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');if(!state.videoMode)renderPhoto();}
+        function setProfile(p){const container=state.videoMode?'videoProfiles':'photoProfiles';if(state.settings.profile===p){state.settings.profile='none';document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));}else{state.settings.profile=p;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');}if(!state.videoMode)renderPhoto();}
 
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
