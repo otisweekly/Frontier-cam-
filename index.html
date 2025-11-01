@@ -150,11 +150,26 @@
         .cmyk-arrow-btn { flex:1; height:48px; background:linear-gradient(180deg, #C3C3C3 0%, #A3A3A3 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
 
+        #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
+        #contactSheetView.active { display:flex; }
+        .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #333; z-index:10; }
+        .contact-sheet-title { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; color:#fff; }
+        .contact-sheet-actions { display:flex; gap:8px; }
+        .contact-sheet-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#D4CEC8; border:3px solid #fff; border-radius:4px; font-size:14px; font-weight:700; cursor:pointer; padding:8px 12px; color:#000; box-shadow:0 3px 0 #666; transition:all 0.1s; }
+        .contact-sheet-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #666; }
+        .contact-sheet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:15px; padding:15px; padding-bottom:30px; }
+        .contact-sheet-item { background:#1a1a1a; border:2px solid #333; border-radius:4px; overflow:hidden; cursor:pointer; transition:all 0.2s; position:relative; }
+        .contact-sheet-item:active { transform:scale(0.95); border-color:#3897AF; }
+        .contact-sheet-item.current { border-color:#3897AF; border-width:3px; }
+        .contact-sheet-item img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+        .contact-sheet-label { padding:8px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:10px; color:#999; text-align:center; line-height:1.3; }
+
         @media (max-width:360px) {
             .action-btn { font-size:9px; padding:6px 10px; }
             .save-btn { padding:8px 16px; font-size:11px; }
             .control-tab { font-size:8px; padding:6px 4px; }
             .preset-btn { font-size:8px; padding:8px 3px; }
+            .contact-sheet-grid { grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
         }
     </style>
 </head>
@@ -176,6 +191,14 @@
 
     <div id="editSection">
         <button class="gallery-icon" onclick="backToUpload()">≡</button>
+        <button class="gallery-icon" onclick="toggleContactSheetView()" style="left:75px;" title="Gallery">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="width:20px;height:20px;">
+                <rect x="3" y="3" width="7" height="7" stroke="black" stroke-width="2" fill="none"/>
+                <rect x="14" y="3" width="7" height="7" stroke="black" stroke-width="2" fill="none"/>
+                <rect x="3" y="14" width="7" height="7" stroke="black" stroke-width="2" fill="none"/>
+                <rect x="14" y="14" width="7" height="7" stroke="black" stroke-width="2" fill="none"/>
+            </svg>
+        </button>
         <div class="top-controls">
             <button class="settings-btn clear-btn" onclick="resetSettings()" title="Reset">CLEAR</button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
@@ -268,6 +291,18 @@
         </div>
     </div>
 
+    <div id="contactSheetView">
+        <div class="contact-sheet-header">
+            <div class="contact-sheet-title">GALLERY</div>
+            <div class="contact-sheet-actions">
+                <button class="contact-sheet-btn" onclick="shareContactSheet()">SHARE</button>
+                <button class="contact-sheet-btn" onclick="saveContactSheet()">SAVE</button>
+                <button class="contact-sheet-btn" onclick="toggleContactSheetView()">✕</button>
+            </div>
+        </div>
+        <div class="contact-sheet-grid" id="contactSheetGrid"></div>
+    </div>
+
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,zoomed:false,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null}};
         function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);wait.classList.toggle('active',s!=='ready');}
@@ -309,7 +344,7 @@
 
         function setupCanvasGestures(canvas){canvas.addEventListener('touchstart',(e)=>{if(state.videoMode)return;if(e.touches.length===2){e.preventDefault();zoomState.isPinching=true;const dx=e.touches[0].clientX-e.touches[1].clientX;const dy=e.touches[0].clientY-e.touches[1].clientY;zoomState.lastDistance=Math.sqrt(dx*dx+dy*dy);}else if(e.touches.length===1&&zoomState.scale>1){zoomState.lastTouchX=e.touches[0].clientX;zoomState.lastTouchY=e.touches[0].clientY;}});canvas.addEventListener('touchmove',(e)=>{if(state.videoMode)return;if(e.touches.length===2&&zoomState.isPinching){e.preventDefault();const dx=e.touches[0].clientX-e.touches[1].clientX;const dy=e.touches[0].clientY-e.touches[1].clientY;const distance=Math.sqrt(dx*dx+dy*dy);if(zoomState.lastDistance>0){const scale=distance/zoomState.lastDistance;zoomState.scale=Math.max(1,Math.min(4,zoomState.scale*scale));}zoomState.lastDistance=distance;applyTransform(canvas);}else if(e.touches.length===1&&zoomState.scale>1){e.preventDefault();if(!zoomState.isPanning){zoomState.isPanning=true;}const deltaX=e.touches[0].clientX-zoomState.lastTouchX;const deltaY=e.touches[0].clientY-zoomState.lastTouchY;zoomState.x+=deltaX;zoomState.y+=deltaY;zoomState.lastTouchX=e.touches[0].clientX;zoomState.lastTouchY=e.touches[0].clientY;applyTransform(canvas);}});canvas.addEventListener('touchend',(e)=>{if(state.videoMode)return;if(e.touches.length<2){zoomState.isPinching=false;zoomState.lastDistance=0;}if(e.touches.length===0){zoomState.isPanning=false;if(zoomState.scale<1.1){resetZoom(canvas);}}applyTransform(canvas);});canvas.addEventListener('touchcancel',()=>{if(state.videoMode)return;zoomState.isPinching=false;zoomState.isPanning=false;applyTransform(canvas);});}
 
-        document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];for(let file of files){const isVideo=file.type.startsWith('video/');if(isVideo){const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise(r=>{video.onloadedmetadata=r;});state.photos.push({name:file.name,video:video,videoUrl:videoUrl,isVideo:true});}else{const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img,isVideo:false});}}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
+        document.getElementById('fileInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length||files.length>36)return;setStatus('wait');state.photos=[];const uploadTime=new Date();for(let file of files){const isVideo=file.type.startsWith('video/');if(isVideo){const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise(r=>{video.onloadedmetadata=r;});state.photos.push({name:file.name,video:video,videoUrl:videoUrl,isVideo:true,uploadTime:uploadTime});}else{const img=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const i=new Image();i.onload=()=>r(i);i.src=ev.target.result;};reader.readAsDataURL(file);});state.photos.push({name:file.name,image:img,original:img,isVideo:false,uploadTime:uploadTime});}}state.currentIndex=0;document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#8C8C8C';renderPhoto();setStatus('ready');});
 
         function prevPhoto(){haptic();if(state.currentIndex>0){state.currentIndex--;const canvas=document.getElementById('canvas');resetZoom(canvas);resetSettings(true);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){state.currentIndex++;const canvas=document.getElementById('canvas');resetZoom(canvas);resetSettings(true);}}
@@ -361,6 +396,18 @@
         async function shareCurrentPhoto(){haptic();toggleExportMenu();const p=state.photos[state.currentIndex];if(p.isVideo){alert('Share is only available for photos');return;}const c=document.getElementById('canvas');c.toBlob(async b=>{const file=new File([b],`frontier_${p.name}`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Photo'});}catch(err){if(err.name!=='AbortError'){alert('Could not share photo');}}}else{alert('Share not supported on this device');}},'image/jpeg',0.95);}
 
         async function exportContactSheet(){haptic();toggleExportMenu();const photoCount=state.photos.filter(p=>!p.isVideo).length;if(photoCount===0){alert('No photos to export');return;}setStatus('wait');const cols=6,rows=Math.ceil(photoCount/cols),thumbSize=400,margin=20,labelHeight=40,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+60;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);sctx.fillStyle='#fff';sctx.font='bold 24px "PP Neue Bit", monospace';sctx.textAlign='center';sctx.fillText('FRONTIER DIGITAL PROCESSOR',sheetW/2,40);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=photoCount)break;const p=state.photos.filter(p=>!p.isVideo)[photoIndex];const x=margin+col*(thumbSize+margin);const y=60+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);applyEffects(tctx,tempCanvas.width,tempCanvas.height);const aspectRatio=p.image.width/p.image.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#222';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#fff';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='center';sctx.fillText(`${photoIndex+1}`,x+thumbSize/2,y+thumbSize+25);photoIndex++;}}sheet.toBlob(async b=>{const file=new File([b],'frontier_contact_sheet.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Contact Sheet'});setStatus('ready');}catch(err){if(err.name!=='AbortError'){fallbackDownload(b,'contact_sheet.jpg');}setStatus('ready');}}else{fallbackDownload(b,'contact_sheet.jpg');setStatus('ready');}},'image/jpeg',0.92);}
+
+        function toggleContactSheetView(){haptic();const view=document.getElementById('contactSheetView');if(view.classList.contains('active')){view.classList.remove('active');}else{populateContactSheet();view.classList.add('active');}}
+
+        function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');item.onclick=()=>selectPhotoFromSheet(idx);const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});if(p.isVideo){tempCanvas.width=p.video.videoWidth;tempCanvas.height=p.video.videoHeight;ctx.drawImage(p.video,0,0);}else{tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;ctx.drawImage(p.image,0,0);applyEffects(ctx,tempCanvas.width,tempCanvas.height);}const img=document.createElement('img');img.src=tempCanvas.toDataURL('image/jpeg',0.8);const label=document.createElement('div');label.className='contact-sheet-label';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});label.innerHTML=`${date}<br>${time}`;item.appendChild(img);item.appendChild(label);grid.appendChild(item);});}
+
+        function selectPhotoFromSheet(idx){haptic();state.currentIndex=idx;const canvas=document.getElementById('canvas');resetZoom(canvas);toggleContactSheetView();renderPhoto();}
+
+        function generateContactSheetImage(){return new Promise(resolve=>{const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=60,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+60;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);sctx.fillStyle='#fff';sctx.font='bold 24px "PP Neue Bit", monospace';sctx.textAlign='center';sctx.fillText('FRONTIER DIGITAL PROCESSOR',sheetW/2,40);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=60+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});if(p.isVideo){tempCanvas.width=p.video.videoWidth;tempCanvas.height=p.video.videoHeight;tctx.drawImage(p.video,0,0);}else{tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);applyEffects(tctx,tempCanvas.width,tempCanvas.height);}const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#999';sctx.font='14px "PP Neue Bit", monospace';sctx.textAlign='center';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(date,x+thumbSize/2,y+thumbSize+22);sctx.fillText(time,x+thumbSize/2,y+thumbSize+42);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
+
+        async function shareContactSheet(){haptic();setStatus('wait');const blob=await generateContactSheetImage();const file=new File([blob],'frontier_gallery.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Gallery'});setStatus('ready');}catch(err){if(err.name!=='AbortError'){alert('Could not share gallery');}setStatus('ready');}}else{alert('Share not supported on this device');setStatus('ready');}}
+
+        async function saveContactSheet(){haptic();setStatus('wait');const blob=await generateContactSheetImage();fallbackDownload(blob,'gallery.jpg');setStatus('ready');}
 
         async function savePhoto(){haptic();const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{const c=document.getElementById('canvas');c.toBlob(async b=>{const file=new File([b],`frontier_${p.name}`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Photo'});setStatus('wait');setTimeout(()=>setStatus('ready'),500);}catch(err){if(err.name!=='AbortError'){fallbackDownload(b,p.name);}}}else{fallbackDownload(b,p.name);}},'image/jpeg',0.95);}}
 
