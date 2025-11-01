@@ -205,44 +205,11 @@
                     <button class="preset-btn" onclick="setProfile('slide')">SLIDE</button>
                     <button class="preset-btn" onclick="setProfile('bw')">B&W</button>
                 </div>
-                <div class="profile-buttons" id="videoProfiles" style="grid-template-columns:repeat(3,1fr);display:none;margin-top:4px;">
+                <div class="profile-buttons" id="videoProfiles" style="grid-template-columns:repeat(4,1fr);display:none;margin-top:4px;">
                     <button class="preset-btn" onclick="setProfile('16mm')">16MM<br>250D</button>
                     <button class="preset-btn" onclick="setProfile('handycam')">HANDY<br>CAM</button>
+                    <button class="preset-btn" onclick="setProfile('vhs')">VHS</button>
                     <button class="preset-btn" onclick="setProfile('nightvision')">NIGHT<br>VISION</button>
-                </div>
-                <div class="cmyk-sliders" id="cmykSliders" style="display:none;">
-                    <div class="cmyk-slider">
-                        <div class="cmyk-value" id="cyanValue">0</div>
-                        <div class="cmyk-color-bar cyan"></div>
-                        <div class="cmyk-arrows">
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('c',-1)">▼</button>
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('c',1)">▲</button>
-                        </div>
-                    </div>
-                    <div class="cmyk-slider">
-                        <div class="cmyk-value" id="magentaValue">0</div>
-                        <div class="cmyk-color-bar magenta"></div>
-                        <div class="cmyk-arrows">
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('m',-1)">▼</button>
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('m',1)">▲</button>
-                        </div>
-                    </div>
-                    <div class="cmyk-slider">
-                        <div class="cmyk-value" id="yellowValue">0</div>
-                        <div class="cmyk-color-bar yellow"></div>
-                        <div class="cmyk-arrows">
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('y',-1)">▼</button>
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('y',1)">▲</button>
-                        </div>
-                    </div>
-                    <div class="cmyk-slider">
-                        <div class="cmyk-value" id="densityValue">0</div>
-                        <div class="cmyk-color-bar density"></div>
-                        <div class="cmyk-arrows">
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('k',-1)">▼</button>
-                            <button class="cmyk-arrow-btn" onclick="adjustCMYK('k',1)">▲</button>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="simple-controls" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
@@ -285,13 +252,15 @@
 
         function togglePlayPause(){const video=document.getElementById('videoPreview'),btn=event.target;if(video.paused){video.play();btn.textContent='⏸';state.videoPlaying=true;}else{video.pause();btn.textContent='▶';state.videoPlaying=false;}}
 
-        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
+        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyGrain(d,state.settings.grain);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);if(state.settings.profile==='handycam'&&state.videoMode)applyHandycamOverlay(ctx,w,h);if(state.settings.profile==='vhs'&&state.videoMode)applyVHSOverlay(ctx,w,h);if(state.settings.profile==='nightvision'&&state.videoMode)applyNightvisionOverlay(ctx,w,h);}
 
         function applyHandycamOverlay(ctx,w,h){const now=new Date();const date=`${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}/${now.getFullYear()}`;const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(10,h-50,200,35);ctx.font='bold 20px monospace';ctx.fillStyle='#fff';ctx.fillText(date,15,h-25);ctx.fillText(time,15,h-8);ctx.fillStyle='#f00';ctx.beginPath();ctx.arc(w-30,h-30,8,0,Math.PI*2);ctx.fill();if(Math.floor(Date.now()/500)%2===0){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.font='bold 16px sans-serif';ctx.fillText('REC',w-70,h-25);}}
 
         function applyNightvisionOverlay(ctx,w,h){for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(0,y,w,1);}}ctx.fillStyle='rgba(0,0,0,0.6)';ctx.beginPath();ctx.arc(w/2,h/2,Math.min(w,h)/2.2,0,Math.PI*2);ctx.rect(w,0,-w,h);ctx.fill('evenodd');ctx.fillStyle='rgba(0,255,0,0.8)';ctx.font='bold 14px monospace';ctx.fillText('NV MODE',15,25);ctx.fillStyle='#0f0';ctx.beginPath();ctx.arc(w-25,25,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,255,0,0.6)';ctx.font='11px monospace';ctx.fillText('IR',w-45,30);}
 
-        function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.08+8);g=Math.min(255,g*1.03+3);b=Math.min(255,b*0.97);}else if(p==='slide'){const L=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-L)*0.7-5);g=Math.min(255,g+(g-L)*0.6);b=Math.min(255,b+(b-L)*0.8+15);}else if(p==='bw'){const L=0.299*r+0.587*g+0.114*b,c=(L-128)*1.15+128;r=g=b=Math.max(0,Math.min(255,c));}else if(p==='16mm'){r=Math.min(255,r*1.12+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95-3);}else if(p==='handycam'){r=Math.min(255,r*1.05);g=Math.min(255,g*0.98-2);b=Math.min(255,b*1.02+3);const sat=0.85;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;}else if(p==='nightvision'){const L=0.299*r+0.587*g+0.114*b;const boosted=Math.min(255,L*2.2+35);r=Math.min(255,boosted*0.05);g=Math.min(255,boosted);b=Math.min(255,boosted*0.08);}d[i]=r;d[i+1]=g;d[i+2]=b;}}
+        function applyVHSOverlay(ctx,w,h){const trackY=(Date.now()/50)%h;for(let y=0;y<h;y+=3){const dist=Math.abs(y-trackY);if(dist<15){const intensity=1-(dist/15);ctx.fillStyle=`rgba(0,0,0,${intensity*0.3})`;ctx.fillRect(0,y,w,2);}}for(let y=0;y<h;y+=2){if(y%4===0){ctx.fillStyle='rgba(0,0,0,0.08)';ctx.fillRect(0,y,w,1);}}const now=new Date();const time=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='bold 16px monospace';ctx.fillText('SP',15,h-20);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px monospace';ctx.fillText(time,50,h-20);}
+
+        function applyProfile(d,p){if(p==='none')return;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(p==='portra'){r=Math.min(255,r*1.08+8);g=Math.min(255,g*1.03+3);b=Math.min(255,b*0.97);}else if(p==='slide'){const L=0.299*r+0.587*g+0.114*b;r=Math.min(255,r+(r-L)*0.7-5);g=Math.min(255,g+(g-L)*0.6);b=Math.min(255,b+(b-L)*0.8+15);}else if(p==='bw'){const L=0.299*r+0.587*g+0.114*b,c=(L-128)*1.15+128;r=g=b=Math.max(0,Math.min(255,c));}else if(p==='16mm'){r=Math.min(255,r*1.12+10);g=Math.min(255,g*1.05+5);b=Math.min(255,b*0.95-3);}else if(p==='handycam'){r=Math.min(255,r*1.05);g=Math.min(255,g*0.98-2);b=Math.min(255,b*1.02+3);const sat=0.85;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;}else if(p==='vhs'){const sat=0.7;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;r=Math.min(255,r*0.95+5);g=Math.min(255,g*0.98);b=Math.min(255,b*1.05+8);}else if(p==='nightvision'){const L=0.299*r+0.587*g+0.114*b;const boosted=Math.min(255,L*2.2+35);r=Math.min(255,boosted*0.05);g=Math.min(255,boosted);b=Math.min(255,boosted*0.08);}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
         function applyCMYK(d,s){const cA=s.cyan/50,mA=s.magenta/50,yA=s.yellow/50,kA=s.black/50;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA*40));g=Math.max(0,Math.min(255,g+cA*20));b=Math.max(0,Math.min(255,b+cA*20));r=Math.max(0,Math.min(255,r+mA*20));g=Math.max(0,Math.min(255,g-mA*40));b=Math.max(0,Math.min(255,b+mA*20));r=Math.max(0,Math.min(255,r+yA*20));g=Math.max(0,Math.min(255,g+yA*20));b=Math.max(0,Math.min(255,b-yA*40));const dF=1-kA*0.25;r*=dF;g*=dF;b*=dF;d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
@@ -302,14 +271,12 @@
 
         function toggleControl(c){}
 
-        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('cmykSliders').style.display=p==='none'?'none':'grid';document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';if(!state.videoMode)renderPhoto();}
+        function setProfile(p){state.settings.profile=p;const lb={none:'NONE',portra:'PORTRA',slide:'SLIDE',bw:'B&W','16mm':'16MM','handycam':'HCAM','nightvision':'NVISION',vhs:'VHS'};document.getElementById('profileValue').textContent=lb[p];document.querySelectorAll('#profileControl .preset-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('videoProfiles').style.display=state.videoMode?'grid':'none';if(!state.videoMode)renderPhoto();}
 
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
 
         function adjustGrain(d){state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').textContent=state.settings.grain;if(!state.videoMode)renderPhoto();}
-
-        function adjustCMYK(ch,d){const chs={c:'cyan',m:'magenta',y:'yellow',k:'black'},k=chs[ch];const displayId=k==='black'?'density':k;state.settings[k]=Math.max(-50,Math.min(50,state.settings[k]+d));document.getElementById(displayId+'Value').textContent=state.settings[k];if(!state.videoMode)renderPhoto();}
 
         function savePhoto(){const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{const c=document.getElementById('canvas');c.toBlob(b=>{const url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=`frontier_${p.name}`;a.click();URL.revokeObjectURL(url);},'image/jpeg',0.95);}}
 
