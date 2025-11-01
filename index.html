@@ -89,6 +89,7 @@
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
         .top-controls .settings-btn:active img { filter:brightness(0) invert(1); }
         .top-controls .preview img { filter:brightness(0) invert(1); }
+        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:9px; font-weight:700; padding:0 8px; width:auto; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; }
         .canvas-container.zoomed { padding:0; }
@@ -181,7 +182,7 @@
     <div id="editSection">
         <button class="gallery-icon" onclick="backToUpload()">≡</button>
         <div class="top-controls">
-            <button class="settings-btn" onclick="resetSettings()" title="Reset"><img src="Clear.svg" alt="Reset"></button>
+            <button class="settings-btn clear-btn" onclick="resetSettings()" title="Reset">CLEAR</button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" onclick="copyToClipboard()" title="Copy"><img src="Copy.svg" alt="Copy"></button>
             <button class="settings-btn preview" onclick="togglePreview()" title="Preview"><img src="Preview.svg" alt="Preview"></button>
@@ -321,7 +322,7 @@
 
         function setProfile(p){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';if(state.settings.profile===p){state.settings.profile='none';document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));}else{state.settings.profile=p;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');}if(!state.videoMode)renderPhoto();}
 
-        function resetSettings(){haptic();state.settings={profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};document.getElementById('bloomValueBig').textContent='0';document.getElementById('grainValueBig').textContent='0';document.getElementById('cyanValue').textContent='0';document.getElementById('magentaValue').textContent='0';document.getElementById('yellowValue').textContent='0';document.getElementById('blackValue').textContent='0';document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));updateCMYKIndicator();if(!state.videoMode)renderPhoto();}
+        function resetSettings(){haptic();if(!confirm('Clear all settings?'))return;state.settings={profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};document.getElementById('bloomValueBig').textContent='0';document.getElementById('grainValueBig').textContent='0';document.getElementById('cyanValue').textContent='0';document.getElementById('magentaValue').textContent='0';document.getElementById('yellowValue').textContent='0';document.getElementById('blackValue').textContent='0';document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));updateCMYKIndicator();if(!state.videoMode)renderPhoto();}
 
         function toggleCMYK(){haptic();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');}
 
