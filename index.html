@@ -326,9 +326,9 @@
 
         function toggleCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');}
 
-        function adjustCMYK(channel,delta){const max=10;state.settings[channel]=Math.max(0,Math.min(max,state.settings[channel]+delta));document.getElementById(channel+'Value').textContent=state.settings[channel];updateCMYKIndicator();if(!state.videoMode)renderPhoto();}
+        function adjustCMYK(channel,delta){const max=10,min=-10;state.settings[channel]=Math.max(min,Math.min(max,state.settings[channel]+delta));document.getElementById(channel+'Value').textContent=state.settings[channel];updateCMYKIndicator();if(!state.videoMode)renderPhoto();}
 
-        function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan>0||state.settings.magenta>0||state.settings.yellow>0||state.settings.black>0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
+        function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
 
         function adjustBloom(d){state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').textContent=state.settings.bloom;if(!state.videoMode)renderPhoto();}
