@@ -266,12 +266,22 @@
 
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,zoomed:false,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null}};
-        function setStatus(s){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready');wait.classList.toggle('active',s!=='ready');}
+        function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);wait.classList.toggle('active',s!=='ready');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
-        // Initial status light animation - start red, flash green 2x, then pulse green
-        let flashCount=0;
-        const flashInterval=setInterval(()=>{setStatus(flashCount%2===1?'ready':'wait');flashCount++;if(flashCount>=5){clearInterval(flashInterval);setStatus('ready');}},300);
+        // Initial status light animation - steady green, wait 1s, flash green 2x, then pulse green
+        setStatus('ready',false);
+        setTimeout(()=>{
+            let flashCount=0;
+            const flashInterval=setInterval(()=>{
+                setStatus(flashCount%2===0?'wait':'ready',false);
+                flashCount++;
+                if(flashCount>=4){
+                    clearInterval(flashInterval);
+                    setStatus('ready',true);
+                }
+            },150);
+        },1000);
 
         // Canvas tap handling
         function handleCanvasTap(e){if(state.videoMode)return;if(state.tapState.comparing)return;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{singleTapCompare();state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(e);state.tapState.count=0;}}
