@@ -99,9 +99,9 @@
         .video-control-btn { width:50px; height:50px; background:#000; border:3px solid #fff; border-radius:50%; cursor:pointer; font-size:20px; color:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .video-control-btn:active { transform:scale(0.95); }
 
-        .edit-footer { background:#8C8C8C; padding:10px 10px 16px 10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; }
+        .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
-        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:12px; font-weight:700; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; color:#000; }
         .settings-btn.active { background:#000; color:#fff; }
         .settings-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2); }
         .settings-btn.preview { background:#000; color:#fff; border-color:#000; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
@@ -130,11 +130,11 @@
 
         .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:52px; }
         .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:52px; }
-        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#D4CEC8; border:3px solid #000; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:6px; }
+        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#D4CEC8; border:3px solid #000; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; }
         .preset-btn.active { background:#000; color:#fff; }
         .preset-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
 
-        .slider-btn { min-height:52px; background:linear-gradient(180deg, #D4CEC8 0%, #C4BEB8 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; font-size:36px; font-weight:700; }
+        .slider-btn { min-height:52px; background:linear-gradient(180deg, #D4CEC8 0%, #C4BEB8 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; font-size:36px; font-weight:700; color:#000; }
         .slider-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
         .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:52px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); }
 
