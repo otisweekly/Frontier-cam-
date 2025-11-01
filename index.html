@@ -660,6 +660,7 @@
             videoGesturesSetup=true;
             const canvasContainer=document.getElementById('canvasContainer');
             let videoTouchStartTarget=null;
+            let videoLastTapX=0,videoLastTapY=0;
 
             const handleVideoTouchStart=(e)=>{
                 if(!state.videoMode)return;
@@ -671,6 +672,10 @@
                 const canvasRect=canvas.getBoundingClientRect();
                 const tappedOnCanvas=touch.clientX>=canvasRect.left&&touch.clientX<=canvasRect.right&&touch.clientY>=canvasRect.top&&touch.clientY<=canvasRect.bottom;
                 videoTouchStartTarget=tappedOnCanvas?'canvas':'container';
+
+                // Store tap coordinates for zoom centering
+                videoLastTapX=touch.clientX;
+                videoLastTapY=touch.clientY;
 
                 if(e.touches.length===2){
                     // Pinch zoom
@@ -823,14 +828,31 @@
                                 // Double tap container enters fullscreen
                                 toggleFullscreenPreview();
                             }else{
-                                // Double tap video toggles pinch zoom
+                                // Double tap video toggles zoom (like photos)
                                 if(zoomState.scale>1){
+                                    console.log('Zooming OUT video to 1x');
                                     resetZoom(canvas);
                                 }else{
-                                    zoomState.scale=2;
-                                    zoomState.x=0;
-                                    zoomState.y=0;
+                                    console.log('Zooming IN video to 2.5x - using stored tap coords:',videoLastTapX,videoLastTapY);
+                                    const canvasRect=canvas.getBoundingClientRect();
+
+                                    // Fixed 2.5x zoom like photos
+                                    zoomState.scale=2.5;
+                                    console.log('Setting video scale to:',zoomState.scale);
+
+                                    // Calculate center point relative to canvas using stored coordinates
+                                    const tapX=videoLastTapX-canvasRect.left;
+                                    const tapY=videoLastTapY-canvasRect.top;
+                                    const canvasCenterX=canvasRect.width/2;
+                                    const canvasCenterY=canvasRect.height/2;
+
+                                    // Pan to center the tap point
+                                    zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
+                                    zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
+
+                                    console.log('Applying video transform...');
                                     applyTransform(canvas);
+                                    console.log('Video zoom complete! New scale:',zoomState.scale);
                                 }
                             }
                             videoTouchState.tapCount=0;
