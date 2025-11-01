@@ -91,7 +91,7 @@
         .top-controls .settings-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
         .top-controls .preview { background:#000; }
         .top-controls .preview img { filter:brightness(0) invert(1); }
-        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:10px; font-weight:700; padding:0; width:44px; }
+        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:15px; font-weight:700; padding:0 8px; width:auto; min-width:44px; color:#000; -webkit-tap-highlight-color:transparent; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; }
         .canvas-container.zoomed { padding:0; }
@@ -244,7 +244,7 @@
                         <div class="slider-value" id="bloomValueBig">0</div>
                         <button class="slider-btn" onclick="adjustBloom(1)">+</button>
                     </div>
-                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">BLOOM</div>
+                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;padding-top:4px;">BLOOM</div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:4px;">
                     <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -252,7 +252,7 @@
                         <div class="slider-value" id="grainValueBig">0</div>
                         <button class="slider-btn" onclick="adjustGrain(1)">+</button>
                     </div>
-                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;">GRAIN</div>
+                    <div style="font-family:'PP Neue Bit','PP Fuji',monospace;font-size:11px;font-weight:700;text-align:center;color:#000;padding-top:4px;">GRAIN</div>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -271,9 +271,9 @@
         function setStatus(s){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready');wait.classList.toggle('active',s!=='ready');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
-        // Initial status light animation - flash a few times then settle into pulse
+        // Initial status light animation - start red, flash green 2x, then pulse green
         let flashCount=0;
-        const flashInterval=setInterval(()=>{setStatus(flashCount%2===0?'ready':'wait');flashCount++;if(flashCount>=6){clearInterval(flashInterval);setStatus('ready');}},300);
+        const flashInterval=setInterval(()=>{setStatus(flashCount%2===1?'ready':'wait');flashCount++;if(flashCount>=5){clearInterval(flashInterval);setStatus('ready');}},300);
 
         // Canvas tap handling
         function handleCanvasTap(){if(state.videoMode)return;if(state.tapState.comparing)return;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{singleTapCompare();state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom();state.tapState.count=0;}}
