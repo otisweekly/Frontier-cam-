@@ -80,16 +80,18 @@
         #editSection { display:none; flex-direction:column; width:100vw; height:100vh; height:100dvh; background:#8C8C8C; position:fixed; top:0; left:0; }
         #editSection.active { display:flex; }
 
-        .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; font-size:32px; font-weight:700; color:#000; box-shadow:0 5px 0 #000; transition:all 0.1s; }
+        .gallery-icon { position:fixed; top:15px; left:15px; width:44px; height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; font-size:35px; font-weight:700; color:#000; box-shadow:0 5px 0 #000; transition:all 0.1s; }
         .gallery-icon:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
 
         .top-controls { position:fixed; top:15px; right:15px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
-        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:6px; }
+        .top-controls .settings-btn { position:relative; width:44px; height:44px; padding:6px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 5px 0 #000; transition:all 0.1s; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
+        .top-controls .settings-btn.active { background:#000; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
-        .top-controls .settings-btn:active img { filter:brightness(0) invert(1); }
+        .top-controls .settings-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
+        .top-controls .preview { background:#000; }
         .top-controls .preview img { filter:brightness(0) invert(1); }
-        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:9px; font-weight:700; padding:0 8px; width:auto; }
+        .top-controls .clear-btn { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:10px; font-weight:700; padding:0; width:44px; }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:90px; padding-left:15px; padding-right:15px; padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:padding 0.3s ease; min-height:0; }
         .canvas-container.zoomed { padding:0; }
@@ -106,20 +108,15 @@
 
         .edit-footer { background:#8C8C8C; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; touch-action:manipulation; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
-        .settings-btn { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:40px; background:#B3B3B3; border:none; border-radius:4px; cursor:pointer; font-size:20px; font-weight:700; text-align:center; transition:all 0.1s; display:flex; align-items:center; justify-content:center; color:#000; }
-        .settings-btn.active { background:#000; color:#fff; }
-        .settings-btn:active { transform:scale(0.95); }
-        .settings-btn.preview { background:#000; color:#fff; }
-        .settings-btn.preview:active { transform:scale(0.95); }
         #cmykToggle::after { content:''; position:absolute; top:4px; right:4px; width:8px; height:8px; background:#3897AF; border-radius:50%; opacity:0; transition:opacity 0.2s; box-shadow:0 0 4px rgba(56,151,175,0.8); }
         #cmykToggle.has-settings::after { opacity:1; }
 
         .footer-bottom { width:100%; }
-        .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:52px; width:100%; }
-        .nav-btn { width:70px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:20px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
+        .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
+        .nav-btn { width:77px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; flex-shrink:0; box-shadow:0 5px 0 #555; transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; }
         .nav-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #555; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:60px; flex-shrink:0; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
-        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex:1; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:28px; font-weight:700; min-width:66px; flex-shrink:0; text-align:center; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
+        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 20px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:15px; font-weight:700; cursor:pointer; flex:1; box-shadow:0 5px 0 #0A5A6C; transition:all 0.1s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
@@ -131,13 +128,13 @@
         .expanded-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
         .simple-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
 
-        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:52px; }
-        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:52px; }
-        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; }
+        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:57px; }
+        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:57px; }
+        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 5px 0 #000; transition:all 0.1s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; }
         .preset-btn.active { background:#000; color:#fff; }
         .preset-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #000; }
 
-        .slider-btn { min-height:52px; background:linear-gradient(180deg, #C3C3C3 0%, #A3A3A3 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; font-size:32px; font-weight:700; color:#000; }
+        .slider-btn { min-height:57px; background:linear-gradient(180deg, #C3C3C3 0%, #A3A3A3 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; font-size:35px; font-weight:700; color:#000; }
         .slider-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
         .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:52px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; }
 
@@ -152,7 +149,7 @@
         .cmyk-color-bar.yellow { background:#FFFF00; }
         .cmyk-color-bar.density { background:#000; }
         .cmyk-arrows { display:flex; gap:4px; }
-        .cmyk-arrow-btn { flex:1; height:44px; background:linear-gradient(180deg, #C3C3C3 0%, #A3A3A3 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:24px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
+        .cmyk-arrow-btn { flex:1; height:48px; background:linear-gradient(180deg, #C3C3C3 0%, #A3A3A3 100%); border:2px solid rgba(0,0,0,0.15); border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0.1s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(2px); box-shadow:0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); }
 
         @media (max-width:360px) {
