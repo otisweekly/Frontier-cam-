@@ -611,16 +611,43 @@
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},swipeState:{swiping:false,startX:0,startIntensity:100},fullscreenPreview:false};
 
-        // Mobile Debug Console
+        // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
         const originalLog=console.log;
+        const originalError=console.error;
+
         console.log=function(...args){
             originalLog.apply(console,args);
             const msg=args.map(a=>typeof a==='object'?JSON.stringify(a):String(a)).join(' ');
-            debugLogs.push(msg);
-            if(debugLogs.length>50)debugLogs.shift();
+            debugLogs.push('✓ ' + msg);
+            if(debugLogs.length>100)debugLogs.shift();
             updateDebugConsole();
         };
+
+        console.error=function(...args){
+            originalError.apply(console,args);
+            const msg=args.map(a=>typeof a==='object'?JSON.stringify(a):String(a)).join(' ');
+            debugLogs.push('❌ ERROR: ' + msg);
+            if(debugLogs.length>100)debugLogs.shift();
+            updateDebugConsole();
+        };
+
+        // Catch unhandled errors
+        window.addEventListener('error', function(e) {
+            const msg = `UNCAUGHT ERROR: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`;
+            debugLogs.push('🔥 ' + msg);
+            if(debugLogs.length>100)debugLogs.shift();
+            updateDebugConsole();
+        });
+
+        // Catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            const msg = `UNHANDLED PROMISE: ${e.reason}`;
+            debugLogs.push('⚠️ ' + msg);
+            if(debugLogs.length>100)debugLogs.shift();
+            updateDebugConsole();
+        });
+
         function toggleDebugConsole(){
             const debug=document.getElementById('mobileDebug');
             debug.classList.toggle('active');
@@ -633,6 +660,9 @@
                 debug.scrollTop=debug.scrollHeight;
             }
         }
+
+        // Log initialization
+        console.log('🐛 Debug console initialized');
 
         function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);wait.classList.toggle('active',s!=='ready');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
