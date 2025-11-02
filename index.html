@@ -2963,19 +2963,31 @@
                 }
 
                 const text = await response.text();
+                console.log(`📄 LUT file size: ${text.length} characters`);
+                console.log(`📄 First 500 chars:`, text.substring(0, 500));
+
                 const lines = text.split('\n');
+                console.log(`📄 Total lines: ${lines.length}`);
+
                 let size = 64; // Default
                 const data = [];
+                let validLineCount = 0;
+                let invalidLineCount = 0;
 
-                for (const line of lines) {
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
                     const trimmed = line.trim();
 
                     // Skip comments and empty
                     if (trimmed.startsWith('#') || trimmed === '') continue;
 
+                    // Skip common header lines
+                    if (trimmed.startsWith('TITLE') || trimmed.startsWith('DOMAIN_')) continue;
+
                     // Parse size
                     if (trimmed.startsWith('LUT_3D_SIZE')) {
                         size = parseInt(trimmed.split(/\s+/)[1]);
+                        console.log(`📄 Found LUT_3D_SIZE: ${size}`);
                         continue;
                     }
 
@@ -2983,8 +2995,16 @@
                     const values = trimmed.split(/\s+/).map(parseFloat);
                     if (values.length === 3 && values.every(v => !isNaN(v))) {
                         data.push(...values);
+                        validLineCount++;
+                    } else if (trimmed.length > 0) {
+                        invalidLineCount++;
+                        if (invalidLineCount < 5) {
+                            console.warn(`⚠️ Invalid line ${i}: "${trimmed}"`);
+                        }
                     }
                 }
+
+                console.log(`📄 Valid RGB lines: ${validLineCount}, Invalid: ${invalidLineCount}`);
 
                 const expectedEntries = size * size * size;
                 const actualEntries = data.length / 3;
