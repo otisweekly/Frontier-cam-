@@ -113,7 +113,7 @@
         @keyframes indicatorPulse { 0%, 100% { transform:scale(1); box-shadow:0 0 6px rgba(56,151,175,0.8); } 50% { transform:scale(1.15); box-shadow:0 0 12px rgba(56,151,175,1), 0 0 18px rgba(56,151,175,0.6); } }
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
-        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0.1s; -webkit-tap-highlight-color:transparent; font-family:inherit; }
+        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; color:#000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0.1s; -webkit-tap-highlight-color:transparent; font-family:inherit; }
         .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 4px 8px rgba(0,0,0,0.2); }
         #fileInput { display:none; }
         @media (pointer: coarse) { .upload-btn { touch-action:manipulation; } }
@@ -380,7 +380,7 @@
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
-            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness contrast.svg" alt="Brightness"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness/contrast.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
@@ -673,7 +673,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1181,7 +1181,7 @@
                                 const oldIntensity=state.settings.profileIntensity;
                                 const newIntensity=Math.max(0,oldIntensity-5);
                                 if(newIntensity!==oldIntensity){
-                                    state.intensityTapState.tapCounter--;
+                                    state.intensityTapState.tapCounter=Math.max(-5,state.intensityTapState.tapCounter-1);
                                     state.settings.profileIntensity=newIntensity;
 
                                     // Show tap counter indicator
@@ -1223,7 +1223,7 @@
                                 const oldIntensity=state.settings.profileIntensity;
                                 const newIntensity=Math.min(100,oldIntensity+5);
                                 if(newIntensity!==oldIntensity){
-                                    state.intensityTapState.tapCounter++;
+                                    state.intensityTapState.tapCounter=Math.min(5,state.intensityTapState.tapCounter+1);
                                     state.settings.profileIntensity=newIntensity;
 
                                     // Show tap counter indicator
@@ -1514,7 +1514,7 @@
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     const defaultSettings = {
                         profile: 'none',
-                        profileIntensity: 40,
+                        profileIntensity: 30,
                         bloom: 0,
                         grain: 0,
                         cyan: 0,
@@ -1759,11 +1759,11 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=40;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updatePresetButtonText();}}
 
         function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
-        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
         function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
 
@@ -3382,8 +3382,7 @@
             },
             'xxx': {
                 name: 'XXX',
-                lut: 'film-luts/Frontier luts/ClassicPrint 16mm DWG LUT v3 Ektachrome.cube',
-                blackAndWhite: true,
+                algorithmic: true,
                 description: 'Kodak Tri-X 400 black & white film emulation'
             }
         };
@@ -3494,9 +3493,9 @@
 
         function toggleControl(c){}
 
-        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==40){const actual=state.settings.profileIntensity;let display;if(actual>=40){display=Math.round((actual-40)/0.6);}else{display=Math.round((actual-40)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
+        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==30){const actual=state.settings.profileIntensity;let display;if(actual>=30){display=Math.round((actual-30)/0.6);}else{display=Math.round((actual-30)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3514,7 +3513,7 @@
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
+        function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
@@ -3601,7 +3600,7 @@
                 const fileExtension = file.name.split('.').pop().toLowerCase();
                 const defaultSettings = {
                     profile: 'none',
-                    profileIntensity: 40,
+                    profileIntensity: 30,
                     bloom: 0,
                     grain: 0,
                     cyan: 0,
