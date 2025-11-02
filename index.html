@@ -1677,6 +1677,10 @@
                     // Upload source texture
                     const sourceTexture = this.createTexture(this.canvas.width, this.canvas.height);
                     gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+
+                    // Fix Y-flip issue - WebGL textures are Y-flipped compared to canvas
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
                     gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
                                  this.textureFormat.format, this.textureFormat.type, sourceCanvas);
 
@@ -1697,6 +1701,9 @@
                     // Copy result back to source canvas
                     const ctx = sourceCanvas.getContext('2d');
                     ctx.drawImage(this.canvas, 0, 0);
+
+                    // Reset pixel store settings
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 
                     // Cleanup
                     gl.deleteTexture(sourceTexture);
