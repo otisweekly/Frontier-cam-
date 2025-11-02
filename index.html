@@ -448,17 +448,15 @@
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('250d', this)">250D</button>
-                <button class="preset-btn" onclick="setProfile('800t', this)">800T</button>
-                <button class="preset-btn" onclick="setProfile('ektachrome', this)">EKTA</button>
-                <button class="preset-btn" onclick="setProfile('technicolor', this)">TECH</button>
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+                <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
+                <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
+                <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
             </div>
-            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('250d', this)">250D</button>
-                <button class="preset-btn" onclick="setProfile('800t', this)">800T</button>
-                <button class="preset-btn" onclick="setProfile('ektachrome', this)">EKTA</button>
-                <button class="preset-btn" onclick="setProfile('technicolor', this)">TECH</button>
+            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+                <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
+                <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
+                <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -1791,9 +1789,48 @@
                 const intensity = state.settings.profileIntensity || 100;
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity`);
+
+                // Apply black & white conversion for XXX preset
+                const preset = FILM_PRESETS[profileId];
+                if (preset && preset.blackAndWhite) {
+                    applyBlackAndWhite(imageData);
+                    console.log('✅ Applied B&W conversion for XXX preset');
+                }
             } catch (error) {
                 console.error('❌ Error applying LUT:', error);
                 // Don't modify imageData if there's an error
+            }
+        }
+
+        // Black & white conversion with punchy Tri-X style contrast
+        function applyBlackAndWhite(imageData) {
+            const pixels = imageData.data;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                const r = pixels[i];
+                const g = pixels[i + 1];
+                const b = pixels[i + 2];
+
+                // Luminance with slight red channel bias (like Tri-X film)
+                // Red channel emphasized for more dramatic skin tones and contrast
+                let lum = r * 0.35 + g * 0.50 + b * 0.15;
+
+                // S-curve for punchy contrast (keeps shadows detailed, punchy mids/highlights)
+                lum = lum / 255;  // Normalize to 0-1
+
+                // Soft S-curve: increases midtone contrast while preserving shadow detail
+                if (lum < 0.5) {
+                    lum = lum * lum * 2;  // Darken shadows slightly, keep detail
+                } else {
+                    lum = 1 - (1 - lum) * (1 - lum) * 2;  // Brighten highlights
+                }
+
+                lum = lum * 255;  // Back to 0-255
+                lum = Math.max(0, Math.min(255, lum));
+
+                pixels[i] = lum;
+                pixels[i + 1] = lum;
+                pixels[i + 2] = lum;
             }
         }
 
@@ -3095,27 +3132,23 @@
         // Global LUT manager instance
         let lutManager = null;
 
-        // Film preset configuration (4 presets)
+        // Film preset configuration (3 presets)
         const FILM_PRESETS = {
-            '250d': {
-                name: '250D',
+            'supra': {
+                name: 'SUPRA',
                 lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 250D.cube',
                 description: 'Daylight balanced, fine grain'
             },
-            '800t': {
-                name: '800T',
-                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 800T.cube',
-                description: 'Low light, visible grain'
-            },
-            'ektachrome': {
-                name: 'Ektachrome',
-                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 Ektachrome.cube',
-                description: 'Vibrant colors, punchy'
-            },
-            'technicolor': {
-                name: 'Technicolor',
+            'chrome': {
+                name: 'CHROME',
                 lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 Technicolor.cube',
                 description: 'Classic Hollywood cinema'
+            },
+            'xxx': {
+                name: 'XXX',
+                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 800T.cube',
+                description: 'Punchy monochrome, Tri-X style',
+                blackAndWhite: true  // Special flag for B&W conversion
             }
         };
 
