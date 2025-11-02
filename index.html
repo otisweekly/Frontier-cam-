@@ -796,14 +796,6 @@
                 const video=document.getElementById('videoPreview');
                 if(!video)return;
 
-                // Prevent double-firing from event bubbling (canvas -> container)
-                const now=Date.now();
-                if(now-lastVideoTouchEndTime<50){
-                    console.log('Ignoring duplicate video touchend (bubbled event)');
-                    return;
-                }
-                lastVideoTouchEndTime=now;
-
                 if(e.touches.length<2){
                     videoZoomState.isPinching=false;
                     videoZoomState.lastDistance=0;
@@ -826,6 +818,14 @@
 
                     // If wasn't scrubbing OR scrubbed but didn't move much, treat as tap
                     if(!wasScrubbing||!hadSignificantScrub){
+                        // Prevent double-firing tap counting from event bubbling (canvas -> container)
+                        const now=Date.now();
+                        if(now-lastVideoTouchEndTime<50){
+                            console.log('Ignoring duplicate video tap (bubbled event)');
+                            return;
+                        }
+                        lastVideoTouchEndTime=now;
+
                         // Handle tap (play/pause/zoom/fullscreen)
                         videoTouchState.tapCount++;
                         if(videoTouchState.tapTimer)clearTimeout(videoTouchState.tapTimer);
