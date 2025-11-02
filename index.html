@@ -454,15 +454,23 @@
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:4px;">
                 <button class="preset-btn" onclick="setProfile('250d')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">250D</button>
                 <button class="preset-btn" onclick="setProfile('500t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">500T</button>
-                <button class="preset-btn" onclick="setProfile('ektachrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EKTA</button>
+                <button class="preset-btn" onclick="setProfile('800t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">800T</button>
             </div>
-            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px;">
+                <button class="preset-btn" onclick="setProfile('ektachrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EKTA</button>
+                <button class="preset-btn" onclick="setProfile('technicolor')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">TECH</button>
+            </div>
+            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:4px;">
                 <button class="preset-btn" onclick="setProfile('250d')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">250D</button>
                 <button class="preset-btn" onclick="setProfile('500t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">500T</button>
+                <button class="preset-btn" onclick="setProfile('800t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">800T</button>
+            </div>
+            <div class="profile-buttons" id="videoProfiles2" style="display:none;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('ektachrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EKTA</button>
+                <button class="preset-btn" onclick="setProfile('technicolor')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">TECH</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -1695,7 +1703,7 @@
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),photoProfiles2=document.getElementById('photoProfiles2'),videoProfiles=document.getElementById('videoProfiles'),videoProfiles2=document.getElementById('videoProfiles2'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';photoProfiles2.style.display='none';videoProfiles.style.display='grid';videoProfiles2.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';photoProfiles2.style.display='grid';videoProfiles.style.display='none';videoProfiles2.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
 
         function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0,processingFrame=false;const targetFPS=30,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval&&!processingFrame){processingFrame=true;requestAnimationFrame(()=>{ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);processingFrame=false;});lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processingFrame=false;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processingFrame=false;processFrame(0);});}
 
@@ -1841,12 +1849,24 @@
 
         // Synchronous LUT application (uses preloaded LUT)
         function applyProfile(imageData, profileId) {
-            if (profileId === 'none' || !currentLUT || currentLUTProfile !== profileId) {
+            if (profileId === 'none') {
+                console.log('Profile is none, skipping LUT');
                 return;
             }
 
-            const manager = getLUTManager();
-            manager.applyLUTToImageData(imageData, currentLUT);
+            if (!currentLUT || currentLUTProfile !== profileId) {
+                console.warn(`LUT not loaded for profile: ${profileId}, currentLUTProfile: ${currentLUTProfile}`);
+                return;
+            }
+
+            try {
+                const manager = getLUTManager();
+                manager.applyLUTToImageData(imageData, currentLUT);
+                console.log(`✅ Applied LUT: ${profileId}`);
+            } catch (error) {
+                console.error('Error applying LUT:', error);
+                // Don't modify imageData if there's an error
+            }
         }
 
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
@@ -3103,10 +3123,20 @@
                 lut: 'ClassicPrint_16mm_500T_Rec709.cube',
                 description: 'Tungsten balanced, versatile'
             },
+            '800t': {
+                name: '800T',
+                lut: 'ClassicPrint_16mm_800T_Rec709.cube',
+                description: 'Low light, visible grain'
+            },
             'ektachrome': {
                 name: 'Ektachrome',
                 lut: 'ClassicPrint_16mm_Ektachrome_Rec709.cube',
                 description: 'Vibrant colors, punchy'
+            },
+            'technicolor': {
+                name: 'Technicolor',
+                lut: 'ClassicPrint_16mm_Technicolor_Rec709.cube',
+                description: 'Classic Hollywood cinema'
             }
         };
 
@@ -3411,7 +3441,10 @@
 
         function setBackground(color){haptic();const container=document.getElementById('canvasContainer');const buttons={grey:document.getElementById('bgGrey'),white:document.getElementById('bgWhite'),black:document.getElementById('bgBlack')};Object.values(buttons).forEach(btn=>btn.classList.remove('active'));buttons[color].classList.add('active');const colors={grey:'#4A4A4A',white:'#FFFFFF',black:'#000000'};container.style.background=colors[color];state.canvasBackground=color;}
 
-        function cycleCanvasBackground(event){haptic();const colors=['grey','white','black'];const bgColors={grey:'#4A4A4A',white:'#FFFFFF',black:'#000000'};const currentIndex=colors.indexOf(state.canvasBackground);const nextIndex=(currentIndex+1)%colors.length;const nextColor=colors[nextIndex];state.canvasBackground=nextColor;const container=document.getElementById('canvasContainer');const buttons={grey:document.getElementById('bgGrey'),white:document.getElementById('bgWhite'),black:document.getElementById('bgBlack')};Object.values(buttons).forEach(btn=>btn.classList.remove('active'));buttons[nextColor].classList.add('active');container.style.background=bgColors[nextColor];console.log('Canvas background changed to:',nextColor);}
+        function cycleCanvasBackground(event){
+            // Disabled - canvas stays dark gray, black only in fullscreen preview
+            return;
+        }
 
         function toggleDarkMode(){document.body.classList.toggle('dark-mode');const isDark=document.body.classList.contains('dark-mode');document.querySelector('.edit-header').style.background=isDark?'#1a1a1a':'#000';document.querySelector('.edit-footer').style.background=isDark?'#1a1a1a':'#8C8C8C';document.querySelector('.canvas-container').style.background=isDark?'#000':'#8C8C8C';}
 
