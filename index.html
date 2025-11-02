@@ -947,8 +947,8 @@
 
         function endVideoCompare(){}
 
-        // DISABLED: Single tap compare functionality removed per user request
-        function singleTapCompare(){return;}
+        // Single tap compare - shows original image for 3 seconds (center 20% zone only)
+        function singleTapCompare(){if(state.videoMode||state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;},3000);}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -1141,71 +1141,109 @@
                         resetZoom(canvas);
                     }
 
-                    // Handle intensity tap left/right if a preset is active
-                    if(state.settings.profile!=='none'&&!zoomState.isPanning&&!state.tapState.comparing){
+                    // Handle intensity tap zones: left 40% (decrease), center 20% (view original), right 40% (increase)
+                    if(!zoomState.isPanning&&!state.tapState.comparing){
                         // Check if this was a tap (minimal movement)
                         const deltaX=Math.abs((e.changedTouches?e.changedTouches[0].clientX:lastTapX)-state.intensityTapState.startX);
                         const deltaY=Math.abs((e.changedTouches?e.changedTouches[0].clientY:lastTapY)-state.intensityTapState.startY);
 
                         if(deltaX<15&&deltaY<15){
-                            // This is a tap! Determine which side of the canvas
+                            // This is a tap! Determine which zone of the canvas
                             const activeCanvas=document.getElementById('canvas');
                             const canvasRect=activeCanvas.getBoundingClientRect();
                             const tapX=e.changedTouches?e.changedTouches[0].clientX:lastTapX;
-                            const canvasMiddle=canvasRect.left+canvasRect.width/2;
 
-                            const oldIntensity=state.settings.profileIntensity;
-                            let newIntensity=oldIntensity;
+                            // Calculate tap position as percentage of canvas width
+                            const tapPercent=(tapX-canvasRect.left)/canvasRect.width;
 
-                            if(tapX<canvasMiddle){
-                                // Tap left: decrease by 5
-                                newIntensity=Math.max(0,oldIntensity-5);
+                            // Center 20% (40%-60%): view original
+                            if(tapPercent>=0.4&&tapPercent<=0.6){
+                                singleTapCompare();
+                                return;
+                            }
+                            // Left 40%: decrease intensity
+                            else if(tapPercent<0.4&&state.settings.profile!=='none'){
+                                const oldIntensity=state.settings.profileIntensity;
+                                const newIntensity=Math.max(0,oldIntensity-5);
                                 if(newIntensity!==oldIntensity){
                                     state.intensityTapState.tapCounter--;
-                                }
-                            }else{
-                                // Tap right: increase by 5
-                                newIntensity=Math.min(100,oldIntensity+5);
-                                if(newIntensity!==oldIntensity){
-                                    state.intensityTapState.tapCounter++;
+                                    state.settings.profileIntensity=newIntensity;
+
+                                    // Show tap counter indicator
+                                    const indicator=document.getElementById('intensityIndicator');
+                                    const counter=state.intensityTapState.tapCounter;
+                                    indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
+                                    indicator.classList.add('active');
+
+                                    // Position indicator over canvas center
+                                    const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
+                                    indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
+                                    indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
+
+                                    // Reset counter timer
+                                    if(state.intensityTapState.timer){
+                                        clearTimeout(state.intensityTapState.timer);
+                                    }
+                                    state.intensityTapState.timer=setTimeout(()=>{
+                                        indicator.classList.remove('active');
+                                        state.intensityTapState.tapCounter=0;
+                                    },800);
+
+                                    // Render immediately for instant feedback
+                                    renderPhoto();
+
+                                    // Add to history
+                                    const profileName=state.settings.profile.toUpperCase();
+                                    addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
+
+                                    saveCurrentPhotoSettings();
+                                    updatePresetButtonText();
+
+                                    // Prevent this from being treated as a regular tap
+                                    return;
                                 }
                             }
+                            // Right 40%: increase intensity
+                            else if(tapPercent>0.6&&state.settings.profile!=='none'){
+                                const oldIntensity=state.settings.profileIntensity;
+                                const newIntensity=Math.min(100,oldIntensity+5);
+                                if(newIntensity!==oldIntensity){
+                                    state.intensityTapState.tapCounter++;
+                                    state.settings.profileIntensity=newIntensity;
 
-                            if(newIntensity!==oldIntensity){
-                                state.settings.profileIntensity=newIntensity;
+                                    // Show tap counter indicator
+                                    const indicator=document.getElementById('intensityIndicator');
+                                    const counter=state.intensityTapState.tapCounter;
+                                    indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
+                                    indicator.classList.add('active');
 
-                                // Show tap counter indicator
-                                const indicator=document.getElementById('intensityIndicator');
-                                const counter=state.intensityTapState.tapCounter;
-                                indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
-                                indicator.classList.add('active');
+                                    // Position indicator over canvas center
+                                    const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
+                                    indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
+                                    indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
 
-                                // Position indicator over canvas center
-                                const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
-                                indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
-                                indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
+                                    // Reset counter timer
+                                    if(state.intensityTapState.timer){
+                                        clearTimeout(state.intensityTapState.timer);
+                                    }
+                                    state.intensityTapState.timer=setTimeout(()=>{
+                                        indicator.classList.remove('active');
+                                        state.intensityTapState.tapCounter=0;
+                                    },800);
 
-                                // Reset counter timer
-                                if(state.intensityTapState.timer){
-                                    clearTimeout(state.intensityTapState.timer);
+                                    // Render immediately for instant feedback
+                                    renderPhoto();
+
+                                    // Add to history
+                                    const profileName=state.settings.profile.toUpperCase();
+                                    addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
+
+                                    saveCurrentPhotoSettings();
+                                    updatePresetButtonText();
+
+                                    // Prevent this from being treated as a regular tap
+                                    return;
                                 }
-                                state.intensityTapState.timer=setTimeout(()=>{
-                                    indicator.classList.remove('active');
-                                    state.intensityTapState.tapCounter=0;
-                                },800);
-
-                                // Render immediately for instant feedback
-                                renderPhoto();
-
-                                // Add to history
-                                const profileName=state.settings.profile.toUpperCase();
-                                addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
-
-                                saveCurrentPhotoSettings();
-                                updatePresetButtonText();
-
-                                // Prevent this from being treated as a regular tap
-                                return;
                             }
                         }
                     }
@@ -3329,8 +3367,9 @@
             },
             'xxx': {
                 name: 'XXX',
-                algorithmic: true,  // Use old algorithmic black & white
-                description: 'Classic black & white with moderate contrast'
+                lut: 'film-luts/Frontier luts/ClassicPrint 16mm DWG LUT v3 Ektachrome.cube',
+                blackAndWhite: true,
+                description: 'Kodak Tri-X 400 black & white film emulation'
             }
         };
 
