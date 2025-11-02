@@ -244,6 +244,8 @@
 
         #cmykControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #cmykControls.active { transform:translateY(0); opacity:1; }
+        #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #brightnessControls.active { transform:translateY(0); opacity:1; }
         #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
@@ -281,6 +283,10 @@
         .cmyk-color-bar.magenta { background:#FF00FF; }
         .cmyk-color-bar.yellow { background:#FFFF00; }
         .cmyk-color-bar.density { background:#000; }
+        .cmyk-color-bar.brightness { background:linear-gradient(90deg, #000 0%, #FFF 100%); }
+        .cmyk-color-bar.contrast { background:linear-gradient(90deg, #808080 0%, #000 50%, #FFF 100%); }
+        .cmyk-color-bar.shadows { background:linear-gradient(90deg, #000 0%, #404040 100%); }
+        .cmyk-color-bar.highlights { background:linear-gradient(90deg, #C0C0C0 0%, #FFF 100%); }
         .cmyk-arrows { display:flex; gap:4px; }
         .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -371,6 +377,7 @@
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness contrast.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
@@ -438,6 +445,54 @@
                     <div class="cmyk-arrows">
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="brightnessControls">
+            <div class="cmyk-sliders">
+                <div class="cmyk-slider">
+                    <div class="cmyk-value" id="brightnessValue" onclick="editBrightnessCounter('brightness')">
+                        <div class="cmyk-value-number">0</div>
+                        <div class="cmyk-value-label">BRIGHT</div>
+                    </div>
+                    <div class="cmyk-color-bar brightness"></div>
+                    <div class="cmyk-arrows">
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                    </div>
+                </div>
+                <div class="cmyk-slider">
+                    <div class="cmyk-value" id="contrastValue" onclick="editBrightnessCounter('contrast')">
+                        <div class="cmyk-value-number">0</div>
+                        <div class="cmyk-value-label">CONTRAST</div>
+                    </div>
+                    <div class="cmyk-color-bar contrast"></div>
+                    <div class="cmyk-arrows">
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                    </div>
+                </div>
+                <div class="cmyk-slider">
+                    <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
+                        <div class="cmyk-value-number">0</div>
+                        <div class="cmyk-value-label">SHADOWS</div>
+                    </div>
+                    <div class="cmyk-color-bar shadows"></div>
+                    <div class="cmyk-arrows">
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                    </div>
+                </div>
+                <div class="cmyk-slider">
+                    <div class="cmyk-value" id="highlightsValue" onclick="editBrightnessCounter('highlights')">
+                        <div class="cmyk-value-number">0</div>
+                        <div class="cmyk-value-label">HIGHLIGHT</div>
+                    </div>
+                    <div class="cmyk-color-bar highlights"></div>
+                    <div class="cmyk-arrows">
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
             </div>
@@ -603,7 +658,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -689,7 +744,7 @@
         },1000);
 
         // Canvas tap handling
-        function handleCanvasTap(e){if(state.videoMode)return;if(state.tapState.comparing)return;const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}else{singleTapCompare();}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
+        function handleCanvasTap(e){if(state.videoMode)return;const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
         // Video touch handling
         let videoTouchState={tapCount:0,tapTimer:null};
@@ -877,7 +932,8 @@
 
         function endVideoCompare(){}
 
-        function singleTapCompare(){if(state.videoMode||state.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;},3000);}
+        // DISABLED: Single tap compare functionality removed per user request
+        function singleTapCompare(){return;}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -1148,13 +1204,11 @@
                             state.tapState.timer=setTimeout(()=>{
                                 // Single tap behavior based on target
                                 console.log('Single tap detected, target:',touchStartTarget);
-                                if(touchStartTarget==='image'){
-                                    // Single tap on image shows unedited version
-                                    singleTapCompare();
-                                }else{
+                                if(touchStartTarget==='background'){
                                     // Single tap on background cycles color
                                     cycleCanvasBackground();
                                 }
+                                // Single tap on image does nothing (preview mode removed per user request)
                                 state.tapState.count=0;
                             },300);
                         }else if(state.tapState.count===2){
@@ -1392,7 +1446,7 @@
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     const defaultSettings = {
                         profile: 'none',
-                        profileIntensity: 100,
+                        profileIntensity: 40,
                         bloom: 0,
                         grain: 0,
                         cyan: 0,
@@ -1637,11 +1691,11 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=100;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=40;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updatePresetButtonText();}}
 
         function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
-        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
         function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
 
@@ -1654,6 +1708,9 @@
 
             // Step 2: Apply CMYK color adjustments
             applyCMYK(imgData.data,state.settings);
+
+            // Step 2.5: Apply brightness/contrast/shadows/highlights adjustments
+            applyBrightness(imgData.data,state.settings);
             ctx.putImageData(imgData,0,0);
 
             // Step 3: Apply bloom
@@ -1863,10 +1920,47 @@
                 let b = origB;
 
                 if (profileId === 'xxx') {
-                    // Simple black & white with moderate contrast (old XXX)
-                    const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
-                    const contrast = (gray - 128) * 1.1 + 128;
-                    r = g = b = Math.max(0, Math.min(255, Math.round(contrast)));
+                    // Kodak Tri-X 400 Black & White Film Emulation
+                    // Tri-X has enhanced red/orange sensitivity, deep blacks, and characteristic grain
+
+                    // Step 1: Weighted B&W conversion mimicking Tri-X's spectral response
+                    // Tri-X is more sensitive to reds/oranges, less to blues
+                    const gray = (r * 0.35 + g * 0.50 + b * 0.15);
+
+                    // Step 2: Apply Tri-X characteristic S-curve for film-like contrast
+                    // Normalize to 0-1 range
+                    let normalized = gray / 255;
+
+                    // S-curve with crushed blacks and lifted shadows (Tri-X signature look)
+                    // This creates the punchy mid-tone contrast Tri-X is famous for
+                    const contrast = 1.35; // Strong mid-tone contrast
+                    const toe = 0.08;      // Lifted shadows (film fog)
+                    const shoulder = 0.92; // Compressed highlights
+
+                    // Apply toe (shadow lift)
+                    if (normalized < 0.25) {
+                        normalized = toe + (normalized / 0.25) * (0.25 - toe);
+                    }
+                    // Apply S-curve in mid-tones
+                    else if (normalized < 0.75) {
+                        const mid = (normalized - 0.25) / 0.5;
+                        const sCurve = 0.5 + Math.sin((mid - 0.5) * Math.PI) * 0.5;
+                        normalized = 0.25 + sCurve * 0.5 * contrast;
+                    }
+                    // Apply shoulder (highlight rolloff)
+                    else {
+                        const high = (normalized - 0.75) / 0.25;
+                        normalized = shoulder + high * (1 - shoulder);
+                    }
+
+                    // Step 3: Add slight warm tone (Tri-X has a slightly warm neutral tone)
+                    const warmth = 1.02;
+                    const coolness = 0.98;
+
+                    const finalValue = Math.round(normalized * 255);
+                    r = Math.max(0, Math.min(255, Math.round(finalValue * warmth)));
+                    g = finalValue;
+                    b = Math.max(0, Math.min(255, Math.round(finalValue * coolness)));
                 }
 
                 // Blend with original based on intensity
@@ -1915,6 +2009,8 @@
         }
 
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
+
+        function applyBrightness(d,s){if(s.brightness===0&&s.contrast===0&&s.shadows===0&&s.highlights===0)return;const brightnessAdjust=s.brightness*12;const contrastFactor=1+(s.contrast*0.15);const shadowsAdjust=s.shadows*12;const highlightsAdjust=s.highlights*12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(brightnessAdjust!==0){r+=brightnessAdjust;g+=brightnessAdjust;b+=brightnessAdjust;}if(contrastFactor!==1){r=((r-128)*contrastFactor)+128;g=((g-128)*contrastFactor)+128;b=((b-128)*contrastFactor)+128;}if(shadowsAdjust!==0||highlightsAdjust!==0){const lum=(r+g+b)/3;if(lum<128&&shadowsAdjust!==0){const shadowFactor=(128-lum)/128;r+=shadowsAdjust*shadowFactor;g+=shadowsAdjust*shadowFactor;b+=shadowsAdjust*shadowFactor;}if(lum>=128&&highlightsAdjust!==0){const highlightFactor=(lum-128)/127;r+=highlightsAdjust*highlightFactor;g+=highlightsAdjust*highlightFactor;b+=highlightsAdjust*highlightFactor;}}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
         // =====================================================================
         // WebGL Dual Kawase Bloom Processor
@@ -3340,7 +3436,7 @@
 
         function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==40){const actual=state.settings.profileIntensity;let display;if(actual>=40){display=Math.round((actual-40)/0.6);}else{display=Math.round((actual-40)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3358,19 +3454,28 @@
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
+        function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:40,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
 
-        function toggleCMYK(){haptic();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
+        function toggleCMYK(){haptic();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
         // Close panels when clicking outside (but not on canvas - canvas has its own tap handler)
-        document.addEventListener('click',(e)=>{const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer'),canvas=document.getElementById('canvas');const isCanvasTap=e.target===canvas||canvasContainer.contains(e.target);if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)&&!isCanvasTap){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}});
+        document.addEventListener('click',(e)=>{const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer'),canvas=document.getElementById('canvas');const isCanvasTap=e.target===canvas||canvasContainer.contains(e.target);if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)&&!isCanvasTap){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)&&!isCanvasTap){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}});
 
         function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
+        function toggleBrightness(){haptic();closeCMYK();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');brightnessControls.classList.toggle('active');brightnessToggle.classList.toggle('active');canvasContainer.classList.toggle('brightness-open');editFooter.classList.toggle('brightness-open');}
+
+        function closeBrightness(){const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(brightnessControls.classList.contains('active')){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}}
+
+        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+
+        function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
+
+        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type];const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function adjustBloom(d){haptic();state.settings.bloom=Math.max(0,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
 
@@ -3384,13 +3489,13 @@
 
         function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);setTimeout(renderPhoto,0);}
 
-        function toggleExportMenu(){haptic();closeCMYK();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
+        function toggleExportMenu(){haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
 
         function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
 
         function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();setTimeout(renderPhoto,0);alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}});}
 
-        function updateUIFromSettings(){const s=state.settings;document.querySelectorAll('.preset-btn').forEach(btn=>{btn.classList.toggle('active',btn.dataset.profile===s.profile);});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;updateCMYKIndicator();}
+        function updateUIFromSettings(){const s=state.settings;document.querySelectorAll('.preset-btn').forEach(btn=>{btn.classList.toggle('active',btn.dataset.profile===s.profile);});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();}
 
         async function copyToClipboard(){haptic();closeMoreDialog();try{const settingsText=JSON.stringify(state.settings,null,2);await navigator.clipboard.writeText(settingsText);alert('Settings copied to clipboard!');}catch(err){alert('Could not copy settings to clipboard.');}}
 
@@ -3436,7 +3541,7 @@
                 const fileExtension = file.name.split('.').pop().toLowerCase();
                 const defaultSettings = {
                     profile: 'none',
-                    profileIntensity: 100,
+                    profileIntensity: 40,
                     bloom: 0,
                     grain: 0,
                     cyan: 0,
