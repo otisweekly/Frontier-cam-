@@ -1388,7 +1388,8 @@
          * ProcessFileSequentially - Process files one at a time with cleanup
          * Key: Sequential processing prevents memory/VRAM exhaustion
          */
-        async function processFilesSequentially(files, onProgress, onFileComplete) {
+        async function processFilesSequentially(files, onProgress, onFileComplete, startIndex = 0) {
+            console.log('processFilesSequentially: Starting with', files.length, 'files, startIndex:', startIndex);
             const results = [];
 
             for (let i = 0; i < files.length; i++) {
@@ -1397,6 +1398,9 @@
                 const file = files[i];
                 const fileNum = i + 1;
                 const totalFiles = files.length;
+                const absoluteIndex = startIndex + i;
+
+                console.log(`Processing file ${fileNum}/${totalFiles}:`, file.name, 'absoluteIndex:', absoluteIndex);
 
                 try {
                     // Update progress
@@ -1419,11 +1423,13 @@
                     };
 
                     if (isVideo) {
+                        console.log('Loading video:', file.name);
                         const { video, blobUrl } = await loadVideoFromBlob(file);
+                        console.log('Video loaded, creating photoData');
 
                         const photoData = {
                             name: file.name,
-                            displayName: generateDisplayName('none', i, fileExtension),
+                            displayName: generateDisplayName('none', absoluteIndex, fileExtension),
                             video: video,
                             videoUrl: blobUrl,
                             isVideo: true,
@@ -1434,17 +1440,21 @@
 
                         results.push(photoData);
                         if (onFileComplete) onFileComplete(photoData);
+                        console.log('Video photoData created and callback called');
 
                     } else {
+                        console.log('Loading image:', file.name);
                         // Load image using Blob URL
                         const { img, blobUrl } = await loadImageFromBlob(file);
+                        console.log('Image loaded, starting downsample');
 
                         // Downsample if needed (but keep original reference)
                         const displayImg = await downsampleImage(img);
+                        console.log('Downsample complete, creating photoData');
 
                         const photoData = {
                             name: file.name,
-                            displayName: generateDisplayName('none', i, fileExtension),
+                            displayName: generateDisplayName('none', absoluteIndex, fileExtension),
                             image: displayImg,
                             original: img,
                             originalBlobUrl: blobUrl,  // Keep reference for cleanup
@@ -1456,13 +1466,15 @@
 
                         results.push(photoData);
                         if (onFileComplete) onFileComplete(photoData);
+                        console.log('Image photoData created and callback called');
                     }
 
                     // Small delay for cleanup/GC
                     await new Promise(resolve => setTimeout(resolve, 10));
 
                 } catch (err) {
-                    console.error(`Failed to load ${file.name}:`, err);
+                    console.error(`FAILED to load ${file.name}:`, err);
+                    alert(`Failed to load ${file.name}: ${err.message}`);
                     // Continue with next file even if one fails
                 }
 
@@ -1472,6 +1484,7 @@
                 }
             }
 
+            console.log('processFilesSequentially: Complete, processed', results.length, 'files');
             return results;
         }
 
@@ -1619,7 +1632,8 @@
                 },
                 (photoData) => {
                     state.photos.push(photoData);
-                }
+                },
+                0  // Starting index for initial upload
             );
 
             console.log('Upload complete, loaded photos:', state.photos.length);
