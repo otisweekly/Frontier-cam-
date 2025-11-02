@@ -2029,14 +2029,14 @@
                 // Red channel emphasized for more dramatic skin tones and contrast
                 let lum = r * 0.35 + g * 0.50 + b * 0.15;
 
-                // S-curve for punchy contrast (keeps shadows detailed, punchy mids/highlights)
+                // Gentler S-curve for subtle contrast (less punchy than before)
                 lum = lum / 255;  // Normalize to 0-1
 
-                // Soft S-curve: increases midtone contrast while preserving shadow detail
+                // Subtle S-curve: gentle midtone contrast
                 if (lum < 0.5) {
-                    lum = lum * lum * 2;  // Darken shadows slightly, keep detail
+                    lum = lum * lum * 1.4;  // Gentle shadow darkening
                 } else {
-                    lum = 1 - (1 - lum) * (1 - lum) * 2;  // Brighten highlights
+                    lum = 1 - (1 - lum) * (1 - lum) * 1.4;  // Gentle highlight brightening
                 }
 
                 lum = lum * 255;  // Back to 0-255
@@ -3510,9 +3510,9 @@
 
         function toggleControl(c){}
 
-        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==30){const actual=state.settings.profileIntensity;let display;if(actual>=30){display=Math.round((actual-30)/0.6);}else{display=Math.round((actual-30)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
+        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();const defaultIntensity=(profile==='supra'||profile==='chrome')?35:30;if(isActive&&state.settings.profileIntensity!==defaultIntensity){const actual=state.settings.profileIntensity;let display;if(actual>=defaultIntensity){display=Math.round((actual-defaultIntensity)/0.6);}else{display=Math.round((actual-defaultIntensity)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;const defaultIntensity=(p==='supra'||p==='chrome')?35:30;state.settings.profileIntensity=defaultIntensity;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
