@@ -463,9 +463,9 @@
                 <button class="preset-btn" onclick="setProfile('xxx')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">XXX</button>
             </div>
             <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('250d')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">250D</button>
-                <button class="preset-btn" onclick="setProfile('handycam')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">HANDY CAM</button>
-                <button class="preset-btn" onclick="setProfile('xxx')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">XXX</button>
+                <button class="preset-btn" onclick="setProfile('16mm')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">16MM FILM</button>
+                <button class="preset-btn" onclick="setProfile('handycam')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">HANDYCAM</button>
+                <button class="preset-btn" onclick="setProfile('vhs')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">VHS</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -1284,7 +1284,55 @@
 
         function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0,processingFrame=false;const targetFPS=30,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval&&!processingFrame){processingFrame=true;requestAnimationFrame(()=>{ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);processingFrame=false;});lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processingFrame=false;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processingFrame=false;processFrame(0);});}
 
-        function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);if(state.settings.profile==='handycam')applyVHSDamage(d,w,h);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;applyGrain(d2,state.settings.grain);ctx.putImageData(imgData2,0,0);if(state.settings.profile==='handycam'){applyPixelation(ctx,w,h);if(state.videoMode)applyHandycamOverlay(ctx,w,h);}}
+        function applyEffects(ctx,w,h){
+            // Step 1: Apply profile color grading
+            const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;
+            applyProfile(d,state.settings.profile);
+            applyCMYK(d,state.settings);
+            if(state.settings.profile==='handycam')applyVHSDamage(d,w,h);
+            ctx.putImageData(imgData,0,0);
+
+            // Step 2: Apply bloom
+            if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);
+
+            // Step 3: Apply WebGL film effects based on preset
+            if(!filmEffectsProcessor){
+                filmEffectsProcessor=new WebGLFilmEffectsProcessor();
+            }
+
+            if(state.settings.profile==='16mm'){
+                // 16mm film grain (animated, chromatic)
+                const grainSettings={amount:0.06,size:2.0,chromatic:true};
+                filmEffectsProcessor.applyFilmGrain(ctx.canvas,grainSettings);
+            }
+            else if(state.settings.profile==='vhs'){
+                // VHS composite effects (all in one pass)
+                const vhsSettings={
+                    distortion:0.6,
+                    scanlines:0.8,
+                    noise:0.12,
+                    chromatic:0.25,
+                    vignette:0.5
+                };
+                filmEffectsProcessor.applyVHS(ctx.canvas,vhsSettings);
+            }
+            else if(state.settings.profile==='handycam'){
+                // Handycam: chromatic aberration + subtle scanlines
+                filmEffectsProcessor.applyChromaticAberration(ctx.canvas,0.08,true);
+                filmEffectsProcessor.applyScanlines(ctx.canvas,0.3);
+            }
+
+            // Step 4: Apply canvas grain (fallback/additional)
+            const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;
+            applyGrain(d2,state.settings.grain);
+            ctx.putImageData(imgData2,0,0);
+
+            // Step 5: Apply remaining effects
+            if(state.settings.profile==='handycam'){
+                applyPixelation(ctx,w,h);
+                if(state.videoMode)applyHandycamOverlay(ctx,w,h);
+            }
+        }
 
         function applyPixelation(ctx,w,h){const pixelSize=8;const tempCanvas=document.createElement('canvas');const tempCtx=tempCanvas.getContext('2d',{alpha:false});const smallW=Math.floor(w/pixelSize);const smallH=Math.floor(h/pixelSize);tempCanvas.width=smallW;tempCanvas.height=smallH;tempCtx.imageSmoothingEnabled=true;tempCtx.imageSmoothingQuality='low';tempCtx.drawImage(ctx.canvas,0,0,w,h,0,0,smallW,smallH);ctx.imageSmoothingEnabled=false;ctx.drawImage(tempCanvas,0,0,smallW,smallH,0,0,w,h);ctx.imageSmoothingEnabled=true;}
 
@@ -1373,7 +1421,7 @@
         }
 
         function softClip(v){if(v<=235)return v;const excess=v-235;const compressed=235+excess/(1+excess/20);return Math.min(255,compressed);}
-        function applyProfile(d,p){if(p==='none')return;const intensity=state.settings.profileIntensity/100;for(let i=0;i<d.length;i+=4){const origR=d[i],origG=d[i+1],origB=d[i+2];let r=origR,g=origG,b=origB;if(p==='supra'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.05;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){const lift=8;r+=lift;g+=lift;b+=lift;}r=r*1.08+8;g=g*1.03+3;b=b*0.985;const processedLum=0.299*r+0.587*g+0.114*b;if(L<120&&processedLum>160){const highlightStrength=Math.min(1,(processedLum-160)/95);const darkSceneStrength=Math.min(1,(120-L)/120);const greenShift=highlightStrength*darkSceneStrength*12;g=g+greenShift;r=r-greenShift*0.25;b=b-greenShift*0.35;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='chrome'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.08;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){r=r*1.02+2;b=b*1.03+3;}else if(L>175){r=r*0.98;g=g*0.99;b=b*0.98;}const satBoost=Math.max(0,1-(Math.abs(L-128)/128)*0.3);r=r+(r-L)*0.16*satBoost;g=g+(g-L)*0.18*satBoost;b=b+(b-L)*0.20*satBoost;if(r>g&&r>b){r=r*1.04+2;}if(b>r&&b>g){b=b*1.06+3;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='xxx'){const gray=Math.round(0.299*r+0.587*g+0.114*b);const contrast=(gray-128)*1.1+128;r=g=b=Math.max(0,Math.min(255,Math.round(contrast)));}else if(p==='250d'){const L=0.299*r+0.587*g+0.114*b;const contrast=L<100?1.02:1.08;const colorShift=Math.max(0,1-(L/255)*0.6);r=(r-128)*contrast+128+12*colorShift;g=(g-128)*contrast+128+6*colorShift;b=(b-128)*contrast+128-3*colorShift;if(L<60){const lift=15*(1-L/60);r=r+lift*0.8;g=g+lift*0.6;b=b+lift*0.4;}if(L>180){const desatAmount=(L-180)/75;const gray=(r+g+b)/3;r=r+(gray-r)*desatAmount*0.35;g=g+(gray-g)*desatAmount*0.35;b=b+(gray-b)*desatAmount*0.35;const rolloff=(L-180)/75;r=r*(1-rolloff*0.08);g=g*(1-rolloff*0.06);b=b*(1-rolloff*0.04);}const warmBoost=1+(255-L)/255*0.08;r=r*warmBoost;g=g*(1+(warmBoost-1)*0.4);r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='handycam'){const L=0.299*r+0.587*g+0.114*b;const sat=1.15;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;if(L<50){const crushFactor=0.85;r*=crushFactor;g*=crushFactor;b*=crushFactor;}const warmMid=1+(128-Math.abs(L-128))/255*0.12;r=r*1.02*warmMid;g=g*1.00*warmMid;b=b*1.08;if(L>100&&L<200){const punchFactor=1.08;r=r*punchFactor;g=g*(punchFactor-0.02);b=b*punchFactor;}if(r>g&&r>b){r=r*1.05;}r=softClip(r);g=softClip(g);b=softClip(b);}r=origR+(r-origR)*intensity;g=origG+(g-origG)*intensity;b=origB+(b-origB)*intensity;d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
+        function applyProfile(d,p){if(p==='none')return;const intensity=state.settings.profileIntensity/100;for(let i=0;i<d.length;i+=4){const origR=d[i],origG=d[i+1],origB=d[i+2];let r=origR,g=origG,b=origB;if(p==='supra'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.05;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){const lift=8;r+=lift;g+=lift;b+=lift;}r=r*1.08+8;g=g*1.03+3;b=b*0.985;const processedLum=0.299*r+0.587*g+0.114*b;if(L<120&&processedLum>160){const highlightStrength=Math.min(1,(processedLum-160)/95);const darkSceneStrength=Math.min(1,(120-L)/120);const greenShift=highlightStrength*darkSceneStrength*12;g=g+greenShift;r=r-greenShift*0.25;b=b-greenShift*0.35;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='chrome'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.08;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){r=r*1.02+2;b=b*1.03+3;}else if(L>175){r=r*0.98;g=g*0.99;b=b*0.98;}const satBoost=Math.max(0,1-(Math.abs(L-128)/128)*0.3);r=r+(r-L)*0.16*satBoost;g=g+(g-L)*0.18*satBoost;b=b+(b-L)*0.20*satBoost;if(r>g&&r>b){r=r*1.04+2;}if(b>r&&b>g){b=b*1.06+3;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='xxx'){const gray=Math.round(0.299*r+0.587*g+0.114*b);const contrast=(gray-128)*1.1+128;r=g=b=Math.max(0,Math.min(255,Math.round(contrast)));}else if(p==='16mm'){const L=0.299*r+0.587*g+0.114*b;const contrast=L<100?1.02:1.08;const colorShift=Math.max(0,1-(L/255)*0.6);r=(r-128)*contrast+128+12*colorShift;g=(g-128)*contrast+128+6*colorShift;b=(b-128)*contrast+128-3*colorShift;if(L<60){const lift=15*(1-L/60);r=r+lift*0.8;g=g+lift*0.6;b=b+lift*0.4;}if(L>180){const desatAmount=(L-180)/75;const gray=(r+g+b)/3;r=r+(gray-r)*desatAmount*0.35;g=g+(gray-g)*desatAmount*0.35;b=b+(gray-b)*desatAmount*0.35;const rolloff=(L-180)/75;r=r*(1-rolloff*0.08);g=g*(1-rolloff*0.06);b=b*(1-rolloff*0.04);}const warmBoost=1+(255-L)/255*0.08;r=r*warmBoost;g=g*(1+(warmBoost-1)*0.4);r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='handycam'){const L=0.299*r+0.587*g+0.114*b;const sat=1.15;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;if(L<50){const crushFactor=0.85;r*=crushFactor;g*=crushFactor;b*=crushFactor;}const warmMid=1+(128-Math.abs(L-128))/255*0.12;r=r*1.02*warmMid;g=g*1.00*warmMid;b=b*1.08;if(L>100&&L<200){const punchFactor=1.08;r=r*punchFactor;g=g*(punchFactor-0.02);b=b*punchFactor;}if(r>g&&r>b){r=r*1.05;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='vhs'){const L=0.299*r+0.587*g+0.114*b;const sat=0.7;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;if(L<60){const crushFactor=0.75;r*=crushFactor;g*=crushFactor;b*=crushFactor;}const warmShift=1.08;r=r*warmShift*1.02;g=g*warmShift*0.98;b=b*0.95;if(L>180){const desatAmount=0.4;r=r+(gray-r)*desatAmount;g=g+(gray-g)*desatAmount;b=b+(gray-b)*desatAmount;}r=softClip(r);g=softClip(g);b=softClip(b);}r=origR+(r-origR)*intensity;g=origG+(g-origG)*intensity;b=origB+(b-origB)*intensity;d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
@@ -1894,6 +1942,548 @@
                 this.initialized = false;
             }
         }
+
+        // =====================================================================
+        // WebGL Film Effects Processor
+        // =====================================================================
+
+        class WebGLFilmEffectsProcessor {
+            constructor() {
+                this.gl = null;
+                this.canvas = null;
+                this.initialized = false;
+                this.programs = {};
+                this.framebuffers = [];
+                this.quadBuffer = null;
+                this.textureFormat = null;
+                this.time = 0;
+                this.filmStockSettings = {
+                    '50d': { grain: 0.03, grainSize: 1.5, chromatic: true },
+                    '200t': { grain: 0.06, grainSize: 2.0, chromatic: true },
+                    '500t': { grain: 0.12, grainSize: 2.5, chromatic: true },
+                    'xxx': { grain: 0.15, grainSize: 3.0, chromatic: false }
+                };
+            }
+
+            initWebGL() {
+                if (this.initialized) return true;
+
+                try {
+                    this.canvas = document.createElement('canvas');
+                    this.gl = this.canvas.getContext('webgl2', {
+                        premultipliedAlpha: false,
+                        preserveDrawingBuffer: true,
+                        antialias: false
+                    }) || this.canvas.getContext('webgl', {
+                        premultipliedAlpha: false,
+                        preserveDrawingBuffer: true,
+                        antialias: false
+                    });
+
+                    if (!this.gl) {
+                        console.warn('WebGL not available for film effects');
+                        return false;
+                    }
+
+                    const gl = this.gl;
+
+                    // Check texture format support (same as bloom)
+                    const ext = {
+                        halfFloat: gl.getExtension('OES_texture_half_float'),
+                        halfFloatLinear: gl.getExtension('OES_texture_half_float_linear')
+                    };
+
+                    if (ext.halfFloat && ext.halfFloatLinear) {
+                        this.textureFormat = {
+                            internalFormat: gl.RGBA,
+                            format: gl.RGBA,
+                            type: ext.halfFloat.HALF_FLOAT_OES
+                        };
+                    } else {
+                        this.textureFormat = {
+                            internalFormat: gl.RGBA,
+                            format: gl.RGBA,
+                            type: gl.UNSIGNED_BYTE
+                        };
+                    }
+
+                    this.compileShaders();
+                    this.createQuad();
+
+                    this.initialized = true;
+                    console.log('WebGL Film Effects Processor initialized');
+                    return true;
+
+                } catch (e) {
+                    console.error('Failed to initialize film effects:', e);
+                    return false;
+                }
+            }
+
+            compileShaders() {
+                const gl = this.gl;
+
+                const vertexShaderSource = `
+                    attribute vec2 aPosition;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = aPosition * 0.5 + 0.5;
+                        gl_Position = vec4(aPosition, 0.0, 1.0);
+                    }
+                `;
+
+                // Film grain shader (animated, procedural)
+                const grainFragSource = `
+                    precision highp float;
+                    uniform sampler2D uTexture;
+                    uniform float uGrainAmount;
+                    uniform float uGrainSize;
+                    uniform float uTime;
+                    uniform bool uChromatic;
+                    varying vec2 vUv;
+
+                    float noise(vec2 uv) {
+                        return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+                    }
+
+                    float grain(vec2 uv, float time) {
+                        vec2 coord = uv * uGrainSize * 200.0;
+                        float g = 0.0;
+                        g += noise(coord + time) * 0.5;
+                        g += noise(coord * 0.5 + time * 1.3) * 0.3;
+                        g += noise(coord * 0.25 + time * 1.7) * 0.2;
+                        return (g - 0.5) * 2.0;
+                    }
+
+                    void main() {
+                        vec4 color = texture2D(uTexture, vUv);
+
+                        if (uChromatic) {
+                            float grainR = grain(vUv, uTime) * uGrainAmount;
+                            float grainG = grain(vUv, uTime + 100.0) * uGrainAmount * 0.9;
+                            float grainB = grain(vUv, uTime + 200.0) * uGrainAmount * 0.85;
+                            color.r += grainR;
+                            color.g += grainG;
+                            color.b += grainB;
+                        } else {
+                            float grainValue = grain(vUv, uTime) * uGrainAmount;
+                            color.rgb += grainValue;
+                        }
+
+                        gl_FragColor = color;
+                    }
+                `;
+
+                // VHS composite shader (all effects merged)
+                const vhsFragSource = `
+                    precision highp float;
+                    uniform sampler2D uTexture;
+                    uniform vec2 uResolution;
+                    uniform float uTime;
+                    uniform float uDistortion;
+                    uniform float uScanlines;
+                    uniform float uNoise;
+                    uniform float uChromatic;
+                    uniform float uVignette;
+                    varying vec2 vUv;
+
+                    float random(vec2 co) {
+                        return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+
+                        // Tracking distortion
+                        float trackingNoise = random(vec2(uTime * 0.001, floor(uv.y * 100.0))) - 0.5;
+                        uv.x += trackingNoise * uDistortion * 0.05;
+
+                        // Vertical roll
+                        uv.y += sin(uTime * 0.5) * uDistortion * 0.001;
+
+                        // Wave distortion
+                        uv.x += sin(uv.y * 10.0 + uTime * 2.0) * uDistortion * 0.003;
+
+                        // Chromatic aberration
+                        float offset = uChromatic * 0.005;
+                        vec4 r = texture2D(uTexture, uv + vec2(offset, 0.0));
+                        vec4 g = texture2D(uTexture, uv);
+                        vec4 b = texture2D(uTexture, uv - vec2(offset, 0.0));
+                        vec3 color = vec3(r.r, g.g, b.b);
+
+                        // Scanlines
+                        float scanline = sin(uv.y * uResolution.y * 2.0) * 0.5 + 0.5;
+                        scanline = mix(1.0, scanline * 0.8 + 0.2, uScanlines);
+                        color *= scanline;
+
+                        // Noise
+                        float noise = random(uv + uTime) * 2.0 - 1.0;
+                        color += noise * uNoise;
+
+                        // Vignette
+                        vec2 center = uv - 0.5;
+                        float vignette = 1.0 - dot(center, center) * uVignette * 1.5;
+                        color *= vignette;
+
+                        // Color bleeding (simulate VHS chroma)
+                        color = mix(color, vec3(dot(color, vec3(0.333))), 0.15);
+
+                        gl_FragColor = vec4(color, 1.0);
+                    }
+                `;
+
+                // Chromatic aberration shader (for Handycam)
+                const chromaticFragSource = `
+                    precision highp float;
+                    uniform sampler2D uTexture;
+                    uniform float uAmount;
+                    uniform bool uRadial;
+                    varying vec2 vUv;
+
+                    void main() {
+                        vec2 direction;
+                        if (uRadial) {
+                            direction = (vUv - 0.5) * uAmount;
+                        } else {
+                            direction = vec2(uAmount, 0.0);
+                        }
+
+                        vec4 r = texture2D(uTexture, vUv + direction * 0.01);
+                        vec4 g = texture2D(uTexture, vUv);
+                        vec4 b = texture2D(uTexture, vUv - direction * 0.01);
+
+                        gl_FragColor = vec4(r.r, g.g, b.b, g.a);
+                    }
+                `;
+
+                // Scanlines shader (for Handycam)
+                const scanlinesFragSource = `
+                    precision highp float;
+                    uniform sampler2D uTexture;
+                    uniform vec2 uResolution;
+                    uniform float uIntensity;
+                    varying vec2 vUv;
+
+                    void main() {
+                        vec4 color = texture2D(uTexture, vUv);
+                        float scanline = sin(vUv.y * uResolution.y * 2.0) * 0.5 + 0.5;
+                        scanline = mix(1.0, scanline * 0.7 + 0.3, uIntensity);
+                        gl_FragColor = vec4(color.rgb * scanline, color.a);
+                    }
+                `;
+
+                this.programs.grain = this.createProgram(vertexShaderSource, grainFragSource);
+                this.programs.vhs = this.createProgram(vertexShaderSource, vhsFragSource);
+                this.programs.chromatic = this.createProgram(vertexShaderSource, chromaticFragSource);
+                this.programs.scanlines = this.createProgram(vertexShaderSource, scanlinesFragSource);
+            }
+
+            createProgram(vertSource, fragSource) {
+                const gl = this.gl;
+
+                const vertShader = gl.createShader(gl.VERTEX_SHADER);
+                gl.shaderSource(vertShader, vertSource);
+                gl.compileShader(vertShader);
+
+                if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+                    console.error('Vertex shader error:', gl.getShaderInfoLog(vertShader));
+                    return null;
+                }
+
+                const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+                gl.shaderSource(fragShader, fragSource);
+                gl.compileShader(fragShader);
+
+                if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+                    console.error('Fragment shader error:', gl.getShaderInfoLog(fragShader));
+                    return null;
+                }
+
+                const program = gl.createProgram();
+                gl.attachShader(program, vertShader);
+                gl.attachShader(program, fragShader);
+                gl.linkProgram(program);
+
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error('Program link error:', gl.getProgramInfoLog(program));
+                    return null;
+                }
+
+                return program;
+            }
+
+            createQuad() {
+                const gl = this.gl;
+                const vertices = new Float32Array([
+                    -1, -1,
+                     1, -1,
+                    -1,  1,
+                     1,  1
+                ]);
+
+                this.quadBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+            }
+
+            createTexture(width, height) {
+                const gl = this.gl;
+                const texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
+                             width, height, 0, this.textureFormat.format,
+                             this.textureFormat.type, null);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                return texture;
+            }
+
+            createFramebuffer(width, height) {
+                const gl = this.gl;
+                const framebuffer = gl.createFramebuffer();
+                const texture = this.createTexture(width, height);
+
+                gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+                gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+                                       gl.TEXTURE_2D, texture, 0);
+
+                if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+                    console.error('Framebuffer not complete');
+                }
+
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                return { framebuffer, texture };
+            }
+
+            drawQuad(program) {
+                const gl = this.gl;
+                const aPosition = gl.getAttribLocation(program, 'aPosition');
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+                gl.enableVertexAttribArray(aPosition);
+                gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+                gl.disableVertexAttribArray(aPosition);
+            }
+
+            // Apply film grain
+            applyFilmGrain(sourceCanvas, settings) {
+                if (!this.initialized && !this.initWebGL()) return false;
+
+                const gl = this.gl;
+                this.time += 0.016; // 60fps animation
+
+                this.canvas.width = sourceCanvas.width;
+                this.canvas.height = sourceCanvas.height;
+
+                try {
+                    const sourceTexture = this.createTexture(this.canvas.width, this.canvas.height);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
+                                 this.textureFormat.format, this.textureFormat.type, sourceCanvas);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+                    const program = this.programs.grain;
+                    gl.useProgram(program);
+
+                    gl.uniform1i(gl.getUniformLocation(program, 'uTexture'), 0);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uGrainAmount'), settings.amount);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uGrainSize'), settings.size);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uTime'), this.time);
+                    gl.uniform1i(gl.getUniformLocation(program, 'uChromatic'), settings.chromatic ? 1 : 0);
+
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+
+                    this.drawQuad(program);
+
+                    const ctx = sourceCanvas.getContext('2d');
+                    ctx.drawImage(this.canvas, 0, 0);
+
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+                    gl.deleteTexture(sourceTexture);
+
+                    return true;
+
+                } catch (e) {
+                    console.error('Film grain error:', e);
+                    return false;
+                }
+            }
+
+            // Apply VHS effects (all in one pass)
+            applyVHS(sourceCanvas, settings) {
+                if (!this.initialized && !this.initWebGL()) return false;
+
+                const gl = this.gl;
+                this.time += 0.016;
+
+                this.canvas.width = sourceCanvas.width;
+                this.canvas.height = sourceCanvas.height;
+
+                try {
+                    const sourceTexture = this.createTexture(this.canvas.width, this.canvas.height);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
+                                 this.textureFormat.format, this.textureFormat.type, sourceCanvas);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+                    const program = this.programs.vhs;
+                    gl.useProgram(program);
+
+                    gl.uniform1i(gl.getUniformLocation(program, 'uTexture'), 0);
+                    gl.uniform2f(gl.getUniformLocation(program, 'uResolution'), this.canvas.width, this.canvas.height);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uTime'), this.time);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uDistortion'), settings.distortion);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uScanlines'), settings.scanlines);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uNoise'), settings.noise);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uChromatic'), settings.chromatic);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uVignette'), settings.vignette);
+
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+
+                    this.drawQuad(program);
+
+                    const ctx = sourceCanvas.getContext('2d');
+                    ctx.drawImage(this.canvas, 0, 0);
+
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+                    gl.deleteTexture(sourceTexture);
+
+                    return true;
+
+                } catch (e) {
+                    console.error('VHS effect error:', e);
+                    return false;
+                }
+            }
+
+            // Apply chromatic aberration
+            applyChromaticAberration(sourceCanvas, amount, radial = false) {
+                if (!this.initialized && !this.initWebGL()) return false;
+
+                const gl = this.gl;
+                this.canvas.width = sourceCanvas.width;
+                this.canvas.height = sourceCanvas.height;
+
+                try {
+                    const sourceTexture = this.createTexture(this.canvas.width, this.canvas.height);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
+                                 this.textureFormat.format, this.textureFormat.type, sourceCanvas);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+                    const program = this.programs.chromatic;
+                    gl.useProgram(program);
+
+                    gl.uniform1i(gl.getUniformLocation(program, 'uTexture'), 0);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uAmount'), amount);
+                    gl.uniform1i(gl.getUniformLocation(program, 'uRadial'), radial ? 1 : 0);
+
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+
+                    this.drawQuad(program);
+
+                    const ctx = sourceCanvas.getContext('2d');
+                    ctx.drawImage(this.canvas, 0, 0);
+
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+                    gl.deleteTexture(sourceTexture);
+
+                    return true;
+
+                } catch (e) {
+                    console.error('Chromatic aberration error:', e);
+                    return false;
+                }
+            }
+
+            // Apply scanlines
+            applyScanlines(sourceCanvas, intensity) {
+                if (!this.initialized && !this.initWebGL()) return false;
+
+                const gl = this.gl;
+                this.canvas.width = sourceCanvas.width;
+                this.canvas.height = sourceCanvas.height;
+
+                try {
+                    const sourceTexture = this.createTexture(this.canvas.width, this.canvas.height);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, this.textureFormat.internalFormat,
+                                 this.textureFormat.format, this.textureFormat.type, sourceCanvas);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+                    const program = this.programs.scanlines;
+                    gl.useProgram(program);
+
+                    gl.uniform1i(gl.getUniformLocation(program, 'uTexture'), 0);
+                    gl.uniform2f(gl.getUniformLocation(program, 'uResolution'), this.canvas.width, this.canvas.height);
+                    gl.uniform1f(gl.getUniformLocation(program, 'uIntensity'), intensity);
+
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+
+                    this.drawQuad(program);
+
+                    const ctx = sourceCanvas.getContext('2d');
+                    ctx.drawImage(this.canvas, 0, 0);
+
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+                    gl.deleteTexture(sourceTexture);
+
+                    return true;
+
+                } catch (e) {
+                    console.error('Scanlines error:', e);
+                    return false;
+                }
+            }
+
+            cleanup() {
+                const gl = this.gl;
+                this.framebuffers.forEach(fbo => {
+                    gl.deleteFramebuffer(fbo.framebuffer);
+                    gl.deleteTexture(fbo.texture);
+                });
+                this.framebuffers = [];
+            }
+
+            dispose() {
+                if (!this.initialized) return;
+
+                const gl = this.gl;
+                this.cleanup();
+
+                Object.values(this.programs).forEach(program => {
+                    if (program) gl.deleteProgram(program);
+                });
+
+                if (this.quadBuffer) gl.deleteBuffer(this.quadBuffer);
+
+                this.initialized = false;
+            }
+        }
+
+        // Global film effects processor instance
+        let filmEffectsProcessor = null;
 
         // Global bloom processor instance
         let bloomProcessor = null;
