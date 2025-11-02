@@ -1270,7 +1270,320 @@
         // Use original images for editing - bloom and effects need full resolution
         function downsampleImage(sourceImg,maxDimension=6000){return new Promise(resolve=>{const w=sourceImg.width,h=sourceImg.height;if(w<=maxDimension&&h<=maxDimension){resolve(sourceImg);return;}const aspectRatio=w/h;let newW,newH;if(w>h){newW=maxDimension;newH=maxDimension/aspectRatio;}else{newH=maxDimension;newW=maxDimension*aspectRatio;}const canvas=document.createElement('canvas');canvas.width=newW;canvas.height=newH;const ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(sourceImg,0,0,newW,newH);const downsampled=new Image();downsampled.onload=()=>resolve(downsampled);downsampled.src=canvas.toDataURL('image/jpeg',0.95);});}
 
-        document.getElementById('fileInput').addEventListener('change',async(e)=>{console.log('File input changed, files:',e.target.files.length);console.log('Multiple attribute:',e.target.multiple);console.log('Files array:',Array.from(e.target.files).map(f=>f.name));const files=Array.from(e.target.files);if(!files.length){console.log('No files selected');return;}if(files.length>36){alert('Maximum 36 files allowed. Only first 36 will be loaded.');files.length=36;}console.log('Starting upload process');document.getElementById('uploadSection').classList.add('hidden');document.getElementById('editSection').classList.add('active');document.body.style.background='#6A6A6A';const canvas=document.getElementById('canvas');canvas.style.display='block';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=800;canvas.height=600;ctx.fillStyle='#000';ctx.fillRect(0,0,800,600);showUploadProgress(`Loading ${files.length} file${files.length===1?'':'s'}...`);setStatus('wait');state.photos=[];const uploadTime=new Date();for(let i=0;i<files.length;i++){if(state.upload.cancelling)break;const file=files[i];console.log(`Loading file ${i+1}/${files.length}:`,file.name,file.type);updateUploadProgress(Math.round((i/files.length)*100),`Loading ${i+1}/${files.length}: ${file.name.length>20?file.name.substring(0,20)+'...':file.name}`);const isVideo=file.type.startsWith('video/');const fileExtension=file.name.split('.').pop().toLowerCase();const defaultSettings={profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};if(isVideo){try{const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise((resolve,reject)=>{video.onloadedmetadata=()=>{console.log('Video loaded:',file.name);resolve();};video.onerror=(err)=>{console.error('Video error:',err);reject(err);};setTimeout(()=>reject(new Error('Video load timeout')),10000);});state.photos.push({name:file.name,displayName:generateDisplayName('none',i,fileExtension),video:video,videoUrl:videoUrl,isVideo:true,uploadTime:uploadTime,settings:{...defaultSettings},fileExtension:fileExtension});}catch(err){console.error('Failed to load video:',file.name,err);}}else{try{const originalImg=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=ev=>{const img=new Image();img.onload=()=>{console.log('Image loaded:',file.name,img.width+'x'+img.height);resolve(img);};img.onerror=(err)=>{console.error('Image error:',err);reject(err);};img.src=ev.target.result;};reader.onerror=(err)=>{console.error('FileReader error:',err);reject(err);};reader.readAsDataURL(file);});const displayImg=await downsampleImage(originalImg);state.photos.push({name:file.name,displayName:generateDisplayName('none',i,fileExtension),image:displayImg,original:originalImg,isVideo:false,uploadTime:uploadTime,settings:{...defaultSettings},fileExtension:fileExtension});}catch(err){console.error('Failed to load image:',file.name,err);}}}console.log('Upload complete, loaded photos:',state.photos.length);updateUploadProgress(100,'Complete!');setTimeout(()=>{hideUploadProgress();if(state.photos.length>0){state.currentIndex=0;state.settings={...state.photos[0].settings};console.log('Rendering first photo');renderPhoto();setStatus('ready');}else{console.log('No photos loaded, returning to upload screen');alert('No files could be loaded. Please check the console for errors.');document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';setStatus('ready');}e.target.value='';},500);});
+        // =====================================================================
+        // Batch Processing & Memory Optimization System
+        // =====================================================================
+
+        /**
+         * LoadImageFromBlob - Load image efficiently using Blob URL
+         * Key: Never use FileReader.readAsDataURL() for large files!
+         */
+        async function loadImageFromBlob(file) {
+            return new Promise((resolve, reject) => {
+                // Create blob URL (efficient - no copy in memory)
+                const blobUrl = URL.createObjectURL(file);
+                const img = new Image();
+
+                img.onload = () => {
+                    resolve({ img, blobUrl });
+                };
+
+                img.onerror = (err) => {
+                    URL.revokeObjectURL(blobUrl);
+                    reject(new Error(`Failed to load image: ${file.name}`));
+                };
+
+                img.src = blobUrl;
+            });
+        }
+
+        /**
+         * LoadVideoFromBlob - Load video efficiently using Blob URL
+         */
+        async function loadVideoFromBlob(file) {
+            return new Promise((resolve, reject) => {
+                const blobUrl = URL.createObjectURL(file);
+                const video = document.createElement('video');
+                video.src = blobUrl;
+
+                video.onloadedmetadata = () => {
+                    resolve({ video, blobUrl });
+                };
+
+                video.onerror = (err) => {
+                    URL.revokeObjectURL(blobUrl);
+                    reject(new Error(`Failed to load video: ${file.name}`));
+                };
+
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                    reject(new Error('Video load timeout'));
+                }, 10000);
+            });
+        }
+
+        /**
+         * ProcessFileSequentially - Process files one at a time with cleanup
+         * Key: Sequential processing prevents memory/VRAM exhaustion
+         */
+        async function processFilesSequentially(files, onProgress, onFileComplete) {
+            const results = [];
+
+            for (let i = 0; i < files.length; i++) {
+                if (state.upload.cancelling) break;
+
+                const file = files[i];
+                const fileNum = i + 1;
+                const totalFiles = files.length;
+
+                try {
+                    // Update progress
+                    if (onProgress) {
+                        onProgress(fileNum, totalFiles, file.name);
+                    }
+
+                    // Process file based on type
+                    const isVideo = file.type.startsWith('video/');
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const defaultSettings = {
+                        profile: 'none',
+                        profileIntensity: 100,
+                        bloom: 0,
+                        grain: 0,
+                        cyan: 0,
+                        magenta: 0,
+                        yellow: 0,
+                        black: 0
+                    };
+
+                    if (isVideo) {
+                        const { video, blobUrl } = await loadVideoFromBlob(file);
+
+                        const photoData = {
+                            name: file.name,
+                            displayName: generateDisplayName('none', i, fileExtension),
+                            video: video,
+                            videoUrl: blobUrl,
+                            isVideo: true,
+                            uploadTime: new Date(),
+                            settings: { ...defaultSettings },
+                            fileExtension: fileExtension
+                        };
+
+                        results.push(photoData);
+                        if (onFileComplete) onFileComplete(photoData);
+
+                    } else {
+                        // Load image using Blob URL
+                        const { img, blobUrl } = await loadImageFromBlob(file);
+
+                        // Downsample if needed (but keep original reference)
+                        const displayImg = await downsampleImage(img);
+
+                        const photoData = {
+                            name: file.name,
+                            displayName: generateDisplayName('none', i, fileExtension),
+                            image: displayImg,
+                            original: img,
+                            originalBlobUrl: blobUrl,  // Keep reference for cleanup
+                            isVideo: false,
+                            uploadTime: new Date(),
+                            settings: { ...defaultSettings },
+                            fileExtension: fileExtension
+                        };
+
+                        results.push(photoData);
+                        if (onFileComplete) onFileComplete(photoData);
+                    }
+
+                    // Small delay for cleanup/GC
+                    await new Promise(resolve => setTimeout(resolve, 10));
+
+                } catch (err) {
+                    console.error(`Failed to load ${file.name}:`, err);
+                    // Continue with next file even if one fails
+                }
+
+                // Force WebGL cleanup if manager exists
+                if (window.webglResourceManager) {
+                    window.webglResourceManager.forceCleanup();
+                }
+            }
+
+            return results;
+        }
+
+        /**
+         * Enhanced WebGL Resource Manager
+         * Tracks textures and framebuffers to prevent VRAM overflow
+         */
+        class WebGLResourceManagerEnhanced {
+            constructor(gl, maxVRAM = 512 * 1024 * 1024) {
+                this.gl = gl;
+                this.maxVRAM = maxVRAM;
+                this.vramUsed = 0;
+                this.textures = new Map();
+                this.framebuffers = new Map();
+
+                this.stats = {
+                    texturesCreated: 0,
+                    texturesDisposed: 0,
+                    framebuffersCreated: 0,
+                    framebuffersDisposed: 0,
+                    forcedCleanups: 0
+                };
+            }
+
+            trackTexture(texture, width, height) {
+                if (!texture) return;
+
+                const size = width * height * 4;  // RGBA = 4 bytes per pixel
+                this.textures.set(texture, { width, height, size, created: Date.now() });
+                this.vramUsed += size;
+                this.stats.texturesCreated++;
+
+                // Check if we're approaching limit
+                if (this.vramUsed > this.maxVRAM * 0.75) {
+                    console.warn(`VRAM usage high: ${(this.vramUsed / 1024 / 1024).toFixed(1)}MB`);
+                }
+            }
+
+            disposeTexture(texture) {
+                if (!texture || !this.textures.has(texture)) return;
+
+                const metadata = this.textures.get(texture);
+                this.gl.deleteTexture(texture);
+                this.textures.delete(texture);
+                this.vramUsed -= metadata.size;
+                this.stats.texturesDisposed++;
+            }
+
+            trackFramebuffer(framebuffer, texture) {
+                if (!framebuffer) return;
+                this.framebuffers.set(framebuffer, { texture, created: Date.now() });
+                this.stats.framebuffersCreated++;
+            }
+
+            disposeFramebuffer(framebuffer) {
+                if (!framebuffer || !this.framebuffers.has(framebuffer)) return;
+
+                this.gl.deleteFramebuffer(framebuffer);
+                this.framebuffers.delete(framebuffer);
+                this.stats.framebuffersDisposed++;
+            }
+
+            forceCleanup() {
+                console.log('WebGL: Force cleanup - disposing all resources');
+
+                // Dispose all tracked resources
+                for (const texture of this.textures.keys()) {
+                    this.gl.deleteTexture(texture);
+                }
+
+                for (const framebuffer of this.framebuffers.keys()) {
+                    this.gl.deleteFramebuffer(framebuffer);
+                }
+
+                this.textures.clear();
+                this.framebuffers.clear();
+                this.vramUsed = 0;
+                this.stats.forcedCleanups++;
+            }
+
+            getStats() {
+                return {
+                    vramUsed: this.vramUsed,
+                    vramMax: this.maxVRAM,
+                    vramPercent: (this.vramUsed / this.maxVRAM) * 100,
+                    texturesActive: this.textures.size,
+                    framebuffersActive: this.framebuffers.size,
+                    ...this.stats
+                };
+            }
+        }
+
+        // Initialize resource manager when bloom/film processors are created
+        if (!window.webglResourceManager && bloomProcessor && bloomProcessor.gl) {
+            window.webglResourceManager = new WebGLResourceManagerEnhanced(
+                bloomProcessor.gl,
+                512 * 1024 * 1024  // 512MB max
+            );
+        }
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            console.log('File input changed, files:', e.target.files.length);
+
+            const files = Array.from(e.target.files);
+            if (!files.length) {
+                console.log('No files selected');
+                return;
+            }
+
+            if (files.length > 36) {
+                alert('Maximum 36 files allowed. Only first 36 will be loaded.');
+                files.length = 36;
+            }
+
+            console.log('Starting optimized upload process');
+
+            // Switch to edit view
+            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('editSection').classList.add('active');
+            document.body.style.background = '#6A6A6A';
+
+            // Setup canvas
+            const canvas = document.getElementById('canvas');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d', {alpha: false});
+            canvas.width = 800;
+            canvas.height = 600;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, 800, 600);
+
+            // Show progress
+            showUploadProgress(`Loading ${files.length} file${files.length === 1 ? '' : 's'}...`);
+            setStatus('wait');
+
+            // Clear existing photos
+            state.photos = [];
+
+            // Process files sequentially (prevents memory issues)
+            const results = await processFilesSequentially(
+                files,
+                (current, total, fileName) => {
+                    const percent = Math.round((current / total) * 100);
+                    const shortName = fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName;
+                    updateUploadProgress(percent, `Loading ${current}/${total}: ${shortName}`);
+                },
+                (photoData) => {
+                    state.photos.push(photoData);
+                }
+            );
+
+            console.log('Upload complete, loaded photos:', state.photos.length);
+            updateUploadProgress(100, 'Complete!');
+
+            setTimeout(() => {
+                hideUploadProgress();
+
+                if (state.photos.length > 0) {
+                    state.currentIndex = 0;
+                    state.settings = { ...state.photos[0].settings };
+                    console.log('Rendering first photo');
+                    renderPhoto();
+                    setStatus('ready');
+                } else {
+                    console.log('No photos loaded, returning to upload screen');
+                    alert('No files could be loaded. Please check the console for errors.');
+                    document.getElementById('editSection').classList.remove('active');
+                    document.getElementById('uploadSection').classList.remove('hidden');
+                    document.body.style.background = '#37A4A4';
+                    setStatus('ready');
+                }
+
+                e.target.value = '';
+            }, 500);
+        });
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
@@ -2654,7 +2967,100 @@
 
         function addMorePhotos(){haptic();document.getElementById('addMoreInput').click();}
 
-        document.getElementById('addMoreInput').addEventListener('change',async(e)=>{const files=Array.from(e.target.files);if(!files.length)return;if(state.photos.length+files.length>36){alert('Maximum 36 files total');return;}showUploadProgress(`Adding ${files.length} file${files.length===1?'':'s'}...`);setStatus('wait');const uploadTime=new Date();const startIndex=state.photos.length;for(let i=0;i<files.length;i++){if(state.upload.cancelling)break;const file=files[i];updateUploadProgress(Math.round((i/files.length)*100),`Adding ${i+1}/${files.length}: ${file.name.length>20?file.name.substring(0,20)+'...':file.name}`);const isVideo=file.type.startsWith('video/');const fileExtension=file.name.split('.').pop().toLowerCase();const defaultSettings={profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0};if(isVideo){const videoUrl=URL.createObjectURL(file);const video=document.createElement('video');video.src=videoUrl;await new Promise(r=>{video.onloadedmetadata=r;});state.photos.push({name:file.name,displayName:generateDisplayName('none',startIndex+i,fileExtension),video:video,videoUrl:videoUrl,isVideo:true,uploadTime:uploadTime,settings:{...defaultSettings},fileExtension:fileExtension});}else{const originalImg=await new Promise(r=>{const reader=new FileReader();reader.onload=ev=>{const img=new Image();img.onload=()=>r(img);img.src=ev.target.result;};reader.readAsDataURL(file);});const displayImg=await downsampleImage(originalImg);state.photos.push({name:file.name,displayName:generateDisplayName('none',startIndex+i,fileExtension),image:displayImg,original:originalImg,isVideo:false,uploadTime:uploadTime,settings:{...defaultSettings},fileExtension:fileExtension});}}updateUploadProgress(100,'Complete!');setTimeout(()=>{hideUploadProgress();populateContactSheet();setStatus('ready');},500);e.target.value='';});
+        document.getElementById('addMoreInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            if (state.photos.length + files.length > 36) {
+                alert('Maximum 36 files total');
+                return;
+            }
+
+            showUploadProgress(`Adding ${files.length} file${files.length === 1 ? '' : 's'}...`);
+            setStatus('wait');
+
+            const uploadTime = new Date();
+            const startIndex = state.photos.length;
+
+            // Process files sequentially with optimized Blob URLs
+            for (let i = 0; i < files.length; i++) {
+                if (state.upload.cancelling) break;
+
+                const file = files[i];
+                const shortName = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+                updateUploadProgress(
+                    Math.round((i / files.length) * 100),
+                    `Adding ${i + 1}/${files.length}: ${shortName}`
+                );
+
+                const isVideo = file.type.startsWith('video/');
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                const defaultSettings = {
+                    profile: 'none',
+                    profileIntensity: 100,
+                    bloom: 0,
+                    grain: 0,
+                    cyan: 0,
+                    magenta: 0,
+                    yellow: 0,
+                    black: 0
+                };
+
+                try {
+                    if (isVideo) {
+                        // Videos already use optimized Blob URLs
+                        const { video, blobUrl } = await loadVideoFromBlob(file);
+
+                        state.photos.push({
+                            name: file.name,
+                            displayName: generateDisplayName('none', startIndex + i, fileExtension),
+                            video: video,
+                            videoUrl: blobUrl,
+                            isVideo: true,
+                            uploadTime: uploadTime,
+                            settings: { ...defaultSettings },
+                            fileExtension: fileExtension
+                        });
+                    } else {
+                        // Use optimized Blob URL instead of FileReader
+                        const { img, blobUrl } = await loadImageFromBlob(file);
+                        const displayImg = await downsampleImage(img);
+
+                        state.photos.push({
+                            name: file.name,
+                            displayName: generateDisplayName('none', startIndex + i, fileExtension),
+                            image: displayImg,
+                            original: img,
+                            originalBlobUrl: blobUrl,  // Keep reference for potential cleanup
+                            isVideo: false,
+                            uploadTime: uploadTime,
+                            settings: { ...defaultSettings },
+                            fileExtension: fileExtension
+                        });
+                    }
+                } catch (err) {
+                    console.error(`Failed to load ${file.name}:`, err);
+                    alert(`Failed to load ${file.name}`);
+                }
+
+                // Force WebGL cleanup between files
+                if (window.webglResourceManager) {
+                    window.webglResourceManager.forceCleanup();
+                }
+
+                // Small delay for garbage collection
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+
+            updateUploadProgress(100, 'Complete!');
+            setTimeout(() => {
+                hideUploadProgress();
+                populateContactSheet();
+                setStatus('ready');
+            }, 500);
+
+            e.target.value = '';
+        });
 
         function toggleContactSheetView(){haptic();const view=document.getElementById('contactSheetView');const galleryIcon=document.querySelector('.gallery-icon');if(view.classList.contains('active')){view.classList.remove('active');if(galleryIcon)galleryIcon.classList.remove('active');state.contactSheet.selectMode=false;state.contactSheet.selected=[];document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';}else{populateContactSheet();view.classList.add('active');if(galleryIcon)galleryIcon.classList.add('active');}}
 
