@@ -1608,13 +1608,8 @@
             }
         }
 
-        // Initialize resource manager when bloom/film processors are created
-        if (!window.webglResourceManager && bloomProcessor && bloomProcessor.gl) {
-            window.webglResourceManager = new WebGLResourceManagerEnhanced(
-                bloomProcessor.gl,
-                512 * 1024 * 1024  // 512MB max
-            );
-        }
+        // Resource manager will be initialized on-demand when needed
+        // (bloomProcessor isn't defined yet at this point in the code)
 
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             console.log('File input changed, files:', e.target.files.length);
