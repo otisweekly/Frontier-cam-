@@ -1055,7 +1055,9 @@
                     }
                     if(state.swipeState.swiping){
                         e.preventDefault();
-                        const sensitivity=0.3;
+                        // Faster sensitivity for snappier feel
+                        // Swipe right increases 50→100%, swipe left decreases 50→0%
+                        const sensitivity=0.5;
                         const intensityDelta=Math.round(deltaX*sensitivity);
                         let newIntensity=Math.max(0,Math.min(100,state.swipeState.startIntensity+intensityDelta));
                         if(newIntensity!==state.settings.profileIntensity){
