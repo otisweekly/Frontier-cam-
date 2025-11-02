@@ -1921,46 +1921,37 @@
 
                 if (profileId === 'xxx') {
                     // Kodak Tri-X 400 Black & White Film Emulation
-                    // Tri-X has enhanced red/orange sensitivity, deep blacks, and characteristic grain
+                    // Tri-X is famous for enhanced red sensitivity, punchy contrast, and deep blacks
 
-                    // Step 1: Weighted B&W conversion mimicking Tri-X's spectral response
-                    // Tri-X is more sensitive to reds/oranges, less to blues
-                    const gray = (r * 0.35 + g * 0.50 + b * 0.15);
+                    // Step 1: Weighted grayscale conversion mimicking Tri-X's panchromatic spectral response
+                    // Tri-X is more sensitive to reds/oranges (skin tones, warmth), less to blues
+                    const gray = r * 0.35 + g * 0.50 + b * 0.15;
 
-                    // Step 2: Apply Tri-X characteristic S-curve for film-like contrast
-                    // Normalize to 0-1 range
-                    let normalized = gray / 255;
+                    // Step 2: Apply Tri-X characteristic film curve
+                    // Tri-X has lifted blacks (film base fog), strong mid-tone contrast, compressed highlights
+                    let value = gray / 255;
 
-                    // S-curve with crushed blacks and lifted shadows (Tri-X signature look)
-                    // This creates the punchy mid-tone contrast Tri-X is famous for
-                    const contrast = 1.35; // Strong mid-tone contrast
-                    const toe = 0.08;      // Lifted shadows (film fog)
-                    const shoulder = 0.92; // Compressed highlights
+                    // Lift shadows (film fog/base density)
+                    value = value * 0.92 + 0.08;
 
-                    // Apply toe (shadow lift)
-                    if (normalized < 0.25) {
-                        normalized = toe + (normalized / 0.25) * (0.25 - toe);
-                    }
-                    // Apply S-curve in mid-tones
-                    else if (normalized < 0.75) {
-                        const mid = (normalized - 0.25) / 0.5;
-                        const sCurve = 0.5 + Math.sin((mid - 0.5) * Math.PI) * 0.5;
-                        normalized = 0.25 + sCurve * 0.5 * contrast;
-                    }
-                    // Apply shoulder (highlight rolloff)
-                    else {
-                        const high = (normalized - 0.75) / 0.25;
-                        normalized = shoulder + high * (1 - shoulder);
+                    // Apply strong S-curve for punchy mid-tone contrast
+                    // Standard film S-curve formula
+                    value = (value - 0.5) * 1.4 + 0.5;
+
+                    // Compress highlights for film-like rolloff
+                    if (value > 0.75) {
+                        const overflow = value - 0.75;
+                        value = 0.75 + overflow * 0.6;
                     }
 
-                    // Step 3: Add slight warm tone (Tri-X has a slightly warm neutral tone)
-                    const warmth = 1.02;
-                    const coolness = 0.98;
+                    // Clamp to valid range
+                    value = Math.max(0, Math.min(1, value));
 
-                    const finalValue = Math.round(normalized * 255);
-                    r = Math.max(0, Math.min(255, Math.round(finalValue * warmth)));
+                    // Step 3: Add subtle warm tone (Tri-X has a slightly warm neutral black & white)
+                    const finalValue = Math.round(value * 255);
+                    r = Math.min(255, Math.round(finalValue * 1.02));
                     g = finalValue;
-                    b = Math.max(0, Math.min(255, Math.round(finalValue * coolness)));
+                    b = Math.max(0, Math.round(finalValue * 0.98));
                 }
 
                 // Blend with original based on intensity
