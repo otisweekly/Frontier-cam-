@@ -153,10 +153,6 @@
         video::-webkit-media-controls-timeline { display:none !important; }
         #videoCanvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 330px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; display:none; cursor:pointer; transform-origin:center center; will-change:transform; }
 
-        .scrub-indicator { position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; width:80px; height:80px; }
-        .scrub-indicator.active { opacity:1; }
-        .scrub-indicator img { width:100%; height:100%; filter:brightness(0) invert(1) drop-shadow(0 4px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
-
         .intensity-indicator { position:fixed; top:calc(50vh - 76px); left:50%; transform:translate(-50%, -50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); }
         .intensity-indicator.active { opacity:1; }
         body.standalone-mode .intensity-indicator { top:calc(50vh - 76px - env(safe-area-inset-top, 0px) / 2); }
@@ -361,7 +357,6 @@
     <div id="editSection">
         <div class="top-nav-bar"></div>
         <div class="status-light green active" id="compareIndicator" style="position:fixed;top:20px;left:70px;z-index:151;border-color:#000;"></div>
-        <div class="scrub-indicator" id="scrubIndicator"><img src="Fast forward.svg" alt="Fast Forward" id="scrubIcon"></div>
         <div class="intensity-indicator" id="intensityIndicator">100%</div>
         <div class="fullscreen-hint" id="fullscreenHint">
             <img src="Shrink.svg" alt="Exit" style="height:16px;width:auto;vertical-align:middle;margin-right:8px;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.9));">
@@ -700,7 +695,7 @@
         function handleCanvasTap(e){if(state.videoMode)return;if(state.tapState.comparing)return;const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}else{singleTapCompare();}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
         // Video touch handling
-        let videoTouchState={tapCount:0,tapTimer:null,scrubbing:false,scrubbingStartX:0,scrubbingStartY:0,lastScrubDelta:0,touchStartTime:0,wasPausedBeforeScrub:false};
+        let videoTouchState={tapCount:0,tapTimer:null};
         let videoGesturesSetup=false;
         let videoZoomState={lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
 
@@ -739,13 +734,6 @@
                         // Pan when zoomed
                         videoZoomState.lastTouchX=e.touches[0].clientX;
                         videoZoomState.lastTouchY=e.touches[0].clientY;
-                    }else if(!state.fullscreenPreview){
-                        // Prepare for potential scrubbing - will activate on movement
-                        videoTouchState.scrubbingStartX=e.touches[0].clientX;
-                        videoTouchState.scrubbingStartY=e.touches[0].clientY;
-                        videoTouchState.lastScrubDelta=0;
-                        videoTouchState.touchStartTime=Date.now();
-                        videoTouchState.wasPausedBeforeScrub=video.paused;
                     }
                 }
             };
@@ -780,47 +768,6 @@
                     videoZoomState.lastTouchX=e.touches[0].clientX;
                     videoZoomState.lastTouchY=e.touches[0].clientY;
                     applyTransform(canvas);
-                }else if(e.touches.length===1&&zoomState.scale<=1){
-                    // Handle scrubbing - activate when user moves horizontally
-                    const currentX=e.touches[0].clientX;
-                    const currentY=e.touches[0].clientY;
-                    const deltaX=currentX-videoTouchState.scrubbingStartX;
-                    const deltaY=currentY-videoTouchState.scrubbingStartY;
-
-                    // Start scrubbing if moved more than threshold horizontally
-                    if(!videoTouchState.scrubbing&&Math.abs(deltaX)>10){
-                        e.preventDefault();
-                        videoTouchState.scrubbing=true;
-                        // Auto-pause video when scrubbing starts
-                        if(!video.paused){
-                            video.pause();
-                            state.videoPlaying=false;
-                        }
-                        // Cancel any pending tap timers
-                        if(videoTouchState.tapTimer){
-                            clearTimeout(videoTouchState.tapTimer);
-                            videoTouchState.tapTimer=null;
-                            videoTouchState.tapCount=0;
-                        }
-                    }
-
-                    if(videoTouchState.scrubbing){
-                        e.preventDefault();
-                        const scrubSensitivity=-0.002;
-                        const newTime=Math.max(0,Math.min(video.duration,video.currentTime+(deltaX-videoTouchState.lastScrubDelta)*scrubSensitivity*video.duration));
-                        video.currentTime=newTime;
-                        videoTouchState.lastScrubDelta=deltaX;
-
-                        // Update scrub indicator
-                        const indicator=document.getElementById('scrubIndicator');
-                        const icon=document.getElementById('scrubIcon');
-                        if(Math.abs(deltaX)>2){
-                            icon.src=deltaX<0?'Fast forward.svg':'Rewind.svg';
-                            indicator.classList.add('active');
-                        }else{
-                            indicator.classList.remove('active');
-                        }
-                    }
                 }
             };
 
@@ -836,85 +783,69 @@
                 if(e.touches.length===0){
                     videoZoomState.isPanning=false;
 
-                    // Hide scrub indicator
-                    const indicator=document.getElementById('scrubIndicator');
-                    indicator.classList.remove('active');
-
-                    const wasScrubbing=videoTouchState.scrubbing;
-                    const hadSignificantScrub=Math.abs(videoTouchState.lastScrubDelta)>15;
-
-                    if(videoTouchState.scrubbing){
-                        // End scrubbing - video stays paused for review
-                        videoTouchState.scrubbing=false;
-                        videoTouchState.lastScrubDelta=0;
+                    // Prevent double-firing tap counting from event bubbling (canvas -> container)
+                    const now=Date.now();
+                    if(now-lastVideoTouchEndTime<50){
+                        console.log('Ignoring duplicate video tap (bubbled event)');
+                        return;
                     }
+                    lastVideoTouchEndTime=now;
 
-                    // If wasn't scrubbing OR scrubbed but didn't move much, treat as tap
-                    if(!wasScrubbing||!hadSignificantScrub){
-                        // Prevent double-firing tap counting from event bubbling (canvas -> container)
-                        const now=Date.now();
-                        if(now-lastVideoTouchEndTime<50){
-                            console.log('Ignoring duplicate video tap (bubbled event)');
-                            return;
-                        }
-                        lastVideoTouchEndTime=now;
+                    // Handle tap (play/pause/zoom/fullscreen)
+                    videoTouchState.tapCount++;
+                    if(videoTouchState.tapTimer)clearTimeout(videoTouchState.tapTimer);
 
-                        // Handle tap (play/pause/zoom/fullscreen)
-                        videoTouchState.tapCount++;
-                        if(videoTouchState.tapTimer)clearTimeout(videoTouchState.tapTimer);
-
-                        if(videoTouchState.tapCount===1){
-                            videoTouchState.tapTimer=setTimeout(()=>{
-                                if(state.fullscreenPreview){
-                                    // In fullscreen preview, single tap cycles background
-                                    cycleCanvasBackground();
-                                }else if(videoTouchStartTarget==='container'){
-                                    // Tapping container background cycles colors
-                                    cycleCanvasBackground();
-                                }else{
-                                    // Tapping video plays/pauses
-                                    toggleVideoPlayPause();
-                                }
-                                videoTouchState.tapCount=0;
-                            },300);
-                        }else if(videoTouchState.tapCount===2){
-                            clearTimeout(videoTouchState.tapTimer);
+                    if(videoTouchState.tapCount===1){
+                        videoTouchState.tapTimer=setTimeout(()=>{
                             if(state.fullscreenPreview){
-                                // In fullscreen preview, double tap exits
-                                toggleFullscreenPreview();
+                                // In fullscreen preview, single tap cycles background
+                                cycleCanvasBackground();
                             }else if(videoTouchStartTarget==='container'){
-                                // Double tap container enters fullscreen
-                                toggleFullscreenPreview();
+                                // Tapping container background cycles colors
+                                cycleCanvasBackground();
                             }else{
-                                // Double tap video toggles zoom (like photos)
-                                if(zoomState.scale>1){
-                                    console.log('Zooming OUT video to 1x');
-                                    resetZoom(canvas);
-                                }else{
-                                    console.log('Zooming IN video to 2.5x - using stored tap coords:',videoLastTapX,videoLastTapY);
-                                    const canvasRect=canvas.getBoundingClientRect();
-
-                                    // Fixed 2.5x zoom like photos
-                                    zoomState.scale=2.5;
-                                    console.log('Setting video scale to:',zoomState.scale);
-
-                                    // Calculate center point relative to canvas using stored coordinates
-                                    const tapX=videoLastTapX-canvasRect.left;
-                                    const tapY=videoLastTapY-canvasRect.top;
-                                    const canvasCenterX=canvasRect.width/2;
-                                    const canvasCenterY=canvasRect.height/2;
-
-                                    // Pan to center the tap point
-                                    zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
-                                    zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
-
-                                    console.log('Applying video transform...');
-                                    applyTransform(canvas);
-                                    console.log('Video zoom complete! New scale:',zoomState.scale);
-                                }
+                                // Tapping video plays/pauses
+                                toggleVideoPlayPause();
                             }
                             videoTouchState.tapCount=0;
+                        },300);
+                    }else if(videoTouchState.tapCount===2){
+                        clearTimeout(videoTouchState.tapTimer);
+                        if(state.fullscreenPreview){
+                            // In fullscreen preview, double tap exits
+                            toggleFullscreenPreview();
+                        }else if(videoTouchStartTarget==='container'){
+                            // Double tap container enters fullscreen
+                            toggleFullscreenPreview();
+                        }else{
+                            // Double tap video toggles zoom (like photos)
+                            if(zoomState.scale>1){
+                                console.log('Zooming OUT video to 1x');
+                                resetZoom(canvas);
+                            }else{
+                                console.log('Zooming IN video to 2.5x - using stored tap coords:',videoLastTapX,videoLastTapY);
+                                const canvasRect=canvas.getBoundingClientRect();
+
+                                // Fixed 2.5x zoom like photos
+                                zoomState.scale=2.5;
+                                console.log('Setting video scale to:',zoomState.scale);
+
+                                // Calculate center point relative to canvas using stored coordinates
+                                const tapX=videoLastTapX-canvasRect.left;
+                                const tapY=videoLastTapY-canvasRect.top;
+                                const canvasCenterX=canvasRect.width/2;
+                                const canvasCenterY=canvasRect.height/2;
+
+                                // Pan to center the tap point
+                                zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
+                                zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
+
+                                console.log('Applying video transform...');
+                                applyTransform(canvas);
+                                console.log('Video zoom complete! New scale:',zoomState.scale);
+                            }
                         }
+                        videoTouchState.tapCount=0;
                     }
 
                     if(zoomState.scale<1.1){
@@ -928,9 +859,6 @@
                 if(!state.videoMode)return;
                 videoZoomState.isPinching=false;
                 videoZoomState.isPanning=false;
-                videoTouchState.scrubbing=false;
-                const indicator=document.getElementById('scrubIndicator');
-                indicator.classList.remove('active');
                 applyTransform(canvas);
             };
 
