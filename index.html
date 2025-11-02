@@ -1859,12 +1859,18 @@
                 return;
             }
 
+            // Validate LUT has data
+            if (!currentLUT.data || currentLUT.data.length === 0) {
+                console.error(`❌ LUT has no data, skipping application`);
+                return;
+            }
+
             try {
                 const manager = getLUTManager();
                 manager.applyLUTToImageData(imageData, currentLUT);
                 console.log(`✅ Applied LUT: ${profileId}`);
             } catch (error) {
-                console.error('Error applying LUT:', error);
+                console.error('❌ Error applying LUT:', error);
                 // Don't modify imageData if there's an error
             }
         }
@@ -2980,7 +2986,19 @@
                     }
                 }
 
-                console.log(`✅ Parsed LUT: size=${size}, entries=${data.length/3}`);
+                const expectedEntries = size * size * size;
+                const actualEntries = data.length / 3;
+
+                console.log(`✅ Parsed LUT: size=${size}, entries=${actualEntries}, expected=${expectedEntries}`);
+
+                if (actualEntries === 0) {
+                    throw new Error(`LUT file is empty or invalid format - no RGB data found`);
+                }
+
+                if (actualEntries !== expectedEntries) {
+                    console.warn(`⚠️ LUT entry count mismatch: got ${actualEntries}, expected ${expectedEntries}`);
+                }
+
                 return { size, data };
             }
 
