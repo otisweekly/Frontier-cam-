@@ -3445,11 +3445,210 @@
 
         function generateExportFilename(photo,index){const now=new Date();const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');const profile=photo.settings.profile!=='none'?photo.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(index+1).padStart(3,'0');let editInfo='';if(photo.settings.bloom>0)editInfo+=`_B${photo.settings.bloom}`;if(photo.settings.grain>0)editInfo+=`_G${photo.settings.grain}`;if(photo.settings.cyan!==0||photo.settings.magenta!==0||photo.settings.yellow!==0||photo.settings.black!==0){editInfo+=`_CMYK`;}const extension=photo.fileExtension||'jpg';return `FRONTIER_${profile}_${frameNum}_${date}_${time}${editInfo}.${extension}`;}
 
-        async function savePhoto(){haptic();closeMoreDialog();const p=state.photos[state.currentIndex];if(p.isVideo){exportVideo();}else{showProgress('Exporting photo...','photo');const filename=generateExportFilename(p,state.currentIndex);const exportCanvas=document.createElement('canvas');const ctx=exportCanvas.getContext('2d',{alpha:false});exportCanvas.width=p.original.width;exportCanvas.height=p.original.height;updateProgress(30,'Processing...');ctx.drawImage(p.original,0,0);applyEffects(ctx,exportCanvas.width,exportCanvas.height);updateProgress(80,'Encoding...');exportCanvas.toBlob(async b=>{updateProgress(100,'Finalizing...');const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMobile&&navigator.share&&navigator.canShare){const file=new File([b],filename,{type:'image/jpeg'});try{await navigator.share({files:[file],title:'Frontier Photo'});hideProgress();}catch(err){if(err.name==='AbortError'){hideProgress();}else{hideProgress();alert('Share cancelled. Photo not saved.');}}}else{const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);setTimeout(()=>{hideProgress();alert('Photo downloaded! Check your Downloads folder or browser downloads.');},500);}},'image/jpeg',0.95);}}
+        async function savePhoto(){
+            haptic();
+            closeMoreDialog();
+            const p=state.photos[state.currentIndex];
+
+            if(p.isVideo){
+                exportVideo();
+                return;
+            }
+
+            try {
+                showProgress('Exporting photo...','photo');
+                const filename=generateExportFilename(p,state.currentIndex);
+
+                // Limit export resolution to 6000px to prevent crashes
+                const maxExportDim = 6000;
+                const origW = p.original.width;
+                const origH = p.original.height;
+                const needsDownsample = origW > maxExportDim || origH > maxExportDim;
+
+                let exportW = origW;
+                let exportH = origH;
+
+                if (needsDownsample) {
+                    const aspectRatio = origW / origH;
+                    if (origW > origH) {
+                        exportW = maxExportDim;
+                        exportH = maxExportDim / aspectRatio;
+                    } else {
+                        exportH = maxExportDim;
+                        exportW = maxExportDim * aspectRatio;
+                    }
+                    console.log(`Downsampling export from ${origW}x${origH} to ${exportW}x${exportH}`);
+                }
+
+                const exportCanvas=document.createElement('canvas');
+                const ctx=exportCanvas.getContext('2d',{alpha:false});
+                exportCanvas.width=exportW;
+                exportCanvas.height=exportH;
+
+                updateProgress(30,'Processing...');
+
+                // Draw original (potentially downsampled)
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(p.original, 0, 0, exportW, exportH);
+
+                // Apply effects - this is wrapped in try-catch in case of memory issues
+                applyEffects(ctx, exportCanvas.width, exportCanvas.height);
+
+                updateProgress(80,'Encoding...');
+
+                exportCanvas.toBlob(async b=>{
+                    updateProgress(100,'Finalizing...');
+                    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                    if(isMobile&&navigator.share&&navigator.canShare){
+                        const file=new File([b],filename,{type:'image/jpeg'});
+                        try{
+                            await navigator.share({files:[file],title:'Frontier Photo'});
+                            hideProgress();
+                        }catch(err){
+                            if(err.name==='AbortError'){
+                                hideProgress();
+                            }else{
+                                hideProgress();
+                                alert('Share cancelled. Photo not saved.');
+                            }
+                        }
+                    }else{
+                        const url=URL.createObjectURL(b);
+                        const a=document.createElement('a');
+                        a.href=url;
+                        a.download=filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        setTimeout(()=>{
+                            hideProgress();
+                            alert('Photo downloaded! Check your Downloads folder or browser downloads.');
+                        },500);
+                    }
+                },'image/jpeg',0.95);
+            } catch (error) {
+                console.error('Error exporting photo:', error);
+                hideProgress();
+                alert('Export failed. Photo may be too large. Try reducing bloom/grain settings.');
+            }
+        }
 
         function fallbackDownload(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`frontier_${name}`;a.click();URL.revokeObjectURL(url);}
 
-        async function exportVideo(){showProgress('Processing video...','video');const p=state.photos[state.currentIndex],video=p.video;const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{alpha:false});canvas.width=video.videoWidth;canvas.height=video.videoHeight;const stream=canvas.captureStream(30);const mediaRecorder=new MediaRecorder(stream,{mimeType:'video/webm',videoBitsPerSecond:12000000});state.download.mediaRecorder=mediaRecorder;const chunks=[];mediaRecorder.ondataavailable=e=>chunks.push(e.data);mediaRecorder.onstop=async()=>{if(state.download.cancelling){hideProgress();return;}updateProgress(100,'Finalizing...');const blob=new Blob(chunks,{type:'video/webm'});const filename=`frontier_${p.name.replace(/\.[^/.]+$/,'')}.webm`;const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMobile&&navigator.share&&navigator.canShare){const file=new File([blob],filename,{type:'video/webm'});try{await navigator.share({files:[file],title:'Frontier Video'});hideProgress();}catch(err){if(err.name==='AbortError'){hideProgress();}else{hideProgress();alert('Share cancelled. Video not saved.');}}}else{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);setTimeout(()=>{hideProgress();alert('Video downloaded! Check your Downloads folder or browser downloads.');},500);}};mediaRecorder.start();video.currentTime=0;video.play();let lastFrameTime=0;const targetFPS=30;const frameInterval=1000/targetFPS;const processVideoFrame=(currentTime)=>{if(state.download.cancelling){video.pause();return;}if(video.ended||video.paused){mediaRecorder.stop();video.pause();return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval){ctx.drawImage(video,0,0);applyEffects(ctx,canvas.width,canvas.height);lastFrameTime=currentTime-elapsed%frameInterval;const progress=Math.min(95,(video.currentTime/video.duration)*100);updateProgress(progress,`Processing video... ${Math.floor(progress)}%`);}requestAnimationFrame(processVideoFrame);};video.addEventListener('play',()=>processVideoFrame(0),{once:true});}
+        async function exportVideo(){
+            try {
+                showProgress('Processing video...','video');
+                const p=state.photos[state.currentIndex];
+                const video=p.video;
+
+                const canvas=document.createElement('canvas');
+                const ctx=canvas.getContext('2d',{alpha:false});
+                canvas.width=video.videoWidth;
+                canvas.height=video.videoHeight;
+
+                const stream=canvas.captureStream(30);
+                const mediaRecorder=new MediaRecorder(stream,{mimeType:'video/webm',videoBitsPerSecond:12000000});
+                state.download.mediaRecorder=mediaRecorder;
+
+                const chunks=[];
+                mediaRecorder.ondataavailable=e=>chunks.push(e.data);
+
+                mediaRecorder.onstop=async()=>{
+                    if(state.download.cancelling){
+                        hideProgress();
+                        return;
+                    }
+
+                    try {
+                        updateProgress(100,'Finalizing...');
+                        const blob=new Blob(chunks,{type:'video/webm'});
+                        const filename=`frontier_${p.name.replace(/\.[^/.]+$/,'')}.webm`;
+                        const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                        if(isMobile&&navigator.share&&navigator.canShare){
+                            const file=new File([blob],filename,{type:'video/webm'});
+                            try{
+                                await navigator.share({files:[file],title:'Frontier Video'});
+                                hideProgress();
+                            }catch(err){
+                                if(err.name==='AbortError'){
+                                    hideProgress();
+                                }else{
+                                    hideProgress();
+                                    alert('Share cancelled. Video not saved.');
+                                }
+                            }
+                        }else{
+                            const url=URL.createObjectURL(blob);
+                            const a=document.createElement('a');
+                            a.href=url;
+                            a.download=filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            setTimeout(()=>{
+                                hideProgress();
+                                alert('Video downloaded! Check your Downloads folder or browser downloads.');
+                            },500);
+                        }
+                    } catch (error) {
+                        console.error('Error finalizing video:', error);
+                        hideProgress();
+                        alert('Video export failed during finalization.');
+                    }
+                };
+
+                mediaRecorder.start();
+                video.currentTime=0;
+                video.play();
+
+                let lastFrameTime=0;
+                const targetFPS=30;
+                const frameInterval=1000/targetFPS;
+
+                const processVideoFrame=(currentTime)=>{
+                    try {
+                        if(state.download.cancelling){
+                            video.pause();
+                            return;
+                        }
+
+                        if(video.ended||video.paused){
+                            mediaRecorder.stop();
+                            video.pause();
+                            return;
+                        }
+
+                        const elapsed=currentTime-lastFrameTime;
+                        if(elapsed>=frameInterval){
+                            ctx.drawImage(video,0,0);
+                            applyEffects(ctx,canvas.width,canvas.height);
+                            lastFrameTime=currentTime-elapsed%frameInterval;
+                            const progress=Math.min(95,(video.currentTime/video.duration)*100);
+                            updateProgress(progress,`Processing video... ${Math.floor(progress)}%`);
+                        }
+
+                        requestAnimationFrame(processVideoFrame);
+                    } catch (error) {
+                        console.error('Error processing video frame:', error);
+                        video.pause();
+                        mediaRecorder.stop();
+                        hideProgress();
+                        alert('Video export failed during processing.');
+                    }
+                };
+
+                video.addEventListener('play',()=>processVideoFrame(0),{once:true});
+            } catch (error) {
+                console.error('Error exporting video:', error);
+                hideProgress();
+                alert('Video export failed. Please try again.');
+            }
+        }
 
         function setBackground(color){haptic();const container=document.getElementById('canvasContainer');const buttons={grey:document.getElementById('bgGrey'),white:document.getElementById('bgWhite'),black:document.getElementById('bgBlack')};Object.values(buttons).forEach(btn=>btn.classList.remove('active'));buttons[color].classList.add('active');const colors={grey:'#4A4A4A',white:'#FFFFFF',black:'#000000'};container.style.background=colors[color];state.canvasBackground=color;}
 
