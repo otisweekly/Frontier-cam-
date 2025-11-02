@@ -1227,7 +1227,7 @@
 
         // Use original images for editing - bloom and effects need full resolution
         // OPTIMIZED: Use Blob URLs instead of toDataURL to avoid memory duplication
-        function downsampleImage(sourceImg, maxDimension = 6000) {
+        function downsampleImage(sourceImg, maxDimension = 5000) {
             return new Promise(resolve => {
                 console.log('Downsampling image:', sourceImg.width, 'x', sourceImg.height);
                 const w = sourceImg.width;
@@ -3015,9 +3015,10 @@
                 const maxIndex = size - 1;
                 const blend = intensity / 100; // Convert to 0-1 range
 
-                // Performance optimization: use nearest neighbor for intensity < 50%
-                // This is 8x faster and visually acceptable when blending is subtle
-                const useNearestNeighbor = intensity < 50;
+                // Performance optimization: use nearest neighbor for fast editing
+                // This is 8x faster than trilinear interpolation
+                // Visually acceptable for preview/editing, can use quality mode for export
+                const useNearestNeighbor = true;  // Always fast for snappy editing
 
                 for (let i = 0; i < pixels.length; i += 4) {
                     // Store original values for blending
@@ -3260,7 +3261,7 @@
 
         function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==100){btn.textContent=`${profileName} (${state.settings.profileIntensity})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=60;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=50;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3459,8 +3460,8 @@
                 showProgress('Exporting photo...','photo');
                 const filename=generateExportFilename(p,state.currentIndex);
 
-                // Limit export resolution to 6000px to prevent crashes
-                const maxExportDim = 6000;
+                // Limit export resolution to 5000px for performance
+                const maxExportDim = 5000;
                 const origW = p.original.width;
                 const origH = p.original.height;
                 const needsDownsample = origW > maxExportDim || origH > maxExportDim;
