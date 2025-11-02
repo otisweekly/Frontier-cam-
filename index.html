@@ -1268,7 +1268,50 @@
         function generateDisplayName(profile,index,extension='jpg'){const styleName=profile==='none'?'Original':profile.charAt(0).toUpperCase()+profile.slice(1);const num=String(index+1).padStart(2,'0');return `Frontier_${styleName}_${num}.${extension}`;}
 
         // Use original images for editing - bloom and effects need full resolution
-        function downsampleImage(sourceImg,maxDimension=6000){return new Promise(resolve=>{const w=sourceImg.width,h=sourceImg.height;if(w<=maxDimension&&h<=maxDimension){resolve(sourceImg);return;}const aspectRatio=w/h;let newW,newH;if(w>h){newW=maxDimension;newH=maxDimension/aspectRatio;}else{newH=maxDimension;newW=maxDimension*aspectRatio;}const canvas=document.createElement('canvas');canvas.width=newW;canvas.height=newH;const ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(sourceImg,0,0,newW,newH);const downsampled=new Image();downsampled.onload=()=>resolve(downsampled);downsampled.src=canvas.toDataURL('image/jpeg',0.95);});}
+        // OPTIMIZED: Use Blob URLs instead of toDataURL to avoid memory duplication
+        function downsampleImage(sourceImg, maxDimension = 6000) {
+            return new Promise(resolve => {
+                console.log('Downsampling image:', sourceImg.width, 'x', sourceImg.height);
+                const w = sourceImg.width;
+                const h = sourceImg.height;
+
+                if (w <= maxDimension && h <= maxDimension) {
+                    console.log('No downsampling needed');
+                    resolve(sourceImg);
+                    return;
+                }
+
+                const aspectRatio = w / h;
+                let newW, newH;
+                if (w > h) {
+                    newW = maxDimension;
+                    newH = maxDimension / aspectRatio;
+                } else {
+                    newH = maxDimension;
+                    newW = maxDimension * aspectRatio;
+                }
+
+                console.log('Downsampling to:', newW, 'x', newH);
+                const canvas = document.createElement('canvas');
+                canvas.width = newW;
+                canvas.height = newH;
+                const ctx = canvas.getContext('2d', {alpha: false});
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(sourceImg, 0, 0, newW, newH);
+
+                // Use Blob URL instead of toDataURL to avoid memory duplication!
+                canvas.toBlob((blob) => {
+                    const blobUrl = URL.createObjectURL(blob);
+                    const downsampled = new Image();
+                    downsampled.onload = () => {
+                        console.log('Downsampled image loaded');
+                        resolve(downsampled);
+                    };
+                    downsampled.src = blobUrl;
+                }, 'image/jpeg', 0.95);
+            });
+        }
 
         // =====================================================================
         // Batch Processing & Memory Optimization System
@@ -1280,15 +1323,18 @@
          */
         async function loadImageFromBlob(file) {
             return new Promise((resolve, reject) => {
+                console.log('Loading image from blob:', file.name, 'size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
                 // Create blob URL (efficient - no copy in memory)
                 const blobUrl = URL.createObjectURL(file);
                 const img = new Image();
 
                 img.onload = () => {
+                    console.log('Image loaded successfully:', file.name);
                     resolve({ img, blobUrl });
                 };
 
                 img.onerror = (err) => {
+                    console.error('Image load error:', file.name, err);
                     URL.revokeObjectURL(blobUrl);
                     reject(new Error(`Failed to load image: ${file.name}`));
                 };
@@ -1302,23 +1348,39 @@
          */
         async function loadVideoFromBlob(file) {
             return new Promise((resolve, reject) => {
+                console.log('Loading video from blob:', file.name);
                 const blobUrl = URL.createObjectURL(file);
                 const video = document.createElement('video');
                 video.src = blobUrl;
 
+                let resolved = false;
+
                 video.onloadedmetadata = () => {
-                    resolve({ video, blobUrl });
+                    if (!resolved) {
+                        resolved = true;
+                        console.log('Video loaded successfully:', file.name);
+                        resolve({ video, blobUrl });
+                    }
                 };
 
                 video.onerror = (err) => {
-                    URL.revokeObjectURL(blobUrl);
-                    reject(new Error(`Failed to load video: ${file.name}`));
+                    if (!resolved) {
+                        resolved = true;
+                        console.error('Video load error:', file.name, err);
+                        URL.revokeObjectURL(blobUrl);
+                        reject(new Error(`Failed to load video: ${file.name}`));
+                    }
                 };
 
+                // Longer timeout for large videos, and only reject if not already resolved
                 setTimeout(() => {
-                    URL.revokeObjectURL(blobUrl);
-                    reject(new Error('Video load timeout'));
-                }, 10000);
+                    if (!resolved) {
+                        resolved = true;
+                        console.error('Video load timeout:', file.name);
+                        URL.revokeObjectURL(blobUrl);
+                        reject(new Error('Video load timeout'));
+                    }
+                }, 30000);
             });
         }
 
