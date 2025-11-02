@@ -1789,8 +1789,9 @@
 
             try {
                 const manager = getLUTManager();
-                manager.applyLUTToImageData(imageData, currentLUT);
-                console.log(`✅ Applied LUT: ${profileId}`);
+                const intensity = state.settings.profileIntensity || 100;
+                manager.applyLUTToImageData(imageData, currentLUT, intensity);
+                console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity`);
             } catch (error) {
                 console.error('❌ Error applying LUT:', error);
                 // Don't modify imageData if there's an error
@@ -2970,18 +2971,24 @@
              * Apply LUT to ImageData
              * This is a CPU-based implementation (slower but works everywhere)
              */
-            applyLUTToImageData(imageData, lutData) {
+            applyLUTToImageData(imageData, lutData, intensity = 100) {
                 if (!lutData) return;
 
                 const { size, data: lutTable } = lutData;
                 const pixels = imageData.data;
                 const maxIndex = size - 1;
+                const blend = intensity / 100; // Convert to 0-1 range
 
                 for (let i = 0; i < pixels.length; i += 4) {
+                    // Store original values for blending
+                    const origR = pixels[i];
+                    const origG = pixels[i + 1];
+                    const origB = pixels[i + 2];
+
                     // Normalize RGB to 0-1
-                    let r = pixels[i] / 255;
-                    let g = pixels[i + 1] / 255;
-                    let b = pixels[i + 2] / 255;
+                    let r = origR / 255;
+                    let g = origG / 255;
+                    let b = origB / 255;
 
                     // Clamp
                     r = Math.max(0, Math.min(1, r));
@@ -3027,12 +3034,17 @@
                     const c1 = this.lerp3(c01, c11, gFrac);
 
                     // Interpolate along B
-                    const finalColor = this.lerp3(c0, c1, bFrac);
+                    const lutColor = this.lerp3(c0, c1, bFrac);
+
+                    // Blend between original and LUT-modified based on intensity
+                    const finalR = origR * (1 - blend) + lutColor[0] * 255 * blend;
+                    const finalG = origG * (1 - blend) + lutColor[1] * 255 * blend;
+                    const finalB = origB * (1 - blend) + lutColor[2] * 255 * blend;
 
                     // Write back
-                    pixels[i] = Math.round(finalColor[0] * 255);
-                    pixels[i + 1] = Math.round(finalColor[1] * 255);
-                    pixels[i + 2] = Math.round(finalColor[2] * 255);
+                    pixels[i] = Math.round(finalR);
+                    pixels[i + 1] = Math.round(finalG);
+                    pixels[i + 2] = Math.round(finalB);
                 }
             }
 
