@@ -283,10 +283,10 @@
         .cmyk-color-bar.magenta { background:#FF00FF; }
         .cmyk-color-bar.yellow { background:#FFFF00; }
         .cmyk-color-bar.density { background:#000; }
-        .cmyk-color-bar.brightness { background:linear-gradient(90deg, #000 0%, #FFF 100%); }
-        .cmyk-color-bar.contrast { background:linear-gradient(90deg, #808080 0%, #000 50%, #FFF 100%); }
-        .cmyk-color-bar.shadows { background:linear-gradient(90deg, #000 0%, #404040 100%); }
-        .cmyk-color-bar.highlights { background:linear-gradient(90deg, #C0C0C0 0%, #FFF 100%); }
+        .cmyk-color-bar.brightness { background:#000; }
+        .cmyk-color-bar.contrast { background:#000; }
+        .cmyk-color-bar.shadows { background:#000; }
+        .cmyk-color-bar.highlights { background:#000; }
         .cmyk-arrows { display:flex; gap:4px; }
         .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -2010,7 +2010,7 @@
 
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
-        function applyBrightness(d,s){if(s.brightness===0&&s.contrast===0&&s.shadows===0&&s.highlights===0)return;const brightnessAdjust=s.brightness*12;const contrastFactor=1+(s.contrast*0.15);const shadowsAdjust=s.shadows*12;const highlightsAdjust=s.highlights*12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(brightnessAdjust!==0){r+=brightnessAdjust;g+=brightnessAdjust;b+=brightnessAdjust;}if(contrastFactor!==1){r=((r-128)*contrastFactor)+128;g=((g-128)*contrastFactor)+128;b=((b-128)*contrastFactor)+128;}if(shadowsAdjust!==0||highlightsAdjust!==0){const lum=(r+g+b)/3;if(lum<128&&shadowsAdjust!==0){const shadowFactor=(128-lum)/128;r+=shadowsAdjust*shadowFactor;g+=shadowsAdjust*shadowFactor;b+=shadowsAdjust*shadowFactor;}if(lum>=128&&highlightsAdjust!==0){const highlightFactor=(lum-128)/127;r+=highlightsAdjust*highlightFactor;g+=highlightsAdjust*highlightFactor;b+=highlightsAdjust*highlightFactor;}}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
+        function applyBrightness(d,s){const brightness=s.brightness||0;const contrast=s.contrast||0;const shadows=s.shadows||0;const highlights=s.highlights||0;if(brightness===0&&contrast===0&&shadows===0&&highlights===0)return;const brightnessAdjust=brightness*12;const contrastFactor=1+(contrast*0.15);const shadowsAdjust=shadows*12;const highlightsAdjust=highlights*12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(brightnessAdjust!==0){r+=brightnessAdjust;g+=brightnessAdjust;b+=brightnessAdjust;}if(contrastFactor!==1){r=((r-128)*contrastFactor)+128;g=((g-128)*contrastFactor)+128;b=((b-128)*contrastFactor)+128;}if(shadowsAdjust!==0||highlightsAdjust!==0){const lum=(r+g+b)/3;if(lum<128&&shadowsAdjust!==0){const shadowFactor=(128-lum)/128;r+=shadowsAdjust*shadowFactor;g+=shadowsAdjust*shadowFactor;b+=shadowsAdjust*shadowFactor;}if(lum>=128&&highlightsAdjust!==0){const highlightFactor=(lum-128)/127;r+=highlightsAdjust*highlightFactor;g+=highlightsAdjust*highlightFactor;b+=highlightsAdjust*highlightFactor;}}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
         // =====================================================================
         // WebGL Dual Kawase Bloom Processor
