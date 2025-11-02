@@ -368,9 +368,6 @@
             Double tap to exit preview
         </div>
 
-        <!-- Mobile Debug Console -->
-        <div id="debugToggle" onclick="toggleDebugConsole()">🐛</div>
-        <div id="mobileDebug"></div>
         <button class="gallery-icon" onclick="backToUpload()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                 <line x1="4" y1="6" x2="20" y2="6"/>
@@ -606,6 +603,10 @@
             <button class="history-done-btn" onclick="toggleGuide()" style="margin-top:20px;">CLOSE</button>
         </div>
     </div>
+
+    <!-- Mobile Debug Console - Global (visible on all screens) -->
+    <div id="debugToggle" onclick="toggleDebugConsole()">🐛</div>
+    <div id="mobileDebug"></div>
 
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},swipeState:{swiping:false,startX:0,startIntensity:100},fullscreenPreview:false};
