@@ -603,7 +603,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},swipeState:{swiping:false,startX:0,startIntensity:100},fullscreenPreview:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:100,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1011,16 +1011,9 @@
                         zoomState.lastTouchX=e.touches[0].clientX;
                         zoomState.lastTouchY=e.touches[0].clientY;
                     }else if(state.settings.profile!=='none'&&!state.tapState.comparing){
-                        state.swipeState.startX=e.touches[0].clientX;
-                        state.swipeState.startIntensity=state.settings.profileIntensity;
-                        // Convert actual intensity to display intensity
-                        const actual=state.settings.profileIntensity;
-                        if(actual>=40){
-                            state.swipeState.startDisplayIntensity=(actual-40)/0.6;
-                        }else{
-                            state.swipeState.startDisplayIntensity=(actual-40)/0.4;
-                        }
-                        state.swipeState.swiping=false;
+                        // Store touch start for tap left/right detection
+                        state.intensityTapState.startX=e.touches[0].clientX;
+                        state.intensityTapState.startY=e.touches[0].clientY;
                     }
                 }
             };
@@ -1051,53 +1044,8 @@
                     zoomState.lastTouchX=e.touches[0].clientX;
                     zoomState.lastTouchY=e.touches[0].clientY;
                     applyTransform(canvas);
-                }else if(e.touches.length===1&&zoomState.scale<=1&&state.settings.profile!=='none'&&!state.tapState.comparing){
-                    const deltaX=e.touches[0].clientX-state.swipeState.startX;
-                    if(Math.abs(deltaX)>10&&!state.swipeState.swiping){
-                        state.swipeState.swiping=true;
-                        if(state.tapState.timer){
-                            clearTimeout(state.tapState.timer);
-                            state.tapState.count=0;
-                        }
-                    }
-                    if(state.swipeState.swiping){
-                        e.preventDefault();
-                        // Display value ranges from -100 to 100 (starts at 0 = 40% actual)
-                        // Swipe right: 0→100 display = 40→100% actual (60% range)
-                        // Swipe left: 0→-100 display = 40→0% actual (40% range)
-                        const sensitivity=0.5;
-                        const displayDelta=Math.round(deltaX*sensitivity);
-                        let displayIntensity=Math.max(-100,Math.min(100,state.swipeState.startDisplayIntensity+displayDelta));
-
-                        // Convert display (-100 to 100) to actual (0 to 100)
-                        let actualIntensity;
-                        if(displayIntensity>=0){
-                            // 0-100 display = 40-100 actual
-                            actualIntensity=40+(displayIntensity*0.6);
-                        }else{
-                            // -1 to -100 display = 39-0 actual
-                            actualIntensity=40+(displayIntensity*0.4);
-                        }
-                        actualIntensity=Math.round(actualIntensity);
-
-                        if(actualIntensity!==state.settings.profileIntensity){
-                            state.settings.profileIntensity=actualIntensity;
-                            const indicator=document.getElementById('intensityIndicator');
-                            indicator.textContent=displayIntensity>0?`+${displayIntensity}%`:`${displayIntensity}%`;
-                            indicator.classList.add('active');
-
-                            // Position indicator over canvas center
-                            const activeCanvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');
-                            const canvasRect=activeCanvas.getBoundingClientRect();
-                            const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
-                            indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
-                            indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
-
-                            saveCurrentPhotoSettings();
-                            // Don't render during swipe - only update indicator for snappy feel
-                        }
-                    }
                 }
+                // Swipe intensity adjustment removed - now using tap left/right
             };
 
             const handleTouchEnd=(e)=>{
@@ -1122,30 +1070,77 @@
                         resetZoom(canvas);
                     }
 
-                    const wasSwiping=state.swipeState.swiping;
+                    // Handle intensity tap left/right if a preset is active
+                    if(state.settings.profile!=='none'&&!zoomState.isPanning&&!state.tapState.comparing){
+                        // Check if this was a tap (minimal movement)
+                        const deltaX=Math.abs((e.changedTouches?e.changedTouches[0].clientX:lastTapX)-state.intensityTapState.startX);
+                        const deltaY=Math.abs((e.changedTouches?e.changedTouches[0].clientY:lastTapY)-state.intensityTapState.startY);
 
-                    if(state.swipeState.swiping){
-                        const indicator=document.getElementById('intensityIndicator');
-                        setTimeout(()=>indicator.classList.remove('active'),800);
-                        const oldIntensity=state.swipeState.startIntensity;
-                        const newIntensity=state.settings.profileIntensity;
+                        if(deltaX<15&&deltaY<15){
+                            // This is a tap! Determine which side of the canvas
+                            const activeCanvas=document.getElementById('canvas');
+                            const canvasRect=activeCanvas.getBoundingClientRect();
+                            const tapX=e.changedTouches?e.changedTouches[0].clientX:lastTapX;
+                            const canvasMiddle=canvasRect.left+canvasRect.width/2;
 
-                        // End swiping first
-                        state.swipeState.swiping=false;
+                            const oldIntensity=state.settings.profileIntensity;
+                            let newIntensity=oldIntensity;
 
-                        // Force final render to ensure image is at correct intensity
-                        intensityRenderPending=false;
-                        renderPhoto();
+                            if(tapX<canvasMiddle){
+                                // Tap left: decrease by 5
+                                newIntensity=Math.max(0,oldIntensity-5);
+                                if(newIntensity!==oldIntensity){
+                                    state.intensityTapState.tapCounter--;
+                                }
+                            }else{
+                                // Tap right: increase by 5
+                                newIntensity=Math.min(100,oldIntensity+5);
+                                if(newIntensity!==oldIntensity){
+                                    state.intensityTapState.tapCounter++;
+                                }
+                            }
 
-                        if(oldIntensity!==newIntensity){
-                            const profileName=state.settings.profile.toUpperCase();
-                            addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
+                            if(newIntensity!==oldIntensity){
+                                state.settings.profileIntensity=newIntensity;
+
+                                // Show tap counter indicator
+                                const indicator=document.getElementById('intensityIndicator');
+                                const counter=state.intensityTapState.tapCounter;
+                                indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
+                                indicator.classList.add('active');
+
+                                // Position indicator over canvas center
+                                const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
+                                indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
+                                indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
+
+                                // Reset counter timer
+                                if(state.intensityTapState.timer){
+                                    clearTimeout(state.intensityTapState.timer);
+                                }
+                                state.intensityTapState.timer=setTimeout(()=>{
+                                    indicator.classList.remove('active');
+                                    state.intensityTapState.tapCounter=0;
+                                },800);
+
+                                // Render immediately for instant feedback
+                                renderPhoto();
+
+                                // Add to history
+                                const profileName=state.settings.profile.toUpperCase();
+                                addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
+
+                                saveCurrentPhotoSettings();
+                                updatePresetButtonText();
+
+                                // Prevent this from being treated as a regular tap
+                                return;
+                            }
                         }
-                        updatePresetButtonText();
                     }
 
-                    // Handle taps only if not swiping or panning
-                    if(!wasSwiping&&!zoomState.isPanning){
+                    // Handle regular taps only if not panning
+                    if(!zoomState.isPanning){
                         state.tapState.count++;
                         if(state.tapState.timer)clearTimeout(state.tapState.timer);
 
@@ -1222,10 +1217,14 @@
                 if(state.videoMode)return;
                 zoomState.isPinching=false;
                 zoomState.isPanning=false;
-                if(state.swipeState.swiping){
-                    const indicator=document.getElementById('intensityIndicator');
+                // Clear intensity indicator if active
+                const indicator=document.getElementById('intensityIndicator');
+                if(indicator.classList.contains('active')){
                     indicator.classList.remove('active');
-                    state.swipeState.swiping=false;
+                }
+                if(state.intensityTapState.timer){
+                    clearTimeout(state.intensityTapState.timer);
+                    state.intensityTapState.tapCounter=0;
                 }
                 applyTransform(canvas);
             };
