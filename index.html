@@ -1988,38 +1988,19 @@
                 let b = origB;
 
                 if (profileId === 'xxx') {
-                    // Kodak Tri-X 400 Black & White Film Emulation
-                    // Tri-X is famous for enhanced red sensitivity, punchy contrast, and deep blacks
+                    // Simple, clean B&W conversion with punchy contrast
+                    // Standard luminance formula
+                    const gray = r * 0.299 + g * 0.587 + b * 0.114;
 
-                    // Step 1: Weighted grayscale conversion mimicking Tri-X's panchromatic spectral response
-                    // Tri-X is more sensitive to reds/oranges (skin tones, warmth), less to blues
-                    const gray = r * 0.35 + g * 0.50 + b * 0.15;
-
-                    // Step 2: Apply Tri-X characteristic film curve
-                    // Tri-X has lifted blacks (film base fog), strong mid-tone contrast, compressed highlights
+                    // Apply strong contrast boost
                     let value = gray / 255;
-
-                    // Lift shadows (film fog/base density)
-                    value = value * 0.92 + 0.08;
-
-                    // Apply strong S-curve for punchy mid-tone contrast
-                    // Standard film S-curve formula
-                    value = (value - 0.5) * 1.4 + 0.5;
-
-                    // Compress highlights for film-like rolloff
-                    if (value > 0.75) {
-                        const overflow = value - 0.75;
-                        value = 0.75 + overflow * 0.6;
-                    }
-
-                    // Clamp to valid range
+                    value = (value - 0.5) * 1.5 + 0.5;
                     value = Math.max(0, Math.min(1, value));
 
-                    // Step 3: Add subtle warm tone (Tri-X has a slightly warm neutral black & white)
-                    const finalValue = Math.round(value * 255);
-                    r = Math.min(255, Math.round(finalValue * 1.02));
-                    g = finalValue;
-                    b = Math.max(0, Math.round(finalValue * 0.98));
+                    const finalGray = Math.round(value * 255);
+                    r = finalGray;
+                    g = finalGray;
+                    b = finalGray;
                 }
 
                 // Blend with original based on intensity
