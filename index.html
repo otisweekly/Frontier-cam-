@@ -380,7 +380,7 @@
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
-            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness/contrast.svg" alt="Brightness"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness contrast.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
@@ -2016,7 +2016,7 @@
             console.log(`✅ Applied algorithmic preset: ${profileId} at ${intensity * 100}%`);
         }
 
-        // Black & white conversion with punchy Tri-X style contrast
+        // Black & white conversion - clean with subtle contrast
         function applyBlackAndWhite(imageData) {
             const pixels = imageData.data;
 
@@ -2025,22 +2025,18 @@
                 const g = pixels[i + 1];
                 const b = pixels[i + 2];
 
-                // Luminance with slight red channel bias (like Tri-X film)
-                // Red channel emphasized for more dramatic skin tones and contrast
-                let lum = r * 0.35 + g * 0.50 + b * 0.15;
+                // Standard luminance conversion
+                let lum = r * 0.299 + g * 0.587 + b * 0.114;
 
-                // Gentler S-curve for subtle contrast (less punchy than before)
+                // Very subtle contrast boost to avoid blowouts
                 lum = lum / 255;  // Normalize to 0-1
 
-                // Subtle S-curve: gentle midtone contrast
-                if (lum < 0.5) {
-                    lum = lum * lum * 1.4;  // Gentle shadow darkening
-                } else {
-                    lum = 1 - (1 - lum) * (1 - lum) * 1.4;  // Gentle highlight brightening
-                }
+                // Gentle linear contrast - prevents highlight/shadow clipping
+                lum = (lum - 0.5) * 1.1 + 0.5;
 
-                lum = lum * 255;  // Back to 0-255
-                lum = Math.max(0, Math.min(255, lum));
+                // Clamp to safe range
+                lum = Math.max(0, Math.min(1, lum));
+                lum = lum * 255;
 
                 pixels[i] = lum;
                 pixels[i + 1] = lum;
