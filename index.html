@@ -153,7 +153,7 @@
         video::-webkit-media-controls-timeline { display:none !important; }
         #videoCanvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 330px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; display:none; cursor:pointer; transform-origin:center center; will-change:transform; }
 
-        .intensity-indicator { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); }
+        .intensity-indicator { position:absolute; z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); transform:translate(-50%, -50%); }
         .intensity-indicator.active { opacity:1; }
 
         .fullscreen-hint { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s ease; font-family:'PP Neue Bit',monospace; color:rgba(255,255,255,0.9); font-size:20px; font-weight:400; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,0.9); }
@@ -1013,6 +1013,13 @@
                     }else if(state.settings.profile!=='none'&&!state.tapState.comparing){
                         state.swipeState.startX=e.touches[0].clientX;
                         state.swipeState.startIntensity=state.settings.profileIntensity;
+                        // Convert actual intensity to display intensity
+                        const actual=state.settings.profileIntensity;
+                        if(actual>=40){
+                            state.swipeState.startDisplayIntensity=(actual-40)/0.6;
+                        }else{
+                            state.swipeState.startDisplayIntensity=(actual-40)/0.4;
+                        }
                         state.swipeState.swiping=false;
                     }
                 }
@@ -1055,26 +1062,39 @@
                     }
                     if(state.swipeState.swiping){
                         e.preventDefault();
-                        // Faster sensitivity for snappier feel
-                        // Swipe right increases 50→100%, swipe left decreases 50→0%
+                        // Display value ranges from -100 to 100 (starts at 0 = 40% actual)
+                        // Swipe right: 0→100 display = 40→100% actual (60% range)
+                        // Swipe left: 0→-100 display = 40→0% actual (40% range)
                         const sensitivity=0.5;
-                        const intensityDelta=Math.round(deltaX*sensitivity);
-                        let newIntensity=Math.max(0,Math.min(100,state.swipeState.startIntensity+intensityDelta));
-                        if(newIntensity!==state.settings.profileIntensity){
-                            state.settings.profileIntensity=newIntensity;
-                            const indicator=document.getElementById('intensityIndicator');
-                            indicator.textContent=newIntensity+'%';
-                            indicator.classList.add('active');
-                            saveCurrentPhotoSettings();
+                        const displayDelta=Math.round(deltaX*sensitivity);
+                        let displayIntensity=Math.max(-100,Math.min(100,state.swipeState.startDisplayIntensity+displayDelta));
 
-                            // Throttle rendering using requestAnimationFrame
-                            if(!intensityRenderPending){
-                                intensityRenderPending=true;
-                                requestAnimationFrame(()=>{
-                                    renderPhoto();
-                                    intensityRenderPending=false;
-                                });
-                            }
+                        // Convert display (-100 to 100) to actual (0 to 100)
+                        let actualIntensity;
+                        if(displayIntensity>=0){
+                            // 0-100 display = 40-100 actual
+                            actualIntensity=40+(displayIntensity*0.6);
+                        }else{
+                            // -1 to -100 display = 39-0 actual
+                            actualIntensity=40+(displayIntensity*0.4);
+                        }
+                        actualIntensity=Math.round(actualIntensity);
+
+                        if(actualIntensity!==state.settings.profileIntensity){
+                            state.settings.profileIntensity=actualIntensity;
+                            const indicator=document.getElementById('intensityIndicator');
+                            indicator.textContent=displayIntensity>0?`+${displayIntensity}%`:`${displayIntensity}%`;
+                            indicator.classList.add('active');
+
+                            // Position indicator over canvas center
+                            const activeCanvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');
+                            const canvasRect=activeCanvas.getBoundingClientRect();
+                            const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
+                            indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
+                            indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
+
+                            saveCurrentPhotoSettings();
+                            // Don't render during swipe - only update indicator for snappy feel
                         }
                     }
                 }
@@ -3261,9 +3281,9 @@
 
         function toggleControl(c){}
 
-        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==100){btn.textContent=`${profileName} (${state.settings.profileIntensity})`;}else{btn.textContent=profileName;}}});}
+        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==40){const actual=state.settings.profileIntensity;let display;if(actual>=40){display=Math.round((actual-40)/0.6);}else{display=Math.round((actual-40)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=50;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=40;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
