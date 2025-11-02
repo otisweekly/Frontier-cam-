@@ -455,14 +455,14 @@
         </div>
         <div class="edit-footer">
             <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('supra')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SUPRA</button>
-                <button class="preset-btn" onclick="setProfile('chrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">CHROME</button>
-                <button class="preset-btn" onclick="setProfile('xxx')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">XXX</button>
+                <button class="preset-btn" onclick="setProfile('250d')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">250D</button>
+                <button class="preset-btn" onclick="setProfile('500t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">500T</button>
+                <button class="preset-btn" onclick="setProfile('ektachrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EKTA</button>
             </div>
             <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('16mm')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">16MM FILM</button>
-                <button class="preset-btn" onclick="setProfile('handycam')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">HANDYCAM</button>
-                <button class="preset-btn" onclick="setProfile('super8')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SUPER 8</button>
+                <button class="preset-btn" onclick="setProfile('250d')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">250D</button>
+                <button class="preset-btn" onclick="setProfile('500t')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">500T</button>
+                <button class="preset-btn" onclick="setProfile('ektachrome')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EKTA</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -1700,49 +1700,21 @@
         function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0,processingFrame=false;const targetFPS=30,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval&&!processingFrame){processingFrame=true;requestAnimationFrame(()=>{ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);processingFrame=false;});lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processingFrame=false;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processingFrame=false;processFrame(0);});}
 
         function applyEffects(ctx,w,h){
-            // Step 1: Apply profile color grading
-            const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;
-            applyProfile(d,state.settings.profile);
-            applyCMYK(d,state.settings);
-            // Removed applyVHSDamage for handycam - was causing harsh banding
+            // Step 1: Apply LUT-based film emulation (sync using preloaded LUT)
+            const imgData=ctx.getImageData(0,0,w,h);
+            applyProfile(imgData, state.settings.profile);
+
+            // Step 2: Apply CMYK color adjustments
+            applyCMYK(imgData.data,state.settings);
             ctx.putImageData(imgData,0,0);
 
-            // Step 2: Apply bloom
+            // Step 3: Apply bloom
             if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);
 
-            // Step 3: Apply WebGL film effects based on preset
-            if(!filmEffectsProcessor){
-                filmEffectsProcessor=new WebGLFilmEffectsProcessor();
-            }
-
-            if(state.settings.profile==='16mm'){
-                // 16mm film grain (animated, chromatic)
-                const grainSettings={amount:0.06,size:2.0,chromatic:true};
-                filmEffectsProcessor.applyFilmGrain(ctx.canvas,grainSettings);
-            }
-            else if(state.settings.profile==='super8'){
-                // Super 8: Organic vintage home movie feel
-                const super8Settings={amount:0.08,size:2.5,chromatic:false};
-                filmEffectsProcessor.applyFilmGrain(ctx.canvas,super8Settings);
-                // Subtle vignette for that vintage home movie look
-                filmEffectsProcessor.applyScanlines(ctx.canvas,0.08);
-            }
-            else if(state.settings.profile==='handycam'){
-                // Handycam: REDUCED intensity - subtle chromatic aberration only
-                filmEffectsProcessor.applyChromaticAberration(ctx.canvas,0.04,true);
-                filmEffectsProcessor.applyScanlines(ctx.canvas,0.15);
-            }
-
-            // Step 4: Apply canvas grain (fallback/additional)
+            // Step 4: Apply grain
             const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;
             applyGrain(d2,state.settings.grain);
             ctx.putImageData(imgData2,0,0);
-
-            // Step 5: Apply remaining effects
-            if(state.settings.profile==='handycam'){
-                applyPixelation(ctx,w,h);
-                if(state.videoMode)applyHandycamOverlay(ctx,w,h);
-            }
         }
 
         function applyPixelation(ctx,w,h){const pixelSize=8;const tempCanvas=document.createElement('canvas');const tempCtx=tempCanvas.getContext('2d',{alpha:false});const smallW=Math.floor(w/pixelSize);const smallH=Math.floor(h/pixelSize);tempCanvas.width=smallW;tempCanvas.height=smallH;tempCtx.imageSmoothingEnabled=true;tempCtx.imageSmoothingQuality='low';tempCtx.drawImage(ctx.canvas,0,0,w,h,0,0,smallW,smallH);ctx.imageSmoothingEnabled=false;ctx.drawImage(tempCanvas,0,0,smallW,smallH,0,0,w,h);ctx.imageSmoothingEnabled=true;}
@@ -1832,7 +1804,50 @@
         }
 
         function softClip(v){if(v<=235)return v;const excess=v-235;const compressed=235+excess/(1+excess/20);return Math.min(255,compressed);}
-        function applyProfile(d,p){if(p==='none')return;const intensity=state.settings.profileIntensity/100;for(let i=0;i<d.length;i+=4){const origR=d[i],origG=d[i+1],origB=d[i+2];let r=origR,g=origG,b=origB;if(p==='supra'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.05;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){const lift=8;r+=lift;g+=lift;b+=lift;}r=r*1.08+8;g=g*1.03+3;b=b*0.985;const processedLum=0.299*r+0.587*g+0.114*b;if(L<120&&processedLum>160){const highlightStrength=Math.min(1,(processedLum-160)/95);const darkSceneStrength=Math.min(1,(120-L)/120);const greenShift=highlightStrength*darkSceneStrength*12;g=g+greenShift;r=r-greenShift*0.25;b=b-greenShift*0.35;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='chrome'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.08;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<80){r=r*1.02+2;b=b*1.03+3;}else if(L>175){r=r*0.98;g=g*0.99;b=b*0.98;}const satBoost=Math.max(0,1-(Math.abs(L-128)/128)*0.3);r=r+(r-L)*0.16*satBoost;g=g+(g-L)*0.18*satBoost;b=b+(b-L)*0.20*satBoost;if(r>g&&r>b){r=r*1.04+2;}if(b>r&&b>g){b=b*1.06+3;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='xxx'){const gray=Math.round(0.299*r+0.587*g+0.114*b);const contrast=(gray-128)*1.1+128;r=g=b=Math.max(0,Math.min(255,Math.round(contrast)));}else if(p==='16mm'){const L=0.299*r+0.587*g+0.114*b;const contrast=L<100?1.02:1.08;const colorShift=Math.max(0,1-(L/255)*0.6);r=(r-128)*contrast+128+12*colorShift;g=(g-128)*contrast+128+6*colorShift;b=(b-128)*contrast+128-3*colorShift;if(L<60){const lift=15*(1-L/60);r=r+lift*0.8;g=g+lift*0.6;b=b+lift*0.4;}if(L>180){const desatAmount=(L-180)/75;const gray=(r+g+b)/3;r=r+(gray-r)*desatAmount*0.35;g=g+(gray-g)*desatAmount*0.35;b=b+(gray-b)*desatAmount*0.35;const rolloff=(L-180)/75;r=r*(1-rolloff*0.08);g=g*(1-rolloff*0.06);b=b*(1-rolloff*0.04);}const warmBoost=1+(255-L)/255*0.08;r=r*warmBoost;g=g*(1+(warmBoost-1)*0.4);r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='handycam'){const L=0.299*r+0.587*g+0.114*b;const sat=1.15;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;if(L<50){const crushFactor=0.85;r*=crushFactor;g*=crushFactor;b*=crushFactor;}const warmMid=1+(128-Math.abs(L-128))/255*0.12;r=r*1.02*warmMid;g=g*1.00*warmMid;b=b*1.08;if(L>100&&L<200){const punchFactor=1.08;r=r*punchFactor;g=g*(punchFactor-0.02);b=b*punchFactor;}if(r>g&&r>b){r=r*1.05;}r=softClip(r);g=softClip(g);b=softClip(b);}else if(p==='super8'){const L=0.299*r+0.587*g+0.114*b;const contrast=1.03;r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;if(L<70){const lift=10*(1-L/70);r=r+lift*0.9;g=g+lift*0.7;b=b+lift*0.4;}const warmBoost=1.12;r=r*warmBoost;g=g*warmBoost*0.95;b=b*0.88;if(L>180){const glow=(L-180)/75*0.15;r=r+(255-r)*glow;g=g+(255-g)*glow*0.95;b=b+(255-b)*glow*0.85;}const sat=0.92;const gray=(r+g+b)/3;r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;r=softClip(r);g=softClip(g);b=softClip(b);}r=origR+(r-origR)*intensity;g=origG+(g-origG)*intensity;b=origB+(b-origB)*intensity;d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
+
+        // Current loaded LUT (cached for real-time video processing)
+        let currentLUT = null;
+        let currentLUTProfile = null;
+
+        // Preload and cache LUT for a given profile
+        async function preloadLUTForProfile(profileId) {
+            if (profileId === 'none') {
+                currentLUT = null;
+                currentLUTProfile = null;
+                return;
+            }
+
+            const preset = FILM_PRESETS[profileId];
+            if (!preset) {
+                console.warn('Unknown preset:', profileId);
+                return;
+            }
+
+            try {
+                const manager = getLUTManager();
+                const lutData = await manager.loadLUT(preset.lut);
+
+                if (lutData) {
+                    currentLUT = lutData;
+                    currentLUTProfile = profileId;
+                    console.log(`✅ Preloaded LUT: ${preset.name}`);
+                } else {
+                    console.warn('❌ LUT not available:', preset.lut);
+                }
+            } catch (error) {
+                console.error('Error preloading LUT:', error);
+            }
+        }
+
+        // Synchronous LUT application (uses preloaded LUT)
+        function applyProfile(imageData, profileId) {
+            if (profileId === 'none' || !currentLUT || currentLUTProfile !== profileId) {
+                return;
+            }
+
+            const manager = getLUTManager();
+            manager.applyLUTToImageData(imageData, currentLUT);
+        }
 
         function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
@@ -2899,6 +2914,210 @@
         // Global bloom processor instance
         let bloomProcessor = null;
 
+        // =============================================================================
+        // LUT (Look-Up Table) Manager for Film Emulation
+        // =============================================================================
+
+        class LUTManager {
+            constructor() {
+                this.lutCache = new Map();
+                this.lutDirectory = '/film-luts/';
+                console.log('LUT Manager initialized');
+            }
+
+            /**
+             * Parse a .cube LUT file
+             * Returns: {size, data} where data is Float32Array of RGB values
+             */
+            async parseCubeFile(url) {
+                console.log('Loading LUT:', url);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`LUT not found: ${url}`);
+                }
+
+                const text = await response.text();
+                const lines = text.split('\n');
+                let size = 64; // Default
+                const data = [];
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+
+                    // Skip comments and empty
+                    if (trimmed.startsWith('#') || trimmed === '') continue;
+
+                    // Parse size
+                    if (trimmed.startsWith('LUT_3D_SIZE')) {
+                        size = parseInt(trimmed.split(/\s+/)[1]);
+                        continue;
+                    }
+
+                    // Parse RGB triplet
+                    const values = trimmed.split(/\s+/).map(parseFloat);
+                    if (values.length === 3 && values.every(v => !isNaN(v))) {
+                        data.push(...values);
+                    }
+                }
+
+                console.log(`✅ Parsed LUT: size=${size}, entries=${data.length/3}`);
+                return { size, data };
+            }
+
+            /**
+             * Load a LUT file (with caching)
+             */
+            async loadLUT(filename) {
+                // Check cache
+                if (this.lutCache.has(filename)) {
+                    console.log('✨ LUT from cache:', filename);
+                    return this.lutCache.get(filename);
+                }
+
+                const lutPath = `${this.lutDirectory}${filename}`;
+
+                try {
+                    const lutData = await this.parseCubeFile(lutPath);
+                    this.lutCache.set(filename, lutData);
+                    return lutData;
+                } catch (error) {
+                    console.error(`❌ Failed to load LUT: ${filename}`, error);
+                    return null;
+                }
+            }
+
+            /**
+             * Apply LUT to ImageData
+             * This is a CPU-based implementation (slower but works everywhere)
+             */
+            applyLUTToImageData(imageData, lutData) {
+                if (!lutData) return;
+
+                const { size, data: lutTable } = lutData;
+                const pixels = imageData.data;
+                const maxIndex = size - 1;
+
+                for (let i = 0; i < pixels.length; i += 4) {
+                    // Normalize RGB to 0-1
+                    let r = pixels[i] / 255;
+                    let g = pixels[i + 1] / 255;
+                    let b = pixels[i + 2] / 255;
+
+                    // Clamp
+                    r = Math.max(0, Math.min(1, r));
+                    g = Math.max(0, Math.min(1, g));
+                    b = Math.max(0, Math.min(1, b));
+
+                    // Scale to LUT coordinates
+                    const rScaled = r * maxIndex;
+                    const gScaled = g * maxIndex;
+                    const bScaled = b * maxIndex;
+
+                    // Get integer indices
+                    const r0 = Math.floor(rScaled);
+                    const g0 = Math.floor(gScaled);
+                    const b0 = Math.floor(bScaled);
+                    const r1 = Math.min(r0 + 1, maxIndex);
+                    const g1 = Math.min(g0 + 1, maxIndex);
+                    const b1 = Math.min(b0 + 1, maxIndex);
+
+                    // Fractional parts for interpolation
+                    const rFrac = rScaled - r0;
+                    const gFrac = gScaled - g0;
+                    const bFrac = bScaled - b0;
+
+                    // Trilinear interpolation (sample 8 cube corners)
+                    const c000 = this.sampleLUT(lutTable, size, r0, g0, b0);
+                    const c001 = this.sampleLUT(lutTable, size, r0, g0, b1);
+                    const c010 = this.sampleLUT(lutTable, size, r0, g1, b0);
+                    const c011 = this.sampleLUT(lutTable, size, r0, g1, b1);
+                    const c100 = this.sampleLUT(lutTable, size, r1, g0, b0);
+                    const c101 = this.sampleLUT(lutTable, size, r1, g0, b1);
+                    const c110 = this.sampleLUT(lutTable, size, r1, g1, b0);
+                    const c111 = this.sampleLUT(lutTable, size, r1, g1, b1);
+
+                    // Interpolate along R
+                    const c00 = this.lerp3(c000, c100, rFrac);
+                    const c01 = this.lerp3(c001, c101, rFrac);
+                    const c10 = this.lerp3(c010, c110, rFrac);
+                    const c11 = this.lerp3(c011, c111, rFrac);
+
+                    // Interpolate along G
+                    const c0 = this.lerp3(c00, c10, gFrac);
+                    const c1 = this.lerp3(c01, c11, gFrac);
+
+                    // Interpolate along B
+                    const finalColor = this.lerp3(c0, c1, bFrac);
+
+                    // Write back
+                    pixels[i] = Math.round(finalColor[0] * 255);
+                    pixels[i + 1] = Math.round(finalColor[1] * 255);
+                    pixels[i + 2] = Math.round(finalColor[2] * 255);
+                }
+            }
+
+            /**
+             * Sample LUT at specific RGB coordinates
+             */
+            sampleLUT(lutTable, size, r, g, b) {
+                const index = (b * size * size + g * size + r) * 3;
+                return [
+                    lutTable[index],
+                    lutTable[index + 1],
+                    lutTable[index + 2]
+                ];
+            }
+
+            /**
+             * Linear interpolation for RGB triplets
+             */
+            lerp3(a, b, t) {
+                return [
+                    a[0] + (b[0] - a[0]) * t,
+                    a[1] + (b[1] - a[1]) * t,
+                    a[2] + (b[2] - a[2]) * t
+                ];
+            }
+
+            /**
+             * Clear cache (for memory management)
+             */
+            clearCache() {
+                this.lutCache.clear();
+                console.log('LUT cache cleared');
+            }
+        }
+
+        // Global LUT manager instance
+        let lutManager = null;
+
+        // Film preset configuration
+        const FILM_PRESETS = {
+            '250d': {
+                name: '250D',
+                lut: 'ClassicPrint_16mm_250D_Rec709.cube',
+                description: 'Daylight balanced, fine grain'
+            },
+            '500t': {
+                name: '500T',
+                lut: 'ClassicPrint_16mm_500T_Rec709.cube',
+                description: 'Tungsten balanced, versatile'
+            },
+            'ektachrome': {
+                name: 'Ektachrome',
+                lut: 'ClassicPrint_16mm_Ektachrome_Rec709.cube',
+                description: 'Vibrant colors, punchy'
+            }
+        };
+
+        // Initialize LUT Manager on first use
+        function getLUTManager() {
+            if (!lutManager) {
+                lutManager = new LUTManager();
+            }
+            return lutManager;
+        }
+
         // Updated applyBloom function using WebGL
         function applyBloom(ctx, w, h, int) {
             if (int < 1) return;
@@ -2999,7 +3218,7 @@
 
         function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==100){btn.textContent=`${profileName} (${state.settings.profileIntensity})`;}else{btn.textContent=profileName;}}});}
 
-        function setProfile(p){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');}else{state.settings.profile=p;state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=100;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));event.target.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
