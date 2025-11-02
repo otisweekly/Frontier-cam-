@@ -947,8 +947,11 @@
 
         function endVideoCompare(){}
 
-        // Single tap compare - shows original image for 3 seconds (center 20% zone only)
-        function singleTapCompare(){if(state.videoMode||state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;},3000);}
+        // Single tap compare - shows original image for 1 second (center 20% zone only), or while holding
+        function singleTapCompare(){if(state.videoMode||state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(state.tapState.comparing){if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;}},1000);}
+
+        // End compare view (called on touchend when holding in center zone)
+        function endCompare(){if(!state.tapState.comparing)return;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -1081,10 +1084,20 @@
                     if(zoomState.scale>1){
                         zoomState.lastTouchX=e.touches[0].clientX;
                         zoomState.lastTouchY=e.touches[0].clientY;
-                    }else if(state.settings.profile!=='none'&&!state.tapState.comparing){
-                        // Store touch start for tap left/right detection
+                    }else if(!state.tapState.comparing){
+                        // Store touch start for tap zone detection
                         state.intensityTapState.startX=e.touches[0].clientX;
                         state.intensityTapState.startY=e.touches[0].clientY;
+
+                        // Check if touch is in center 20% zone - if so, immediately show original
+                        const canvasRect=canvas.getBoundingClientRect();
+                        const tapX=e.touches[0].clientX;
+                        const tapPercent=(tapX-canvasRect.left)/canvasRect.width;
+
+                        if(tapPercent>=0.4&&tapPercent<=0.6){
+                            // Immediately show original for hold-to-view functionality
+                            singleTapCompare();
+                        }
                     }
                 }
             };
@@ -1141,6 +1154,12 @@
                         resetZoom(canvas);
                     }
 
+                    // If user was holding to view original, end it immediately on release
+                    if(state.tapState.comparing){
+                        endCompare();
+                        return;
+                    }
+
                     // Handle intensity tap zones: left 40% (decrease), center 20% (view original), right 40% (increase)
                     if(!zoomState.isPanning&&!state.tapState.comparing){
                         // Check if this was a tap (minimal movement)
@@ -1156,13 +1175,9 @@
                             // Calculate tap position as percentage of canvas width
                             const tapPercent=(tapX-canvasRect.left)/canvasRect.width;
 
-                            // Center 20% (40%-60%): view original
-                            if(tapPercent>=0.4&&tapPercent<=0.6){
-                                singleTapCompare();
-                                return;
-                            }
+                            // Center zone handled on touchStart, only handle left/right zones here
                             // Left 40%: decrease intensity
-                            else if(tapPercent<0.4&&state.settings.profile!=='none'){
+                            if(tapPercent<0.4&&state.settings.profile!=='none'){
                                 const oldIntensity=state.settings.profileIntensity;
                                 const newIntensity=Math.max(0,oldIntensity-5);
                                 if(newIntensity!==oldIntensity){
