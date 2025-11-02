@@ -1286,7 +1286,7 @@
 
         function applyEffects(ctx,w,h){const imgData=ctx.getImageData(0,0,w,h),d=imgData.data;applyProfile(d,state.settings.profile);applyCMYK(d,state.settings);if(state.settings.profile==='handycam')applyVHSDamage(d,w,h);ctx.putImageData(imgData,0,0);if(state.settings.bloom>0)applyBloom(ctx,w,h,state.settings.bloom);const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;applyGrain(d2,state.settings.grain);ctx.putImageData(imgData2,0,0);if(state.settings.profile==='handycam'){applyPixelation(ctx,w,h);if(state.videoMode)applyHandycamOverlay(ctx,w,h);}}
 
-        function applyPixelation(ctx,w,h){const pixelSize=5;const tempCanvas=document.createElement('canvas');const tempCtx=tempCanvas.getContext('2d',{alpha:false});const smallW=Math.floor(w/pixelSize);const smallH=Math.floor(h/pixelSize);tempCanvas.width=smallW;tempCanvas.height=smallH;tempCtx.imageSmoothingEnabled=true;tempCtx.imageSmoothingQuality='low';tempCtx.drawImage(ctx.canvas,0,0,w,h,0,0,smallW,smallH);ctx.imageSmoothingEnabled=false;ctx.drawImage(tempCanvas,0,0,smallW,smallH,0,0,w,h);ctx.imageSmoothingEnabled=true;}
+        function applyPixelation(ctx,w,h){const pixelSize=8;const tempCanvas=document.createElement('canvas');const tempCtx=tempCanvas.getContext('2d',{alpha:false});const smallW=Math.floor(w/pixelSize);const smallH=Math.floor(h/pixelSize);tempCanvas.width=smallW;tempCanvas.height=smallH;tempCtx.imageSmoothingEnabled=true;tempCtx.imageSmoothingQuality='low';tempCtx.drawImage(ctx.canvas,0,0,w,h,0,0,smallW,smallH);ctx.imageSmoothingEnabled=false;ctx.drawImage(tempCanvas,0,0,smallW,smallH,0,0,w,h);ctx.imageSmoothingEnabled=true;}
 
         function applyHandycamOverlay(ctx,w,h){
             const now=new Date();
