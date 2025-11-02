@@ -1229,7 +1229,7 @@
 
         // Use original images for editing - bloom and effects need full resolution
         // OPTIMIZED: Use Blob URLs instead of toDataURL to avoid memory duplication
-        function downsampleImage(sourceImg, maxDimension = 8000) {
+        function downsampleImage(sourceImg, maxDimension = 6000) {
             return new Promise(resolve => {
                 console.log('Downsampling image:', sourceImg.width, 'x', sourceImg.height);
                 const w = sourceImg.width;
