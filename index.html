@@ -153,9 +153,8 @@
         video::-webkit-media-controls-timeline { display:none !important; }
         #videoCanvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 330px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; display:none; cursor:pointer; transform-origin:center center; will-change:transform; }
 
-        .intensity-indicator { position:fixed; top:calc(50vh - 76px); left:50%; transform:translate(-50%, -50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); }
+        .intensity-indicator { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.1s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); }
         .intensity-indicator.active { opacity:1; }
-        body.standalone-mode .intensity-indicator { top:calc(50vh - 76px - env(safe-area-inset-top, 0px) / 2); }
 
         .fullscreen-hint { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s ease; font-family:'PP Neue Bit',monospace; color:rgba(255,255,255,0.9); font-size:20px; font-weight:400; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,0.9); }
         body.fullscreen-preview .fullscreen-hint { opacity:1; }
@@ -357,7 +356,6 @@
     <div id="editSection">
         <div class="top-nav-bar"></div>
         <div class="status-light green active" id="compareIndicator" style="position:fixed;top:20px;left:70px;z-index:151;border-color:#000;"></div>
-        <div class="intensity-indicator" id="intensityIndicator">100%</div>
         <div class="fullscreen-hint" id="fullscreenHint">
             <img src="Shrink.svg" alt="Exit" style="height:16px;width:auto;vertical-align:middle;margin-right:8px;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.9));">
             Double tap to exit preview
@@ -389,6 +387,7 @@
             <canvas id="canvas"></canvas>
             <canvas id="videoCanvas"></canvas>
             <video id="videoPreview" playsinline autoplay loop muted></video>
+            <div class="intensity-indicator" id="intensityIndicator">100%</div>
         </div>
         <div class="background-toggle-bar">
             <button class="bg-toggle-btn grey active" onclick="setBackground('grey')" id="bgGrey" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
