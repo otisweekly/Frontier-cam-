@@ -92,8 +92,24 @@
         .status-light.red { background:#EF4444; color:#EF4444; }
         .status-light.orange { background:#FF8C00; color:#FF8C00; }
         .status-light.orange.pulsing { animation:pulse-orange 500ms ease-in-out infinite; }
+        .status-light.orange.blinking { animation:blink-orange-3x 3s ease-in-out 1; }
         @keyframes pulse-green { 0%, 100% { box-shadow:0 0 12px #4ADE80; opacity:1; } 50% { box-shadow:0 0 20px #4ADE80; opacity:0.8; } }
         @keyframes pulse-orange { 0%, 100% { box-shadow:0 0 15px #FF8C00; opacity:1; } 50% { box-shadow:0 0 25px #FF8C00; opacity:0.9; } }
+        @keyframes blink-orange-3x {
+            0% { box-shadow:0 0 20px #FF8C00; opacity:1; }
+            8% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            16% { box-shadow:0 0 8px #FF8C00; opacity:0.3; }
+            24% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            33% { box-shadow:0 0 20px #FF8C00; opacity:1; }
+            41% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            49% { box-shadow:0 0 8px #FF8C00; opacity:0.3; }
+            57% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            66% { box-shadow:0 0 20px #FF8C00; opacity:1; }
+            74% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            82% { box-shadow:0 0 8px #FF8C00; opacity:0.3; }
+            90% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
+            100% { box-shadow:0 0 20px #FF8C00; opacity:1; }
+        }
         @keyframes indicatorPulse { 0%, 100% { transform:scale(1); box-shadow:0 0 6px rgba(56,151,175,0.8); } 50% { transform:scale(1.15); box-shadow:0 0 12px rgba(56,151,175,1), 0 0 18px rgba(56,151,175,0.6); } }
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
@@ -894,7 +910,7 @@
 
         function endVideoCompare(){}
 
-        function singleTapCompare(){if(state.videoMode||state.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green');indicator.classList.add('orange','pulsing');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(indicator){indicator.classList.remove('orange','pulsing');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;},3000);}
+        function singleTapCompare(){if(state.videoMode||state.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;},3000);}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
