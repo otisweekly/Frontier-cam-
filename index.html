@@ -1848,6 +1848,17 @@
             state.holdBaselineSettings={...state.settings};
             // Don't set holdDirty to false here - only the navigation dialog should clear it
             // This allows multiple changes to all trigger the dialog
+
+            // Regenerate contact sheet after applying settings (with delay to avoid navigation interference)
+            clearTimeout(state.holdRegenerateTimer);
+            state.holdRegenerateTimer=setTimeout(async()=>{
+                try {
+                    await generateAndAddContactSheet();
+                    console.log('Contact sheet regenerated after HOLD apply');
+                } catch (err) {
+                    console.error('Failed to regenerate contact sheet:', err);
+                }
+            },500);
         }
 
         function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;if(state.settings.brightness===undefined)state.settings.brightness=0;if(state.settings.contrast===undefined)state.settings.contrast=0;if(state.settings.shadows===undefined)state.settings.shadows=0;if(state.settings.highlights===undefined)state.settings.highlights=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
