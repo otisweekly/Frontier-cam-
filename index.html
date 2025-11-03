@@ -1109,11 +1109,15 @@
 
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
-                                // Single tap to view original
-                                console.log('Single tap detected, target:',touchStartTarget);
-                                singleTapCompare();
+                                // Single tap to view original - ONLY when NOT zoomed in
+                                if(zoomState.scale<=1){
+                                    console.log('Single tap detected (not zoomed), showing original');
+                                    singleTapCompare();
+                                }else{
+                                    console.log('Single tap ignored (zoomed in)');
+                                }
                                 state.tapState.count=0;
-                            },300);
+                            },250); // Reduced from 300ms to 250ms for snappier feel
                         }else if(state.tapState.count===2){
                             clearTimeout(state.tapState.timer);
                             // Double tap to zoom to fill/cover
@@ -3095,10 +3099,9 @@
                 const maxIndex = size - 1;
                 const blend = intensity / 100; // Convert to 0-1 range
 
-                // Performance optimization: use nearest neighbor for fast editing
-                // This is 8x faster than trilinear interpolation
-                // Visually acceptable for preview/editing, can use quality mode for export
-                const useNearestNeighbor = true;  // Always fast for snappy editing
+                // Use trilinear interpolation for high quality
+                // Prevents banding and artifacts
+                const useNearestNeighbor = false;  // High quality mode
 
                 for (let i = 0; i < pixels.length; i += 4) {
                     // Store original values for blending
@@ -3404,7 +3407,7 @@
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
-        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}}document.addEventListener('click',handleOutsideInteraction);
+        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();}}document.addEventListener('click',handleOutsideInteraction);
 
         function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
