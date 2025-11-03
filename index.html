@@ -2193,6 +2193,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
+                // Apply cooling correction for SUPRA to reduce strong yellows
+                if (profileId === 'supra') {
+                    applySUPRACooling(imageData);
+                }
+
                 // Apply black & white conversion for XXX preset
                 if (preset.blackAndWhite) {
                     applyBlackAndWhite(imageData);
@@ -2276,6 +2281,47 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 pixels[i] = lum;
                 pixels[i + 1] = lum;
                 pixels[i + 2] = lum;
+            }
+        }
+
+        // SUPRA cooling correction - reduces strong yellows in shadows/midtones
+        function applySUPRACooling(imageData) {
+            const pixels = imageData.data;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                let r = pixels[i];
+                let g = pixels[i + 1];
+                let b = pixels[i + 2];
+
+                // Calculate luminance to target shadows/midtones
+                const lum = (r + g + b) / 3;
+
+                // Create a factor that affects darker areas more (0-180 range)
+                // Shadows (0-90): full correction
+                // Midtones (90-180): reduced correction
+                // Highlights (180+): minimal correction
+                let factor = 0;
+                if (lum < 90) {
+                    // Full strength in shadows
+                    factor = 1.0;
+                } else if (lum < 180) {
+                    // Fade out through midtones
+                    factor = 1.0 - ((lum - 90) / 90) * 0.7; // 1.0 → 0.3
+                } else {
+                    // Very subtle in highlights
+                    factor = Math.max(0, 0.3 - ((lum - 180) / 75) * 0.3); // 0.3 → 0
+                }
+
+                // Apply cooling: reduce red, boost blue
+                const redReduction = 8 * factor;    // Up to -8 in shadows
+                const blueBoost = 6 * factor;       // Up to +6 in shadows
+
+                r = Math.max(0, Math.min(255, r - redReduction));
+                b = Math.max(0, Math.min(255, b + blueBoost));
+
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
             }
         }
 
