@@ -193,11 +193,15 @@
         #moreDialog.active { transform:translateY(0); opacity:1; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
-        #intensityOverlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:9999; display:none; align-items:center; justify-content:center; touch-action:none; user-select:none; }
-        #intensityOverlay.active { display:flex; }
-        .intensity-overlay-content { text-align:center; pointer-events:none; }
-        .intensity-instruction { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; color:#999; margin-bottom:30px; text-transform:uppercase; letter-spacing:2px; }
-        .intensity-percentage { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:140px; font-weight:700; color:#3897AF; line-height:1; }
+        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #intensityControls.active { transform:translateY(0); opacity:1; }
+        .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
+        .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; padding:15px 25px; display:flex; flex-direction:column; align-items:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
+        .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .intensity-value-number { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:48px; font-weight:700; color:#fff; line-height:1; }
+        .intensity-value-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; color:#999; margin-top:5px; letter-spacing:1px; }
+        .intensity-buttons { display:flex; gap:6px; }
+        .intensity-arrow-btn { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
         #cmykToggle.has-settings { background:#3897AF !important; }
         #cmykToggle.has-settings img { filter:brightness(0) invert(1); }
@@ -518,17 +522,15 @@
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
-                <button class="preset-btn intensity-btn" id="intensityBtn" onclick="toggleIntensitySlide()"><img src="Intensity.svg" style="width:28px;height:28px;" alt="Intensity"></button>
             </div>
-            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
-                <button class="preset-btn intensity-btn" id="intensityBtnVideo" onclick="toggleIntensitySlide()"><img src="Intensity.svg" style="width:28px;height:28px;" alt="Intensity"></button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -590,10 +592,16 @@
         <button class="more-dialog-btn" onclick="toggleGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
     </div>
 
-    <div id="intensityOverlay">
-        <div class="intensity-overlay-content">
-            <div class="intensity-instruction">Tap screen to adjust intensity</div>
-            <div class="intensity-percentage" id="intensityPercentage">30%</div>
+    <div id="intensityControls">
+        <div class="intensity-slider-container">
+            <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
+                <div class="intensity-value-number">30</div>
+                <div class="intensity-value-label">INTENSITY</div>
+            </div>
+            <div class="intensity-buttons">
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(-5)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(5)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+            </div>
         </div>
     </div>
 
@@ -1608,7 +1616,7 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
 
         function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
@@ -3395,9 +3403,6 @@
 
         function closeBrightness(){const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(brightnessControls.classList.contains('active')){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}}
 
-        let intensityAdjustmentActive=false;
-        let intensityTapCounter=0;
-
         function toggleIntensitySlide(){
             haptic();
             closeCMYK();
@@ -3406,68 +3411,85 @@
             closeHistoryPanel();
             closeDownloadProgress();
 
-            const overlay=document.getElementById('intensityOverlay');
-            const percentageEl=document.getElementById('intensityPercentage');
+            const intensityControls=document.getElementById('intensityControls');
             const intensityBtn=document.getElementById('intensityBtn');
+            intensityControls.classList.toggle('active');
+            intensityBtn.classList.toggle('active');
+        }
 
-            if(intensityAdjustmentActive){
-                // Exit intensity mode
-                intensityAdjustmentActive=false;
-                overlay.classList.remove('active');
+        function closeIntensity(){
+            const intensityControls=document.getElementById('intensityControls');
+            const intensityBtn=document.getElementById('intensityBtn');
+            if(intensityControls.classList.contains('active')){
+                intensityControls.classList.remove('active');
                 intensityBtn.classList.remove('active');
-                intensityTapCounter=0;
-                return;
+            }
+        }
+
+        function adjustIntensity(delta){
+            haptic();
+            const oldIntensity=state.settings.profileIntensity;
+            const newIntensity=Math.max(0,Math.min(100,state.settings.profileIntensity+delta));
+            state.settings.profileIntensity=newIntensity;
+
+            document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=newIntensity;
+
+            if(oldIntensity!==newIntensity){
+                addToHistory(`Intensity: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
             }
 
-            // Enter intensity mode
-            intensityAdjustmentActive=true;
-            intensityTapCounter=0;
-            percentageEl.textContent=state.settings.profileIntensity+'%';
-            overlay.classList.add('active');
-            intensityBtn.classList.add('active'); // Keep button in down state
+            updateIntensityIndicator();
+            updatePresetButtonText();
+            saveCurrentPhotoSettings();
+            if(!state.videoMode)setTimeout(renderPhoto,0);
+        }
 
-            // Add tap listener to overlay - left side decreases, right side increases
-            const handleTap=(e)=>{
-                if(!intensityAdjustmentActive)return;
+        function editIntensityCounter(){
+            haptic();
+            const currentValue=state.settings.profileIntensity;
+            const profile=state.settings.profile;
+            const defaultIntensity=(profile==='supra'||profile==='chrome')?40:30;
 
-                haptic();
-                const clientX=e.touches?e.touches[0].clientX:e.clientX;
-                const screenWidth=window.innerWidth;
-                const isRightSide=clientX>screenWidth/2;
+            const clearConfirm=confirm(`Clear intensity to ${defaultIntensity}%?\n\n(Cancel to enter a custom value)`);
 
-                intensityTapCounter++;
+            if(clearConfirm){
                 const oldIntensity=state.settings.profileIntensity;
-                const delta=isRightSide?5:-5;
-                const newIntensity=Math.max(0,Math.min(100,state.settings.profileIntensity+delta));
-                state.settings.profileIntensity=newIntensity;
+                state.settings.profileIntensity=defaultIntensity;
+                document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=defaultIntensity;
 
-                percentageEl.textContent=newIntensity+'%';
-
-                if(oldIntensity!==newIntensity){
-                    addToHistory(`Intensity: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
+                if(oldIntensity!==defaultIntensity){
+                    addToHistory(`Intensity: ${oldIntensity}% → ${defaultIntensity}%`,'profileIntensity',oldIntensity,defaultIntensity);
                 }
 
                 updateIntensityIndicator();
                 updatePresetButtonText();
                 saveCurrentPhotoSettings();
                 if(!state.videoMode)setTimeout(renderPhoto,0);
-
-                e.stopPropagation();
-            };
-
-            overlay.addEventListener('click',handleTap);
-            overlay.addEventListener('touchend',handleTap);
-        }
-
-        function closeIntensity(){
-            if(intensityAdjustmentActive){
-                intensityAdjustmentActive=false;
-                const overlay=document.getElementById('intensityOverlay');
-                const intensityBtn=document.getElementById('intensityBtn');
-                overlay.classList.remove('active');
-                intensityBtn.classList.remove('active');
-                intensityTapCounter=0;
+                return;
             }
+
+            const options=`Current: ${currentValue}%\n\nEnter new intensity (0-100):`;
+            const input=prompt(options,currentValue);
+            if(input===null)return;
+
+            const newValue=parseInt(input);
+            if(isNaN(newValue)||newValue<0||newValue>100){
+                alert('Please enter a number between 0 and 100');
+                return;
+            }
+
+            const oldIntensity=state.settings.profileIntensity;
+            state.settings.profileIntensity=newValue;
+            document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=newValue;
+
+            if(oldIntensity!==newValue){
+                addToHistory(`Intensity: ${oldIntensity}% → ${newValue}%`,'profileIntensity',oldIntensity,newValue);
+            }
+
+            updateIntensityIndicator();
+            updatePresetButtonText();
+            saveCurrentPhotoSettings();
+            if(!state.videoMode)setTimeout(renderPhoto,0);
         }
 
         function updateIntensityIndicator(){
