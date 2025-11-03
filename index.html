@@ -188,15 +188,30 @@
         .edit-footer.more-open { transform:translateY(100%); }
         .edit-footer.history-open { transform:translateY(100%); }
         .edit-footer.download-open { transform:translateY(100%); }
+        .edit-footer.hidden { transform:translateY(calc(100% - 40px)); }
+        .footer-toggle { position:absolute; top:0; left:50%; transform:translateX(-50%); background:#4A4A4A; border:none; color:#999; font-size:16px; padding:2px 20px; cursor:pointer; z-index:10; border-radius:8px 8px 0 0; box-shadow:0 -2px 5px rgba(0,0,0,0.3); transition:all 0.2s; }
+        .footer-toggle:active { background:#3A3A3A; }
+        .edit-footer.hidden .footer-toggle { background:#6A6A6A; }
 
         #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
         #moreDialog.active { transform:translateY(0); opacity:1; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        #intensitySlideOverlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:9999; display:none; align-items:center; justify-content:center; touch-action:none; user-select:none; }
+        #intensitySlideOverlay.active { display:flex; }
+        .intensity-slide-content { text-align:center; pointer-events:none; }
+        .intensity-slide-instruction { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#999; margin-bottom:20px; }
+        .intensity-slide-percentage { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:120px; font-weight:700; color:#3897AF; line-height:1; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
         #cmykToggle.has-settings { background:#3897AF !important; }
         #cmykToggle.has-settings img { filter:brightness(0) invert(1); }
         #cmykToggle.has-settings.active { background:#2A7B8F !important; }
+        .intensity-btn.has-settings { background:#3897AF !important; }
+        .intensity-btn.has-settings img { filter:brightness(0) invert(1); }
+        #intensityBtn.has-settings { background:#3897AF !important; }
+        #intensityBtn.has-settings img { filter:brightness(0) invert(1); }
+        #brightnessToggle.has-settings { background:#3897AF !important; }
+        #brightnessToggle.has-settings img { filter:brightness(0) invert(1); }
 
         /* Progress Bar */
         #downloadProgress { position:fixed; top:70px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:100; transform:translateY(calc(-100% - 70px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); }
@@ -379,6 +394,7 @@
         </button>
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
+            <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
@@ -506,15 +522,18 @@
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <button class="footer-toggle" onclick="toggleFooter()" title="Hide controls">▼</button>
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
+                <button class="preset-btn intensity-btn" id="intensityBtn" onclick="toggleIntensitySlide()"><img src="Intensity.svg" style="width:28px;height:28px;" alt="Intensity"></button>
             </div>
-            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
+                <button class="preset-btn intensity-btn" id="intensityBtnVideo" onclick="toggleIntensitySlide()"><img src="Intensity.svg" style="width:28px;height:28px;" alt="Intensity"></button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -574,6 +593,13 @@
         <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
         <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
         <button class="more-dialog-btn" onclick="toggleGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
+    </div>
+
+    <div id="intensitySlideOverlay">
+        <div class="intensity-slide-content">
+            <div class="intensity-slide-instruction">Slide to adjust intensity</div>
+            <div class="intensity-slide-percentage" id="intensitySlidePercentage">0%</div>
+        </div>
     </div>
 
     <div id="guidePanel">
@@ -1587,7 +1613,7 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
 
         function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
@@ -3374,6 +3400,87 @@
 
         function closeBrightness(){const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(brightnessControls.classList.contains('active')){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}}
 
+        function toggleIntensitySlide(){
+            haptic();
+            closeCMYK();
+            closeBrightness();
+            closeMoreDialog();
+            closeHistoryPanel();
+            closeDownloadProgress();
+
+            const overlay=document.getElementById('intensitySlideOverlay');
+            const percentageEl=document.getElementById('intensitySlidePercentage');
+
+            // Show current intensity
+            percentageEl.textContent=state.settings.profileIntensity+'%';
+            overlay.classList.add('active');
+
+            let startY=0;
+            let currentIntensity=state.settings.profileIntensity;
+
+            function handleMove(e){
+                const clientY=e.touches?e.touches[0].clientY:e.clientY;
+                const deltaY=startY-clientY;
+                const sensitivity=0.5;
+                const newIntensity=Math.max(0,Math.min(100,currentIntensity+(deltaY*sensitivity)));
+                const roundedIntensity=Math.round(newIntensity);
+                percentageEl.textContent=roundedIntensity+'%';
+            }
+
+            function handleEnd(){
+                const intensity=parseInt(percentageEl.textContent);
+                const oldIntensity=state.settings.profileIntensity;
+                state.settings.profileIntensity=intensity;
+
+                overlay.classList.remove('active');
+                overlay.removeEventListener('touchmove',handleMove);
+                overlay.removeEventListener('touchend',handleEnd);
+                overlay.removeEventListener('mousemove',handleMove);
+                overlay.removeEventListener('mouseup',handleEnd);
+
+                if(oldIntensity!==intensity){
+                    addToHistory(`Intensity: ${oldIntensity}% → ${intensity}%`,'profileIntensity',oldIntensity,intensity);
+                }
+
+                updateIntensityIndicator();
+                updatePresetButtonText();
+                saveCurrentPhotoSettings();
+                if(!state.videoMode)setTimeout(renderPhoto,0);
+            }
+
+            function handleStart(e){
+                startY=e.touches?e.touches[0].clientY:e.clientY;
+                currentIntensity=state.settings.profileIntensity;
+            }
+
+            overlay.addEventListener('touchstart',handleStart,{once:true});
+            overlay.addEventListener('mousedown',handleStart,{once:true});
+            overlay.addEventListener('touchmove',handleMove);
+            overlay.addEventListener('touchend',handleEnd,{once:true});
+            overlay.addEventListener('mousemove',handleMove);
+            overlay.addEventListener('mouseup',handleEnd,{once:true});
+        }
+
+        function updateIntensityIndicator(){
+            const intensityBtn=document.getElementById('intensityBtn');
+            const profile=state.settings.profile;
+            const defaultIntensity=(profile==='supra'||profile==='chrome')?40:30;
+            const hasSettings=state.settings.profileIntensity!==defaultIntensity;
+            if(hasSettings){
+                intensityBtn.classList.add('has-settings');
+            }else{
+                intensityBtn.classList.remove('has-settings');
+            }
+        }
+
+        function toggleFooter(){
+            haptic();
+            const footer=document.querySelector('.edit-footer');
+            const toggleBtn=document.querySelector('.footer-toggle');
+            footer.classList.toggle('hidden');
+            toggleBtn.textContent=footer.classList.contains('hidden')?'▲':'▼';
+        }
+
         function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
@@ -3398,7 +3505,7 @@
 
         function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
 
-        function updateUIFromSettings(){const s=state.settings;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();}
+        function updateUIFromSettings(){const s=state.settings;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();}
 
         async function copyToClipboard(){haptic();closeMoreDialog();try{const settingsText=JSON.stringify(state.settings,null,2);await navigator.clipboard.writeText(settingsText);alert('Settings copied to clipboard!');}catch(err){alert('Could not copy settings to clipboard.');}}
 
