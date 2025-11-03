@@ -647,8 +647,8 @@
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
-                    <button id="prevBtn" class="nav-btn"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
-                    <button id="nextBtn" class="nav-btn"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
+                    <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
+                    <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
             </div>
         </div>
@@ -1509,76 +1509,33 @@
             const nextBtn = document.getElementById('nextBtn');
 
             function handleNavButton(btn, direction) {
-                let touchHandled = false;
-
                 // Function to reset button styles
                 function resetButtonStyles() {
                     btn.style.transform = '';
                     btn.style.boxShadow = '';
                 }
 
-                // Touch handling - shows confirm immediately on touchstart
-                btn.addEventListener('touchstart', (e) => {
-                    if (btn.classList.contains('disabled')) return;
-                    e.preventDefault();
-                    touchHandled = true;
-
-                    // Apply down state
-                    btn.style.transform = 'translateY(5px)';
-                    btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';
-
-                    try {
-                        // Check HOLD confirm immediately
-                        if (state.holdSettings && state.holdDirty) {
-                            const shouldApplyAll = showHoldDialog();
-                            if (shouldApplyAll) {
-                                applySettingsToAllLightweight();
-                            } else {
-                                // User canceled - update baseline to current settings so same changes don't prompt again
-                                state.holdBaselineSettings = {...state.settings};
-                            }
-                            state.holdDirty = false;
-                        }
-
-                        // Navigate
-                        if (direction === 'prev') {
-                            prevPhoto();
-                        } else {
-                            nextPhoto();
-                        }
-                    } catch (err) {
-                        console.error('Navigation error:', err);
-                    }
-                });
-
-                // Reset on touchend
-                btn.addEventListener('touchend', (e) => {
-                    if (touchHandled) {
-                        e.preventDefault();
-                        touchHandled = false;
-                        resetButtonStyles();
-                    }
-                });
+                // Touch handling - visual press handled by inline ontouchstart/ontouchend attributes
 
                 // Mouse/click handling for desktop
                 btn.addEventListener('mousedown', (e) => {
-                    if (btn.classList.contains('disabled') || touchHandled) return;
+                    if (btn.classList.contains('disabled')) return;
                     btn.style.transform = 'translateY(5px)';
                     btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';
                 });
 
                 btn.addEventListener('mouseup', (e) => {
-                    if (btn.classList.contains('disabled') || touchHandled) return;
+                    if (btn.classList.contains('disabled')) return;
                     resetButtonStyles();
                 });
 
                 btn.addEventListener('mouseleave', (e) => {
-                    if (btn.classList.contains('disabled') || touchHandled) return;
+                    if (btn.classList.contains('disabled')) return;
                     resetButtonStyles();
                 });
 
                 btn.addEventListener('click', (e) => {
-                    if (btn.classList.contains('disabled') || touchHandled) return;
+                    if (btn.classList.contains('disabled')) return;
 
                     try {
                         // Check HOLD confirm immediately
