@@ -129,6 +129,14 @@
         .top-nav-bar { position:fixed; top:0; left:0; right:0; height:78px; background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); isolation:isolate; }
         .edit-status-light { position:fixed; top:15px; left:71px; width:12px; height:12px; border-radius:50%; border:2px solid #4A4A4A; z-index:151; opacity:0.4; }
         .edit-status-light.active { opacity:1; box-shadow:0 0 12px currentColor; border:1px solid rgba(255,255,255,0.2); }
+        .edit-status-light.green { background:#4ADE80; color:#4ADE80; }
+        .edit-status-light.green.active { animation:pulse-green-gentle 3s ease-in-out infinite; }
+        .edit-status-light.turquoise { background:#3897AF; color:#3897AF; }
+        .edit-status-light.turquoise.active { animation:pulse-turquoise 2s ease-in-out infinite; }
+        .edit-status-light.orange { background:#FF8C00; color:#FF8C00; }
+        .edit-status-light.orange.active { animation:flash-orange 600ms ease-in-out infinite; }
+        .edit-status-light.red { background:#EF4444; color:#EF4444; }
+        .edit-status-light.red.active { animation:blink-red 800ms ease-in-out infinite; }
 
         .gallery-icon { position:fixed; top:15px; left:15px; width:44px; height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
         .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
@@ -532,6 +540,22 @@
             <button class="history-clear-all" onclick="clearAllHistory()" ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';">CLEAR ALL</button>
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
+        <div id="moreDialog">
+            <button class="more-dialog-btn" onclick="copyToClipboard()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">COPY</button>
+            <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
+            <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
+            <button class="more-dialog-btn" onclick="toggleGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
+        </div>
+        <div id="intensityControls">
+            <div class="intensity-slider-container">
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
+                    <div class="intensity-value-number">0</div>
+                    <div class="intensity-value-label">INTENSITY</div>
+                </div>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+            </div>
+        </div>
         <div class="edit-footer">
             <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
@@ -589,24 +613,6 @@
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
     </div>
     <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
-
-    <div id="moreDialog">
-        <button class="more-dialog-btn" onclick="copyToClipboard()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">COPY</button>
-        <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
-        <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
-        <button class="more-dialog-btn" onclick="toggleGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
-    </div>
-
-    <div id="intensityControls">
-        <div class="intensity-slider-container">
-            <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-            <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
-                <div class="intensity-value-number">0</div>
-                <div class="intensity-value-label">INTENSITY</div>
-            </div>
-            <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
-        </div>
-    </div>
 
     <div id="guidePanel">
         <img src="Logo.svg" alt="Frontier" class="guide-logo">
