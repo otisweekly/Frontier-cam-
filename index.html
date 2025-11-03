@@ -82,7 +82,7 @@
         #uploadSection > div { transform:translateY(-15%); position:relative; z-index:2; }
         #uploadSection.hidden { display:none; }
         #uploadSection::before { content:''; position:absolute; top:20px; left:0; right:0; width:100%; height:132px; background:linear-gradient(to bottom, #0D626E 0%, #0D626E 12px, #1D727E 12px, #0D626E 18px, transparent 18px, transparent 30px, #0D626E 30px, #0D626E 42px, #1D727E 42px, #0D626E 48px, transparent 48px, transparent 60px, #0D626E 60px, #0D626E 72px, #1D727E 72px, #0D626E 78px, transparent 78px, transparent 90px, #0D626E 90px, #0D626E 102px, #1D727E 102px, #0D626E 108px, transparent 108px, transparent 120px, #0D626E 120px, #0D626E 132px, #1D727E 132px, #0D626E 138px, transparent 138px); box-shadow:inset 0 3px 6px rgba(0,0,0,0.4), inset 0 -3px 6px rgba(255,255,255,0.1); z-index:0; }
-        .logo-container { position:relative; margin-bottom:40px; padding:40px 50px; border:4px solid #0D626E; border-radius:4px; background:rgba(13, 98, 110, 0.3); display:flex; flex-direction:column; align-items:center; gap:8px; width:min(400px, 85vw); box-sizing:border-box; box-shadow:inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3), 0 4px 0 rgba(0,0,0,0.2); }
+        .logo-container { position:relative; margin-bottom:24px; padding:40px 50px; border:4px solid #0D626E; border-radius:4px; background:rgba(13, 98, 110, 0.3); display:flex; flex-direction:column; align-items:center; gap:8px; width:min(400px, 85vw); box-sizing:border-box; box-shadow:inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3), 0 4px 0 rgba(0,0,0,0.2); }
         .logo-container img { width:100%; max-width:280px; height:auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; filter:contrast(1.1); }
         .status-lights { position:absolute; right:15px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; }
         .status-light { width:12px; height:12px; border-radius:50%; border:2px solid #0D626E; opacity:0.4; }
@@ -170,9 +170,11 @@
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
         .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
+        #holdBtn.active { background:#6355B5 !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
+        #holdBtn.active img { filter:brightness(0) invert(1) !important; }
         .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
+        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; z-index:1; }
         .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.intensity-open { padding-top:calc(78px + 170px); padding-bottom:15px; }
@@ -197,6 +199,10 @@
         /* Film strip inter-frame (black flash between images) */
         .film-interframe { position:absolute; top:0; left:0; right:0; bottom:0; background:#000; z-index:50; opacity:0; pointer-events:none; transition:opacity 0.15s ease-out; }
         .film-interframe.active { opacity:1; transition:opacity 0.05s ease-in; }
+
+        /* HOLD flash message */
+        .hold-flash { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100; opacity:0; pointer-events:none; transition:opacity 0.2s ease-out; font-family:'PP Neue Bit',monospace; color:#E0E0E0; font-size:28px; font-weight:700; text-align:center; text-shadow:0 0 12px rgba(224,224,224,0.6), 0 2px 4px rgba(0,0,0,0.9); }
+        .hold-flash.active { opacity:1; transition:opacity 0.1s ease-in; }
 
         .fullscreen-hint { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s ease; font-family:'PP Neue Bit',monospace; color:rgba(255,255,255,0.9); font-size:20px; font-weight:400; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,0.9); }
         body.fullscreen-preview .fullscreen-hint { opacity:1; }
@@ -450,6 +456,7 @@
         </button>
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
+            <button class="settings-btn" id="holdBtn" onclick="toggleHold()" title="Hold" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img id="holdIcon" src="Unlocked.svg" alt="Hold"></button>
             <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
@@ -469,6 +476,7 @@
             <canvas id="canvas"></canvas>
             <div class="intensity-indicator" id="intensityIndicator">100%</div>
             <div class="film-interframe" id="filmInterframe"></div>
+            <div class="hold-flash" id="holdFlash">SETTINGS HELD • TAP AGAIN TO RELEASE</div>
         </div>
         <div class="background-toggle-bar">
             <button class="bg-toggle-btn grey active" onclick="setBackground('grey')" id="bgGrey" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
@@ -638,8 +646,8 @@
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
-                    <button id="prevBtn" class="nav-btn" onclick="prevPhoto()" ontouchstart="if(!this.classList.contains('disabled')){this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';}" ontouchend="if(!this.classList.contains('disabled')){this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';}"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
-                    <button id="nextBtn" class="nav-btn" onclick="nextPhoto()" ontouchstart="if(!this.classList.contains('disabled')){this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';}" ontouchend="if(!this.classList.contains('disabled')){this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';}"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
+                    <button id="prevBtn" class="nav-btn"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
+                    <button id="nextBtn" class="nav-btn"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
             </div>
         </div>
@@ -670,7 +678,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1494,6 +1502,145 @@
         // Resource manager will be initialized on-demand when needed
         // (bloomProcessor isn't defined yet at this point in the code)
 
+        // Setup navigation button handlers for instant HOLD confirm
+        function setupNavButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            function handleNavButton(btn, direction) {
+                let touchHandled = false;
+
+                // Function to reset button styles
+                function resetButtonStyles() {
+                    btn.style.transform = '';
+                    btn.style.boxShadow = '';
+                }
+
+                // Touch handling - shows confirm immediately on touchstart
+                btn.addEventListener('touchstart', (e) => {
+                    if (btn.classList.contains('disabled')) return;
+                    e.preventDefault();
+                    touchHandled = true;
+
+                    try {
+                        // Apply down state
+                        btn.style.transform = 'translateY(5px)';
+                        btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';
+
+                        // Check HOLD confirm immediately
+                        if (state.holdSettings && state.holdDirty) {
+                            const changes = getHoldChanges();
+                            const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
+                            const shouldApplyAll = confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`);
+                            if (shouldApplyAll) {
+                                applySettingsToAllLightweight();
+                            } else {
+                                // User canceled - update baseline to current settings so same changes don't prompt again
+                                state.holdBaselineSettings = {...state.settings};
+                            }
+                            state.holdDirty = false;
+                        }
+
+                        // Navigate
+                        if (direction === 'prev') {
+                            prevPhoto();
+                        } else {
+                            nextPhoto();
+                        }
+                    } catch (err) {
+                        console.error('Navigation error:', err);
+                    } finally {
+                        // Always reset button state
+                        resetButtonStyles();
+                        // Safety timeout to ensure styles are cleared
+                        setTimeout(() => resetButtonStyles(), 100);
+                    }
+                });
+
+                // Prevent touchend from triggering click
+                btn.addEventListener('touchend', (e) => {
+                    if (touchHandled) {
+                        e.preventDefault();
+                        touchHandled = false;
+                        // Ensure button is reset
+                        resetButtonStyles();
+                    }
+                });
+
+                // Mouse/click handling for desktop
+                btn.addEventListener('click', (e) => {
+                    if (btn.classList.contains('disabled') || touchHandled) return;
+
+                    try {
+                        // Check HOLD confirm immediately
+                        if (state.holdSettings && state.holdDirty) {
+                            const changes = getHoldChanges();
+                            const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
+                            const shouldApplyAll = confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`);
+                            if (shouldApplyAll) {
+                                applySettingsToAllLightweight();
+                            } else {
+                                // User canceled - update baseline to current settings so same changes don't prompt again
+                                state.holdBaselineSettings = {...state.settings};
+                            }
+                            state.holdDirty = false;
+                        }
+
+                        // Navigate
+                        if (direction === 'prev') {
+                            prevPhoto();
+                        } else {
+                            nextPhoto();
+                        }
+                    } catch (err) {
+                        console.error('Navigation error:', err);
+                    }
+                });
+            }
+
+            handleNavButton(prevBtn, 'prev');
+            handleNavButton(nextBtn, 'next');
+        }
+
+        setupNavButtons();
+
+        // Show preview on canvas as photos load (behind progress bar)
+        function showLoadingPreview(photoData) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d', {alpha: false});
+
+            // Use preview for fast display
+            const img = photoData.preview || photoData.image;
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            // Size canvas for display
+            const maxW = window.innerWidth - 30;
+            const maxH = window.innerHeight - 330;
+            const imageAspect = img.width / img.height;
+            const containerAspect = maxW / maxH;
+
+            let displayW, displayH;
+            if (imageAspect > containerAspect) {
+                displayW = maxW;
+                displayH = maxW / imageAspect;
+            } else {
+                displayH = maxH;
+                displayW = maxH * imageAspect;
+            }
+
+            canvas.style.width = displayW + 'px';
+            canvas.style.height = displayH + 'px';
+
+            // Fade in canvas briefly
+            canvas.style.opacity = '0.5';
+            setTimeout(() => {
+                canvas.style.opacity = '1';
+            }, 50);
+        }
+
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             console.log('File input changed, files:', e.target.files.length);
 
@@ -1508,7 +1655,10 @@
                 files.length = 36;
             }
 
-            console.log('Starting optimized upload process');
+            // Reverse files to load like a real scanner (last to first, ending on frame 1)
+            files.reverse();
+
+            console.log('Starting optimized upload process (scanner mode: loading in reverse)');
 
             // Switch to edit view
             document.getElementById('uploadSection').classList.add('hidden');
@@ -1541,40 +1691,181 @@
                 },
                 (photoData) => {
                     state.photos.push(photoData);
+                    // Update counter as photos load - just show the count during loading
+                    const counterEl = document.getElementById('photoCounter');
+                    if (counterEl) {
+                        counterEl.textContent = `${state.photos.length}`;
+                    }
+                    // Show preview on canvas as each photo loads
+                    showLoadingPreview(photoData);
                 },
                 0  // Starting index for initial upload
             );
 
             console.log('Upload complete, loaded photos:', state.photos.length);
-            updateUploadProgress(100, 'Complete!');
 
-            setTimeout(async () => {
+            if (state.photos.length > 0) {
+                // Reverse array back to correct order after scanner-style loading
+                // Files were loaded last-to-first, now put them back in first-to-last order
+                state.photos.reverse();
+
+                // Set to first photo (index 0) - now correctly the first selected photo
+                state.currentIndex = 0;
+                const firstPhoto = state.photos[0];
+
+                console.log('First photo data:', {
+                    name: firstPhoto.name,
+                    hasImage: !!firstPhoto.image,
+                    hasPreview: !!firstPhoto.preview,
+                    hasOriginal: !!firstPhoto.original,
+                    hasSettings: !!firstPhoto.settings
+                });
+
+                // Verify photo has required properties
+                if (!firstPhoto.image && !firstPhoto.preview) {
+                    console.error('First photo missing image data!');
+                    alert('Failed to load photos. Please try again.');
+                    hideUploadProgress();
+                    return;
+                }
+
+                state.settings = { ...firstPhoto.settings };
+                state.renderPending = false;
+
+                console.log('Ready to render first photo, index:', state.currentIndex, 'total photos:', state.photos.length);
+
+                // Hide progress bar
                 hideUploadProgress();
 
-                if (state.photos.length > 0) {
-                    // Generate contact sheet as last image
-                    await generateAndAddContactSheet();
+                // Small delay to let progress bar finish hiding
+                setTimeout(() => {
+                    console.log('Attempting to render first photo...');
+                    try {
+                        renderPhoto();
+                        updateNavButtons();
 
-                    state.currentIndex = 0;
-                    state.settings = { ...state.photos[0].settings };
-                    console.log('Rendering first photo');
-                    renderPhoto();
-                    updateNavButtons();
-                    setStatus('ready');
-                } else {
-                    console.log('No photos loaded, returning to upload screen');
+                        // Update counter to final format "1/total"
+                        const counterEl = document.getElementById('photoCounter');
+                        if (counterEl) {
+                            counterEl.textContent = `1/${state.photos.length}`;
+                        }
+
+                        setStatus('ready');
+                        console.log('First photo rendered successfully!');
+
+                        // DON'T generate contact sheet automatically - causes crashes with many photos
+                        // It will be generated on-demand when user views it or downloads
+                    } catch (err) {
+                        console.error('Failed to render first photo:', err);
+                        alert('Failed to display photos. Error: ' + err.message);
+                        setStatus('ready');
+                    }
+                }, 300);
+            } else {
+                console.log('No photos loaded, returning to upload screen');
+                hideUploadProgress();
+                setTimeout(() => {
                     alert('No files could be loaded. Please check the console for errors.');
                     document.getElementById('editSection').classList.remove('active');
                     document.getElementById('uploadSection').classList.remove('hidden');
                     document.body.style.background = '#37A4A4';
                     setStatus('ready');
-                }
+                }, 300);
+            }
 
-                e.target.value = '';
-            }, 500);
+            e.target.value = '';
         });
 
-        function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
+        function saveCurrentPhotoSettings(applyHold=true, settingsChanged=false){
+            if(state.photos[state.currentIndex]){
+                state.photos[state.currentIndex].settings={...state.settings};
+                delete state.photos[state.currentIndex].thumbnail;
+                if(state.holdSettings){
+                    // Only mark as dirty if this is from an actual user change
+                    if(settingsChanged){
+                        state.holdDirty=true;
+                    }
+                    // Don't apply to all during editing!
+                    // Only apply when user confirms the dialog during navigation
+                }
+            }
+        }
+
+        // Generate a human-readable list of setting changes
+        function getHoldChanges(){
+            if(!state.holdBaselineSettings)return[];
+            const changes=[];
+            const baseline=state.holdBaselineSettings;
+            const current=state.settings;
+
+            // Profile changes
+            if(baseline.profile!==current.profile){
+                const oldName=baseline.profile==='none'?'None':baseline.profile.toUpperCase();
+                const newName=current.profile==='none'?'None':current.profile.toUpperCase();
+                changes.push(`Profile: ${oldName} → ${newName}`);
+            }
+
+            // Intensity
+            if(baseline.profileIntensity!==current.profileIntensity){
+                changes.push(`Intensity: ${baseline.profileIntensity} → ${current.profileIntensity}`);
+            }
+
+            // CMYK
+            if(baseline.cyan!==current.cyan){
+                changes.push(`Cyan: ${baseline.cyan} → ${current.cyan}`);
+            }
+            if(baseline.magenta!==current.magenta){
+                changes.push(`Magenta: ${baseline.magenta} → ${current.magenta}`);
+            }
+            if(baseline.yellow!==current.yellow){
+                changes.push(`Yellow: ${baseline.yellow} → ${current.yellow}`);
+            }
+            if(baseline.black!==current.black){
+                changes.push(`Density: ${baseline.black} → ${current.black}`);
+            }
+
+            // Brightness controls
+            if(baseline.brightness!==current.brightness){
+                changes.push(`Brightness: ${baseline.brightness} → ${current.brightness}`);
+            }
+            if(baseline.contrast!==current.contrast){
+                changes.push(`Contrast: ${baseline.contrast} → ${current.contrast}`);
+            }
+            if(baseline.shadows!==current.shadows){
+                changes.push(`Shadows: ${baseline.shadows} → ${current.shadows}`);
+            }
+            if(baseline.highlights!==current.highlights){
+                changes.push(`Highlights: ${baseline.highlights} → ${current.highlights}`);
+            }
+
+            // Effects
+            if(baseline.bloom!==current.bloom){
+                changes.push(`Bloom: ${baseline.bloom} → ${current.bloom}`);
+            }
+            if(baseline.grain!==current.grain){
+                changes.push(`Grain: ${baseline.grain} → ${current.grain}`);
+            }
+
+            return changes;
+        }
+
+        // Lightweight version: just copy settings, no rendering
+        function applySettingsToAllLightweight(){
+            if(!state.holdSettings)return;
+            const currentSettings={...state.settings};
+            // Apply to all photos (except contact sheet)
+            state.photos.forEach((photo,index)=>{
+                if(!photo.isContactSheet&&index!==state.currentIndex){
+                    photo.settings={...currentSettings};
+                    // Delete thumbnail cache so contact sheet will regenerate with new settings
+                    delete photo.thumbnail;
+                }
+            });
+            // Update baseline after applying to all
+            state.holdBaselineSettings={...state.settings};
+            // Don't set holdDirty to false here - only the navigation dialog should clear it
+            // This allows multiple changes to all trigger the dialog
+        }
 
         function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;if(state.settings.brightness===undefined)state.settings.brightness=0;if(state.settings.contrast===undefined)state.settings.contrast=0;if(state.settings.shadows===undefined)state.settings.shadows=0;if(state.settings.highlights===undefined)state.settings.highlights=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
 
@@ -1590,57 +1881,121 @@
         }
 
         function updateNavButtons(){
-            const prevBtn=document.getElementById('prevBtn');
-            const nextBtn=document.getElementById('nextBtn');
-            if(prevBtn&&nextBtn){
-                // Disable both buttons if only one photo
-                if(state.photos.length<=1){
-                    prevBtn.classList.add('disabled');
-                    nextBtn.classList.add('disabled');
-                }else{
-                    // Disable prev button on first frame
-                    if(state.currentIndex===0){
+            try {
+                const prevBtn=document.getElementById('prevBtn');
+                const nextBtn=document.getElementById('nextBtn');
+                if(prevBtn&&nextBtn){
+                    // Clear any lingering inline styles
+                    prevBtn.style.transform = '';
+                    prevBtn.style.boxShadow = '';
+                    nextBtn.style.transform = '';
+                    nextBtn.style.boxShadow = '';
+
+                    // Disable both buttons if only one photo
+                    if(state.photos.length<=1){
                         prevBtn.classList.add('disabled');
-                    }else{
-                        prevBtn.classList.remove('disabled');
-                    }
-                    // Disable next button on last frame
-                    if(state.currentIndex===state.photos.length-1){
                         nextBtn.classList.add('disabled');
                     }else{
-                        nextBtn.classList.remove('disabled');
+                        // Disable prev button on first frame
+                        if(state.currentIndex===0){
+                            prevBtn.classList.add('disabled');
+                        }else{
+                            prevBtn.classList.remove('disabled');
+                        }
+                        // Disable next button on last frame
+                        if(state.currentIndex===state.photos.length-1){
+                            nextBtn.classList.add('disabled');
+                        }else{
+                            nextBtn.classList.remove('disabled');
+                        }
                     }
                 }
+            } catch (err) {
+                console.error('Error in updateNavButtons:', err);
             }
         }
 
-        function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();
-            state.currentIndex--;
-            resetZoom(document.getElementById('canvas'));
-            renderPhoto();
-            updateNavButtons();
-            // Update download previews if panel is open
-            const downloadOptions=document.getElementById('downloadOptions');
-            if(downloadOptions&&downloadOptions.classList.contains('active')){
-                generateDownloadPreviews();
+        function prevPhoto(){
+            try {
+                haptic();
+                if(state.currentIndex>0){
+                    saveCurrentPhotoSettings(false);
+                    state.currentIndex--;
+                    resetZoom(document.getElementById('canvas'));
+                    renderPhoto();
+                    updateNavButtons();
+                    // Update download previews if panel is open
+                    const downloadOptions=document.getElementById('downloadOptions');
+                    if(downloadOptions&&downloadOptions.classList.contains('active')){
+                        generateDownloadPreviews();
+                    }
+                }
+            } catch (err) {
+                console.error('Error in prevPhoto:', err);
+                setStatus('ready');
             }
-        }}
-        function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();
-            state.currentIndex++;
-            resetZoom(document.getElementById('canvas'));
-            renderPhoto();
-            updateNavButtons();
-            // Update download previews if panel is open
-            const downloadOptions=document.getElementById('downloadOptions');
-            if(downloadOptions&&downloadOptions.classList.contains('active')){
-                generateDownloadPreviews();
+        }
+        function nextPhoto(){
+            try {
+                haptic();
+                if(state.currentIndex<state.photos.length-1){
+                    saveCurrentPhotoSettings(false);
+                    state.currentIndex++;
+                    resetZoom(document.getElementById('canvas'));
+                    renderPhoto();
+                    updateNavButtons();
+                    // Update download previews if panel is open
+                    const downloadOptions=document.getElementById('downloadOptions');
+                    if(downloadOptions&&downloadOptions.classList.contains('active')){
+                        generateDownloadPreviews();
+                    }
+                }
+            } catch (err) {
+                console.error('Error in nextPhoto:', err);
+                setStatus('ready');
             }
-        }}
+        }
         function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;setStatus('processing');const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;setStatus('ready');return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas');canvas.style.display='block';
-// Use preview image for instant responsiveness during adjustments, full quality otherwise
-const sourceImg=state.usePreview&&p.preview?p.preview:p.image;
+        function renderPhoto(){
+            try {
+                if(state.renderPending){console.log('Render already pending, skipping');return;}
+                state.renderPending=true;
+                setStatus('processing');
+
+                const p=state.photos[state.currentIndex];
+                if(!p){
+                    console.error('No photo at index:', state.currentIndex, 'total photos:', state.photos.length);
+                    state.renderPending=false;
+                    setStatus('ready');
+                    return;
+                }
+
+                console.log('Rendering photo index:', state.currentIndex, 'name:', p.name);
+                document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;
+
+                const canvas=document.getElementById('canvas');
+                if(!canvas){
+                    console.error('Canvas element not found!');
+                    state.renderPending=false;
+                    return;
+                }
+
+                canvas.style.display='block';
+                canvas.style.opacity='1';
+
+                // Use preview image for instant responsiveness during adjustments, full quality otherwise
+                const sourceImg=state.usePreview&&p.preview?p.preview:p.image;
+
+                if(!sourceImg){
+                    console.error('No source image available for photo:', p.name);
+                    state.renderPending=false;
+                    setStatus('ready');
+                    alert('Photo data corrupted. Please try uploading again.');
+                    return;
+                }
+
+                console.log('Using source image:', sourceImg.width, 'x', sourceImg.height);
 // Render to offscreen canvas first to avoid flashing
 const offscreenCanvas=document.createElement('canvas');
 offscreenCanvas.width=sourceImg.width;
@@ -1653,7 +2008,14 @@ loadPhotoSettings(state.currentIndex);
 applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
 // Now copy the fully processed image to visible canvas in one operation
 canvas.width=sourceImg.width;canvas.height=sourceImg.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=sourceImg.width/sourceImg.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:false});
-ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;setStatus('ready');}
+ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;setStatus('ready');
+            } catch (err) {
+                console.error('Error in renderPhoto:', err);
+                state.renderPending=false;
+                setStatus('ready');
+                alert('Failed to render photo. Please try refreshing the page.');
+            }
+        }
 
 
         function applyEffects(ctx,w,h){
@@ -3428,7 +3790,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');
                 updatePresetButtonText();
-                saveCurrentPhotoSettings();
+                saveCurrentPhotoSettings(true,true);
                 await preloadLUTForProfile('none');
                 if(!state.videoMode)deferredRender();
             }else{
@@ -3453,13 +3815,94 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){
                     currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');
                 }
-                saveCurrentPhotoSettings();
+                saveCurrentPhotoSettings(true,true);
                 await preloadLUTForProfile(p);
                 deferredRender();
             }
         }
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
+
+        function toggleHold(){
+            haptic();
+            state.holdSettings=!state.holdSettings;
+
+            const holdBtn=document.getElementById('holdBtn');
+            const holdIcon=document.getElementById('holdIcon');
+            const holdFlash=document.getElementById('holdFlash');
+
+            if(state.holdSettings){
+                holdBtn.classList.add('active');
+                holdIcon.src='Locked.svg';
+
+                // Reset dirty flag when activating HOLD
+                state.holdDirty=false;
+                // Store baseline settings for tracking changes
+                state.holdBaselineSettings={...state.settings};
+
+                // Show flash message
+                holdFlash.textContent='SETTINGS HELD • TAP AGAIN TO RELEASE';
+                holdFlash.classList.add('active');
+                setTimeout(()=>{
+                    holdFlash.classList.remove('active');
+                },1500);
+
+                // Apply current settings to all photos (lightweight - no rendering)
+                applySettingsToAllLightweight();
+                // Show brief processing status for feedback
+                setStatus('processing');
+                setTimeout(()=>setStatus('ready'),200);
+            }else{
+                holdBtn.classList.remove('active');
+                holdIcon.src='Unlocked.svg';
+                state.holdDirty=false;
+
+                // Show release message
+                holdFlash.textContent='HOLD RELEASED';
+                holdFlash.classList.add('active');
+                setTimeout(()=>{
+                    holdFlash.classList.remove('active');
+                },800);
+            }
+        }
+
+        async function applySettingsToAll(){
+            if(!state.holdSettings)return;
+
+            const currentSettings={...state.settings};
+            const wasViewingContactSheet=state.photos[state.currentIndex]&&state.photos[state.currentIndex].isContactSheet;
+
+            // Apply to all photos (except contact sheet)
+            state.photos.forEach((photo,index)=>{
+                if(!photo.isContactSheet&&index!==state.currentIndex){
+                    photo.settings={...currentSettings};
+                }
+            });
+
+            // Reset dirty flag since we just applied to all
+            state.holdDirty=false;
+
+            // Debounce contact sheet regeneration
+            clearTimeout(state.holdRegenerateTimer);
+            state.holdRegenerateTimer=setTimeout(async()=>{
+                try {
+                    await generateAndAddContactSheet();
+
+                    // If user is viewing contact sheet, re-render it
+                    if(wasViewingContactSheet||state.photos[state.currentIndex]&&state.photos[state.currentIndex].isContactSheet){
+                        renderPhoto();
+                    }
+
+                    // Update download previews if panel is open
+                    const downloadOptions=document.getElementById('downloadOptions');
+                    if(downloadOptions&&downloadOptions.classList.contains('active')){
+                        generateDownloadPreviews();
+                    }
+                } catch (err) {
+                    console.error('Failed to regenerate contact sheet:', err);
+                }
+            },300);
+        }
 
         function addToHistory(description,key,oldValue,newValue){if(key==='profile'){state.history=state.history.filter(h=>h.key!=='profile');}const change={description,key,oldValue,newValue,timestamp:Date.now(),undone:false};state.history=state.history.slice(0,state.historyIndex+1);state.history.push(change);state.historyIndex=state.history.length-1;renderHistoryList();}
 
@@ -3475,7 +3918,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();toggleHistoryPanel();}
+        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeIntensity();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
@@ -3484,7 +3927,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
         function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadOptions=document.getElementById('downloadOptions'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(downloadOptions.classList.contains('active')&&!downloadOptions.contains(e.target)&&!downloadBtn.contains(e.target)){closeDownloadOptions();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
 
-        function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
+        function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();if(!state.videoMode)deferredRender();}
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
@@ -3523,7 +3966,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function toggleDownloadOptions(){
+        async function toggleDownloadOptions(){
             haptic();
             closeCMYK();
             closeBrightness();
@@ -3546,7 +3989,31 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             // Generate previews when opening
             if(isOpening){
-                generateDownloadPreviews();
+                // Show simple placeholders instantly for speed
+                const previewCurrent=document.getElementById('downloadPreviewCurrent');
+                const previewSheet=document.getElementById('downloadPreviewSheet');
+                const ctxCurrent=previewCurrent.getContext('2d');
+                const ctxSheet=previewSheet.getContext('2d');
+
+                // Simple placeholder for current
+                previewCurrent.width=200;
+                previewCurrent.height=160;
+                ctxCurrent.fillStyle='#2a2a2a';
+                ctxCurrent.fillRect(0,0,200,160);
+                ctxCurrent.fillStyle='#666';
+                ctxCurrent.font='12px "PP Neue Bit", monospace';
+                ctxCurrent.textAlign='center';
+                ctxCurrent.fillText('CURRENT',100,80);
+
+                // Simple placeholder for all
+                previewSheet.width=200;
+                previewSheet.height=160;
+                ctxSheet.fillStyle='#2a2a2a';
+                ctxSheet.fillRect(0,0,200,160);
+                ctxSheet.fillStyle='#666';
+                ctxSheet.font='12px "PP Neue Bit", monospace';
+                ctxSheet.textAlign='center';
+                ctxSheet.fillText('ALL PHOTOS',100,80);
             }
         }
 
@@ -3945,20 +4412,21 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         async function generateAndAddContactSheet(){
-            setStatus('processing');
+            try {
+                setStatus('processing');
 
-            // Remove existing contact sheet if present
-            const contactSheetIndex=state.photos.findIndex(p=>p.isContactSheet);
-            if(contactSheetIndex!==-1){
-                state.photos.splice(contactSheetIndex,1);
-            }
+                // Remove existing contact sheet if present
+                const contactSheetIndex=state.photos.findIndex(p=>p.isContactSheet);
+                if(contactSheetIndex!==-1){
+                    state.photos.splice(contactSheetIndex,1);
+                }
 
-            // Get only actual photos (not videos, not existing contact sheets)
-            const photos=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
-            if(photos.length===0){
-                setStatus('ready');
-                return;
-            }
+                // Get only actual photos (not videos, not existing contact sheets)
+                const photos=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
+                if(photos.length===0){
+                    setStatus('ready');
+                    return;
+                }
 
             // Calculate available canvas dimensions
             const canvasContainer=document.getElementById('canvasContainer');
@@ -4049,16 +4517,17 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                         const tempCanvas=document.createElement('canvas');
                         const tctx=tempCanvas.getContext('2d',{alpha:false});
-                        tempCanvas.width=p.image.width;
-                        tempCanvas.height=p.image.height;
-                        tctx.drawImage(p.image,0,0);
+                        const sourceImg=p.original||p.image;
+                        tempCanvas.width=sourceImg.width;
+                        tempCanvas.height=sourceImg.height;
+                        tctx.drawImage(sourceImg,0,0);
 
                         const savedSettings=state.settings;
                         state.settings=p.settings;
                         applyEffects(tctx,tempCanvas.width,tempCanvas.height);
                         state.settings=savedSettings;
 
-                        const aspectRatio=p.image.width/p.image.height;
+                        const aspectRatio=sourceImg.width/sourceImg.height;
                         let drawW=thumbSize;
                         let drawH=thumbSize;
                         if(aspectRatio>1){
@@ -4120,28 +4589,51 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     resolve();
                 },'image/jpeg',0.92);
             });
+            } catch (err) {
+                console.error('Contact sheet generation failed:', err);
+                setStatus('ready');
+                // Don't throw - allow the app to continue without contact sheet
+            }
         }
 
         async function saveAll(){
             haptic();
             closeDownloadOptions();
 
-            const photoCount=state.photos.filter(p=>!p.isVideo).length;
+            const photoCount=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet).length;
             if(photoCount===0){
                 alert('No photos to export');
                 return;
             }
 
-            if(!confirm(`Save all ${photoCount} photos individually plus contact sheet?`)){
-                return;
+            // Detect if mobile
+            const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if(isMobile){
+                // Mobile: Share photos individually to camera roll
+                if(!confirm(`Export ${photoCount} photos + contact sheet to camera roll?`)){
+                    return;
+                }
+            }else{
+                // Desktop: Export as ZIP
+                if(!confirm(`Export ${photoCount} photos + contact sheet as ZIP?`)){
+                    return;
+                }
             }
 
             setStatus('loading');
+            showUploadProgress(`Saving ${photoCount} photos...`);
 
-            // Save all individual photos
-            const photos=state.photos.filter(p=>!p.isVideo);
+            const photos=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
+            const files=[];
+
+            // Process all photos with progress
             for(let i=0;i<photos.length;i++){
                 const p=photos[i];
+
+                // Update progress
+                const percent=Math.round(((i+1)/photoCount)*100);
+                updateUploadProgress(percent,`Saving ${i+1}/${photoCount}: ${(p.displayName||p.name).substring(0,20)}...`);
 
                 // Create canvas with effects applied
                 const tempCanvas=document.createElement('canvas');
@@ -4155,18 +4647,26 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 applyEffects(tctx,tempCanvas.width,tempCanvas.height);
                 state.settings=savedSettings;
 
-                // Convert to blob and download
-                await new Promise(resolve=>{
-                    tempCanvas.toBlob(b=>{
-                        const filename=p.displayName||`frontier_photo_${i+1}.jpg`;
-                        fallbackDownload(b,filename);
-                        resolve();
-                    },'image/jpeg',0.92);
+                // Show preview on main canvas (like upload animation)
+                const mainCanvas=document.getElementById('canvas');
+                if(mainCanvas){
+                    const mainCtx=mainCanvas.getContext('2d',{alpha:false});
+                    mainCanvas.width=tempCanvas.width;
+                    mainCanvas.height=tempCanvas.height;
+                    mainCtx.drawImage(tempCanvas,0,0);
+                }
+
+                // Convert to blob
+                const blob=await new Promise(resolve=>{
+                    tempCanvas.toBlob(b=>resolve(b),'image/jpeg',0.92);
                 });
 
-                // Small delay between downloads
-                await new Promise(resolve=>setTimeout(resolve,300));
+                const filename=(p.displayName||p.name||`frontier_photo_${i+1}.jpg`).replace(/\.[^/.]+$/,'')+'.jpg';
+                files.push({blob,filename});
             }
+
+            // Show completion
+            updateUploadProgress(100,'Complete!');
 
             // Now save contact sheet with 4:5 aspect ratio (high res export)
             // Target export size in 4:5 ratio (portrait)
@@ -4271,11 +4771,92 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 }
             }
 
-            sheet.toBlob(b=>{
-                fallbackDownload(b,'contact_sheet.jpg');
-                setStatus('ready');
-                alert(`Successfully saved ${photoCount} photos + contact sheet!`);
-            },'image/jpeg',0.92);
+            // Add contact sheet
+            const sheetBlob=await new Promise(resolve=>{
+                sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);
+            });
+            files.push({blob:sheetBlob,filename:'00_CONTACT_SHEET.jpg'});
+
+            if(isMobile&&navigator.share&&navigator.canShare){
+                // Mobile: Use Share API to save to camera roll
+                try{
+                    const shareFiles=files.map(f=>new File([f.blob],f.filename,{type:'image/jpeg'}));
+
+                    // Check if browser can share files
+                    if(navigator.canShare({files:shareFiles})){
+                        await navigator.share({
+                            files:shareFiles,
+                            title:'Frontier Photos',
+                            text:`${photoCount} photos + contact sheet`
+                        });
+                        hideUploadProgress();
+                        setStatus('ready');
+                    }else{
+                        // Fallback: Try sharing one at a time
+                        for(const f of shareFiles){
+                            if(navigator.canShare({files:[f]})){
+                                await navigator.share({files:[f],title:f.name});
+                                await new Promise(resolve=>setTimeout(resolve,500));
+                            }
+                        }
+                        hideUploadProgress();
+                        setStatus('ready');
+                        alert(`Shared ${photoCount} photos + contact sheet! Save them to your camera roll.`);
+                    }
+                }catch(err){
+                    if(err.name!=='AbortError'){
+                        // If share fails, fall back to ZIP on mobile too
+                        await createZipDownload(files,photoCount);
+                    }else{
+                        hideUploadProgress();
+                        setStatus('ready');
+                    }
+                }
+            }else{
+                // Desktop: Create ZIP download
+                await createZipDownload(files,photoCount);
+            }
+        }
+
+        async function createZipDownload(files,photoCount){
+            // Load JSZip dynamically
+            if(typeof JSZip==='undefined'){
+                await new Promise((resolve,reject)=>{
+                    const script=document.createElement('script');
+                    script.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                    script.onload=resolve;
+                    script.onerror=reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            const zip=new JSZip();
+
+            // Add all files to ZIP
+            for(const f of files){
+                zip.file(f.filename,f.blob);
+            }
+
+            // Generate ZIP and download
+            const zipBlob=await zip.generateAsync({type:'blob'});
+
+            // Create download with timestamp
+            const now=new Date();
+            const timestamp=now.toISOString().slice(0,19).replace(/[T:]/g,'-');
+            const zipFilename=`Frontier_Export_${timestamp}.zip`;
+
+            const url=URL.createObjectURL(zipBlob);
+            const a=document.createElement('a');
+            a.href=url;
+            a.download=zipFilename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(()=>URL.revokeObjectURL(url),100);
+
+            hideUploadProgress();
+            setStatus('ready');
+            alert(`Successfully exported ${photoCount} photos + contact sheet!`);
         }
 
         function adjustIntensity(delta){
@@ -4292,7 +4873,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             updateIntensityIndicator();
             updatePresetButtonText();
-            saveCurrentPhotoSettings();
+            saveCurrentPhotoSettings(true,true);
             enablePreviewMode();
             if(!state.videoMode)deferredRender();
         }
@@ -4316,7 +4897,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 updateIntensityIndicator();
                 updatePresetButtonText();
-                saveCurrentPhotoSettings();
+                saveCurrentPhotoSettings(true,true);
                 if(!state.videoMode)deferredRender();
                 return;
             }
@@ -4341,7 +4922,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             updateIntensityIndicator();
             updatePresetButtonText();
-            saveCurrentPhotoSettings();
+            saveCurrentPhotoSettings(true,true);
             if(!state.videoMode)deferredRender();
         }
 
@@ -4357,19 +4938,19 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
+        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();if(!state.videoMode)deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
 
-        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
+        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();}
 
-        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode){deferredRender();}}
+        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings(true,true);enablePreviewMode();if(!state.videoMode){deferredRender();}}
 
-        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode){deferredRender();}}
+        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings(true,true);enablePreviewMode();if(!state.videoMode){deferredRender();}}
 
-        function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
+        function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();}
 
-        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
+        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();}
 
         function frameCounterOptions(){haptic();if(confirm('View all photos?\n\n(Cancel to remove current photo)')){toggleContactSheetView();}else if(confirm('Remove current photo?')){removeCurrentPhoto();}}
 
@@ -4379,7 +4960,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
 
-        function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
+        function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);if(!state.videoMode)deferredRender();alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
 
         function updateUIFromSettings(){const s=state.settings;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();}
 
@@ -4444,6 +5025,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 alert('Maximum 36 files total');
                 return;
             }
+
+            // Reverse files to load like a real scanner
+            files.reverse();
 
             showUploadProgress(`Adding ${files.length} file${files.length === 1 ? '' : 's'}...`);
             setStatus('wait');
@@ -4524,7 +5108,34 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             e.target.value = '';
         });
 
-        function toggleContactSheetView(){haptic();const view=document.getElementById('contactSheetView');const galleryIcon=document.querySelector('.gallery-icon');if(view.classList.contains('active')){view.classList.remove('active');if(galleryIcon)galleryIcon.classList.remove('active');state.contactSheet.selectMode=false;state.contactSheet.selected=[];document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';setStatus('ready');}else{setStatus('processing');populateContactSheet();view.classList.add('active');if(galleryIcon)galleryIcon.classList.add('active');setStatus('ready');}}
+        async function toggleContactSheetView(){
+            haptic();
+            const view=document.getElementById('contactSheetView');
+            const galleryIcon=document.querySelector('.gallery-icon');
+            if(view.classList.contains('active')){
+                view.classList.remove('active');
+                if(galleryIcon)galleryIcon.classList.remove('active');
+                state.contactSheet.selectMode=false;
+                state.contactSheet.selected=[];
+                document.getElementById('selectBtn').classList.remove('select-mode');
+                document.getElementById('selectionInfo').style.display='none';
+                document.getElementById('deleteBtn').style.display='none';
+                setStatus('ready');
+            }else{
+                setStatus('processing');
+                // Always ensure contact sheet exists when viewing
+                try {
+                    await generateAndAddContactSheet();
+                } catch(err) {
+                    console.error('Contact sheet generation failed:', err);
+                    // Continue anyway - populateContactSheet will show what we have
+                }
+                populateContactSheet();
+                view.classList.add('active');
+                if(galleryIcon)galleryIcon.classList.add('active');
+                setStatus('ready');
+            }
+        }
 
         function toggleSelectMode(){haptic();state.contactSheet.selectMode=!state.contactSheet.selectMode;const btn=document.getElementById('selectBtn');const deleteBtn=document.getElementById('deleteBtn');if(state.contactSheet.selectMode){btn.classList.add('select-mode');btn.textContent='CANCEL';document.getElementById('selectionInfo').style.display='block';updateSelectionInfo();}else{btn.classList.remove('select-mode');btn.textContent='SELECT';state.contactSheet.selected=[];document.querySelectorAll('.contact-sheet-item').forEach(item=>item.classList.remove('selected'));document.getElementById('selectionInfo').style.display='none';deleteBtn.style.display='none';}}
 
@@ -4532,7 +5143,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;setStatus('processing');const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();setStatus('ready');}
 
-        function populateContactSheet(){setStatus('processing');const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(p.isVideo){const videoEl=document.createElement('video');videoEl.src=p.videoUrl;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;videoEl.autoplay=true;videoEl.playbackRate=0.5;videoEl.style.cssText='width:100%;aspect-ratio:10/8;object-fit:cover;display:block;';videoEl.play().catch(e=>console.log('Autoplay prevented:',e));item.appendChild(videoEl);}else{if(!p.thumbnail){const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;ctx.drawImage(p.image,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);p.thumbnail=tempCanvas.toDataURL('image/jpeg',0.65);}const img=document.createElement('img');img.src=p.thumbnail;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';filenameText.textContent=p.displayName||p.name;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);});setStatus('ready');}
+        function populateContactSheet(){setStatus('processing');const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(p.isVideo){const videoEl=document.createElement('video');videoEl.src=p.videoUrl;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;videoEl.autoplay=true;videoEl.playbackRate=0.5;videoEl.style.cssText='width:100%;aspect-ratio:10/8;object-fit:cover;display:block;';videoEl.play().catch(e=>console.log('Autoplay prevented:',e));item.appendChild(videoEl);}else if(!p.isContactSheet){if(!p.thumbnail){const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});const sourceImg=p.original||p.image;tempCanvas.width=sourceImg.width;tempCanvas.height=sourceImg.height;ctx.drawImage(sourceImg,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);p.thumbnail=tempCanvas.toDataURL('image/jpeg',0.65);}const img=document.createElement('img');img.src=p.thumbnail;item.appendChild(img);}else{const img=document.createElement('img');img.src=p.image.src||p.image;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';filenameText.textContent=p.displayName||p.name;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);});setStatus('ready');}
 
         function handleContactSheetItemClick(idx){haptic();if(state.contactSheet.selectMode){togglePhotoSelection(idx);}else{selectPhotoFromSheet(idx);}}
 
@@ -4540,7 +5151,30 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function editPhotoName(idx){haptic();const p=state.photos[idx];const currentName=p.displayName||p.name;const newName=prompt('Edit filename:',currentName);if(newName&&newName.trim()!==''&&newName!==currentName){state.photos[idx].displayName=newName.trim();populateContactSheet();}}
 
-        function selectPhotoFromSheet(idx){haptic();saveCurrentPhotoSettings();state.currentIndex=idx;const canvas=document.getElementById('canvas');resetZoom(canvas);toggleContactSheetView();deferredRender();updateNavButtons();}
+        function selectPhotoFromSheet(idx){
+            haptic();
+
+            // Check if HOLD is active and settings changed
+            if(state.holdSettings&&state.holdDirty){
+                const changes = getHoldChanges();
+                const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
+                if(confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`)){
+                    applySettingsToAllLightweight();
+                } else {
+                    // User canceled - update baseline to current settings so same changes don't prompt again
+                    state.holdBaselineSettings = {...state.settings};
+                }
+                state.holdDirty=false;
+            }
+
+            saveCurrentPhotoSettings(false);
+            state.currentIndex=idx;
+            const canvas=document.getElementById('canvas');
+            resetZoom(canvas);
+            toggleContactSheetView();
+            deferredRender();
+            updateNavButtons();
+        }
 
         function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='Logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});if(p.isVideo){tempCanvas.width=p.video.videoWidth;tempCanvas.height=p.video.videoHeight;tctx.drawImage(p.video,0,0);}else{tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);tctx.putImageData(imgData2,0,0);}const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
 
