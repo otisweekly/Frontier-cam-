@@ -5122,18 +5122,18 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 document.getElementById('deleteBtn').style.display='none';
                 setStatus('ready');
             }else{
-                setStatus('processing');
-                // Always ensure contact sheet exists when viewing
-                try {
-                    await generateAndAddContactSheet();
-                } catch(err) {
-                    console.error('Contact sheet generation failed:', err);
-                    // Continue anyway - populateContactSheet will show what we have
-                }
-                populateContactSheet();
+                // Show view immediately without waiting for contact sheet generation
                 view.classList.add('active');
                 if(galleryIcon)galleryIcon.classList.add('active');
+                populateContactSheet();
                 setStatus('ready');
+
+                // Generate contact sheet in background (optional, for the frame view)
+                // Don't await it - let it happen in background
+                generateAndAddContactSheet().catch(err => {
+                    console.error('Background contact sheet generation failed:', err);
+                    // Silently fail - the grid view still works without it
+                });
             }
         }
 
