@@ -4950,32 +4950,44 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             if(isMobile){
                 // Mobile: Save each photo individually to camera roll using Share API
-                if(navigator.share){
+                console.log('Mobile detected. Share API available:', !!navigator.share, 'canShare available:', !!navigator.canShare);
+
+                if(navigator.share && navigator.canShare){
                     let savedCount=0;
                     for(let i=0;i<files.length;i++){
                         const f=files[i];
                         try{
-                            // Update progress
+                            // Update progress - keep it visible
                             const percent=Math.round(((i+1)/(files.length))*100);
                             updateUploadProgress(percent,`Saving to camera roll ${i+1}/${files.length}...`);
+                            console.log(`Saving photo ${i+1}/${files.length}: ${f.filename}`);
 
                             const file=new File([f.blob],f.filename,{type:'image/jpeg'});
-                            if(navigator.canShare({files:[file]})){
+
+                            // Check if this specific file can be shared
+                            const canShareThis = navigator.canShare({files:[file]});
+                            console.log('Can share this file?', canShareThis);
+
+                            if(canShareThis){
                                 await navigator.share({
                                     files:[file],
                                     title:'Frontier Photo'
                                 });
                                 savedCount++;
+                                console.log('Successfully saved',f.filename);
                             }else{
                                 console.log('Cannot share file:',f.filename);
                             }
+
+                            // Small delay to show progress
+                            await new Promise(resolve=>setTimeout(resolve,100));
                         }catch(err){
                             if(err.name==='AbortError'){
                                 // User canceled - stop saving
                                 console.log('User canceled share at photo',i+1);
                                 break;
                             }
-                            console.log('Share failed for',f.filename,err);
+                            console.error('Share failed for',f.filename,err);
                             // Continue with next photo even if one fails
                         }
                     }
@@ -4990,10 +5002,34 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                     if(savedCount>0){
                         alert(`Successfully saved ${savedCount} photo${savedCount===1?'':'s'} to camera roll!`);
+                    }else{
+                        alert('No photos were saved. Please check console for errors.');
                     }
                 }else{
-                    // No Share API available
-                    alert('Share API not available on this device. Please use a different browser or device.');
+                    // No Share API available - download as files instead
+                    console.error('Share API not available. navigator.share:', navigator.share, 'navigator.canShare:', navigator.canShare);
+                    updateUploadProgress(0,'Downloading files...');
+
+                    // Download files one by one
+                    for(let i=0;i<files.length;i++){
+                        const f=files[i];
+                        const percent=Math.round(((i+1)/(files.length))*100);
+                        updateUploadProgress(percent,`Downloading ${i+1}/${files.length}: ${f.filename.substring(0,20)}...`);
+
+                        // Create download link
+                        const url=URL.createObjectURL(f.blob);
+                        const a=document.createElement('a');
+                        a.href=url;
+                        a.download=f.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(()=>URL.revokeObjectURL(url),100);
+
+                        // Delay between downloads
+                        await new Promise(resolve=>setTimeout(resolve,500));
+                    }
+
                     // Restore original settings and re-render
                     state.settings={...originalSettings};
                     state.currentIndex=originalIndex;
@@ -5001,6 +5037,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     renderPhoto();
                     hideUploadProgress();
                     setStatus('ready');
+                    alert(`${files.length} photos downloaded!`);
                 }
             }else{
                 // Desktop: Create ZIP download
