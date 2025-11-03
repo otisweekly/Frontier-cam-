@@ -3883,9 +3883,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 exportCanvas.toBlob(async b=>{
                     updateProgress(100,'Finalizing...');
                     const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    const file=new File([b],filename,{type:'image/jpeg'});
 
-                    if(isMobile&&navigator.share&&navigator.canShare){
-                        const file=new File([b],filename,{type:'image/jpeg'});
+                    if(isMobile&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
                         try{
                             await navigator.share({files:[file],title:'Frontier Photo'});
                             hideProgress();
@@ -3974,9 +3974,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 exportCanvas.toBlob(async b=>{
                     updateProgress(100,'Finalizing...');
                     const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    const file=new File([b],filename,{type:'image/jpeg'});
 
-                    if(isMobile&&navigator.share&&navigator.canShare){
-                        const file=new File([b],filename,{type:'image/jpeg'});
+                    if(isMobile&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
                         try{
                             await navigator.share({files:[file],title:'Frontier Photo'});
                             hideProgress();
@@ -4041,9 +4041,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         const blob=new Blob(chunks,{type:'video/webm'});
                         const filename=`frontier_${p.name.replace(/\.[^/.]+$/,'')}.webm`;
                         const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        const file=new File([blob],filename,{type:'video/webm'});
 
-                        if(isMobile&&navigator.share&&navigator.canShare){
-                            const file=new File([blob],filename,{type:'video/webm'});
+                        if(isMobile&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
                             try{
                                 await navigator.share({files:[file],title:'Frontier Video'});
                                 hideProgress();
