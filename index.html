@@ -113,8 +113,8 @@
         @keyframes indicatorPulse { 0%, 100% { transform:scale(1); box-shadow:0 0 6px rgba(56,151,175,0.8); } 50% { transform:scale(1.15); box-shadow:0 0 12px rgba(56,151,175,1), 0 0 18px rgba(56,151,175,0.6); } }
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
-        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; color:#000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:inherit; }
-        .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 4px 8px rgba(0,0,0,0.2); }
+        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; color:#000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:inherit; }
+        .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 4px 8px rgba(0,0,0,0.2); }
         #fileInput { display:none; }
         @media (pointer: coarse) { .upload-btn { touch-action:manipulation; } }
 
@@ -124,38 +124,37 @@
 
         .top-nav-bar { position:fixed; top:0; left:0; right:0; height:78px; background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); }
 
-        .gallery-icon { position:fixed; top:15px; left:15px; width:44px; height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
-        .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
+        .gallery-icon { position:fixed; top:15px; left:15px; width:44px; height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
+        .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .gallery-icon.active svg line { stroke:#fff !important; }
-        .gallery-icon:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .gallery-icon:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .gallery-icon svg { width:24px; height:24px; }
         .gallery-icon svg line { stroke:#000; }
 
-        .top-controls { position:fixed; top:15px; right:15px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
-        .top-controls .settings-btn { position:relative; width:44px; height:44px; padding:6px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; cursor:pointer; }
+        .top-controls { position:fixed; top:15px; right:15px; display:flex; gap:8px; z-index:150; touch-action:manipulation; }
+        .top-controls .settings-btn { position:relative; width:44px; height:44px; padding:6px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; cursor:pointer; will-change:transform, box-shadow; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
-        .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
+        .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
-        .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
         .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
+        .canvas-container.intensity-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
         .canvas-container.more-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
         .canvas-container.history-open { padding-top:calc(78px + 30vh); padding-bottom:15px; }
         .canvas-container.download-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
-        #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 340px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; }
-        #videoPreview { position:absolute; opacity:0; pointer-events:none; width:1px; height:1px; left:-9999px; }
-        #videoPreview::-webkit-media-controls { display:none !important; }
-        #videoPreview::-webkit-media-controls-enclosure { display:none !important; }
-        video::-webkit-media-controls { display:none !important; }
-        video::-webkit-media-controls-panel { display:none !important; }
-        video::-webkit-media-controls-play-button { display:none !important; }
-        video::-webkit-media-controls-timeline { display:none !important; }
-        #videoCanvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 330px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; display:none; cursor:pointer; transform-origin:center center; will-change:transform; }
+        #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 340px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; position:relative; z-index:100; touch-action: none; }
+
+
 
         .intensity-indicator { position:absolute; z-index:9999; pointer-events:none; opacity:0; transition:opacity 0s ease; font-family:'PP Neue Bit',monospace; color:#fff; font-size:72px; font-weight:700; text-align:center; text-shadow:0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9); transform:translate(-50%, -50%); }
         .intensity-indicator.active { opacity:1; }
+
+        /* Film strip inter-frame (black flash between images) */
+        .film-interframe { position:absolute; top:0; left:0; right:0; bottom:0; background:#000; z-index:50; opacity:0; pointer-events:none; transition:opacity 0.15s ease-out; }
+        .film-interframe.active { opacity:1; transition:opacity 0.05s ease-in; }
 
         .fullscreen-hint { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s ease; font-family:'PP Neue Bit',monospace; color:rgba(255,255,255,0.9); font-size:20px; font-weight:400; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,0.9); }
         body.fullscreen-preview .fullscreen-hint { opacity:1; }
@@ -172,11 +171,10 @@
         body.fullscreen-preview .status-light { display:none !important; }
         body.fullscreen-preview .canvas-container { padding:20px !important; background:#000 !important; }
         body.fullscreen-preview #canvas,
-        body.fullscreen-preview #videoCanvas { max-width:calc(100vw - 40px) !important; max-height:calc(100vh - 40px) !important; }
 
         .background-toggle-bar { position:fixed; bottom:calc(230px + env(safe-area-inset-bottom, 20px) + 20px); left:0; right:0; background:#6A6A6A; padding:8px 15px; display:none; align-items:center; justify-content:center; gap:8px; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); touch-action:manipulation; }
-        .bg-toggle-btn { width:40px; height:40px; border:3px solid #000; border-radius:4px; cursor:pointer; transition:all 0s; box-shadow:0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); position:relative; }
-        .bg-toggle-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2); }
+        .bg-toggle-btn { width:40px; height:40px; border:3px solid #000; border-radius:4px; cursor:pointer; transition:all 0s; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); position:relative; }
+        .bg-toggle-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.2); }
         .bg-toggle-btn.active::after { content:''; position:absolute; top:-3px; right:-3px; width:12px; height:12px; background:#3897AF; border:2px solid #fff; border-radius:50%; box-shadow:0 0 6px rgba(56,151,175,0.8); animation:indicatorGlow 2s ease-in-out infinite; }
         .bg-toggle-btn.white { background:#fff; }
         .bg-toggle-btn.grey { background:#4A4A4A; }
@@ -185,24 +183,25 @@
         .edit-footer { background:#6A6A6A; padding:10px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); display:flex; flex-direction:column; gap:10px; position:fixed; bottom:0; left:0; right:0; overflow-y:auto; box-sizing:border-box; touch-action:manipulation; z-index:150; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); transition:transform 0.3s ease; }
         .edit-footer.cmyk-open { transform:translateY(100%); }
         .edit-footer.brightness-open { transform:translateY(100%); }
+        .edit-footer.intensity-open { transform:translateY(100%); }
         .edit-footer.more-open { transform:translateY(100%); }
         .edit-footer.history-open { transform:translateY(100%); }
         .edit-footer.download-open { transform:translateY(100%); }
 
         #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
         #moreDialog.active { transform:translateY(0); opacity:1; }
-        .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
-        .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
+        .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #intensityControls.active { transform:translateY(0); opacity:1; }
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
-        .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
-        .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
+        .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .intensity-value-number { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:32px; font-weight:700; color:#fff; line-height:1; }
         .intensity-value-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:11px; color:#999; margin-top:2px; letter-spacing:1px; }
         .intensity-buttons { display:flex; gap:6px; }
-        .intensity-arrow-btn { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; }
-        .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
+        .intensity-arrow-btn { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; }
+        .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:4px; }
         #cmykToggle.has-settings { background:#3897AF !important; }
         #cmykToggle.has-settings img { filter:brightness(0) invert(1); }
         #cmykToggle.has-settings.active { background:#2A7B8F !important; }
@@ -217,45 +216,51 @@
         #downloadProgress { position:fixed; top:70px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:100; transform:translateY(calc(-100% - 70px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); }
         #downloadProgress.active { transform:translateY(0); opacity:1; }
         .progress-content { display:flex; align-items:center; gap:6px; }
-        .progress-bar-container { flex:1; height:44px; background:#4A4A4A; border:3px solid #000; border-radius:4px; overflow:hidden; position:relative; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.1); }
+        .progress-bar-container { flex:1; height:44px; background:#4A4A4A; border:3px solid #000; border-radius:4px; overflow:hidden; position:relative; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); }
         .progress-bar-fill { height:100%; background:#3897AF; transition:width 0.3s ease; box-shadow:inset 0 1px 0 rgba(255,255,255,0.3); position:relative; z-index:1; }
         .progress-text { position:absolute; top:50%; left:15px; right:15px; transform:translateY(-50%); font-family:'PP Neue Bit',monospace; font-size:20px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; z-index:2; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,0.5); }
-        .progress-cancel { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:44px; height:44px; font-family:'PP Neue Bit',monospace; font-size:20px; font-weight:700; cursor:pointer; transition:all 0s; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; display:flex; align-items:center; justify-content:center; }
-        .progress-cancel:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .progress-cancel { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:44px; height:44px; font-family:'PP Neue Bit',monospace; font-size:20px; font-weight:700; cursor:pointer; transition:all 0s; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; display:flex; align-items:center; justify-content:center; }
+        .progress-cancel:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         .footer-bottom { width:100%; }
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
-        .nav-btn { flex:1; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; }
-        .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .nav-btn { flex:1; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; }
+        .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .nav-btn.disabled { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); cursor:not-allowed; pointer-events:none; }
+        .nav-btn.disabled img { opacity:0.25; }
         #downloadBtn { font-size:20px; }
-        .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); }
-        .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
+        .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:4px 0; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px; transition:all 0s; will-change:transform, box-shadow; }
+        .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
+        .photo-counter > div { display:flex; flex-direction:column; align-items:center; }
+        .photo-counter .contact-icon { height:100%; width:auto; margin-right:10px; align-self:stretch; object-fit:contain; }
         .photo-counter-number { font-size:26px; font-weight:700; line-height:1; }
         .photo-counter-label { font-size:9px; font-weight:700; color:#666; margin-top:2px; letter-spacing:0.5px; }
-        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #0A5A6C; transition:all 0s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
-        .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
+        .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #222222; transition:all 0s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
+        .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #222222; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
-        .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #000; transition:all 0s; justify-content:center; align-items:center; }
+        .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #222222; transition:all 0s; justify-content:center; align-items:center; }
         .control-tab.active { background:#000; color:#fff; }
-        .control-tab:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
+        .control-tab:active { transform:translateY(1px); box-shadow:0 1px 0 #222222; }
         .control-tab-value { font-size:9px; font-weight:700; }
 
         .expanded-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
         .simple-controls { padding:8px; background:#B3B3B3; border:2px solid #000; border-radius:3px; }
 
-        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:57px; }
-        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:57px; }
-        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; position:relative; }
-        .preset-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.5); }
-        .preset-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .preset-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; min-height:57px; }
+        .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; min-height:57px; }
+        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; position:relative; }
+        .preset-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .preset-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .preset-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
 
-        .slider-btn { min-height:57px; background:#B3B3B3; border:3px solid #000; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; font-size:35px; font-weight:700; color:#000; }
-        .slider-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; }
+        .slider-btn { min-height:57px; background:#B3B3B3; border:3px solid #000; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; font-size:35px; font-weight:700; color:#000; }
+        .slider-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; transition:all 0s; }
+        .slider-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .slider-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .slider-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
 
@@ -270,8 +275,8 @@
         #guidePanel.active { transform:translateY(0); }
         .guide-logo { position:fixed; top:calc(env(safe-area-inset-top, 0px) + 20px); left:20px; width:160px; height:auto; z-index:251; }
         .guide-content { max-width:800px; margin:0 auto; font-family:'PP Neue Bit',monospace; font-size:28px; line-height:1.1; color:#3897AF; }
-        .guide-close { position:fixed; top:calc(env(safe-area-inset-top, 0px) + 20px); right:20px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; cursor:pointer; z-index:251; box-shadow:0 8px 0 #3A3A3A, inset 0 1px 0 rgba(255,255,255,0.1); color:#fff; font-family:'PP Neue Bit',monospace; }
-        .guide-close:active { transform:translateY(5px); box-shadow:0 3px 0 #3A3A3A, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .guide-close { position:fixed; top:calc(env(safe-area-inset-top, 0px) + 20px); right:20px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; cursor:pointer; z-index:251; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); color:#fff; font-family:'PP Neue Bit',monospace; }
+        .guide-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .guide-section { margin-bottom:30px; }
         .guide-section h3 { font-family:'PP Neue Bit',monospace; font-size:32px; margin:0 0 15px 0; color:#3897AF; text-transform:uppercase; }
         .guide-section p { font-family:'PP Neue Bit',monospace; font-size:28px; line-height:1.1; color:#999; margin:0 0 15px 0; }
@@ -283,16 +288,17 @@
         .history-item { display:flex; align-items:center; justify-content:space-between; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#fff; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.1); }
         .history-item.undone { opacity:0.5; }
         .history-item-text { flex:1; font-weight:700; }
-        .history-item-btn { width:32px; height:32px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; box-shadow:0 4px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; margin-left:6px; }
-        .history-item-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #000, inset 0 2px 3px rgba(0,0,0,0.3); }
+        .history-item-btn { width:32px; height:32px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; box-shadow:0 4px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; margin-left:6px; }
+        .history-item-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .history-item-btn img { width:20px; height:20px; }
-        .history-clear-all { margin-top:10px; padding:12px; background:#D4CEC8; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:16px; font-weight:700; cursor:pointer; text-align:center; color:#000; box-shadow:0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
-        .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #000, inset 0 2px 3px rgba(0,0,0,0.3); }
-        .history-done-btn { margin-top:10px; padding:14px; padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:#000; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; cursor:pointer; text-align:center; color:#fff; box-shadow:0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; }
-        .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5); }
-        .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+        .history-clear-all { margin-top:10px; padding:12px; background:#D4CEC8; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:16px; font-weight:700; cursor:pointer; text-align:center; color:#000; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
+        .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
+        .history-done-btn { margin-top:10px; padding:14px; padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:#000; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; cursor:pointer; text-align:center; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; }
+        .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
-        .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; }
+        .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; transition:all 0s; }
+        .cmyk-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .cmyk-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .cmyk-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .cmyk-color-bar { height:10px; border-radius:0 0 3px 3px; border:2px solid rgba(0,0,0,0.2); }
@@ -305,23 +311,23 @@
         .cmyk-color-bar.shadows { background:#000; }
         .cmyk-color-bar.highlights { background:#000; }
         .cmyk-arrows { display:flex; gap:4px; }
-        .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
-        .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
+        .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
         .contact-sheet-header { position:sticky; top:0; background:#000; padding:20px 15px 15px; display:flex; flex-direction:column; gap:15px; border-bottom:2px solid #333; z-index:10; align-items:center; }
         .contact-sheet-header-top { display:flex; justify-content:center; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:200px; height:auto; }
-        .contact-sheet-close { position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:20px; width:44px; height:44px; padding:6px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #3A3A3A, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
-        .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #3A3A3A, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-close { position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:20px; width:44px; height:44px; padding:6px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
+        .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close img { width:24px; height:24px; object-fit:contain; filter:brightness(0) invert(1); }
         .contact-sheet-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:0 15px; }
-        .contact-sheet-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; padding:8px 16px; height:44px; color:#fff; box-shadow:0 8px 0 #3A3A3A, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; display:flex; align-items:center; justify-content:center; }
-        .contact-sheet-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #3A3A3A, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; padding:8px 16px; height:44px; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; display:flex; align-items:center; justify-content:center; }
+        .contact-sheet-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-btn.add-btn { width:44px; padding:6px; font-size:28px; }
-        .contact-sheet-btn.select-mode { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .contact-sheet-btn.select-mode:active { transform:translateY(5px); box-shadow:0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-btn.select-mode { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-btn.select-mode:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-title { display:none; }
         .contact-sheet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:15px; padding:15px; padding-bottom:calc(90px + env(safe-area-inset-bottom,0px)); }
         .contact-sheet-item { background:#1a1a1a; border:2px solid #333; border-radius:4px; overflow:hidden; cursor:pointer; transition:all 0s; position:relative; }
@@ -333,8 +339,8 @@
         .contact-sheet-label { padding:10px 8px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:16px; color:#999; line-height:1.2; background:#1a1a1a; }
         .contact-sheet-filename { display:flex; align-items:center; justify-content:space-between; gap:6px; color:#fff; font-weight:700; margin-bottom:2px; }
         .contact-sheet-filename-text { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:left; }
-        .contact-sheet-edit-btn { width:24px; height:24px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0s; box-shadow:0 4px 0 #555, inset 0 1px 0 rgba(255,255,255,0.3); }
-        .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #555, inset 0 2px 3px rgba(0,0,0,0.2); }
+        .contact-sheet-edit-btn { width:24px; height:24px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0s; box-shadow:0 4px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); }
+        .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.2); }
         .contact-sheet-edit-btn svg { width:14px; height:14px; }
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
         .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#3897AF; text-align:center; font-weight:700; }
@@ -351,7 +357,6 @@
         body.standalone-mode .edit-footer { padding-bottom:10px !important; }
         body.standalone-mode .canvas-container { padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 30px) !important; padding-top:calc(78px + env(safe-area-inset-top, 0px)) !important; }
         body.standalone-mode #canvas { max-height:calc(100vh - 340px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 30px) !important; }
-        body.standalone-mode #videoCanvas { max-height:calc(100vh - 330px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 30px) !important; }
         body.standalone-mode .background-toggle-bar { bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 30px + 20px) !important; }
         body.standalone-mode #historyPanel { max-height:calc(100vh - 78px - env(safe-area-inset-top, 0px) - 230px - env(safe-area-inset-bottom, 0px) - 30px - 20px) !important; }
         body.standalone-mode #guidePanel { padding-bottom:20px !important; }
@@ -371,15 +376,14 @@
             </div>
         </div>
         <div>
-            <div class="upload-label">UPLOAD PHOTO OR VIDEO</div>
+            <div class="upload-label">UPLOAD PHOTO</div>
             <button class="upload-btn" onclick="document.getElementById('fileInput').click();"><span>≡</span></button>
-            <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+            <input type="file" id="fileInput" accept="image/*" multiple>
         </div>
     </div>
 
     <div id="editSection">
         <div class="top-nav-bar"></div>
-        <div class="status-light green active" id="compareIndicator" style="position:fixed;top:20px;left:70px;z-index:151;border-color:#000;"></div>
         <div class="fullscreen-hint" id="fullscreenHint" style="display:none;">
             <img src="Shrink.svg" alt="Exit" style="height:16px;width:auto;vertical-align:middle;margin-right:8px;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.9));">
             Fullscreen hint (disabled)
@@ -393,12 +397,12 @@
             </svg>
         </button>
         <div class="top-controls">
-            <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
-            <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
-            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
-            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
-            <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
-            <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
+            <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
+            <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
+            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
+            <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
+            <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
         <div id="downloadProgress">
             <div class="progress-content">
@@ -411,9 +415,8 @@
         </div>
         <div class="canvas-container" id="canvasContainer">
             <canvas id="canvas"></canvas>
-            <canvas id="videoCanvas"></canvas>
-            <video id="videoPreview" playsinline autoplay loop muted></video>
             <div class="intensity-indicator" id="intensityIndicator">100%</div>
+            <div class="film-interframe" id="filmInterframe"></div>
         </div>
         <div class="background-toggle-bar">
             <button class="bg-toggle-btn grey active" onclick="setBackground('grey')" id="bgGrey" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
@@ -518,49 +521,43 @@
         </div>
         <div id="historyPanel">
             <div class="history-list" id="historyList"></div>
-            <button class="history-clear-all" onclick="clearAllHistory()" ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #000, inset 0 2px 3px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';">CLEAR ALL</button>
-            <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
+            <button class="history-clear-all" onclick="clearAllHistory()" ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';">CLEAR ALL</button>
+            <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
-                <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
-                <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
-                <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
-            </div>
-            <div class="profile-buttons" id="videoProfiles" style="display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                    <button class="slider-btn" onclick="adjustBloom(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
+                    <button class="slider-btn" onclick="adjustBloom(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
                     <div class="slider-value" id="bloomValueBig" onclick="editCounter('bloom')">
                         <div class="slider-value-number">0</div>
                         <div class="slider-value-label">BLOOM</div>
                     </div>
-                    <button class="slider-btn" onclick="adjustBloom(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
+                    <button class="slider-btn" onclick="adjustBloom(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                    <button class="slider-btn" onclick="adjustGrain(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
+                    <button class="slider-btn" onclick="adjustGrain(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
                     <div class="slider-value" id="grainValueBig" onclick="editCounter('grain')">
                         <div class="slider-value-number">0</div>
                         <div class="slider-value-label">GRAIN</div>
                     </div>
-                    <button class="slider-btn" onclick="adjustGrain(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
+                    <button class="slider-btn" onclick="adjustGrain(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
                 </div>
             </div>
             <div class="footer-bottom">
                 <div class="nav-controls">
-                    <button class="nav-btn gallery" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">
-                        <img src="Contact.svg" style="width:28px;height:28px;" alt="Contact Sheet">
-                    </button>
-                    <div class="photo-counter" onclick="frameCounterOptions()">
-                        <div class="photo-counter-number" id="photoCounter">1/36</div>
-                        <div class="photo-counter-label">UPLOADS</div>
+                    <div class="photo-counter" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.15)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8)';">
+                        <img src="Contact.svg" class="contact-icon" alt="Contact Sheet">
+                        <div>
+                            <div class="photo-counter-number" id="photoCounter">1/36</div>
+                        </div>
                     </div>
-                    <button class="nav-btn" onclick="prevPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
-                    <button class="nav-btn" onclick="nextPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #555, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #555, inset 0 1px 0 rgba(255,255,255,0.1)';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
+                    <button id="prevBtn" class="nav-btn" onclick="prevPhoto()" ontouchstart="if(!this.classList.contains('disabled')){this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';}" ontouchend="if(!this.classList.contains('disabled')){this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';}"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
+                    <button id="nextBtn" class="nav-btn" onclick="nextPhoto()" ontouchstart="if(!this.classList.contains('disabled')){this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';}" ontouchend="if(!this.classList.contains('disabled')){this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';}"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
             </div>
         </div>
@@ -583,7 +580,7 @@
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
     </div>
-    <input type="file" id="addMoreInput" accept="image/*,video/*" multiple style="display:none;">
+    <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
 
     <div id="moreDialog">
         <button class="more-dialog-btn" onclick="copyToClipboard()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">COPY</button>
@@ -594,14 +591,12 @@
 
     <div id="intensityControls">
         <div class="intensity-slider-container">
+            <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
             <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
                 <div class="intensity-value-number">0</div>
                 <div class="intensity-value-label">INTENSITY</div>
             </div>
-            <div class="intensity-buttons">
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
-            </div>
+            <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
         </div>
     </div>
 
@@ -701,7 +696,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -787,199 +782,13 @@
         },1000);
 
         // Canvas tap handling
-        function handleCanvasTap(e){if(state.videoMode)return;const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
+        function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
-        // Video touch handling
-        let videoTouchState={tapCount:0,tapTimer:null};
-        let videoGesturesSetup=false;
-        let videoZoomState={lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
+        // Single tap compare - shows original image for 1 second (ONLY when zoomed in)
+        function singleTapCompare(){if(state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(state.tapState.comparing){renderPhoto();state.tapState.comparing=false;}},1000);}
 
-        function setupVideoTouchHandling(canvas){
-            if(videoGesturesSetup)return;
-            videoGesturesSetup=true;
-            const canvasContainer=document.getElementById('canvasContainer');
-            let videoTouchStartTarget=null;
-            let videoLastTapX=0,videoLastTapY=0;
-            let lastVideoTouchEndTime=0; // For event deduplication
-
-            const handleVideoTouchStart=(e)=>{
-                if(!state.videoMode)return;
-                const video=document.getElementById('videoPreview');
-                if(!video)return;
-
-                // Determine if tap is on canvas or background
-                const touch=e.touches[0];
-                const canvasRect=canvas.getBoundingClientRect();
-                const tappedOnCanvas=touch.clientX>=canvasRect.left&&touch.clientX<=canvasRect.right&&touch.clientY>=canvasRect.top&&touch.clientY<=canvasRect.bottom;
-                videoTouchStartTarget=tappedOnCanvas?'canvas':'container';
-
-                // Store tap coordinates for zoom centering
-                videoLastTapX=touch.clientX;
-                videoLastTapY=touch.clientY;
-
-                if(e.touches.length===2){
-                    // Pinch zoom
-                    e.preventDefault();
-                    videoZoomState.isPinching=true;
-                    const dx=e.touches[0].clientX-e.touches[1].clientX;
-                    const dy=e.touches[0].clientY-e.touches[1].clientY;
-                    videoZoomState.lastDistance=Math.sqrt(dx*dx+dy*dy);
-                }else if(e.touches.length===1){
-                    if(zoomState.scale>1){
-                        // Pan when zoomed
-                        videoZoomState.lastTouchX=e.touches[0].clientX;
-                        videoZoomState.lastTouchY=e.touches[0].clientY;
-                    }
-                }
-            };
-
-            const handleVideoTouchMove=(e)=>{
-                if(!state.videoMode)return;
-                const video=document.getElementById('videoPreview');
-                if(!video)return;
-
-                if(e.touches.length===2&&videoZoomState.isPinching){
-                    // Handle pinch zoom
-                    e.preventDefault();
-                    const dx=e.touches[0].clientX-e.touches[1].clientX;
-                    const dy=e.touches[0].clientY-e.touches[1].clientY;
-                    const distance=Math.sqrt(dx*dx+dy*dy);
-                    if(videoZoomState.lastDistance>0){
-                        const scale=distance/videoZoomState.lastDistance;
-                        zoomState.scale=Math.max(1,Math.min(4,zoomState.scale*scale));
-                    }
-                    videoZoomState.lastDistance=distance;
-                    applyTransform(canvas);
-                }else if(e.touches.length===1&&zoomState.scale>1){
-                    // Handle pan when zoomed
-                    e.preventDefault();
-                    if(!videoZoomState.isPanning){
-                        videoZoomState.isPanning=true;
-                    }
-                    const deltaX=e.touches[0].clientX-videoZoomState.lastTouchX;
-                    const deltaY=e.touches[0].clientY-videoZoomState.lastTouchY;
-                    zoomState.x+=deltaX;
-                    zoomState.y+=deltaY;
-                    videoZoomState.lastTouchX=e.touches[0].clientX;
-                    videoZoomState.lastTouchY=e.touches[0].clientY;
-                    applyTransform(canvas);
-                }
-            };
-
-            const handleVideoTouchEnd=(e)=>{
-                if(!state.videoMode)return;
-                const video=document.getElementById('videoPreview');
-                if(!video)return;
-
-                if(e.touches.length<2){
-                    videoZoomState.isPinching=false;
-                    videoZoomState.lastDistance=0;
-                }
-                if(e.touches.length===0){
-                    videoZoomState.isPanning=false;
-
-                    // Prevent double-firing tap counting from event bubbling (canvas -> container)
-                    const now=Date.now();
-                    if(now-lastVideoTouchEndTime<50){
-                        console.log('Ignoring duplicate video tap (bubbled event)');
-                        return;
-                    }
-                    lastVideoTouchEndTime=now;
-
-                    // Handle tap (play/pause/zoom/fullscreen)
-                    videoTouchState.tapCount++;
-                    if(videoTouchState.tapTimer)clearTimeout(videoTouchState.tapTimer);
-
-                    if(videoTouchState.tapCount===1){
-                        videoTouchState.tapTimer=setTimeout(()=>{
-                            if(state.fullscreenPreview){
-                                // In fullscreen preview, single tap cycles background
-                                cycleCanvasBackground();
-                            }else if(videoTouchStartTarget==='container'){
-                                // Tapping container background cycles colors
-                                cycleCanvasBackground();
-                            }else{
-                                // Tapping video plays/pauses
-                                toggleVideoPlayPause();
-                            }
-                            videoTouchState.tapCount=0;
-                        },300);
-                    }else if(videoTouchState.tapCount===2){
-                        clearTimeout(videoTouchState.tapTimer);
-                        if(state.fullscreenPreview){
-                            // In fullscreen preview, double tap exits
-                            toggleFullscreenPreview();
-                        }else if(videoTouchStartTarget==='container'){
-                            // Double tap container enters fullscreen
-                            toggleFullscreenPreview();
-                        }else{
-                            // Double tap video toggles zoom (like photos)
-                            if(zoomState.scale>1){
-                                console.log('Zooming OUT video to 1x');
-                                resetZoom(canvas);
-                            }else{
-                                console.log('Zooming IN video to 2.5x - using stored tap coords:',videoLastTapX,videoLastTapY);
-                                const canvasRect=canvas.getBoundingClientRect();
-
-                                // Fixed 2.5x zoom like photos
-                                zoomState.scale=2.5;
-                                console.log('Setting video scale to:',zoomState.scale);
-
-                                // Calculate center point relative to canvas using stored coordinates
-                                const tapX=videoLastTapX-canvasRect.left;
-                                const tapY=videoLastTapY-canvasRect.top;
-                                const canvasCenterX=canvasRect.width/2;
-                                const canvasCenterY=canvasRect.height/2;
-
-                                // Pan to center the tap point
-                                zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
-                                zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
-
-                                console.log('Applying video transform...');
-                                applyTransform(canvas);
-                                console.log('Video zoom complete! New scale:',zoomState.scale);
-                            }
-                        }
-                        videoTouchState.tapCount=0;
-                    }
-
-                    if(zoomState.scale<1.1){
-                        resetZoom(canvas);
-                    }
-                }
-                applyTransform(canvas);
-            };
-
-            const handleVideoTouchCancel=()=>{
-                if(!state.videoMode)return;
-                videoZoomState.isPinching=false;
-                videoZoomState.isPanning=false;
-                applyTransform(canvas);
-            };
-
-            // Attach all video touch handlers to both canvas and container
-            canvas.addEventListener('touchstart',handleVideoTouchStart);
-            canvas.addEventListener('touchmove',handleVideoTouchMove);
-            canvas.addEventListener('touchend',handleVideoTouchEnd);
-            canvas.addEventListener('touchcancel',handleVideoTouchCancel);
-
-            canvasContainer.addEventListener('touchstart',handleVideoTouchStart);
-            canvasContainer.addEventListener('touchmove',handleVideoTouchMove);
-            canvasContainer.addEventListener('touchend',handleVideoTouchEnd);
-            canvasContainer.addEventListener('touchcancel',handleVideoTouchCancel);
-        }
-
-        function toggleVideoPlayPause(){const video=document.getElementById('videoPreview');if(video.paused){video.play();state.videoPlaying=true;}else{video.pause();state.videoPlaying=false;}}
-
-        function startVideoCompare(){state.videoMode=false;requestAnimationFrame(()=>{setupVideoProcessing(state.photos[state.currentIndex].video);state.videoMode=true;});}
-
-        function endVideoCompare(){}
-
-        // Single tap compare - shows original image for 1 second (center 20% zone only), or while holding
-        function singleTapCompare(){if(state.videoMode||state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('green','pulsing');indicator.classList.add('orange','blinking');}const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(state.tapState.comparing){if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;}},1000);}
-
-        // End compare view (called on touchend when holding in center zone)
-        function endCompare(){if(!state.tapState.comparing)return;const indicator=document.getElementById('compareIndicator');if(indicator){indicator.classList.remove('orange','blinking');indicator.classList.add('green');}renderPhoto();state.tapState.comparing=false;}
+        // End compare view (called on touchend when releasing tap)
+        function endCompare(){if(!state.tapState.comparing)return;renderPhoto();state.tapState.comparing=false;}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -999,6 +808,33 @@
 
         function resetZoom(canvas){zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};applyTransform(canvas);}
 
+        // Fullscreen distraction-free viewing mode
+        function enterFullscreenMode(){
+            state.fullscreenPreview=true;
+            document.querySelector('.top-nav-bar').style.display='none';
+            document.querySelector('.edit-footer').style.display='none';
+            document.querySelector('.top-controls').style.display='none';
+            document.body.style.background='#000';
+            const canvasContainer=document.getElementById('canvasContainer');
+            canvasContainer.style.paddingTop='0';
+            canvasContainer.style.paddingBottom='0';
+            canvasContainer.style.background='#000';
+            console.log('Entered fullscreen mode');
+        }
+
+        function exitFullscreenMode(){
+            state.fullscreenPreview=false;
+            document.querySelector('.top-nav-bar').style.display='flex';
+            document.querySelector('.edit-footer').style.display='grid';
+            document.querySelector('.top-controls').style.display='flex';
+            document.body.style.background='#6A6A6A';
+            const canvasContainer=document.getElementById('canvasContainer');
+            canvasContainer.style.paddingTop='calc(78px + 8px)';
+            canvasContainer.style.paddingBottom='calc(230px + env(safe-area-inset-bottom, 0px) + 15px)';
+            canvasContainer.style.background='#4A4A4A';
+            console.log('Exited fullscreen mode');
+        }
+
         function applyTransform(canvas){const maxX=canvas.offsetWidth*(zoomState.scale-1)/2;const maxY=canvas.offsetHeight*(zoomState.scale-1)/2;zoomState.x=Math.max(-maxX,Math.min(maxX,zoomState.x));zoomState.y=Math.max(-maxY,Math.min(maxY,zoomState.y));canvas.style.transform=`translate(${zoomState.x}px, ${zoomState.y}px) scale(${zoomState.scale})`;canvas.style.transition=zoomState.isPinching||zoomState.isPanning?'none':'transform 0.3s ease';}
 
         function setupCanvasGestures(canvas){
@@ -1010,7 +846,6 @@
             let lastTouchEndTime=0; // For event deduplication
 
             const handleTouchStart=(e)=>{
-                if(state.videoMode)return;
                 console.log('Touch start, touches:',e.touches.length);
 
                 // Determine if tap is on canvas image or container background
@@ -1032,6 +867,13 @@
                     const dx=e.touches[0].clientX-e.touches[1].clientX;
                     const dy=e.touches[0].clientY-e.touches[1].clientY;
                     zoomState.lastDistance=Math.sqrt(dx*dx+dy*dy);
+
+                    // Store the center point of the pinch
+                    zoomState.pinchCenterX=(e.touches[0].clientX+e.touches[1].clientX)/2;
+                    zoomState.pinchCenterY=(e.touches[0].clientY+e.touches[1].clientY)/2;
+
+                    // Store the initial scale
+                    zoomState.initialScale=zoomState.scale;
                 }else if(e.touches.length===1){
                     if(zoomState.scale>1){
                         zoomState.lastTouchX=e.touches[0].clientX;
@@ -1040,12 +882,17 @@
                         // Store touch start for tap zone detection
                         state.intensityTapState.startX=e.touches[0].clientX;
                         state.intensityTapState.startY=e.touches[0].clientY;
+                        // Initialize swipe tracking (for image navigation when not zoomed)
+                        state.swipeState.startX=e.touches[0].clientX;
+                        state.swipeState.startY=e.touches[0].clientY;
+                        state.swipeState.currentX=e.touches[0].clientX;
+                        state.swipeState.currentY=e.touches[0].clientY;
+                        state.swipeState.swiping=false;
                     }
                 }
             };
 
             const handleTouchMove=(e)=>{
-                if(state.videoMode)return;
 
                 if(e.touches.length===2&&zoomState.isPinching){
                     e.preventDefault();
@@ -1053,8 +900,23 @@
                     const dy=e.touches[0].clientY-e.touches[1].clientY;
                     const distance=Math.sqrt(dx*dx+dy*dy);
                     if(zoomState.lastDistance>0){
+                        const oldScale=zoomState.scale;
                         const scale=distance/zoomState.lastDistance;
                         zoomState.scale=Math.max(1,Math.min(4,zoomState.scale*scale));
+
+                        // Calculate current pinch center
+                        const currentPinchCenterX=(e.touches[0].clientX+e.touches[1].clientX)/2;
+                        const currentPinchCenterY=(e.touches[0].clientY+e.touches[1].clientY)/2;
+
+                        // Get canvas position and size
+                        const canvasRect=canvas.getBoundingClientRect();
+                        const canvasCenterX=canvasRect.left+canvasRect.width/2;
+                        const canvasCenterY=canvasRect.top+canvasRect.height/2;
+
+                        // Adjust pan to keep the pinch center point fixed
+                        const scaleDiff=zoomState.scale-oldScale;
+                        zoomState.x+=(currentPinchCenterX-canvasCenterX)*scaleDiff;
+                        zoomState.y+=(currentPinchCenterY-canvasCenterY)*scaleDiff;
                     }
                     zoomState.lastDistance=distance;
                     applyTransform(canvas);
@@ -1070,12 +932,22 @@
                     zoomState.lastTouchX=e.touches[0].clientX;
                     zoomState.lastTouchY=e.touches[0].clientY;
                     applyTransform(canvas);
+                }else if(e.touches.length===1&&zoomState.scale<=1&&!state.tapState.comparing){
+                    // Track swipe for image navigation (horizontal swipe when not zoomed)
+                    state.swipeState.currentX=e.touches[0].clientX;
+                    state.swipeState.currentY=e.touches[0].clientY;
+                    const deltaX=state.swipeState.currentX-state.swipeState.startX;
+                    const deltaY=state.swipeState.currentY-state.swipeState.startY;
+                    // Detect horizontal swipe (horizontal movement > vertical movement and > 30px to avoid blocking taps)
+                    if(Math.abs(deltaX)>Math.abs(deltaY)&&Math.abs(deltaX)>30){
+                        state.swipeState.swiping=true;
+                        // Optional: Add visual feedback or prevent page scroll
+                        e.preventDefault();
+                    }
                 }
-                // Swipe intensity adjustment removed - now using tap left/right
             };
 
             const handleTouchEnd=(e)=>{
-                if(state.videoMode)return;
 
                 // Prevent double-firing from event bubbling (canvas -> container)
                 const now=Date.now();
@@ -1099,35 +971,72 @@
                     // If user was holding to view original, end it immediately on release
                     if(state.tapState.comparing){
                         endCompare();
+                        state.swipeState.swiping=false; // Reset swipe state
                         return;
                     }
 
-                    // Handle regular taps only if not panning
+                    // Check for swipe navigation (when not zoomed)
+                    let wasSwipe=false;
+                    if(state.swipeState.swiping&&zoomState.scale<=1){
+                        const deltaX=state.swipeState.currentX-state.swipeState.startX;
+                        const swipeThreshold=100; // Minimum swipe distance in pixels
+                        if(Math.abs(deltaX)>=swipeThreshold){
+                            console.log('Swipe detected, deltaX:',deltaX);
+                            if(deltaX>0){
+                                // Swipe right = go to previous image (film moves right)
+                                if(state.currentIndex>0){
+                                    prevPhoto();
+                                }
+                            }else{
+                                // Swipe left = go to next image (film moves left)
+                                if(state.currentIndex<state.photos.length-1){
+                                    nextPhoto();
+                                }
+                            }
+                            wasSwipe=true;
+                        }
+                    }
+                    // Always reset swipe state after checking
+                    state.swipeState.swiping=false;
+
+                    if(wasSwipe)return; // Don't process as tap if it was a swipe
+
+                    // Handle regular taps (swipe state now always false)
+                    console.log('Touch end - tap count before:',state.tapState.count,'panning:',zoomState.isPanning);
                     if(!zoomState.isPanning){
                         state.tapState.count++;
                         if(state.tapState.timer)clearTimeout(state.tapState.timer);
+                        console.log('Touch end - tap count after:',state.tapState.count);
 
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
-                                // Single tap to view original - ONLY when NOT zoomed in
-                                if(zoomState.scale<=1){
-                                    console.log('Single tap detected (not zoomed), showing original');
+                                // Single tap to view original - ONLY when zoomed in
+                                if(zoomState.scale>1&&!state.panelJustClosed&&!zoomState.justZoomed){
+                                    console.log('Single tap detected (zoomed in), showing original');
                                     singleTapCompare();
                                 }else{
-                                    console.log('Single tap ignored (zoomed in)');
+                                    console.log('Single tap ignored (not zoomed or just zoomed)');
                                 }
                                 state.tapState.count=0;
-                            },250); // Reduced from 300ms to 250ms for snappier feel
+                            },350); // Long enough for comfortable double-tapping
                         }else if(state.tapState.count===2){
                             clearTimeout(state.tapState.timer);
-                            // Double tap to zoom to fill/cover
+                            e.preventDefault(); // Prevent browser double-tap zoom
+                            console.log('Double tap detected! Scale:',zoomState.scale);
+                            // Double tap: Simple zoom in/out
                             const p=state.photos[state.currentIndex];
-                            if(p&&!p.isVideo){
+                            if(p){
                                 if(zoomState.scale>1){
-                                    // Zoom out
+                                    // Already zoomed: zoom out
+                                    console.log('Zooming out');
+                                    zoomState.justZoomed=true;
+                                    setTimeout(()=>{zoomState.justZoomed=false;},400);
                                     resetZoom(canvas);
                                 }else{
-                                    // Zoom in to 2.5x to fill/cover canvas
+                                    // Not zoomed: zoom in to 2.5x centered on tap point
+                                    console.log('Zooming in to 2.5x at',lastTapX,lastTapY);
+                                    zoomState.justZoomed=true;
+                                    setTimeout(()=>{zoomState.justZoomed=false;},400);
                                     const canvasRect=canvas.getBoundingClientRect();
                                     zoomState.scale=2.5;
 
@@ -1143,18 +1052,23 @@
 
                                     applyTransform(canvas);
                                 }
+                            }else{
+                                console.log('Double tap blocked - no photo');
                             }
                             state.tapState.count=0;
                         }
+                    }else{
+                        console.log('Tap blocked - was panning');
                     }
                 }
                 applyTransform(canvas);
             };
 
             const handleTouchCancel=(e)=>{
-                if(state.videoMode)return;
                 zoomState.isPinching=false;
                 zoomState.isPanning=false;
+                // Reset swipe state on touch cancel
+                state.swipeState.swiping=false;
                 // Clear intensity indicator if active
                 const indicator=document.getElementById('intensityIndicator');
                 if(indicator.classList.contains('active')){
@@ -1187,26 +1101,39 @@
 
             canvas.addEventListener('click',(e)=>{
                 clickCount++;
+                console.log('Desktop click - count:',clickCount);
 
                 if(clickTimer)clearTimeout(clickTimer);
 
                 if(clickCount===1){
                     clickTimer=setTimeout(()=>{
-                        // Single click - view original
-                        singleTapCompare();
+                        // Single click - view original (only when zoomed in)
+                        if(zoomState.scale>1&&!state.panelJustClosed&&!zoomState.justZoomed){
+                            console.log('Single click - showing original');
+                            singleTapCompare();
+                        }else{
+                            console.log('Single click ignored - not zoomed or just zoomed');
+                        }
                         clickCount=0;
-                    },300);
+                    },350);
                 }else if(clickCount===2){
                     clearTimeout(clickTimer);
                     clickCount=0;
-                    // Double click - zoom to fill
+                    console.log('Double click detected! Scale:',zoomState.scale);
+                    // Double click: Simple zoom in/out
                     const p=state.photos[state.currentIndex];
-                    if(p&&!p.isVideo){
+                    if(p){
                         if(zoomState.scale>1){
-                            // Zoom out
+                            // Already zoomed: zoom out
+                            console.log('Desktop zooming out');
+                            zoomState.justZoomed=true;
+                            setTimeout(()=>{zoomState.justZoomed=false;},400);
                             resetZoom(canvas);
                         }else{
-                            // Zoom in to 2.5x
+                            // Not zoomed: zoom in to 2.5x centered on click point
+                            console.log('Desktop zooming in to 2.5x');
+                            zoomState.justZoomed=true;
+                            setTimeout(()=>{zoomState.justZoomed=false;},400);
                             const canvasRect=canvas.getBoundingClientRect();
                             zoomState.scale=2.5;
 
@@ -1222,6 +1149,8 @@
 
                             applyTransform(canvas);
                         }
+                    }else{
+                        console.log('Double click blocked - no photo');
                     }
                 }
             });
@@ -1273,6 +1202,63 @@
                     downsampled.src = blobUrl;
                 }, 'image/jpeg', 0.95);
             });
+        }
+
+        // Create lightweight preview image for instant interactive editing (max 640px for ultra-fast response)
+        function createPreviewImage(sourceImg) {
+            return new Promise(resolve => {
+                const w = sourceImg.width;
+                const h = sourceImg.height;
+                const maxPreviewDim = 640;  // Smaller = faster processing
+
+                const aspectRatio = w / h;
+                let newW, newH;
+                if (w > h) {
+                    newW = Math.min(w, maxPreviewDim);
+                    newH = newW / aspectRatio;
+                } else {
+                    newH = Math.min(h, maxPreviewDim);
+                    newW = newH * aspectRatio;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = newW;
+                canvas.height = newH;
+                const ctx = canvas.getContext('2d', {alpha: false});
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'medium';
+                ctx.drawImage(sourceImg, 0, 0, newW, newH);
+
+                canvas.toBlob((blob) => {
+                    const blobUrl = URL.createObjectURL(blob);
+                    const preview = new Image();
+                    preview.onload = () => resolve(preview);
+                    preview.src = blobUrl;
+                }, 'image/jpeg', 0.85);
+            });
+        }
+
+        // Preview mode management for instant button responsiveness
+        // Defer rendering until after UI updates have painted (makes buttons feel instant)
+        function deferredRender() {
+            // Single RAF for instant feedback
+            requestAnimationFrame(() => {
+                if (!state.videoMode) renderPhoto();
+            });
+        }
+
+        function enablePreviewMode() {
+            state.usePreview = true;
+            // Clear any existing debounce timer
+            if (state.previewDebounceTimer) {
+                clearTimeout(state.previewDebounceTimer);
+            }
+            // Schedule return to full quality after 50ms of no adjustments (instant feedback)
+            state.previewDebounceTimer = setTimeout(() => {
+                state.usePreview = false;
+                console.log('Switching to full quality');
+                deferredRender();
+            }, 50);
         }
 
         // =====================================================================
@@ -1370,8 +1356,13 @@
                         onProgress(fileNum, totalFiles, file.name);
                     }
 
-                    // Process file based on type
+                    // Process file based on type - skip videos
                     const isVideo = file.type.startsWith('video/');
+                    if (isVideo) {
+                        console.log('Skipping video:', file.name, '(video support removed)');
+                        continue; // Skip videos
+                    }
+
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     const defaultSettings = {
                         profile: 'none',
@@ -1384,27 +1375,7 @@
                         black: 0
                     };
 
-                    if (isVideo) {
-                        console.log('Loading video:', file.name);
-                        const { video, blobUrl } = await loadVideoFromBlob(file);
-                        console.log('Video loaded, creating photoData');
-
-                        const photoData = {
-                            name: file.name,
-                            displayName: generateDisplayName('none', absoluteIndex, fileExtension),
-                            video: video,
-                            videoUrl: blobUrl,
-                            isVideo: true,
-                            uploadTime: new Date(),
-                            settings: { ...defaultSettings },
-                            fileExtension: fileExtension
-                        };
-
-                        results.push(photoData);
-                        if (onFileComplete) onFileComplete(photoData);
-                        console.log('Video photoData created and callback called');
-
-                    } else {
+                    {
                         console.log('Loading image:', file.name);
                         // Load image using Blob URL
                         const { img, blobUrl } = await loadImageFromBlob(file);
@@ -1412,12 +1383,17 @@
 
                         // Downsample if needed (but keep original reference)
                         const displayImg = await downsampleImage(img);
-                        console.log('Downsample complete, creating photoData');
+                        console.log('Downsample complete, creating preview for instant editing');
+
+                        // Create lightweight preview for instant interactive editing
+                        const previewImg = await createPreviewImage(displayImg);
+                        console.log('Preview created, creating photoData');
 
                         const photoData = {
                             name: file.name,
                             displayName: generateDisplayName('none', absoluteIndex, fileExtension),
                             image: displayImg,
+                            preview: previewImg,  // Lightweight preview for instant editing
                             original: img,
                             originalBlobUrl: blobUrl,  // Keep reference for cleanup
                             isVideo: false,
@@ -1429,7 +1405,7 @@
                         results.push(photoData);
                         if (onFileComplete) onFileComplete(photoData);
                         console.log('Image photoData created and callback called');
-                    }
+                    } // End image processing
 
                     // Small delay for cleanup/GC
                     await new Promise(resolve => setTimeout(resolve, 10));
@@ -1604,6 +1580,7 @@
                     state.settings = { ...state.photos[0].settings };
                     console.log('Rendering first photo');
                     renderPhoto();
+                    updateNavButtons();
                     setStatus('ready');
                 } else {
                     console.log('No photos loaded, returning to upload screen');
@@ -1620,15 +1597,75 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;if(state.settings.brightness===undefined)state.settings.brightness=0;if(state.settings.contrast===undefined)state.settings.contrast=0;if(state.settings.shadows===undefined)state.settings.shadows=0;if(state.settings.highlights===undefined)state.settings.highlights=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;if(state.settings.brightness===undefined)state.settings.brightness=0;if(state.settings.contrast===undefined)state.settings.contrast=0;if(state.settings.shadows===undefined)state.settings.shadows=0;if(state.settings.highlights===undefined)state.settings.highlights=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
 
-        function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
-        function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
-        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+        // Film strip inter-frame transition (black flash between images)
+        function showFilmInterframe() {
+            const filmInterframe = document.getElementById('filmInterframe');
+            filmInterframe.classList.add('active');
+        }
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
+        function hideFilmInterframe() {
+            const filmInterframe = document.getElementById('filmInterframe');
+            filmInterframe.classList.remove('active');
+        }
 
-        function setupVideoProcessing(video){const canvas=document.getElementById('videoCanvas'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true}),videoEl=document.getElementById('videoPreview');canvas.width=video.videoWidth;canvas.height=video.videoHeight;let animationId=null,lastFrameTime=0,processingFrame=false;const targetFPS=30,frameInterval=1000/targetFPS;const processFrame=(currentTime)=>{if(!state.videoMode){if(animationId)cancelAnimationFrame(animationId);return;}const elapsed=currentTime-lastFrameTime;if(elapsed>=frameInterval&&!processingFrame){processingFrame=true;requestAnimationFrame(()=>{ctx.drawImage(videoEl,0,0);applyEffects(ctx,canvas.width,canvas.height);processingFrame=false;});lastFrameTime=currentTime-elapsed%frameInterval;}animationId=requestAnimationFrame(processFrame);};processFrame(0);videoEl.addEventListener('play',()=>{if(animationId)cancelAnimationFrame(animationId);lastFrameTime=0;processingFrame=false;processFrame(0);});videoEl.addEventListener('loadeddata',()=>{lastFrameTime=0;processingFrame=false;processFrame(0);});}
+        function updateNavButtons(){
+            const prevBtn=document.getElementById('prevBtn');
+            const nextBtn=document.getElementById('nextBtn');
+            if(prevBtn&&nextBtn){
+                // Disable both buttons if only one photo
+                if(state.photos.length<=1){
+                    prevBtn.classList.add('disabled');
+                    nextBtn.classList.add('disabled');
+                }else{
+                    // Disable prev button on first frame
+                    if(state.currentIndex===0){
+                        prevBtn.classList.add('disabled');
+                    }else{
+                        prevBtn.classList.remove('disabled');
+                    }
+                    // Disable next button on last frame
+                    if(state.currentIndex===state.photos.length-1){
+                        nextBtn.classList.add('disabled');
+                    }else{
+                        nextBtn.classList.remove('disabled');
+                    }
+                }
+            }
+        }
+
+        function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();
+            state.currentIndex--;
+            resetZoom(document.getElementById('canvas'));
+            renderPhoto();
+            updateNavButtons();
+        }}
+        function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();
+            state.currentIndex++;
+            resetZoom(document.getElementById('canvas'));
+            renderPhoto();
+            updateNavButtons();
+        }}
+        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas');canvas.style.display='block';
+// Use preview image for instant responsiveness during adjustments, full quality otherwise
+const sourceImg=state.usePreview&&p.preview?p.preview:p.image;
+// Render to offscreen canvas first to avoid flashing
+const offscreenCanvas=document.createElement('canvas');
+offscreenCanvas.width=sourceImg.width;
+offscreenCanvas.height=sourceImg.height;
+const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:false});
+offscreenCtx.imageSmoothingEnabled=true;
+offscreenCtx.imageSmoothingQuality='high';
+offscreenCtx.drawImage(sourceImg,0,0);
+loadPhotoSettings(state.currentIndex);
+applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
+// Now copy the fully processed image to visible canvas in one operation
+canvas.width=sourceImg.width;canvas.height=sourceImg.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=sourceImg.width/sourceImg.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:false});
+ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;}
+
 
         function applyEffects(ctx,w,h){
             // Step 1: Apply LUT-based film emulation (sync using preloaded LUT)
@@ -3382,7 +3419,45 @@
 
         function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==0){const actual=state.settings.profileIntensity;const displayText=actual>0?`+${actual}`:`${actual}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;
+            // Update UI IMMEDIATELY for instant visual feedback
+            document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));
+            if(state.settings.profile===p){
+                // Deselecting current profile
+                state.settings.profile='none';
+                state.settings.profileIntensity=0;
+                addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');
+                updatePresetButtonText();
+                saveCurrentPhotoSettings();
+                await preloadLUTForProfile('none');
+                if(!state.videoMode)deferredRender();
+            }else{
+                // Selecting new profile - add active class IMMEDIATELY
+                if(buttonElement)buttonElement.classList.add('active');
+                state.settings.profile=p;
+                state.settings.profileIntensity=0;
+
+                // Set preset bloom and grain values ONLY if user hasn't manually changed them from defaults
+                if(state.settings.bloom===0){
+                    state.settings.bloom=2;
+                    document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;
+                }
+                if(state.settings.grain===0){
+                    state.settings.grain=5;
+                    document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;
+                }
+
+                addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);
+                updatePresetButtonText();
+                const currentPhoto=state.photos[state.currentIndex];
+                if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){
+                    currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');
+                }
+                saveCurrentPhotoSettings();
+                await preloadLUTForProfile(p);
+                deferredRender();
+            }
+        }
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3394,22 +3469,22 @@
 
         function renderHistoryList(){const list=document.getElementById('historyList');if(state.history.length===0){list.innerHTML='<div style="text-align:center;padding:20px;color:#999;font-family:\'PP Neue Bit\',monospace;font-size:20px;">No changes yet</div>';return;}list.innerHTML='';const reversedHistory=[...state.history].reverse();reversedHistory.forEach((change)=>{const idx=state.history.indexOf(change);const item=document.createElement('div');item.className='history-item';if(change.undone){item.style.opacity='0.5';}const text=document.createElement('div');text.className='history-item-text';text.textContent=change.description;item.appendChild(text);const actionBtn=document.createElement('button');actionBtn.className='history-item-btn';if(change.undone){actionBtn.innerHTML='<img src="Redo.svg" alt="Redo">';actionBtn.onclick=(e)=>{e.stopPropagation();redoChange(idx);};}else{actionBtn.innerHTML='<img src="Delete.svg" alt="Delete">';actionBtn.onclick=(e)=>{e.stopPropagation();undoChange(idx);};}item.appendChild(actionBtn);list.appendChild(item);});}
 
-        function undoChange(idx){haptic();const change=state.history[idx];if(!change||change.undone)return;state.settings[change.key]=change.oldValue;change.undone=true;updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);renderHistoryList();}
+        function undoChange(idx){haptic();const change=state.history[idx];if(!change||change.undone)return;state.settings[change.key]=change.oldValue;change.undone=true;updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)deferredRender();renderHistoryList();}
 
-        function redoChange(idx){haptic();const change=state.history[idx];if(!change||!change.undone)return;state.settings[change.key]=change.newValue;change.undone=false;updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);renderHistoryList();}
+        function redoChange(idx){haptic();const change=state.history[idx];if(!change||!change.undone)return;state.settings[change.key]=change.newValue;change.undone=false;updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)deferredRender();renderHistoryList();}
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
+        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeIntensity();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
-        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();}}document.addEventListener('click',handleOutsideInteraction);
+        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
 
-        function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
@@ -3427,16 +3502,24 @@
 
             const intensityControls=document.getElementById('intensityControls');
             const intensityBtn=document.getElementById('intensityBtn');
+            const canvasContainer=document.getElementById('canvasContainer');
+            const editFooter=document.querySelector('.edit-footer');
             intensityControls.classList.toggle('active');
             intensityBtn.classList.toggle('active');
+            canvasContainer.classList.toggle('intensity-open');
+            editFooter.classList.toggle('intensity-open');
         }
 
         function closeIntensity(){
             const intensityControls=document.getElementById('intensityControls');
             const intensityBtn=document.getElementById('intensityBtn');
+            const canvasContainer=document.getElementById('canvasContainer');
+            const editFooter=document.querySelector('.edit-footer');
             if(intensityControls.classList.contains('active')){
                 intensityControls.classList.remove('active');
                 intensityBtn.classList.remove('active');
+                canvasContainer.classList.remove('intensity-open');
+                editFooter.classList.remove('intensity-open');
             }
         }
 
@@ -3455,7 +3538,8 @@
             updateIntensityIndicator();
             updatePresetButtonText();
             saveCurrentPhotoSettings();
-            if(!state.videoMode)setTimeout(renderPhoto,0);
+            enablePreviewMode();
+            if(!state.videoMode)deferredRender();
         }
 
         function editIntensityCounter(){
@@ -3478,7 +3562,7 @@
                 updateIntensityIndicator();
                 updatePresetButtonText();
                 saveCurrentPhotoSettings();
-                if(!state.videoMode)setTimeout(renderPhoto,0);
+                if(!state.videoMode)deferredRender();
                 return;
             }
 
@@ -3503,7 +3587,7 @@
             updateIntensityIndicator();
             updatePresetButtonText();
             saveCurrentPhotoSettings();
-            if(!state.videoMode)setTimeout(renderPhoto,0);
+            if(!state.videoMode)deferredRender();
         }
 
         function updateIntensityIndicator(){
@@ -3518,29 +3602,29 @@
             }
         }
 
-        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
 
-        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
 
-        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode){deferredRender();}}
 
-        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode){deferredRender();}}
 
-        function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
 
-        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
 
         function frameCounterOptions(){haptic();if(confirm('View all photos?\n\n(Cancel to remove current photo)')){toggleContactSheetView();}else if(confirm('Remove current photo?')){removeCurrentPhoto();}}
 
-        function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);setTimeout(renderPhoto,0);}
+        function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);deferredRender();updateNavButtons();}
 
         function toggleExportMenu(){haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
 
         function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
 
-        function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
+        function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
 
         function updateUIFromSettings(){const s=state.settings;const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();}
 
@@ -3585,6 +3669,11 @@
                 );
 
                 const isVideo = file.type.startsWith('video/');
+                if (isVideo) {
+                    console.log('Skipping video:', file.name, '(video support removed)');
+                    continue; // Skip videos
+                }
+
                 const fileExtension = file.name.split('.').pop().toLowerCase();
                 const defaultSettings = {
                     profile: 'none',
@@ -3598,21 +3687,7 @@
                 };
 
                 try {
-                    if (isVideo) {
-                        // Videos already use optimized Blob URLs
-                        const { video, blobUrl } = await loadVideoFromBlob(file);
-
-                        state.photos.push({
-                            name: file.name,
-                            displayName: generateDisplayName('none', startIndex + i, fileExtension),
-                            video: video,
-                            videoUrl: blobUrl,
-                            isVideo: true,
-                            uploadTime: uploadTime,
-                            settings: { ...defaultSettings },
-                            fileExtension: fileExtension
-                        });
-                    } else {
+                    {
                         // Use optimized Blob URL instead of FileReader
                         const { img, blobUrl } = await loadImageFromBlob(file);
                         const displayImg = await downsampleImage(img);
@@ -3623,12 +3698,11 @@
                             image: displayImg,
                             original: img,
                             originalBlobUrl: blobUrl,  // Keep reference for potential cleanup
-                            isVideo: false,
                             uploadTime: uploadTime,
                             settings: { ...defaultSettings },
                             fileExtension: fileExtension
                         });
-                    }
+                    } // End image processing
                 } catch (err) {
                     console.error(`Failed to load ${file.name}:`, err);
                     alert(`Failed to load ${file.name}`);
@@ -3659,7 +3733,7 @@
 
         function updateSelectionInfo(){const count=state.contactSheet.selected.length;const info=document.getElementById('selectionInfo');const deleteBtn=document.getElementById('deleteBtn');if(count===0){info.textContent='TAP PHOTOS TO SELECT';deleteBtn.style.display='none';}else{info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;deleteBtn.style.display='block';}}
 
-        function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';populateContactSheet();loadPhotoSettings(state.currentIndex);setTimeout(renderPhoto,0);}
+        function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();}
 
         function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(p.isVideo){const videoEl=document.createElement('video');videoEl.src=p.videoUrl;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;videoEl.autoplay=true;videoEl.playbackRate=0.5;videoEl.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;display:block;';videoEl.play().catch(e=>console.log('Autoplay prevented:',e));item.appendChild(videoEl);}else{if(!p.thumbnail){const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;ctx.drawImage(p.image,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);p.thumbnail=tempCanvas.toDataURL('image/jpeg',0.65);}const img=document.createElement('img');img.src=p.thumbnail;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';filenameText.textContent=p.displayName||p.name;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);});}
 
@@ -3669,7 +3743,7 @@
 
         function editPhotoName(idx){haptic();const p=state.photos[idx];const currentName=p.displayName||p.name;const newName=prompt('Edit filename:',currentName);if(newName&&newName.trim()!==''&&newName!==currentName){state.photos[idx].displayName=newName.trim();populateContactSheet();}}
 
-        function selectPhotoFromSheet(idx){haptic();saveCurrentPhotoSettings();state.currentIndex=idx;const canvas=document.getElementById('canvas');resetZoom(canvas);toggleContactSheetView();setTimeout(renderPhoto,0);}
+        function selectPhotoFromSheet(idx){haptic();saveCurrentPhotoSettings();state.currentIndex=idx;const canvas=document.getElementById('canvas');resetZoom(canvas);toggleContactSheetView();deferredRender();updateNavButtons();}
 
         function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='Logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});if(p.isVideo){tempCanvas.width=p.video.videoWidth;tempCanvas.height=p.video.videoHeight;tctx.drawImage(p.video,0,0);}else{tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);tctx.putImageData(imgData2,0,0);}const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
 
