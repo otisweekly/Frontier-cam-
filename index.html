@@ -674,9 +674,9 @@
     <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
 
 
-    <!-- Mobile Debug Console - Global (visible on all screens) -->
-    <div id="debugToggle" onclick="toggleDebugConsole()">🐛</div>
-    <div id="mobileDebug"></div>
+    <!-- Mobile Debug Console - Hidden in production -->
+    <!-- <div id="debugToggle" onclick="toggleDebugConsole()">🐛</div> -->
+    <!-- <div id="mobileDebug"></div> -->
 
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false};
