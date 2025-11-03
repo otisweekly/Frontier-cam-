@@ -291,6 +291,19 @@
         .nav-btn.gallery svg { width:24px; height:24px; }
         .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px; transition:all 0s; will-change:transform, box-shadow; }
         .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
+
+        /* Custom Hold Dialog */
+        #customHoldDialog { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+        #customHoldDialog.active { display:flex; }
+        .hold-dialog-content { background:#4A4A4A; border:4px solid #000; border-radius:8px; box-shadow:0 12px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.1); padding:24px; max-width:400px; width:90%; }
+        .hold-dialog-title { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; font-weight:700; color:#fff; margin-bottom:16px; text-align:center; }
+        .hold-dialog-changes { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; color:#3897AF; margin-bottom:20px; background:#2A2A2A; border:2px solid #000; border-radius:4px; padding:12px; max-height:200px; overflow-y:auto; }
+        .hold-dialog-change-item { margin-bottom:4px; }
+        .hold-dialog-message { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:13px; color:#ccc; margin-bottom:20px; text-align:center; }
+        .hold-dialog-buttons { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .hold-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; text-align:center; padding:14px 20px; line-height:1; }
+        .hold-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .hold-dialog-btn.primary { background:#3897AF; color:#fff; border-color:#0A5A6C; }
         .photo-counter > div { display:flex; flex-direction:column; align-items:center; }
         .photo-counter .contact-icon { height:100%; width:auto; margin-right:10px; align-self:stretch; object-fit:contain; }
         .photo-counter-number { font-size:26px; font-weight:700; line-height:1; }
@@ -589,6 +602,17 @@
             <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
             <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
             <button class="more-dialog-btn" onclick="deleteCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">DELETE</button>
+        </div>
+        <div id="customHoldDialog">
+            <div class="hold-dialog-content">
+                <div class="hold-dialog-title">APPLY TO ALL FRAMES?</div>
+                <div class="hold-dialog-changes" id="holdDialogChanges"></div>
+                <div class="hold-dialog-message">Cancel to apply only to this frame</div>
+                <div class="hold-dialog-buttons">
+                    <button class="hold-dialog-btn" id="holdDialogCancel" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">CANCEL</button>
+                    <button class="hold-dialog-btn primary" id="holdDialogConfirm" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">APPLY TO ALL</button>
+                </div>
+            </div>
         </div>
         <div id="intensityControls">
             <div class="intensity-slider-container">
@@ -1517,7 +1541,7 @@
                 }
 
                 // Touch handling - shows confirm immediately on touchstart
-                btn.addEventListener('touchstart', (e) => {
+                btn.addEventListener('touchstart', async (e) => {
                     if (btn.classList.contains('disabled')) return;
                     e.preventDefault();
                     touchHandled = true;
@@ -1529,9 +1553,7 @@
 
                         // Check HOLD confirm immediately
                         if (state.holdSettings && state.holdDirty) {
-                            const changes = getHoldChanges();
-                            const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
-                            const shouldApplyAll = confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`);
+                            const shouldApplyAll = await showHoldDialog();
                             if (shouldApplyAll) {
                                 applySettingsToAllLightweight();
                             } else {
@@ -1568,15 +1590,13 @@
                 });
 
                 // Mouse/click handling for desktop
-                btn.addEventListener('click', (e) => {
+                btn.addEventListener('click', async (e) => {
                     if (btn.classList.contains('disabled') || touchHandled) return;
 
                     try {
                         // Check HOLD confirm immediately
                         if (state.holdSettings && state.holdDirty) {
-                            const changes = getHoldChanges();
-                            const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
-                            const shouldApplyAll = confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`);
+                            const shouldApplyAll = await showHoldDialog();
                             if (shouldApplyAll) {
                                 applySettingsToAllLightweight();
                             } else {
@@ -1856,6 +1876,53 @@
             }
 
             return changes;
+        }
+
+        // Show custom HOLD dialog with changes list
+        function showHoldDialog(){
+            return new Promise((resolve)=>{
+                const dialog=document.getElementById('customHoldDialog');
+                const changesEl=document.getElementById('holdDialogChanges');
+                const confirmBtn=document.getElementById('holdDialogConfirm');
+                const cancelBtn=document.getElementById('holdDialogCancel');
+
+                // Set orange status
+                setStatus('processing');
+
+                // Populate changes list
+                const changes=getHoldChanges();
+                if(changes.length>0){
+                    changesEl.innerHTML=changes.map(c=>`<div class="hold-dialog-change-item">${c}</div>`).join('');
+                }else{
+                    changesEl.innerHTML='<div class="hold-dialog-change-item">No changes detected</div>';
+                }
+
+                // Show dialog
+                dialog.classList.add('active');
+
+                // Handle confirm
+                const handleConfirm=()=>{
+                    haptic();
+                    dialog.classList.remove('active');
+                    confirmBtn.removeEventListener('click',handleConfirm);
+                    cancelBtn.removeEventListener('click',handleCancel);
+                    setStatus('ready');
+                    resolve(true);
+                };
+
+                // Handle cancel
+                const handleCancel=()=>{
+                    haptic();
+                    dialog.classList.remove('active');
+                    confirmBtn.removeEventListener('click',handleConfirm);
+                    cancelBtn.removeEventListener('click',handleCancel);
+                    setStatus('ready');
+                    resolve(false);
+                };
+
+                confirmBtn.addEventListener('click',handleConfirm);
+                cancelBtn.addEventListener('click',handleCancel);
+            });
         }
 
         // Lightweight version: just copy settings, no rendering
@@ -5160,14 +5227,13 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function editPhotoName(idx){haptic();const p=state.photos[idx];const currentName=p.displayName||p.name;const newName=prompt('Edit filename:',currentName);if(newName&&newName.trim()!==''&&newName!==currentName){state.photos[idx].displayName=newName.trim();populateContactSheet();}}
 
-        function selectPhotoFromSheet(idx){
+        async function selectPhotoFromSheet(idx){
             haptic();
 
             // Check if HOLD is active and settings changed
             if(state.holdSettings&&state.holdDirty){
-                const changes = getHoldChanges();
-                const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
-                if(confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`)){
+                const shouldApplyAll = await showHoldDialog();
+                if(shouldApplyAll){
                     applySettingsToAllLightweight();
                 } else {
                     // User canceled - update baseline to current settings so same changes don't prompt again
