@@ -191,7 +191,7 @@
 
         #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
         #moreDialog.active { transform:translateY(0); opacity:1; }
-        .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
+        .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
         #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #intensityControls.active { transform:translateY(0); opacity:1; }
@@ -201,7 +201,7 @@
         .intensity-value-number { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:48px; font-weight:700; color:#fff; line-height:1; }
         .intensity-value-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; color:#999; margin-top:5px; letter-spacing:1px; }
         .intensity-buttons { display:flex; gap:6px; }
-        .intensity-arrow-btn { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; }
+        .intensity-arrow-btn { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; }
         .settings-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:4px; }
         #cmykToggle.has-settings { background:#3897AF !important; }
         #cmykToggle.has-settings img { filter:brightness(0) invert(1); }
@@ -238,7 +238,7 @@
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #0A5A6C; }
 
         .control-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; height:40px; }
-        .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #000; transition:all 0s; justify-content:center; align-items:center; }
+        .control-tab { background:#B3B3B3; border:2px solid #000; border-radius:3px; font-size:7px; font-weight:700; text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:1px; box-shadow:0 2px 0 #000; transition:all 0.05s; justify-content:center; align-items:center; }
         .control-tab.active { background:#000; color:#fff; }
         .control-tab:active { transform:translateY(1px); box-shadow:0 1px 0 #000; }
         .control-tab-value { font-size:9px; font-weight:700; }
@@ -248,12 +248,12 @@
 
         .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; min-height:57px; }
         .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; min-height:57px; }
-        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; position:relative; }
+        .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; position:relative; }
         .preset-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.5); }
         .preset-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
         .preset-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.5); }
 
-        .slider-btn { min-height:57px; background:#B3B3B3; border:3px solid #000; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; font-size:35px; font-weight:700; color:#000; }
+        .slider-btn { min-height:57px; background:#B3B3B3; border:3px solid #000; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; font-size:35px; font-weight:700; color:#000; }
         .slider-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
         .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; }
         .slider-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
@@ -305,7 +305,7 @@
         .cmyk-color-bar.shadows { background:#000; }
         .cmyk-color-bar.highlights { background:#000; }
         .cmyk-arrows { display:flex; gap:4px; }
-        .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
+        .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.05s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
@@ -595,7 +595,7 @@
     <div id="intensityControls">
         <div class="intensity-slider-container">
             <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
-                <div class="intensity-value-number">0</div>
+                <div class="intensity-value-number">30</div>
                 <div class="intensity-value-label">INTENSITY</div>
             </div>
             <div class="intensity-buttons">
@@ -701,7 +701,7 @@
     <div id="mobileDebug"></div>
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,videoMode:false,videoPlaying:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,comparing:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},fullscreenPreview:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1371,7 +1371,7 @@
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     const defaultSettings = {
                         profile: 'none',
-                        profileIntensity: 0,
+                        profileIntensity: 30,
                         bloom: 0,
                         grain: 0,
                         cyan: 0,
@@ -1616,11 +1616,11 @@
 
         function saveCurrentPhotoSettings(){if(state.photos[state.currentIndex]){state.photos[state.currentIndex].settings={...state.settings};delete state.photos[state.currentIndex].thumbnail;}}
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
+        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=30;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const container=state.videoMode?'videoProfiles':'photoProfiles';const btn=document.querySelector(`#${container} .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
 
         function prevPhoto(){haptic();if(state.currentIndex>0){saveCurrentPhotoSettings();state.currentIndex--;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
         function nextPhoto(){haptic();if(state.currentIndex<state.photos.length-1){saveCurrentPhotoSettings();state.currentIndex++;const canvas=state.videoMode?document.getElementById('videoCanvas'):document.getElementById('canvas');resetZoom(canvas);setTimeout(renderPhoto,0);}}
-        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;state.videoMode=false;state.videoPlaying=false;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
         function renderPhoto(){if(state.renderPending)return;state.renderPending=true;requestAnimationFrame(()=>{const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas'),videoCanvas=document.getElementById('videoCanvas'),videoEl=document.getElementById('videoPreview'),photoProfiles=document.getElementById('photoProfiles'),videoProfiles=document.getElementById('videoProfiles'),canvasContainer=document.getElementById('canvasContainer');if(p.isVideo){if(!state.videoMode||videoEl.src!==p.videoUrl){canvas.style.display='none';videoCanvas.style.display='block';videoEl.src=p.videoUrl;videoEl.currentTime=0;state.videoMode=true;state.videoPlaying=true;photoProfiles.style.display='none';videoProfiles.style.display='grid';setupVideoTouchHandling(videoCanvas);setupVideoProcessing(p.video);loadPhotoSettings(state.currentIndex);videoEl.play().catch(e=>console.log('Autoplay prevented:',e));}}else{if(state.videoMode){videoGesturesSetup=false;}canvas.style.display='block';videoCanvas.style.display='none';state.videoMode=false;photoProfiles.style.display='grid';videoProfiles.style.display='none';const ctx=canvas.getContext('2d',{alpha:false});canvas.width=p.image.width;canvas.height=p.image.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=p.image.width/p.image.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(p.image,0,0);loadPhotoSettings(state.currentIndex);applyEffects(ctx,canvas.width,canvas.height);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}}state.renderPending=false;});}
 
@@ -3366,9 +3366,9 @@
 
         function toggleControl(c){}
 
-        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();// Default is now always 0if(isActive&&state.settings.profileIntensity!==0){const actual=state.settings.profileIntensity;let display;if(actual>=0){display=Math.round((actual-0)/0.6);}else{display=Math.round((actual-0)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
+        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();const defaultIntensity=(profile==='supra'||profile==='chrome')?40:30;if(isActive&&state.settings.profileIntensity!==defaultIntensity){const actual=state.settings.profileIntensity;let display;if(actual>=defaultIntensity){display=Math.round((actual-defaultIntensity)/0.6);}else{display=Math.round((actual-defaultIntensity)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=30;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;const defaultIntensity=(p==='supra'||p==='chrome')?40:30;state.settings.profileIntensity=defaultIntensity;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3386,7 +3386,7 @@
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
+        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeIntensity();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
@@ -3429,13 +3429,13 @@
         function adjustIntensity(delta){
             haptic();
             const oldIntensity=state.settings.profileIntensity;
-            const newIntensity=Math.max(-100,Math.min(100,state.settings.profileIntensity+delta));
+            const newIntensity=Math.max(0,Math.min(100,state.settings.profileIntensity+delta));
             state.settings.profileIntensity=newIntensity;
 
             document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=newIntensity;
 
             if(oldIntensity!==newIntensity){
-                addToHistory(`Intensity: ${oldIntensity} → ${newIntensity}`,'profileIntensity',oldIntensity,newIntensity);
+                addToHistory(`Intensity: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
             }
 
             updateIntensityIndicator();
@@ -3448,17 +3448,17 @@
             haptic();
             const currentValue=state.settings.profileIntensity;
             const profile=state.settings.profile;
-            // Default is now always 0
+            const defaultIntensity=(profile==='supra'||profile==='chrome')?40:30;
 
-            const clearConfirm=confirm(`Clear intensity to 0?\n\n(Cancel to enter a custom value)`);
+            const clearConfirm=confirm(`Clear intensity to ${defaultIntensity}%?\n\n(Cancel to enter a custom value)`);
 
             if(clearConfirm){
                 const oldIntensity=state.settings.profileIntensity;
-                state.settings.profileIntensity=0;
-                document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=0;
+                state.settings.profileIntensity=defaultIntensity;
+                document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=defaultIntensity;
 
-                if(oldIntensity!==0){
-                    addToHistory(`Intensity: ${oldIntensity} → 0`,'profileIntensity',oldIntensity,0);
+                if(oldIntensity!==defaultIntensity){
+                    addToHistory(`Intensity: ${oldIntensity}% → ${defaultIntensity}%`,'profileIntensity',oldIntensity,defaultIntensity);
                 }
 
                 updateIntensityIndicator();
@@ -3468,13 +3468,13 @@
                 return;
             }
 
-            const options=`Current: ${currentValue}\n\nEnter new intensity (-100 to 100):`;
+            const options=`Current: ${currentValue}%\n\nEnter new intensity (0-100):`;
             const input=prompt(options,currentValue);
             if(input===null)return;
 
             const newValue=parseInt(input);
-            if(isNaN(newValue)||newValue<-100||newValue>100){
-                alert('Please enter a number between -100 and 100');
+            if(isNaN(newValue)||newValue<0||newValue>100){
+                alert('Please enter a number between 0 and 100');
                 return;
             }
 
@@ -3495,8 +3495,8 @@
         function updateIntensityIndicator(){
             const intensityBtn=document.getElementById('intensityBtn');
             const profile=state.settings.profile;
-            // Default is now always 0
-            const hasSettings=state.settings.profileIntensity!==0;
+            const defaultIntensity=(profile==='supra'||profile==='chrome')?40:30;
+            const hasSettings=state.settings.profileIntensity!==defaultIntensity;
             if(hasSettings){
                 intensityBtn.classList.add('has-settings');
             }else{
@@ -3574,7 +3574,7 @@
                 const fileExtension = file.name.split('.').pop().toLowerCase();
                 const defaultSettings = {
                     profile: 'none',
-                    profileIntensity: 0,
+                    profileIntensity: 30,
                     bloom: 0,
                     grain: 0,
                     cyan: 0,
