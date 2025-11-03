@@ -1551,10 +1551,9 @@
                             const shouldApplyAll = showHoldDialog();
                             if (shouldApplyAll) {
                                 applySettingsToAllLightweight();
-                            } else {
-                                // User canceled - update baseline to current settings so same changes don't prompt again
-                                state.holdBaselineSettings = {...state.settings};
                             }
+                            // If user cancels, don't update baseline - they chose to apply to this frame only
+                            // Other frames keep their existing settings from HOLD
                             state.holdDirty = false;
                         }
 
@@ -1918,10 +1917,9 @@
                         const shouldApplyAll=showHoldDialog();
                         if(shouldApplyAll){
                             applySettingsToAllLightweight();
-                        }else{
-                            // User canceled - update baseline to current settings so same changes don't prompt again
-                            state.holdBaselineSettings={...state.settings};
                         }
+                        // If user cancels, don't update baseline - they chose to apply to this frame only
+                        // Other frames keep their existing settings from HOLD
                         state.holdDirty=false;
                     }
 
@@ -1950,10 +1948,9 @@
                         const shouldApplyAll=showHoldDialog();
                         if(shouldApplyAll){
                             applySettingsToAllLightweight();
-                        }else{
-                            // User canceled - update baseline to current settings so same changes don't prompt again
-                            state.holdBaselineSettings={...state.settings};
                         }
+                        // If user cancels, don't update baseline - they chose to apply to this frame only
+                        // Other frames keep their existing settings from HOLD
                         state.holdDirty=false;
                     }
 
@@ -5231,10 +5228,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 const shouldApplyAll = showHoldDialog();
                 if(shouldApplyAll){
                     applySettingsToAllLightweight();
-                } else {
-                    // User canceled - update baseline to current settings so same changes don't prompt again
-                    state.holdBaselineSettings = {...state.settings};
                 }
+                // If user cancels, don't update baseline - they chose to apply to this frame only
+                // Other frames keep their existing settings from HOLD
                 state.holdDirty=false;
             }
 
