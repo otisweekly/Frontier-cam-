@@ -921,8 +921,9 @@
                     state.swipeState.currentY=e.touches[0].clientY;
                     const deltaX=state.swipeState.currentX-state.swipeState.startX;
                     const deltaY=state.swipeState.currentY-state.swipeState.startY;
-                    // Detect horizontal swipe (horizontal movement > vertical movement and > 30px to avoid blocking taps)
-                    if(Math.abs(deltaX)>Math.abs(deltaY)&&Math.abs(deltaX)>30){
+                    // Detect horizontal swipe (horizontal movement > vertical movement and > 15px to avoid blocking taps)
+                    // Reduced from 30px to 15px for more sensitive swipe detection
+                    if(Math.abs(deltaX)>Math.abs(deltaY)&&Math.abs(deltaX)>15){
                         state.swipeState.swiping=true;
                         // Optional: Add visual feedback or prevent page scroll
                         e.preventDefault();
@@ -988,7 +989,14 @@
 
                     // Handle regular taps (swipe state now always false)
                     console.log('Touch end - tap count before:',state.tapState.count,'panning:',wasPanning);
-                    if(!wasPanning){
+
+                    // Check for any movement - don't count as tap if finger moved significantly
+                    const deltaX=state.swipeState.currentX-state.swipeState.startX;
+                    const deltaY=state.swipeState.currentY-state.swipeState.startY;
+                    const totalMovement=Math.sqrt(deltaX*deltaX+deltaY*deltaY);
+                    const isTap=totalMovement<10; // Less than 10px total movement = tap
+
+                    if(!wasPanning&&isTap){
                         state.tapState.count++;
                         if(state.tapState.timer)clearTimeout(state.tapState.timer);
                         console.log('Touch end - tap count after:',state.tapState.count);
@@ -1043,7 +1051,7 @@
                             state.tapState.count=0;
                         }
                     }else{
-                        console.log('Tap blocked - was panning');
+                        console.log('Tap blocked - was panning or too much movement (swipe-like)');
                     }
                 }
                 applyTransform(canvas);
