@@ -86,15 +86,19 @@
         .logo-container img { width:100%; max-width:280px; height:auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; filter:contrast(1.1); }
         .status-lights { position:absolute; right:15px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; }
         .status-light { width:12px; height:12px; border-radius:50%; border:2px solid #0D626E; opacity:0.4; }
-        .status-light.active { opacity:1; box-shadow:0 0 12px currentColor; }
+        .status-light.active { opacity:1; box-shadow:0 0 12px currentColor; border:1px solid rgba(255,255,255,0.2); }
         .status-light.green { background:#4ADE80; color:#4ADE80; }
-        .status-light.green.pulsing { animation:pulse-green 1.5s ease-in-out infinite; }
+        .status-light.green.active { animation:pulse-green-gentle 3s ease-in-out infinite; }
+        .status-light.turquoise { background:#3897AF; color:#3897AF; }
+        .status-light.turquoise.active { animation:pulse-turquoise 2s ease-in-out infinite; }
         .status-light.red { background:#EF4444; color:#EF4444; }
+        .status-light.red.active { animation:blink-red 800ms ease-in-out infinite; }
         .status-light.orange { background:#FF8C00; color:#FF8C00; }
-        .status-light.orange.pulsing { animation:pulse-orange 500ms ease-in-out infinite; }
-        .status-light.orange.blinking { animation:blink-orange-3x 3s ease-in-out 1; }
-        @keyframes pulse-green { 0%, 100% { box-shadow:0 0 12px #4ADE80; opacity:1; } 50% { box-shadow:0 0 20px #4ADE80; opacity:0.8; } }
-        @keyframes pulse-orange { 0%, 100% { box-shadow:0 0 15px #FF8C00; opacity:1; } 50% { box-shadow:0 0 25px #FF8C00; opacity:0.9; } }
+        .status-light.orange.active { animation:flash-orange 600ms ease-in-out infinite; }
+        @keyframes pulse-green-gentle { 0%, 100% { box-shadow:0 0 8px #4ADE80; opacity:1; } 50% { box-shadow:0 0 12px #4ADE80; opacity:0.9; } }
+        @keyframes pulse-turquoise { 0%, 100% { box-shadow:0 0 10px #3897AF; opacity:1; transform:scale(1); } 50% { box-shadow:0 0 16px #3897AF; opacity:0.85; transform:scale(1.05); } }
+        @keyframes flash-orange { 0%, 100% { box-shadow:0 0 15px #FF8C00; opacity:1; } 50% { box-shadow:0 0 25px #FF8C00; opacity:0.7; } }
+        @keyframes blink-red { 0%, 49% { opacity:1; box-shadow:0 0 16px #EF4444; } 50%, 100% { opacity:0.3; box-shadow:0 0 4px #EF4444; } }
         @keyframes blink-orange-3x {
             0% { box-shadow:0 0 20px #FF8C00; opacity:1; }
             8% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
@@ -113,7 +117,7 @@
         @keyframes indicatorPulse { 0%, 100% { transform:scale(1); box-shadow:0 0 6px rgba(56,151,175,0.8); } 50% { transform:scale(1.15); box-shadow:0 0 12px rgba(56,151,175,1), 0 0 18px rgba(56,151,175,0.6); } }
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
-        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; color:#000; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:inherit; }
+        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:'PP Neue Bit', monospace; }
         .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 4px 8px rgba(0,0,0,0.2); }
         #fileInput { display:none; }
         @media (pointer: coarse) { .upload-btn { touch-action:manipulation; } }
@@ -188,11 +192,11 @@
         .edit-footer.history-open { transform:translateY(100%); }
         .edit-footer.download-open { transform:translateY(100%); }
 
-        #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
+        #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
         #moreDialog.active { transform:translateY(0); opacity:1; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #intensityControls.active { transform:translateY(0); opacity:1; }
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
         .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
@@ -213,7 +217,7 @@
         #brightnessToggle.has-settings img { filter:brightness(0) invert(1); }
 
         /* Progress Bar */
-        #downloadProgress { position:fixed; top:70px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:100; transform:translateY(calc(-100% - 70px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); }
+        #downloadProgress { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); }
         #downloadProgress.active { transform:translateY(0); opacity:1; }
         .progress-content { display:flex; align-items:center; gap:6px; }
         .progress-bar-container { flex:1; height:44px; background:#4A4A4A; border:3px solid #000; border-radius:4px; overflow:hidden; position:relative; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); }
@@ -264,11 +268,11 @@
         .slider-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .slider-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
 
-        #cmykControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #cmykControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #cmykControls.active { transform:translateY(0); opacity:1; }
-        #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
-        #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
+        #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
         #guidePanel { position:fixed; top:0; left:0; right:0; bottom:0; background:#000; z-index:250; transform:translateY(100%); transition:transform 0.3s ease; overflow-y:auto; padding:20px; padding-top:calc(env(safe-area-inset-top, 0px) + 120px); padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 40px); }
@@ -371,13 +375,14 @@
             <img src="Logo.svg" alt="Frontier">
             <div class="status-lights">
                 <div class="status-light green" id="statusReady"></div>
+                <div class="status-light turquoise" id="statusProcessing"></div>
                 <div class="status-light orange" id="statusLoading"></div>
                 <div class="status-light red active" id="statusWait"></div>
             </div>
         </div>
         <div>
             <div class="upload-label">UPLOAD PHOTO</div>
-            <button class="upload-btn" onclick="document.getElementById('fileInput').click();"><span>≡</span></button>
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click();"><span>UPLOAD PHOTOS</span><span>≡</span></button>
             <input type="file" id="fileInput" accept="image/*" multiple>
         </div>
     </div>
@@ -751,7 +756,7 @@
         // Log initialization
         console.log('🐛 Debug console initialized');
 
-        function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),loading=document.getElementById('statusLoading'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');ready.classList.toggle('pulsing',s==='ready'&&pulse);loading.classList.toggle('active',s==='loading');loading.classList.toggle('pulsing',s==='loading');wait.classList.toggle('active',s!=='ready'&&s!=='loading');}
+        function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),processing=document.getElementById('statusProcessing'),loading=document.getElementById('statusLoading'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');processing.classList.toggle('active',s==='processing');loading.classList.toggle('active',s==='loading');wait.classList.toggle('active',s!=='ready'&&s!=='processing'&&s!=='loading');}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
         // Progress bar functions
@@ -759,7 +764,7 @@
         function updateProgress(percent,text=null){if(text)document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width=percent+'%';}
         function hideProgress(){state.download.active=false;state.download.cancelling=false;state.download.mediaRecorder=null;state.download.type=null;const downloadBtn=document.getElementById('downloadBtn');const progressBar=document.getElementById('downloadProgress');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');downloadBtn.classList.remove('active');progressBar.classList.remove('active');canvasContainer.classList.remove('download-open');editFooter.classList.remove('download-open');}
         function closeDownloadProgress(){if(state.download.active){hideProgress();}}
-        function cancelDownload(){haptic();if(state.download.active){if(confirm('Cancel this download?')){state.download.cancelling=true;if(state.download.mediaRecorder){state.download.mediaRecorder.stop();}hideProgress();}}else if(state.upload.active){if(confirm('Cancel upload? Files loaded so far will be kept.')){state.upload.cancelling=true;hideUploadProgress();}}}
+        function cancelDownload(){haptic();if(state.download.active){state.download.cancelling=true;if(state.download.mediaRecorder){state.download.mediaRecorder.stop();}hideProgress();}else if(state.upload.active){state.upload.cancelling=true;hideUploadProgress();}}
 
         // Upload progress functions
         function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';document.getElementById('downloadProgress').classList.add('active');}
