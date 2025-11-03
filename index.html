@@ -289,12 +289,12 @@
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px; transition:all 0s; will-change:transform, box-shadow; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:flex-start; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px; transition:all 0s; will-change:transform, box-shadow; }
         .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
 
-        .photo-counter > div { display:flex; flex-direction:column; align-items:center; }
-        .photo-counter .contact-icon { height:100%; width:auto; margin-left:12px; margin-right:10px; align-self:stretch; object-fit:contain; }
-        .photo-counter-number { font-size:26px; font-weight:700; line-height:1; min-width:80px; text-align:center; }
+        .photo-counter > div { display:flex; flex-direction:column; align-items:center; flex:1; }
+        .photo-counter .contact-icon { height:100%; width:auto; margin-left:12px; margin-right:0; align-self:stretch; object-fit:contain; flex-shrink:0; }
+        .photo-counter-number { font-size:26px; font-weight:700; line-height:1; text-align:center; width:100%; }
         .photo-counter-label { font-size:9px; font-weight:700; color:#666; margin-top:2px; letter-spacing:0.5px; }
         .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #222222; transition:all 0s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #222222; }
@@ -679,7 +679,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1365,7 +1365,11 @@
                         cyan: 0,
                         magenta: 0,
                         yellow: 0,
-                        black: 0
+                        black: 0,
+                        brightness: 0,
+                        contrast: 0,
+                        shadows: 0,
+                        highlights: 0
                     };
 
                     {
@@ -1753,15 +1757,30 @@
 
         function saveCurrentPhotoSettings(applyHold=true, settingsChanged=false){
             if(state.photos[state.currentIndex]){
+                console.log('💾 Saving settings for photo', state.currentIndex, ':', JSON.stringify(state.settings));
                 state.photos[state.currentIndex].settings={...state.settings};
                 delete state.photos[state.currentIndex].thumbnail;
                 if(state.holdSettings){
                     // Only mark as dirty if this is from an actual user change
                     if(settingsChanged){
                         state.holdDirty=true;
+                        console.log('🔴 HOLD is dirty - settings changed');
                     }
                     // Don't apply to all during editing!
                     // Only apply when user confirms the dialog during navigation
+                }
+
+                // Regenerate contact sheet to reflect changes (debounced to avoid excessive regeneration)
+                if(settingsChanged && state.photos.some(p => p.isContactSheet)){
+                    clearTimeout(state.contactSheetRegenerateTimer);
+                    state.contactSheetRegenerateTimer=setTimeout(async()=>{
+                        try {
+                            await generateAndAddContactSheet();
+                            console.log('Contact sheet regenerated after settings change');
+                        } catch (err) {
+                            console.error('Failed to regenerate contact sheet:', err);
+                        }
+                    },800);
                 }
             }
         }
@@ -1833,16 +1852,24 @@
 
         // Lightweight version: just copy settings, no rendering
         function applySettingsToAllLightweight(){
-            if(!state.holdSettings)return;
+            if(!state.holdSettings){
+                console.log('⚠️ applySettingsToAllLightweight called but HOLD is not active');
+                return;
+            }
             const currentSettings={...state.settings};
+            console.log('🔒 HOLD: Applying settings to all frames:', JSON.stringify(currentSettings));
             // Apply to all photos (except contact sheet)
+            let count = 0;
             state.photos.forEach((photo,index)=>{
                 if(!photo.isContactSheet&&index!==state.currentIndex){
                     photo.settings={...currentSettings};
                     // Delete thumbnail cache so contact sheet will regenerate with new settings
                     delete photo.thumbnail;
+                    count++;
+                    console.log(`  ✓ Applied to photo ${index}`);
                 }
             });
+            console.log(`✅ HOLD: Applied settings to ${count} photos`);
             // Update baseline after applying to all
             state.holdBaselineSettings={...state.settings};
             // Don't set holdDirty to false here - only the navigation dialog should clear it
@@ -1860,7 +1887,43 @@
             },500);
         }
 
-        function loadPhotoSettings(idx){if(state.photos[idx]){state.settings={...state.photos[idx].settings};if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;if(state.settings.brightness===undefined)state.settings.brightness=0;if(state.settings.contrast===undefined)state.settings.contrast=0;if(state.settings.shadows===undefined)state.settings.shadows=0;if(state.settings.highlights===undefined)state.settings.highlights=0;document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));if(state.settings.profile!=='none'){const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);if(btn)btn.classList.add('active');}updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();updatePresetButtonText();}}
+        async function loadPhotoSettings(idx){
+            if(state.photos[idx]){
+                console.log('📸 Loading settings for photo', idx, ':', JSON.stringify(state.photos[idx].settings));
+                state.settings={...state.photos[idx].settings};
+                if(state.settings.profileIntensity===undefined)state.settings.profileIntensity=0;
+                if(state.settings.brightness===undefined)state.settings.brightness=0;
+                if(state.settings.contrast===undefined)state.settings.contrast=0;
+                if(state.settings.shadows===undefined)state.settings.shadows=0;
+                if(state.settings.highlights===undefined)state.settings.highlights=0;
+                console.log('✅ State settings now:', JSON.stringify(state.settings));
+
+                // CRITICAL: Preload LUT for the profile (ensures effects are applied)
+                await preloadLUTForProfile(state.settings.profile);
+                console.log('🎬 LUT preloaded for profile:', state.settings.profile);
+
+                document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;
+                document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=state.settings.cyan;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=state.settings.magenta;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=state.settings.yellow;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=state.settings.black;
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=state.settings.brightness||0;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=state.settings.contrast||0;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=state.settings.shadows||0;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=state.settings.highlights||0;
+                document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=state.settings.profileIntensity;
+                document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+                if(state.settings.profile!=='none'){
+                    const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);
+                    if(btn)btn.classList.add('active');
+                }
+                updateCMYKIndicator();
+                updateBrightnessIndicator();
+                updateIntensityIndicator();
+                updatePresetButtonText();
+            }
+        }
 
         // Film strip inter-frame transition (black flash between images)
         function showFilmInterframe() {
@@ -1914,9 +1977,13 @@
                 if(state.currentIndex>0){
                     // Check HOLD dialog before navigating
                     if(state.holdSettings&&state.holdDirty){
+                        console.log('⚠️ HOLD dialog needed - navigating from photo', state.currentIndex);
                         const shouldApplyAll=showHoldDialog();
                         if(shouldApplyAll){
+                            console.log('✅ User chose: Apply to All');
                             applySettingsToAllLightweight();
+                        } else {
+                            console.log('🚫 User chose: This Frame Only');
                         }
                         // If user cancels, don't update baseline - they chose to apply to this frame only
                         // Other frames keep their existing settings from HOLD
@@ -1925,6 +1992,7 @@
 
                     saveCurrentPhotoSettings(false);
                     state.currentIndex--;
+                    console.log('⬅️ Navigating to photo', state.currentIndex);
                     resetZoom(document.getElementById('canvas'));
                     renderPhoto();
                     updateNavButtons();
@@ -1945,9 +2013,13 @@
                 if(state.currentIndex<state.photos.length-1){
                     // Check HOLD dialog before navigating
                     if(state.holdSettings&&state.holdDirty){
+                        console.log('⚠️ HOLD dialog needed - navigating from photo', state.currentIndex);
                         const shouldApplyAll=showHoldDialog();
                         if(shouldApplyAll){
+                            console.log('✅ User chose: Apply to All');
                             applySettingsToAllLightweight();
+                        } else {
+                            console.log('🚫 User chose: This Frame Only');
                         }
                         // If user cancels, don't update baseline - they chose to apply to this frame only
                         // Other frames keep their existing settings from HOLD
@@ -1956,6 +2028,7 @@
 
                     saveCurrentPhotoSettings(false);
                     state.currentIndex++;
+                    console.log('➡️ Navigating to photo', state.currentIndex);
                     resetZoom(document.getElementById('canvas'));
                     renderPhoto();
                     updateNavButtons();
@@ -1972,7 +2045,7 @@
         }
         function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
-        function renderPhoto(){
+        async function renderPhoto(){
             try {
                 if(state.renderPending){console.log('Render already pending, skipping');return;}
                 state.renderPending=true;
@@ -2019,7 +2092,7 @@ const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:false});
 offscreenCtx.imageSmoothingEnabled=true;
 offscreenCtx.imageSmoothingQuality='high';
 offscreenCtx.drawImage(sourceImg,0,0);
-loadPhotoSettings(state.currentIndex);
+await loadPhotoSettings(state.currentIndex);
 applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
 // Now copy the fully processed image to visible canvas in one operation
 canvas.width=sourceImg.width;canvas.height=sourceImg.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=sourceImg.width/sourceImg.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:false});
@@ -3691,7 +3764,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         const FILM_PRESETS = {
             'supra': {
                 name: 'SUPRA',
-                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 250D.cube',
+                lut: 'Frontier luts/ClassicPrint_16mm_250D_CORRECTED.cube',
                 description: 'Daylight balanced, fine grain'
             },
             'chrome': {
@@ -3847,7 +3920,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.5;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.575;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
@@ -3915,6 +3988,8 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const holdFlash=document.getElementById('holdFlash');
 
             if(state.holdSettings){
+                console.log('🔒 HOLD ACTIVATED on photo', state.currentIndex);
+                console.log('   Baseline settings:', JSON.stringify(state.settings));
                 holdBtn.classList.add('active');
                 holdIcon.src='Locked.svg';
 
@@ -3936,6 +4011,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 setStatus('processing');
                 setTimeout(()=>setStatus('ready'),200);
             }else{
+                console.log('🔓 HOLD RELEASED');
                 holdBtn.classList.remove('active');
                 holdIcon.src='Unlocked.svg';
                 state.holdDirty=false;
@@ -4617,6 +4693,8 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         // Apply effects to small thumbnail (not full res!)
                         const savedSettings=state.settings;
                         state.settings=p.settings;
+                        // CRITICAL: Preload LUT for this photo's profile
+                        await preloadLUTForProfile(p.settings.profile);
                         applyEffects(tctx,tempCanvas.width,tempCanvas.height);
                         state.settings=savedSettings;
 
