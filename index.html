@@ -963,6 +963,7 @@
                     // Check for swipe navigation (when not zoomed)
                     let wasSwipe=false;
                     if(state.swipeState.swiping&&zoomState.scale<=1){
+                        wasSwipe=true; // Mark as swipe if any swipe motion was detected (even if too short to navigate)
                         const deltaX=state.swipeState.currentX-state.swipeState.startX;
                         const swipeThreshold=100; // Minimum swipe distance in pixels
                         if(Math.abs(deltaX)>=swipeThreshold){
@@ -978,7 +979,6 @@
                                     nextPhoto();
                                 }
                             }
-                            wasSwipe=true;
                         }
                     }
                     // Always reset swipe state after checking
