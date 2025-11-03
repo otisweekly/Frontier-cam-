@@ -294,7 +294,7 @@
 
         .photo-counter > div { display:flex; flex-direction:column; align-items:center; }
         .photo-counter .contact-icon { height:100%; width:auto; margin-right:10px; align-self:stretch; object-fit:contain; }
-        .photo-counter-number { font-size:26px; font-weight:700; line-height:1; }
+        .photo-counter-number { font-size:26px; font-weight:700; line-height:1; min-width:80px; text-align:center; }
         .photo-counter-label { font-size:9px; font-weight:700; color:#666; margin-top:2px; letter-spacing:0.5px; }
         .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #222222; transition:all 0s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
         .save-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #222222; }
@@ -1894,6 +1894,18 @@
             try {
                 haptic();
                 if(state.currentIndex>0){
+                    // Check HOLD dialog before navigating
+                    if(state.holdSettings&&state.holdDirty){
+                        const shouldApplyAll=showHoldDialog();
+                        if(shouldApplyAll){
+                            applySettingsToAllLightweight();
+                        }else{
+                            // User canceled - update baseline to current settings so same changes don't prompt again
+                            state.holdBaselineSettings={...state.settings};
+                        }
+                        state.holdDirty=false;
+                    }
+
                     saveCurrentPhotoSettings(false);
                     state.currentIndex--;
                     resetZoom(document.getElementById('canvas'));
@@ -1914,6 +1926,18 @@
             try {
                 haptic();
                 if(state.currentIndex<state.photos.length-1){
+                    // Check HOLD dialog before navigating
+                    if(state.holdSettings&&state.holdDirty){
+                        const shouldApplyAll=showHoldDialog();
+                        if(shouldApplyAll){
+                            applySettingsToAllLightweight();
+                        }else{
+                            // User canceled - update baseline to current settings so same changes don't prompt again
+                            state.holdBaselineSettings={...state.settings};
+                        }
+                        state.holdDirty=false;
+                    }
+
                     saveCurrentPhotoSettings(false);
                     state.currentIndex++;
                     resetZoom(document.getElementById('canvas'));
