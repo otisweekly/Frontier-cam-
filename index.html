@@ -999,6 +999,8 @@
                 }
 
                 if(e.touches.length===0){
+                    // Save panning state before resetting
+                    const wasPanning=zoomState.isPanning;
                     zoomState.isPanning=false;
                     if(zoomState.scale<1.1){
                         resetZoom(canvas);
@@ -1038,8 +1040,8 @@
                     if(wasSwipe)return; // Don't process as tap if it was a swipe
 
                     // Handle regular taps (swipe state now always false)
-                    console.log('Touch end - tap count before:',state.tapState.count,'panning:',zoomState.isPanning);
-                    if(!zoomState.isPanning){
+                    console.log('Touch end - tap count before:',state.tapState.count,'panning:',wasPanning);
+                    if(!wasPanning){
                         state.tapState.count++;
                         if(state.tapState.timer)clearTimeout(state.tapState.timer);
                         console.log('Touch end - tap count after:',state.tapState.count);
