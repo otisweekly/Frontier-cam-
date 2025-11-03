@@ -595,12 +595,12 @@
     <div id="intensityControls">
         <div class="intensity-slider-container">
             <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
-                <div class="intensity-value-number">30</div>
+                <div class="intensity-value-number">0</div>
                 <div class="intensity-value-label">INTENSITY</div>
             </div>
             <div class="intensity-buttons">
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(-5)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(5)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
             </div>
         </div>
     </div>
@@ -3366,9 +3366,9 @@
 
         function toggleControl(c){}
 
-        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();const defaultIntensity=0;if(isActive&&state.settings.profileIntensity!==defaultIntensity){const actual=state.settings.profileIntensity;let display;if(actual>=defaultIntensity){display=Math.round((actual-defaultIntensity)/0.6);}else{display=Math.round((actual-defaultIntensity)/0.4);}const displayText=display>0?`+${display}`:`${display}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
+        function updatePresetButtonText(){const container=state.videoMode?'videoProfiles':'photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];const isActive=state.settings.profile===profile;const profileName=profile.toUpperCase();if(isActive&&state.settings.profileIntensity!==0){const actual=state.settings.profileIntensity;const displayText=actual>0?`+${actual}`:`${actual}`;btn.textContent=`${profileName} (${displayText})`;}else{btn.textContent=profileName;}}});}
 
-        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;const defaultIntensity=(p==='supra'||p==='chrome')?40:30;state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
+        async function setProfile(p, buttonElement){haptic();const container=state.videoMode?'videoProfiles':'photoProfiles';const oldProfile=state.settings.profile;if(state.settings.profile===p){state.settings.profile='none';state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));addToHistory(`Profile: ${oldProfile} → none`,'profile',oldProfile,'none');await preloadLUTForProfile('none');}else{state.settings.profile=p;state.settings.profileIntensity=0;document.querySelectorAll(`#${container} .preset-btn`).forEach(b=>b.classList.remove('active'));if(buttonElement)buttonElement.classList.add('active');addToHistory(`Profile: ${oldProfile} → ${p}`,'profile',oldProfile,p);await preloadLUTForProfile(p);}updatePresetButtonText();const currentPhoto=state.photos[state.currentIndex];if(currentPhoto&&currentPhoto.displayName&&currentPhoto.displayName.match(/^Frontier_[A-Za-z]+_\d+\./)){currentPhoto.displayName=generateDisplayName(state.settings.profile,state.currentIndex,currentPhoto.fileExtension||'jpg');}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
         function resetSettings(silent=false){haptic();toggleHistoryPanel();}
 
@@ -3429,7 +3429,7 @@
         function adjustIntensity(delta){
             haptic();
             const oldIntensity=state.settings.profileIntensity;
-            const newIntensity=Math.max(-100,Math.min(100,state.settings.profileIntensity+delta));
+            const newIntensity=Math.max(-5,Math.min(5,state.settings.profileIntensity+delta));
             state.settings.profileIntensity=newIntensity;
 
             document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=newIntensity;
@@ -3468,13 +3468,13 @@
                 return;
             }
 
-            const options=`Current: ${currentValue}\n\nEnter new intensity (-100 to 100):`;
+            const options=`Current: ${currentValue}\n\nEnter new intensity (-5 to 5):`;
             const input=prompt(options,currentValue);
             if(input===null)return;
 
             const newValue=parseInt(input);
-            if(isNaN(newValue)||newValue<-100||newValue>100){
-                alert('Please enter a number between -100 and 100');
+            if(isNaN(newValue)||newValue<-5||newValue>5){
+                alert('Please enter a number between -5 and 5');
                 return;
             }
 
@@ -3483,7 +3483,7 @@
             document.getElementById('intensityValue').querySelector('.intensity-value-number').textContent=newValue;
 
             if(oldIntensity!==newValue){
-                addToHistory(`Intensity: ${oldIntensity} → ${newValue}%`,'profileIntensity',oldIntensity,newValue);
+                addToHistory(`Intensity: ${oldIntensity} → ${newValue}`,'profileIntensity',oldIntensity,newValue);
             }
 
             updateIntensityIndicator();
