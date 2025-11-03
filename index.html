@@ -233,7 +233,7 @@
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
         .nav-btn { flex:1; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; }
         .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
-        .nav-btn.disabled { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); cursor:not-allowed; pointer-events:none; }
+        .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5) !important; cursor:not-allowed; pointer-events:none; }
         .nav-btn.disabled img { opacity:0.25; }
         #downloadBtn { font-size:20px; }
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
@@ -559,7 +559,7 @@
             <div class="footer-bottom">
                 <div class="nav-controls">
                     <div class="photo-counter" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.15)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8)';">
-                        <img src="Contact.svg" class="contact-icon" alt="Contact Sheet">
+                        <img src="Gallery viewe.svg" class="contact-icon" alt="Contact Sheet">
                         <div>
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
@@ -1558,7 +1558,7 @@
 
             // Show progress
             showUploadProgress(`Loading ${files.length} file${files.length === 1 ? '' : 's'}...`);
-            setStatus('wait');
+            setStatus('loading');
 
             // Clear existing photos
             state.photos = [];
@@ -1657,7 +1657,7 @@
         }}
         function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
-        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas');canvas.style.display='block';
+        function renderPhoto(){if(state.renderPending)return;state.renderPending=true;setStatus('processing');const p=state.photos[state.currentIndex];if(!p){state.renderPending=false;setStatus('ready');return;}document.getElementById('photoCounter').textContent=`${state.currentIndex+1}/${state.photos.length}`;const canvas=document.getElementById('canvas');canvas.style.display='block';
 // Use preview image for instant responsiveness during adjustments, full quality otherwise
 const sourceImg=state.usePreview&&p.preview?p.preview:p.image;
 // Render to offscreen canvas first to avoid flashing
@@ -1672,7 +1672,7 @@ loadPhotoSettings(state.currentIndex);
 applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
 // Now copy the fully processed image to visible canvas in one operation
 canvas.width=sourceImg.width;canvas.height=sourceImg.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=sourceImg.width/sourceImg.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:false});
-ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;}
+ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;setStatus('ready');}
 
 
         function applyEffects(ctx,w,h){
