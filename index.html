@@ -138,7 +138,7 @@
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
         .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
 
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:78px; padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px)); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
+        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 15px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
         .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.more-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
@@ -365,9 +365,9 @@
     <div id="editSection">
         <div class="top-nav-bar"></div>
         <div class="status-light green active" id="compareIndicator" style="position:fixed;top:20px;left:70px;z-index:151;border-color:#000;"></div>
-        <div class="fullscreen-hint" id="fullscreenHint">
+        <div class="fullscreen-hint" id="fullscreenHint" style="display:none;">
             <img src="Shrink.svg" alt="Exit" style="height:16px;width:auto;vertical-align:middle;margin-right:8px;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.9));">
-            Double tap to exit preview
+            Fullscreen hint (disabled)
         </div>
 
         <button class="gallery-icon" onclick="backToUpload()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';">
@@ -380,7 +380,7 @@
         <div class="top-controls">
             <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
-            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness/Brightness + contrast.svg" alt="Brightness"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
@@ -588,12 +588,11 @@
             <div class="guide-section">
                 <h3>Canvas Interactions</h3>
                 <ul>
-                    
-                    <li><strong>Single tap background</strong> Cycle canvas color grey → white → black</li>
-                    <li><strong>Double tap image</strong> Zoom to fill frame Tap again to return to normal size</li>
-                    <li><strong>Double tap background</strong> Fullscreen preview mode Hides all controls for clean viewing</li>
-                    <li><strong>Swipe left/right</strong> Adjust active preset intensity 0-100% when a film profile is selected</li>
-                    <li><strong>Tap counter value</strong> directly edit Bloom Grain or CMYK values Tap to clear or set custom amount</li>
+                    <li><strong>Single tap</strong> View original unedited photo (shows for 1 second)</li>
+                    <li><strong>Double tap</strong> Zoom to fill/cover canvas (tap again to zoom out)</li>
+                    <li><strong>Pinch</strong> Zoom in/out</li>
+                    <li><strong>Drag while zoomed</strong> Pan around the zoomed photo</li>
+                    <li><strong>Tap counter value</strong> Directly edit Bloom, Grain, or CMYK values</li>
                 </ul>
             </div>
 
@@ -957,92 +956,16 @@
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
         let gesturesSetup=false;
 
+        // Double tap functionality disabled - reserved for future use
         function doubleTapZoom(e){
-            const targetId=e.target.id;
-            // If clicking on canvas background (not image), toggle fullscreen preview
-            if(targetId==='canvasContainer'){
-                toggleFullscreenPreview();
-            }else{
-                // If clicking on image/canvas, zoom to fit frame
-                const p=state.photos[state.currentIndex];
-                if(!p)return;
-
-                // Zoom handled by touch gestures in setupCanvasGestures
-                // This click handler is legacy - zoom is now done via double tap
-                if(!state.videoMode&&p.image){
-                    const canvas=document.getElementById('canvas');
-                    if(zoomState.scale>1){
-                        resetZoom(canvas);
-                    }
-                }else if(state.videoMode){
-                    const videoCanvas=document.getElementById('videoCanvas');
-                    const videoEl=document.getElementById('videoPreview');
-                    const maxW=window.innerWidth-30;
-                    const maxH=window.innerHeight-160-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');
-                    const videoAspect=videoEl.videoWidth/videoEl.videoHeight;
-                    const containerAspect=maxW/maxH;
-                    let displayW,displayH;
-                    if(videoAspect>containerAspect){
-                        displayW=maxW;
-                        displayH=maxW/videoAspect;
-                    }else{
-                        displayH=maxH;
-                        displayW=maxH*videoAspect;
-                    }
-                    videoCanvas.style.width=displayW+'px';
-                    videoCanvas.style.height=displayH+'px';
-                }
-            }
+            // Disabled - no double tap functionality
+            return;
         }
 
+        // Fullscreen preview disabled
         function toggleFullscreenPreview(){
-            state.fullscreenPreview=!state.fullscreenPreview;
-            if(state.fullscreenPreview){
-                document.body.classList.add('fullscreen-preview');
-                // Recalculate canvas size for fullscreen
-                setTimeout(()=>{
-                    const p=state.photos[state.currentIndex];
-                    if(p&&!p.isVideo){
-                        const canvas=document.getElementById('canvas');
-                        const ctx=canvas.getContext('2d',{alpha:false});
-                        const maxW=window.innerWidth-40;
-                        const maxH=window.innerHeight-40;
-                        const imageAspect=p.image.width/p.image.height;
-                        const containerAspect=maxW/maxH;
-                        let displayW,displayH;
-                        if(imageAspect>containerAspect){
-                            displayW=maxW;
-                            displayH=maxW/imageAspect;
-                        }else{
-                            displayH=maxH;
-                            displayW=maxH*imageAspect;
-                        }
-                        canvas.style.width=displayW+'px';
-                        canvas.style.height=displayH+'px';
-                    }else if(state.videoMode){
-                        const videoCanvas=document.getElementById('videoCanvas');
-                        const videoEl=document.getElementById('videoPreview');
-                        const maxW=window.innerWidth-40;
-                        const maxH=window.innerHeight-40;
-                        const videoAspect=videoEl.videoWidth/videoEl.videoHeight;
-                        const containerAspect=maxW/maxH;
-                        let displayW,displayH;
-                        if(videoAspect>containerAspect){
-                            displayW=maxW;
-                            displayH=maxW/videoAspect;
-                        }else{
-                            displayH=maxH;
-                            displayW=maxH*videoAspect;
-                        }
-                        videoCanvas.style.width=displayW+'px';
-                        videoCanvas.style.height=displayH+'px';
-                    }
-                },50);
-            }else{
-                document.body.classList.remove('fullscreen-preview');
-                // Restore normal size
-                setTimeout(renderPhoto,50);
-            }
+            // Disabled - no fullscreen preview
+            return;
         }
 
         function resetZoom(canvas){zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};applyTransform(canvas);}
@@ -1088,16 +1011,6 @@
                         // Store touch start for tap zone detection
                         state.intensityTapState.startX=e.touches[0].clientX;
                         state.intensityTapState.startY=e.touches[0].clientY;
-
-                        // Check if touch is in center 20% zone - if so, immediately show original
-                        const canvasRect=canvas.getBoundingClientRect();
-                        const tapX=e.touches[0].clientX;
-                        const tapPercent=(tapX-canvasRect.left)/canvasRect.width;
-
-                        if(tapPercent>=0.4&&tapPercent<=0.6){
-                            // Immediately show original for hold-to-view functionality
-                            singleTapCompare();
-                        }
                     }
                 }
             };
@@ -1160,109 +1073,6 @@
                         return;
                     }
 
-                    // Handle intensity tap zones: left 40% (decrease), center 20% (view original), right 40% (increase)
-                    if(!zoomState.isPanning&&!state.tapState.comparing){
-                        // Check if this was a tap (minimal movement)
-                        const deltaX=Math.abs((e.changedTouches?e.changedTouches[0].clientX:lastTapX)-state.intensityTapState.startX);
-                        const deltaY=Math.abs((e.changedTouches?e.changedTouches[0].clientY:lastTapY)-state.intensityTapState.startY);
-
-                        if(deltaX<15&&deltaY<15){
-                            // This is a tap! Determine which zone of the canvas
-                            const activeCanvas=document.getElementById('canvas');
-                            const canvasRect=activeCanvas.getBoundingClientRect();
-                            const tapX=e.changedTouches?e.changedTouches[0].clientX:lastTapX;
-
-                            // Calculate tap position as percentage of canvas width
-                            const tapPercent=(tapX-canvasRect.left)/canvasRect.width;
-
-                            // Center zone handled on touchStart, only handle left/right zones here
-                            // Left 40%: decrease intensity
-                            if(tapPercent<0.4&&state.settings.profile!=='none'){
-                                const oldIntensity=state.settings.profileIntensity;
-                                const newIntensity=Math.max(0,oldIntensity-5);
-                                if(newIntensity!==oldIntensity){
-                                    state.intensityTapState.tapCounter=Math.max(-5,state.intensityTapState.tapCounter-1);
-                                    state.settings.profileIntensity=newIntensity;
-
-                                    // Show tap counter indicator
-                                    const indicator=document.getElementById('intensityIndicator');
-                                    const counter=state.intensityTapState.tapCounter;
-                                    indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
-                                    indicator.classList.add('active');
-
-                                    // Position indicator over canvas center
-                                    const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
-                                    indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
-                                    indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
-
-                                    // Reset counter timer
-                                    if(state.intensityTapState.timer){
-                                        clearTimeout(state.intensityTapState.timer);
-                                    }
-                                    state.intensityTapState.timer=setTimeout(()=>{
-                                        indicator.classList.remove('active');
-                                        state.intensityTapState.tapCounter=0;
-                                    },800);
-
-                                    // Render immediately for instant feedback
-                                    renderPhoto();
-
-                                    // Add to history
-                                    const profileName=state.settings.profile.toUpperCase();
-                                    addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
-
-                                    saveCurrentPhotoSettings();
-                                    updatePresetButtonText();
-
-                                    // Prevent this from being treated as a regular tap
-                                    return;
-                                }
-                            }
-                            // Right 40%: increase intensity
-                            else if(tapPercent>0.6&&state.settings.profile!=='none'){
-                                const oldIntensity=state.settings.profileIntensity;
-                                const newIntensity=Math.min(100,oldIntensity+5);
-                                if(newIntensity!==oldIntensity){
-                                    state.intensityTapState.tapCounter=Math.min(5,state.intensityTapState.tapCounter+1);
-                                    state.settings.profileIntensity=newIntensity;
-
-                                    // Show tap counter indicator
-                                    const indicator=document.getElementById('intensityIndicator');
-                                    const counter=state.intensityTapState.tapCounter;
-                                    indicator.textContent=counter>0?`+${counter}`:counter<0?`${counter}`:'0';
-                                    indicator.classList.add('active');
-
-                                    // Position indicator over canvas center
-                                    const containerRect=document.getElementById('canvasContainer').getBoundingClientRect();
-                                    indicator.style.left=(canvasRect.left-containerRect.left+canvasRect.width/2)+'px';
-                                    indicator.style.top=(canvasRect.top-containerRect.top+canvasRect.height/2)+'px';
-
-                                    // Reset counter timer
-                                    if(state.intensityTapState.timer){
-                                        clearTimeout(state.intensityTapState.timer);
-                                    }
-                                    state.intensityTapState.timer=setTimeout(()=>{
-                                        indicator.classList.remove('active');
-                                        state.intensityTapState.tapCounter=0;
-                                    },800);
-
-                                    // Render immediately for instant feedback
-                                    renderPhoto();
-
-                                    // Add to history
-                                    const profileName=state.settings.profile.toUpperCase();
-                                    addToHistory(`${profileName} INTENSITY: ${oldIntensity}% → ${newIntensity}%`,'profileIntensity',oldIntensity,newIntensity);
-
-                                    saveCurrentPhotoSettings();
-                                    updatePresetButtonText();
-
-                                    // Prevent this from being treated as a regular tap
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
                     // Handle regular taps only if not panning
                     if(!zoomState.isPanning){
                         state.tapState.count++;
@@ -1270,62 +1080,35 @@
 
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
-                                // Single tap behavior based on target
+                                // Single tap to view original
                                 console.log('Single tap detected, target:',touchStartTarget);
-                                if(touchStartTarget==='background'){
-                                    // Single tap on background cycles color
-                                    cycleCanvasBackground();
-                                }
-                                // Single tap on image does nothing (preview mode removed per user request)
+                                singleTapCompare();
                                 state.tapState.count=0;
                             },300);
                         }else if(state.tapState.count===2){
                             clearTimeout(state.tapState.timer);
-                            // Double tap behavior
-                            console.log('Double tap detected, target:',touchStartTarget,'fullscreen:',state.fullscreenPreview,'zoomScale:',zoomState.scale);
-                            if(state.fullscreenPreview){
-                                // In fullscreen preview: double tap exits
-                                toggleFullscreenPreview();
-                            }else{
-                                // In normal edit mode
-                                if(touchStartTarget==='image'){
-                                    // Double tap image: zoom to fill width
-                                    const p=state.photos[state.currentIndex];
-                                    console.log('Double tap zoom check - p:',!!p,'isVideo:',p?.isVideo,'currentScale:',zoomState.scale);
-                                    if(p&&!p.isVideo){
-                                        if(zoomState.scale>1){
-                                            // Zoom out
-                                            console.log('Zooming OUT to 1x');
-                                            resetZoom(canvas);
-                                        }else{
-                                            // Zoom in to 2.5x
-                                            console.log('Zooming IN to 2.5x - using stored tap coords:',lastTapX,lastTapY);
-                                            const canvasRect=canvas.getBoundingClientRect();
-
-                                            // Fixed 2.5x zoom for clear magnification
-                                            zoomState.scale=2.5;
-                                            console.log('Setting scale to:',zoomState.scale);
-
-                                            // Calculate center point relative to canvas using stored coordinates
-                                            const tapX=lastTapX-canvasRect.left;
-                                            const tapY=lastTapY-canvasRect.top;
-                                            const canvasCenterX=canvasRect.width/2;
-                                            const canvasCenterY=canvasRect.height/2;
-
-                                            // Pan to center the tap point
-                                            zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
-                                            zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
-
-                                            console.log('Applying transform...');
-                                            applyTransform(canvas);
-                                            console.log('Zoom complete! New scale:',zoomState.scale);
-                                        }
-                                    }else{
-                                        console.log('Cannot zoom - p:',!!p,'isVideo:',p?.isVideo);
-                                    }
+                            // Double tap to zoom to fill/cover
+                            const p=state.photos[state.currentIndex];
+                            if(p&&!p.isVideo){
+                                if(zoomState.scale>1){
+                                    // Zoom out
+                                    resetZoom(canvas);
                                 }else{
-                                    // Double tap background: enter fullscreen preview
-                                    toggleFullscreenPreview();
+                                    // Zoom in to 2.5x to fill/cover canvas
+                                    const canvasRect=canvas.getBoundingClientRect();
+                                    zoomState.scale=2.5;
+
+                                    // Calculate center point relative to canvas using stored coordinates
+                                    const tapX=lastTapX-canvasRect.left;
+                                    const tapY=lastTapY-canvasRect.top;
+                                    const canvasCenterX=canvasRect.width/2;
+                                    const canvasCenterY=canvasRect.height/2;
+
+                                    // Pan to center the tap point
+                                    zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
+                                    zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
+
+                                    applyTransform(canvas);
                                 }
                             }
                             state.tapState.count=0;
@@ -3349,17 +3132,17 @@
         const FILM_PRESETS = {
             'supra': {
                 name: 'SUPRA',
-                lut: 'film-luts/Frontier luts/ClassicPrint 16mm DWG LUT v3 250D.cube',
+                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 250D.cube',
                 description: 'Daylight balanced, fine grain'
             },
             'chrome': {
                 name: 'CHROME',
-                lut: 'film-luts/Frontier luts/ClassicPrint 16mm DWG LUT v3 Technicolor.cube',
+                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 Technicolor.cube',
                 description: 'Classic Hollywood cinema'
             },
             'xxx': {
                 name: 'XXX',
-                lut: 'film-luts/Frontier luts/ClassicPrint 16mm DWG LUT v3 500T.cube',
+                lut: 'Frontier luts/ClassicPrint 16mm DWG LUT v3 500T.cube',
                 blackAndWhite: true,
                 description: 'Kodak Tri-X 400 black & white film emulation'
             }
@@ -3526,14 +3309,14 @@
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};updateUIFromSettings();updatePresetButtonText();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
+        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:30,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
-        // Close panels when clicking outside (but not on canvas - canvas has its own tap handler)
-        document.addEventListener('click',(e)=>{const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer'),canvas=document.getElementById('canvas');const isCanvasTap=e.target===canvas||canvasContainer.contains(e.target);if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)&&!isCanvasTap){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)&&!isCanvasTap){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}});
+        // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
+        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();}}document.addEventListener('click',handleOutsideInteraction);
 
         function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
@@ -3549,9 +3332,9 @@
 
         function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
-        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+(d*0.5)));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom.toFixed(1);saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
 
-        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+(d*0.5)));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain.toFixed(1);saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
 
         function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
