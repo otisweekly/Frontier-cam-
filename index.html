@@ -1753,8 +1753,17 @@
                         setStatus('ready');
                         console.log('First photo rendered successfully!');
 
-                        // DON'T generate contact sheet automatically - causes crashes with many photos
-                        // It will be generated on-demand when user views it or downloads
+                        // Generate contact sheet frame in background (non-blocking)
+                        generateAndAddContactSheet().then(() => {
+                            console.log('Contact sheet frame added as last frame');
+                            // Update counter to include contact sheet frame
+                            const counterEl = document.getElementById('photoCounter');
+                            if (counterEl) {
+                                counterEl.textContent = `1/${state.photos.length}`;
+                            }
+                        }).catch(err => {
+                            console.error('Background contact sheet generation failed:', err);
+                        });
                     } catch (err) {
                         console.error('Failed to render first photo:', err);
                         alert('Failed to display photos. Error: ' + err.message);
