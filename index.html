@@ -138,7 +138,7 @@
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
         .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3); }
 
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 15px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
+        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
         .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.more-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
@@ -1147,6 +1147,51 @@
             canvasContainer.addEventListener('touchend',handleTouchEnd);
             canvasContainer.addEventListener('touchcancel',handleTouchCancel);
             console.log('Touch handlers attached successfully');
+
+            // Desktop click handlers
+            let clickCount=0;
+            let clickTimer=null;
+
+            canvas.addEventListener('click',(e)=>{
+                clickCount++;
+
+                if(clickTimer)clearTimeout(clickTimer);
+
+                if(clickCount===1){
+                    clickTimer=setTimeout(()=>{
+                        // Single click - view original
+                        singleTapCompare();
+                        clickCount=0;
+                    },300);
+                }else if(clickCount===2){
+                    clearTimeout(clickTimer);
+                    clickCount=0;
+                    // Double click - zoom to fill
+                    const p=state.photos[state.currentIndex];
+                    if(p&&!p.isVideo){
+                        if(zoomState.scale>1){
+                            // Zoom out
+                            resetZoom(canvas);
+                        }else{
+                            // Zoom in to 2.5x
+                            const canvasRect=canvas.getBoundingClientRect();
+                            zoomState.scale=2.5;
+
+                            // Calculate center point relative to canvas using mouse coordinates
+                            const tapX=e.clientX-canvasRect.left;
+                            const tapY=e.clientY-canvasRect.top;
+                            const canvasCenterX=canvasRect.width/2;
+                            const canvasCenterY=canvasRect.height/2;
+
+                            // Pan to center the click point
+                            zoomState.x=(canvasCenterX-tapX)*zoomState.scale;
+                            zoomState.y=(canvasCenterY-tapY)*zoomState.scale;
+
+                            applyTransform(canvas);
+                        }
+                    }
+                }
+            });
         }
 
         function generateDisplayName(profile,index,extension='jpg'){const styleName=profile==='none'?'Original':profile.charAt(0).toUpperCase()+profile.slice(1);const num=String(index+1).padStart(2,'0');return `Frontier_${styleName}_${num}.${extension}`;}
@@ -3160,6 +3205,9 @@
         function applyBloom(ctx, w, h, int) {
             if (int === 0) return;
 
+            // Scale effect to be slower - value of 10 feels like 5
+            int = int * 0.5;
+
             // Negative values apply sharpening/clarity
             if (int < 0) {
                 applySharpen(ctx, w, h, Math.abs(int));
@@ -3285,7 +3333,7 @@
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*12;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.5;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
@@ -3332,9 +3380,9 @@
 
         function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
-        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+(d*0.5)));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom.toFixed(1);saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
 
-        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+(d*0.5)));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain.toFixed(1);saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
+        function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings();if(!state.videoMode){setTimeout(renderPhoto,0);}}
 
         function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings();if(!state.videoMode)setTimeout(renderPhoto,0);}
 
