@@ -2343,6 +2343,13 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 r = Math.max(0, Math.min(255, r - redReduction));
                 b = Math.max(0, Math.min(255, b + blueBoost));
 
+                // Lift shadows: brighten darker areas
+                // Shadow lift equivalent to +1 on the shadows slider
+                const shadowLift = 12 * factor;     // Up to +12 in shadows, fading to 0 in highlights
+                r = Math.max(0, Math.min(255, r + shadowLift));
+                g = Math.max(0, Math.min(255, g + shadowLift));
+                b = Math.max(0, Math.min(255, b + shadowLift));
+
                 pixels[i] = r;
                 pixels[i + 1] = g;
                 pixels[i + 2] = b;
