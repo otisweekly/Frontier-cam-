@@ -3961,31 +3961,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             // Generate previews when opening
             if(isOpening){
-                // Show simple placeholders instantly for speed
-                const previewCurrent=document.getElementById('downloadPreviewCurrent');
-                const previewSheet=document.getElementById('downloadPreviewSheet');
-                const ctxCurrent=previewCurrent.getContext('2d');
-                const ctxSheet=previewSheet.getContext('2d');
-
-                // Simple placeholder for current
-                previewCurrent.width=200;
-                previewCurrent.height=160;
-                ctxCurrent.fillStyle='#2a2a2a';
-                ctxCurrent.fillRect(0,0,200,160);
-                ctxCurrent.fillStyle='#666';
-                ctxCurrent.font='12px "PP Neue Bit", monospace';
-                ctxCurrent.textAlign='center';
-                ctxCurrent.fillText('CURRENT',100,80);
-
-                // Simple placeholder for all
-                previewSheet.width=200;
-                previewSheet.height=160;
-                ctxSheet.fillStyle='#2a2a2a';
-                ctxSheet.fillRect(0,0,200,160);
-                ctxSheet.fillStyle='#666';
-                ctxSheet.font='12px "PP Neue Bit", monospace';
-                ctxSheet.textAlign='center';
-                ctxSheet.fillText('ALL PHOTOS',100,80);
+                generateDownloadPreviews();
             }
         }
 
@@ -4097,19 +4073,33 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             previewGif.height=previewHeight;
 
             // Create array of frame canvases (exclude contact sheet)
+            // Scale down FIRST before applying effects for performance
             const frames=[];
             state.photos.forEach((p,i)=>{
                 if(!p.isVideo&&!p.isContactSheet){
-                    const frameCanvas=document.createElement('canvas');
-                    const frameCtx=frameCanvas.getContext('2d',{alpha:false});
-                    frameCanvas.width=p.image.width;
-                    frameCanvas.height=p.image.height;
-                    frameCtx.drawImage(p.image,0,0);
+                    const sourceImg=p.original||p.image;
+                    const aspectRatio=sourceImg.width/sourceImg.height;
 
-                    // Apply effects with photo's settings
+                    // Calculate scaled dimensions to fit preview
+                    let scaledW=previewWidth;
+                    let scaledH=previewHeight;
+                    if(aspectRatio>previewWidth/previewHeight){
+                        scaledH=Math.floor(previewWidth/aspectRatio);
+                    }else{
+                        scaledW=Math.floor(previewHeight*aspectRatio);
+                    }
+
+                    // Scale down FIRST to preview size (much faster!)
+                    const frameCanvas=document.createElement('canvas');
+                    const frameCtx=frameCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+                    frameCanvas.width=scaledW;
+                    frameCanvas.height=scaledH;
+                    frameCtx.drawImage(sourceImg,0,0,scaledW,scaledH);
+
+                    // Apply effects to small preview (not full res!)
                     const savedSettings=state.settings;
                     state.settings=p.settings;
-                    applyEffects(frameCtx,frameCanvas.width,frameCanvas.height);
+                    applyEffects(frameCtx,scaledW,scaledH);
                     state.settings=savedSettings;
 
                     frames.push(frameCanvas);
@@ -4515,13 +4505,15 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                         sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);
 
-                        // Add filename and date (centered)
+                        // Add preset name and date (centered)
                         sctx.fillStyle='#666';
                         sctx.font=`${7*scale}px "PP Neue Bit", monospace`;
                         sctx.textAlign='center';
-                        const filename=(p.displayName||p.name).substring(0,25);
+                        const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';
+                        const frameNum=String(photoIndex+1).padStart(2,'0');
+                        const filename=`Frontier-${profileText}_${frameNum}`;
                         const date=p.uploadTime?p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'}):'--/--/--';
-                        sctx.fillText(`${filename}`,x+thumbSize/2,y+thumbSize+10*scale);
+                        sctx.fillText(filename,x+thumbSize/2,y+thumbSize+10*scale);
                         sctx.fillText(`${date}`,x+thumbSize/2,y+thumbSize+18*scale);
 
                         photoIndex++;
