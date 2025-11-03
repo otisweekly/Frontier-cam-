@@ -293,13 +293,13 @@
         .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
 
         /* Custom Hold Dialog */
-        #customHoldDialog { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+        #customHoldDialog { position:fixed; top:0; left:0; right:0; bottom:0; background:transparent; z-index:10000; display:none; align-items:center; justify-content:center; }
         #customHoldDialog.active { display:flex; }
-        .hold-dialog-content { background:#4A4A4A; border:4px solid #000; border-radius:8px; box-shadow:0 12px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.1); padding:24px; max-width:400px; width:90%; }
+        .hold-dialog-content { background:#4A4A4A; border:4px solid #000; border-radius:8px; padding:24px; max-width:400px; width:90%; }
         .hold-dialog-title { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; font-weight:700; color:#fff; margin-bottom:16px; text-align:center; }
-        .hold-dialog-changes { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:14px; color:#3897AF; margin-bottom:20px; background:#2A2A2A; border:2px solid #000; border-radius:4px; padding:12px; max-height:200px; overflow-y:auto; }
+        .hold-dialog-changes { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; color:#3897AF; margin-bottom:20px; background:#2A2A2A; border:2px solid #000; border-radius:4px; padding:12px; max-height:200px; overflow-y:auto; }
         .hold-dialog-change-item { margin-bottom:4px; }
-        .hold-dialog-message { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:13px; color:#ccc; margin-bottom:20px; text-align:center; }
+        .hold-dialog-message { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; color:#ccc; margin-bottom:20px; text-align:center; }
         .hold-dialog-buttons { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         .hold-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; text-align:center; padding:14px 20px; line-height:1; }
         .hold-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
