@@ -1717,8 +1717,18 @@
                         setStatus('ready');
                         console.log('First photo rendered successfully!');
 
-                        // Contact sheet generation disabled - causes crashes
-                        // Contact sheet will be generated on-demand when opening gallery view
+                        // Generate contact sheet in background (now optimized - uses thumbnails!)
+                        setTimeout(() => {
+                            generateAndAddContactSheet().then(() => {
+                                console.log('Contact sheet frame added as last frame');
+                                const counterEl = document.getElementById('photoCounter');
+                                if (counterEl) {
+                                    counterEl.textContent = `1/${state.photos.length}`;
+                                }
+                            }).catch(err => {
+                                console.error('Background contact sheet generation failed:', err);
+                            });
+                        }, 1000);
                     } catch (err) {
                         console.error('Failed to render first photo:', err);
                         alert('Failed to display photos. Error: ' + err.message);
@@ -4484,20 +4494,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                     if(photoIndex<photos.length){
                         const p=photos[photoIndex];
-
-                        const tempCanvas=document.createElement('canvas');
-                        const tctx=tempCanvas.getContext('2d',{alpha:false});
                         const sourceImg=p.original||p.image;
-                        tempCanvas.width=sourceImg.width;
-                        tempCanvas.height=sourceImg.height;
-                        tctx.drawImage(sourceImg,0,0);
-
-                        const savedSettings=state.settings;
-                        state.settings=p.settings;
-                        applyEffects(tctx,tempCanvas.width,tempCanvas.height);
-                        state.settings=savedSettings;
-
                         const aspectRatio=sourceImg.width/sourceImg.height;
+
+                        // Calculate display size
                         let drawW=thumbSize;
                         let drawH=thumbSize;
                         if(aspectRatio>1){
@@ -4505,6 +4505,19 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         }else{
                             drawW=thumbSize*aspectRatio;
                         }
+
+                        // Scale down FIRST to thumbnail size (much faster!)
+                        const tempCanvas=document.createElement('canvas');
+                        const tctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+                        tempCanvas.width=Math.floor(drawW);
+                        tempCanvas.height=Math.floor(drawH);
+                        tctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);
+
+                        // Apply effects to small thumbnail (not full res!)
+                        const savedSettings=state.settings;
+                        state.settings=p.settings;
+                        applyEffects(tctx,tempCanvas.width,tempCanvas.height);
+                        state.settings=savedSettings;
 
                         const offsetX=x+(thumbSize-drawW)/2;
                         const offsetY=y+(thumbSize-drawH)/2;
