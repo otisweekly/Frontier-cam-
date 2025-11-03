@@ -155,8 +155,8 @@
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; }
         .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
-        .canvas-container.intensity-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
-        .canvas-container.more-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
+        .canvas-container.intensity-open { padding-top:calc(78px + 170px); padding-bottom:15px; }
+        .canvas-container.more-open { padding-top:calc(78px + 170px); padding-bottom:15px; }
         .canvas-container.download-options-open { padding-top:calc(78px + 270px); padding-bottom:15px; }
         .canvas-container.history-open { padding-top:calc(78px + 30vh); padding-bottom:15px; }
         .canvas-container.download-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
@@ -209,7 +209,7 @@
         #moreDialog.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:100px; display:flex; align-items:center; justify-content:center; }
+        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:150px; display:flex; align-items:center; justify-content:center; }
         #intensityControls.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         #downloadOptions { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:flex; flex-direction:column; gap:8px; min-height:150px; }
         #downloadOptions.active { transform:translateY(0); opacity:1; pointer-events:auto; }
