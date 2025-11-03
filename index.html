@@ -1717,19 +1717,8 @@
                         setStatus('ready');
                         console.log('First photo rendered successfully!');
 
-                        // Generate contact sheet frame in background (non-blocking, no status changes)
-                        setTimeout(() => {
-                            generateAndAddContactSheet().then(() => {
-                                console.log('Contact sheet frame added as last frame');
-                                // Update counter to include contact sheet frame
-                                const counterEl = document.getElementById('photoCounter');
-                                if (counterEl) {
-                                    counterEl.textContent = `1/${state.photos.length}`;
-                                }
-                            }).catch(err => {
-                                console.error('Background contact sheet generation failed:', err);
-                            });
-                        }, 1000); // Wait 1 second after first photo renders
+                        // Contact sheet generation disabled - causes crashes
+                        // Contact sheet will be generated on-demand when opening gallery view
                     } catch (err) {
                         console.error('Failed to render first photo:', err);
                         alert('Failed to display photos. Error: ' + err.message);
