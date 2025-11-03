@@ -4798,6 +4798,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const photos=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
             const files=[];
 
+            // Save current settings to restore after export
+            const originalSettings={...state.settings};
+            const originalIndex=state.currentIndex;
+
             // Process all photos with progress
             for(let i=0;i<photos.length;i++){
                 const p=photos[i];
@@ -4813,10 +4817,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 tempCanvas.height=p.image.height;
                 tctx.drawImage(p.image,0,0);
 
-                const savedSettings=state.settings;
+                // CRITICAL: Preload LUT and apply effects
                 state.settings=p.settings;
+                await preloadLUTForProfile(p.settings.profile);
                 applyEffects(tctx,tempCanvas.width,tempCanvas.height);
-                state.settings=savedSettings;
 
                 // Show preview on main canvas (like upload animation)
                 const mainCanvas=document.getElementById('canvas');
@@ -4909,10 +4913,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         tempCanvas.height=p.image.height;
                         tctx.drawImage(p.image,0,0);
 
-                        const savedSettings=state.settings;
+                        // CRITICAL: Preload LUT and apply effects
                         state.settings=p.settings;
+                        await preloadLUTForProfile(p.settings.profile);
                         applyEffects(tctx,tempCanvas.width,tempCanvas.height);
-                        state.settings=savedSettings;
 
                         const aspectRatio=p.image.width/p.image.height;
                         let drawW=thumbSize;
@@ -4961,6 +4965,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                                 title:'Frontier Photos',
                                 text:`${photoCount} photos + contact sheet`
                             });
+                            // Restore original settings and re-render
+                            state.settings={...originalSettings};
+                            state.currentIndex=originalIndex;
+                            await preloadLUTForProfile(state.settings.profile);
+                            renderPhoto();
                             hideUploadProgress();
                             setStatus('ready');
                             return; // Success - exit
@@ -4968,6 +4977,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     }catch(err){
                         if(err.name==='AbortError'){
                             // User canceled - just exit
+                            // Restore original settings and re-render
+                            state.settings={...originalSettings};
+                            state.currentIndex=originalIndex;
+                            await preloadLUTForProfile(state.settings.profile);
+                            renderPhoto();
                             hideUploadProgress();
                             setStatus('ready');
                             return;
@@ -4977,17 +4991,17 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 }
 
                 // Fallback: Create ZIP download if share fails or not supported
-                await createZipDownload(files,photoCount);
+                await createZipDownload(files,photoCount,originalSettings,originalIndex);
             }else{
                 // Desktop: Create ZIP download
-                await createZipDownload(files,photoCount);
+                await createZipDownload(files,photoCount,originalSettings,originalIndex);
             }
         }
 
         // Removed: downloadIndividualFiles - caused too many download prompts
         // Mobile now uses Share API or falls back to single ZIP download
 
-        async function createZipDownload(files,photoCount){
+        async function createZipDownload(files,photoCount,originalSettings,originalIndex){
             // Load JSZip dynamically
             if(typeof JSZip==='undefined'){
                 await new Promise((resolve,reject)=>{
@@ -5022,6 +5036,12 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             a.click();
             document.body.removeChild(a);
             setTimeout(()=>URL.revokeObjectURL(url),100);
+
+            // Restore original settings and re-render
+            state.settings={...originalSettings};
+            state.currentIndex=originalIndex;
+            await preloadLUTForProfile(state.settings.profile);
+            renderPhoto();
 
             hideUploadProgress();
             setStatus('ready');
