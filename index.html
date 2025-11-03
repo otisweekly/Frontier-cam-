@@ -117,7 +117,7 @@
         @keyframes indicatorPulse { 0%, 100% { transform:scale(1); box-shadow:0 0 6px rgba(56,151,175,0.8); } 50% { transform:scale(1.15); box-shadow:0 0 12px rgba(56,151,175,1), 0 0 18px rgba(56,151,175,0.6); } }
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
-        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:32px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:'PP Neue Bit', monospace; }
+        .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:24px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:'PP Neue Bit', monospace; }
         .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 4px 8px rgba(0,0,0,0.2); }
         #fileInput { display:none; }
         @media (pointer: coarse) { .upload-btn { touch-action:manipulation; } }
@@ -127,6 +127,8 @@
         #editSection.active { display:flex; }
 
         .top-nav-bar { position:fixed; top:0; left:0; right:0; height:78px; background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); }
+        .edit-status-light { position:fixed; top:31px; left:50%; transform:translateX(-50%); width:16px; height:16px; border-radius:50%; border:1px solid rgba(255,255,255,0.2); z-index:151; opacity:0.4; }
+        .edit-status-light.active { opacity:1; box-shadow:0 0 12px currentColor; }
 
         .gallery-icon { position:fixed; top:15px; left:15px; width:44px; height:44px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
         .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
@@ -172,7 +174,8 @@
         body.fullscreen-preview .edit-footer,
         body.fullscreen-preview .gallery-icon,
         body.fullscreen-preview .background-toggle-bar,
-        body.fullscreen-preview .status-light { display:none !important; }
+        body.fullscreen-preview .status-light,
+        body.fullscreen-preview .edit-status-light { display:none !important; }
         body.fullscreen-preview .canvas-container { padding:20px !important; background:#000 !important; }
         body.fullscreen-preview #canvas,
 
@@ -381,7 +384,6 @@
             </div>
         </div>
         <div>
-            <div class="upload-label">UPLOAD PHOTO</div>
             <button class="upload-btn" onclick="document.getElementById('fileInput').click();"><span>UPLOAD PHOTOS</span><span>≡</span></button>
             <input type="file" id="fileInput" accept="image/*" multiple>
         </div>
@@ -389,6 +391,7 @@
 
     <div id="editSection">
         <div class="top-nav-bar"></div>
+        <div class="edit-status-light green active" id="editStatusLight"></div>
         <div class="fullscreen-hint" id="fullscreenHint" style="display:none;">
             <img src="Shrink.svg" alt="Exit" style="height:16px;width:auto;vertical-align:middle;margin-right:8px;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.9));">
             Fullscreen hint (disabled)
@@ -756,7 +759,7 @@
         // Log initialization
         console.log('🐛 Debug console initialized');
 
-        function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),processing=document.getElementById('statusProcessing'),loading=document.getElementById('statusLoading'),wait=document.getElementById('statusWait');ready.classList.toggle('active',s==='ready');processing.classList.toggle('active',s==='processing');loading.classList.toggle('active',s==='loading');wait.classList.toggle('active',s!=='ready'&&s!=='processing'&&s!=='loading');}
+        function setStatus(s,pulse=true){const ready=document.getElementById('statusReady'),processing=document.getElementById('statusProcessing'),loading=document.getElementById('statusLoading'),wait=document.getElementById('statusWait'),editLight=document.getElementById('editStatusLight');ready.classList.toggle('active',s==='ready');processing.classList.toggle('active',s==='processing');loading.classList.toggle('active',s==='loading');wait.classList.toggle('active',s!=='ready'&&s!=='processing'&&s!=='loading');if(editLight){editLight.className='edit-status-light';if(s==='ready')editLight.classList.add('green','active');else if(s==='processing')editLight.classList.add('turquoise','active');else if(s==='loading')editLight.classList.add('orange','active');else editLight.classList.add('red','active');}}
         function haptic(){if(navigator.vibrate){navigator.vibrate(10);}}
 
         // Progress bar functions
@@ -1015,12 +1018,12 @@
 
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
-                                // Single tap to view original - ONLY when zoomed in
-                                if(zoomState.scale>1&&!state.panelJustClosed&&!zoomState.justZoomed){
-                                    console.log('Single tap detected (zoomed in), showing original');
+                                // Single tap to view original
+                                if(!state.panelJustClosed&&!zoomState.justZoomed){
+                                    console.log('Single tap detected, showing original');
                                     singleTapCompare();
                                 }else{
-                                    console.log('Single tap ignored (not zoomed or just zoomed)');
+                                    console.log('Single tap ignored (panel just closed or just zoomed)');
                                 }
                                 state.tapState.count=0;
                             },350); // Long enough for comfortable double-tapping
@@ -1112,12 +1115,12 @@
 
                 if(clickCount===1){
                     clickTimer=setTimeout(()=>{
-                        // Single click - view original (only when zoomed in)
-                        if(zoomState.scale>1&&!state.panelJustClosed&&!zoomState.justZoomed){
+                        // Single click - view original
+                        if(!state.panelJustClosed&&!zoomState.justZoomed){
                             console.log('Single click - showing original');
                             singleTapCompare();
                         }else{
-                            console.log('Single click ignored - not zoomed or just zoomed');
+                            console.log('Single click ignored - panel just closed or just zoomed');
                         }
                         clickCount=0;
                     },350);
