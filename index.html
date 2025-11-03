@@ -1717,9 +1717,12 @@
                         setStatus('ready');
                         console.log('First photo rendered successfully!');
 
-                        // Contact sheet auto-generation DISABLED
-                        // Even with optimization, background generation causes crashes on mobile
-                        // Contact sheet only generates on-demand when opening gallery view
+                        // Generate contact sheet as last frame (with delay to prevent crashes)
+                        setTimeout(()=>{
+                            generateAndAddContactSheet().catch(err=>{
+                                console.error('Failed to generate contact sheet:',err);
+                            });
+                        },500);
                     } catch (err) {
                         console.error('Failed to render first photo:', err);
                         alert('Failed to display photos. Error: ' + err.message);
@@ -1818,7 +1821,7 @@
         function showHoldDialog(){
             const changes = getHoldChanges();
             const changesList = changes.length > 0 ? '\n\n' + changes.join('\n') : '';
-            return confirm(`Apply these changes to all frames with HOLD?${changesList}\n\n(Cancel to apply only to this frame)`);
+            return confirm(`Apply these changes to all frames with HOLD?${changesList}\n\nOK = Apply to All\nCancel = This Frame Only`);
         }
 
         // Lightweight version: just copy settings, no rendering
@@ -4062,7 +4065,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 generateSheetPreview(previewSheet,ctxSheet,false);
             }
 
-            // Generate animated GIF preview (low-res animation cycling through all frames)
+            // Generate animated GIF preview (deferred to prevent crashes)
             const previewGif=document.getElementById('downloadPreviewGif');
             const ctxGif=previewGif.getContext('2d');
 
@@ -4072,75 +4075,84 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             previewGif.width=previewWidth;
             previewGif.height=previewHeight;
 
-            // Create array of frame canvases (exclude contact sheet)
-            // Scale down FIRST before applying effects for performance
-            const frames=[];
-            state.photos.forEach((p,i)=>{
-                if(!p.isVideo&&!p.isContactSheet){
-                    const sourceImg=p.original||p.image;
-                    const aspectRatio=sourceImg.width/sourceImg.height;
+            // Show placeholder immediately
+            ctxGif.fillStyle='#2a2a2a';
+            ctxGif.fillRect(0,0,previewWidth,previewHeight);
+            ctxGif.fillStyle='#666';
+            ctxGif.font='12px "PP Neue Bit", monospace';
+            ctxGif.textAlign='center';
+            ctxGif.fillText('GIF PREVIEW',previewWidth/2,previewHeight/2);
 
-                    // Calculate scaled dimensions to fit preview
-                    let scaledW=previewWidth;
-                    let scaledH=previewHeight;
+            // Defer heavy processing to avoid crash
+            const frames=[];
+            setTimeout(()=>{
+                state.photos.forEach((p,i)=>{
+                    if(!p.isVideo&&!p.isContactSheet){
+                        const sourceImg=p.original||p.image;
+                        const aspectRatio=sourceImg.width/sourceImg.height;
+
+                        // Calculate scaled dimensions to fit preview
+                        let scaledW=previewWidth;
+                        let scaledH=previewHeight;
+                        if(aspectRatio>previewWidth/previewHeight){
+                            scaledH=Math.floor(previewWidth/aspectRatio);
+                        }else{
+                            scaledW=Math.floor(previewHeight*aspectRatio);
+                        }
+
+                        // Scale down FIRST to preview size (much faster!)
+                        const frameCanvas=document.createElement('canvas');
+                        const frameCtx=frameCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+                        frameCanvas.width=scaledW;
+                        frameCanvas.height=scaledH;
+                        frameCtx.drawImage(sourceImg,0,0,scaledW,scaledH);
+
+                        // Apply effects to small preview (not full res!)
+                        const savedSettings=state.settings;
+                        state.settings=p.settings;
+                        applyEffects(frameCtx,scaledW,scaledH);
+                        state.settings=savedSettings;
+
+                        frames.push(frameCanvas);
+                    }
+                });
+
+                // Animate through frames
+                let frameIndex=0;
+                if(state.gifPreviewInterval){
+                    clearInterval(state.gifPreviewInterval);
+                }
+
+                function drawGifFrame(){
+                    if(frames.length===0)return;
+
+                    const frame=frames[frameIndex];
+                    const aspectRatio=frame.width/frame.height;
+
+                    // Clear canvas
+                    ctxGif.fillStyle='#000';
+                    ctxGif.fillRect(0,0,previewWidth,previewHeight);
+
+                    // Calculate dimensions maintaining aspect ratio
+                    let drawW=previewWidth;
+                    let drawH=previewHeight;
                     if(aspectRatio>previewWidth/previewHeight){
-                        scaledH=Math.floor(previewWidth/aspectRatio);
+                        drawH=previewWidth/aspectRatio;
                     }else{
-                        scaledW=Math.floor(previewHeight*aspectRatio);
+                        drawW=previewHeight*aspectRatio;
                     }
 
-                    // Scale down FIRST to preview size (much faster!)
-                    const frameCanvas=document.createElement('canvas');
-                    const frameCtx=frameCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
-                    frameCanvas.width=scaledW;
-                    frameCanvas.height=scaledH;
-                    frameCtx.drawImage(sourceImg,0,0,scaledW,scaledH);
+                    const offsetX=(previewWidth-drawW)/2;
+                    const offsetY=(previewHeight-drawH)/2;
 
-                    // Apply effects to small preview (not full res!)
-                    const savedSettings=state.settings;
-                    state.settings=p.settings;
-                    applyEffects(frameCtx,scaledW,scaledH);
-                    state.settings=savedSettings;
+                    ctxGif.drawImage(frame,offsetX,offsetY,drawW,drawH);
 
-                    frames.push(frameCanvas);
-                }
-            });
-
-            // Animate through frames
-            let frameIndex=0;
-            if(state.gifPreviewInterval){
-                clearInterval(state.gifPreviewInterval);
-            }
-
-            function drawGifFrame(){
-                if(frames.length===0)return;
-
-                const frame=frames[frameIndex];
-                const aspectRatio=frame.width/frame.height;
-
-                // Clear canvas
-                ctxGif.fillStyle='#000';
-                ctxGif.fillRect(0,0,previewWidth,previewHeight);
-
-                // Calculate dimensions maintaining aspect ratio
-                let drawW=previewWidth;
-                let drawH=previewHeight;
-                if(aspectRatio>previewWidth/previewHeight){
-                    drawH=previewWidth/aspectRatio;
-                }else{
-                    drawW=previewHeight*aspectRatio;
+                    frameIndex=(frameIndex+1)%frames.length;
                 }
 
-                const offsetX=(previewWidth-drawW)/2;
-                const offsetY=(previewHeight-drawH)/2;
-
-                ctxGif.drawImage(frame,offsetX,offsetY,drawW,drawH);
-
-                frameIndex=(frameIndex+1)%frames.length;
-            }
-
-            drawGifFrame();
-            state.gifPreviewInterval=setInterval(drawGifFrame,400);
+                drawGifFrame();
+                state.gifPreviewInterval=setInterval(drawGifFrame,400);
+            },100); // End setTimeout - defer heavy processing
         }
 
         function previewInCanvas(type){
