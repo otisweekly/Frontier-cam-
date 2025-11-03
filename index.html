@@ -377,9 +377,9 @@
         .contact-sheet-header { position:sticky; top:0; background:#000; padding:20px 15px 15px; display:flex; flex-direction:column; gap:15px; border-bottom:2px solid #333; z-index:10; align-items:center; }
         .contact-sheet-header-top { display:flex; justify-content:center; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:200px; height:auto; }
-        .contact-sheet-close { position:fixed; top:20px; right:20px; width:44px; height:44px; padding:6px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
+        .contact-sheet-close { position:fixed; top:15px; right:15px; width:36px; height:36px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
         .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .contact-sheet-close img { width:24px; height:24px; object-fit:contain; filter:brightness(0) invert(1); }
+        .contact-sheet-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
         .contact-sheet-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:0 15px; }
         .contact-sheet-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; padding:8px 16px; height:44px; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; display:flex; align-items:center; justify-content:center; }
         .contact-sheet-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -1717,8 +1717,19 @@
                         setStatus('ready');
                         console.log('First photo rendered successfully!');
 
-                        // Don't auto-generate contact sheet - causes UI to freeze
-                        // User can open contact sheet view manually with gallery button
+                        // Generate contact sheet frame in background (non-blocking, no status changes)
+                        setTimeout(() => {
+                            generateAndAddContactSheet().then(() => {
+                                console.log('Contact sheet frame added as last frame');
+                                // Update counter to include contact sheet frame
+                                const counterEl = document.getElementById('photoCounter');
+                                if (counterEl) {
+                                    counterEl.textContent = `1/${state.photos.length}`;
+                                }
+                            }).catch(err => {
+                                console.error('Background contact sheet generation failed:', err);
+                            });
+                        }, 1000); // Wait 1 second after first photo renders
                     } catch (err) {
                         console.error('Failed to render first photo:', err);
                         alert('Failed to display photos. Error: ' + err.message);
@@ -4384,7 +4395,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         async function generateAndAddContactSheet(){
             try {
-                setStatus('processing');
+                // Don't change status - this runs in background
 
                 // Remove existing contact sheet if present
                 const contactSheetIndex=state.photos.findIndex(p=>p.isContactSheet);
@@ -4395,7 +4406,6 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 // Get only actual photos (not videos, not existing contact sheets)
                 const photos=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
                 if(photos.length===0){
-                    setStatus('ready');
                     return;
                 }
 
@@ -4556,13 +4566,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         isContactSheet:true
                     });
 
-                    setStatus('ready');
                     resolve();
                 },'image/jpeg',0.92);
             });
             } catch (err) {
                 console.error('Contact sheet generation failed:', err);
-                setStatus('ready');
                 // Don't throw - allow the app to continue without contact sheet
             }
         }
