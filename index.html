@@ -4858,67 +4858,44 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             });
             files.push({blob:sheetBlob,filename:'00_CONTACT_SHEET.jpg'});
 
-            if(isMobile&&navigator.share&&navigator.canShare){
-                // Mobile: Use Share API to save to camera roll
-                try{
-                    const shareFiles=files.map(f=>new File([f.blob],f.filename,{type:'image/jpeg'}));
+            if(isMobile){
+                // Mobile: Always use Share API (or ZIP as fallback)
+                if(navigator.share&&navigator.canShare){
+                    try{
+                        const shareFiles=files.map(f=>new File([f.blob],f.filename,{type:'image/jpeg'}));
 
-                    // Check if browser can share files
-                    if(navigator.canShare({files:shareFiles})){
-                        await navigator.share({
-                            files:shareFiles,
-                            title:'Frontier Photos',
-                            text:`${photoCount} photos + contact sheet`
-                        });
-                        hideUploadProgress();
-                        setStatus('ready');
-                        // Note: User must tap "Save X Images" in the share sheet
-                    }else{
-                        // Fallback: Download individual images on mobile (no ZIP)
-                        await downloadIndividualFiles(files,photoCount);
-                    }
-                }catch(err){
-                    if(err.name!=='AbortError'){
-                        // If share fails, download individual files instead of ZIP
-                        await downloadIndividualFiles(files,photoCount);
-                    }else{
-                        hideUploadProgress();
-                        setStatus('ready');
+                        // Try to share all files
+                        if(navigator.canShare({files:shareFiles})){
+                            await navigator.share({
+                                files:shareFiles,
+                                title:'Frontier Photos',
+                                text:`${photoCount} photos + contact sheet`
+                            });
+                            hideUploadProgress();
+                            setStatus('ready');
+                            return; // Success - exit
+                        }
+                    }catch(err){
+                        if(err.name==='AbortError'){
+                            // User canceled - just exit
+                            hideUploadProgress();
+                            setStatus('ready');
+                            return;
+                        }
+                        console.log('Share API failed, falling back to ZIP:',err);
                     }
                 }
-            }else if(isMobile){
-                // Mobile without share API: Download individual files
-                await downloadIndividualFiles(files,photoCount);
+
+                // Fallback: Create ZIP download if share fails or not supported
+                await createZipDownload(files,photoCount);
             }else{
                 // Desktop: Create ZIP download
                 await createZipDownload(files,photoCount);
             }
         }
 
-        async function downloadIndividualFiles(files,photoCount){
-            // Download each file individually (for mobile when share API fails)
-            hideUploadProgress();
-
-            for(let i=0;i<files.length;i++){
-                const file=files[i];
-                const url=URL.createObjectURL(file.blob);
-                const a=document.createElement('a');
-                a.href=url;
-                a.download=file.filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                // Small delay between downloads to prevent browser blocking
-                if(i<files.length-1){
-                    await new Promise(resolve=>setTimeout(resolve,300));
-                }
-            }
-
-            setStatus('ready');
-            alert(`${photoCount} photos + contact sheet saved to Downloads folder.\n\nOn iPhone: Open Files app > Downloads folder > Tap photos > Share > Save to Photos`);
-        }
+        // Removed: downloadIndividualFiles - caused too many download prompts
+        // Mobile now uses Share API or falls back to single ZIP download
 
         async function createZipDownload(files,photoCount){
             // Load JSZip dynamically
