@@ -157,6 +157,7 @@
         .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
         .canvas-container.intensity-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
         .canvas-container.more-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
+        .canvas-container.download-options-open { padding-top:calc(78px + 270px); padding-bottom:15px; }
         .canvas-container.history-open { padding-top:calc(78px + 30vh); padding-bottom:15px; }
         .canvas-container.download-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
         #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 340px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; position:relative; z-index:100; touch-action: none; }
@@ -200,15 +201,22 @@
         .edit-footer.brightness-open { transform:translateY(100%); }
         .edit-footer.intensity-open { transform:translateY(100%); }
         .edit-footer.more-open { transform:translateY(100%); }
+        .edit-footer.download-options-open { transform:translateY(100%); }
         .edit-footer.history-open { transform:translateY(100%); }
         .edit-footer.download-open { transform:translateY(100%); }
 
-        #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; }
+        #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
         #moreDialog.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; }
+        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:100px; display:flex; align-items:center; justify-content:center; }
         #intensityControls.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+        #downloadOptions { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:flex; flex-direction:column; gap:8px; min-height:150px; }
+        #downloadOptions.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+        .download-option-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px; line-height:1.2; pointer-events:auto; min-height:70px; }
+        .download-option-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .download-option-title { font-size:22px; font-weight:700; margin-bottom:4px; }
+        .download-option-desc { font-size:14px; font-weight:400; opacity:0.7; }
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
         .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
         .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -350,7 +358,7 @@
         .contact-sheet-item.current::before { content:'ACTIVE'; position:absolute; bottom:10px; right:8px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:11px; font-weight:700; color:#FF8C00; text-shadow:0 1px 3px rgba(0,0,0,0.9); z-index:1; line-height:16px; }
         .contact-sheet-item.selected { border-color:#3897AF; border-width:3px; }
         .contact-sheet-item.selected::after { content:'✓'; position:absolute; top:8px; right:8px; width:24px; height:24px; background:#3897AF; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.5); z-index:1; }
-        .contact-sheet-item img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+        .contact-sheet-item img { width:100%; aspect-ratio:10/8; object-fit:cover; display:block; }
         .contact-sheet-label { padding:10px 8px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:16px; color:#999; line-height:1.2; background:#1a1a1a; }
         .contact-sheet-filename { display:flex; align-items:center; justify-content:space-between; gap:6px; color:#fff; font-weight:700; margin-bottom:2px; }
         .contact-sheet-filename-text { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:left; }
@@ -418,7 +426,7 @@
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
             <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
-            <button class="settings-btn" id="downloadBtn" onclick="savePhoto()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
+            <button class="settings-btn" id="downloadBtn" onclick="toggleDownloadOptions()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
         <div id="downloadProgress">
             <div class="progress-content">
@@ -555,6 +563,20 @@
                 </div>
                 <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
             </div>
+        </div>
+        <div id="downloadOptions">
+            <button class="download-option-btn" onclick="savePhotoWithQuality('full')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">
+                <div class="download-option-title">FULL QUALITY</div>
+                <div class="download-option-desc">JPG 100% • Original resolution</div>
+            </button>
+            <button class="download-option-btn" onclick="savePhotoWithQuality('high')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">
+                <div class="download-option-title">HIGH QUALITY</div>
+                <div class="download-option-desc">JPG 95% • Original resolution</div>
+            </button>
+            <button class="download-option-btn" onclick="savePhotoWithQuality('web')" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">
+                <div class="download-option-title">WEB OPTIMIZED</div>
+                <div class="download-option-desc">JPG 85% • Smaller file size</div>
+            </button>
         </div>
         <div class="edit-footer">
             <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
@@ -3496,7 +3518,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
-        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
+        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadOptions=document.getElementById('downloadOptions'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(downloadOptions.classList.contains('active')&&!downloadOptions.contains(e.target)&&!downloadBtn.contains(e.target)){closeDownloadOptions();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
 
         function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
 
@@ -3534,6 +3556,38 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 intensityBtn.classList.remove('active');
                 canvasContainer.classList.remove('intensity-open');
                 editFooter.classList.remove('intensity-open');
+            }
+        }
+
+        function toggleDownloadOptions(){
+            haptic();
+            closeCMYK();
+            closeBrightness();
+            closeMoreDialog();
+            closeHistoryPanel();
+            closeIntensity();
+            closeDownloadProgress();
+
+            const downloadOptions=document.getElementById('downloadOptions');
+            const downloadBtn=document.getElementById('downloadBtn');
+            const canvasContainer=document.getElementById('canvasContainer');
+            const editFooter=document.querySelector('.edit-footer');
+            downloadOptions.classList.toggle('active');
+            downloadBtn.classList.toggle('active');
+            canvasContainer.classList.toggle('download-options-open');
+            editFooter.classList.toggle('download-options-open');
+        }
+
+        function closeDownloadOptions(){
+            const downloadOptions=document.getElementById('downloadOptions');
+            const downloadBtn=document.getElementById('downloadBtn');
+            const canvasContainer=document.getElementById('canvasContainer');
+            const editFooter=document.querySelector('.edit-footer');
+            if(downloadOptions.classList.contains('active')){
+                downloadOptions.classList.remove('active');
+                downloadBtn.classList.remove('active');
+                canvasContainer.classList.remove('download-options-open');
+                editFooter.classList.remove('download-options-open');
             }
         }
 
@@ -3749,7 +3803,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();}
 
-        function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(p.isVideo){const videoEl=document.createElement('video');videoEl.src=p.videoUrl;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;videoEl.autoplay=true;videoEl.playbackRate=0.5;videoEl.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;display:block;';videoEl.play().catch(e=>console.log('Autoplay prevented:',e));item.appendChild(videoEl);}else{if(!p.thumbnail){const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;ctx.drawImage(p.image,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);p.thumbnail=tempCanvas.toDataURL('image/jpeg',0.65);}const img=document.createElement('img');img.src=p.thumbnail;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';filenameText.textContent=p.displayName||p.name;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);});}
+        function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';state.photos.forEach((p,idx)=>{const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(p.isVideo){const videoEl=document.createElement('video');videoEl.src=p.videoUrl;videoEl.loop=true;videoEl.muted=true;videoEl.playsInline=true;videoEl.autoplay=true;videoEl.playbackRate=0.5;videoEl.style.cssText='width:100%;aspect-ratio:10/8;object-fit:cover;display:block;';videoEl.play().catch(e=>console.log('Autoplay prevented:',e));item.appendChild(videoEl);}else{if(!p.thumbnail){const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;ctx.drawImage(p.image,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);p.thumbnail=tempCanvas.toDataURL('image/jpeg',0.65);}const img=document.createElement('img');img.src=p.thumbnail;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';filenameText.textContent=p.displayName||p.name;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);});}
 
         function handleContactSheetItemClick(idx){haptic();if(state.contactSheet.selectMode){togglePhotoSelection(idx);}else{selectPhotoFromSheet(idx);}}
 
@@ -3764,6 +3818,104 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         async function shareContactSheet(){haptic();setStatus('wait');if(state.contactSheet.selected.length>0){const files=[];for(const idx of state.contactSheet.selected){const p=state.photos[idx];if(p.isVideo)continue;const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.original.width;tempCanvas.height=p.original.height;ctx.drawImage(p.original,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d=imgData.data;applyProfile(d,p.settings.profile);applyCMYK(d,p.settings);ctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(ctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height),d2=imgData2.data;applyGrain(d2,p.settings.grain);ctx.putImageData(imgData2,0,0);const blob=await new Promise(resolve=>tempCanvas.toBlob(resolve,'image/jpeg',0.95));const filename=generateExportFilename(p,idx);files.push(new File([blob],filename,{type:'image/jpeg'}));}if(files.length===0){alert('No photos selected');setStatus('ready');return;}if(navigator.share&&navigator.canShare&&navigator.canShare({files:files})){try{await navigator.share({files:files,title:`Frontier Photos (${files.length})`});setStatus('ready');}catch(err){if(err.name!=='AbortError'){alert('Could not share photos');}setStatus('ready');}}else{alert('Share not supported on this device');setStatus('ready');}}else{const blob=await generateContactSheetImage();const now=new Date();const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');const file=new File([blob],`FRONTIER_CONTACT_SHEET_${date}_${time}.jpg`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Contact Sheet'});setStatus('ready');}catch(err){if(err.name!=='AbortError'){alert('Could not share contact sheet');}setStatus('ready');}}else{alert('Share not supported on this device');setStatus('ready');}}}
 
         function generateExportFilename(photo,index){const now=new Date();const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');const profile=photo.settings.profile!=='none'?photo.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(index+1).padStart(3,'0');let editInfo='';if(photo.settings.bloom!==0)editInfo+=`_B${photo.settings.bloom}`;if(photo.settings.grain>0)editInfo+=`_G${photo.settings.grain}`;if(photo.settings.cyan!==0||photo.settings.magenta!==0||photo.settings.yellow!==0||photo.settings.black!==0){editInfo+=`_CMYK`;}const extension=photo.fileExtension||'jpg';return `FRONTIER_${profile}_${frameNum}_${date}_${time}${editInfo}.${extension}`;}
+
+        async function savePhotoWithQuality(quality){
+            closeDownloadOptions();
+            const qualitySettings = {
+                'full': { jpeg: 1.0, label: 'Full Quality' },
+                'high': { jpeg: 0.95, label: 'High Quality' },
+                'web': { jpeg: 0.85, label: 'Web Optimized' }
+            };
+            const settings = qualitySettings[quality] || qualitySettings['high'];
+
+            haptic();
+            const p=state.photos[state.currentIndex];
+
+            if(p.isVideo){
+                exportVideo();
+                return;
+            }
+
+            try {
+                showProgress(`Exporting ${settings.label}...`,'photo');
+                const filename=generateExportFilename(p,state.currentIndex);
+
+                // Limit export resolution to 5000px for performance
+                const maxExportDim = 5000;
+                const origW = p.original.width;
+                const origH = p.original.height;
+                const needsDownsample = origW > maxExportDim || origH > maxExportDim;
+
+                let exportW = origW;
+                let exportH = origH;
+
+                if (needsDownsample) {
+                    const aspectRatio = origW / origH;
+                    if (origW > origH) {
+                        exportW = maxExportDim;
+                        exportH = maxExportDim / aspectRatio;
+                    } else {
+                        exportH = maxExportDim;
+                        exportW = maxExportDim * aspectRatio;
+                    }
+                    console.log(`Downsampling export from ${origW}x${origH} to ${exportW}x${exportH}`);
+                }
+
+                const exportCanvas=document.createElement('canvas');
+                const ctx=exportCanvas.getContext('2d',{alpha:false});
+                exportCanvas.width=exportW;
+                exportCanvas.height=exportH;
+
+                updateProgress(30,'Processing...');
+
+                // Draw original (potentially downsampled)
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(p.original, 0, 0, exportW, exportH);
+
+                // Apply effects
+                applyEffects(ctx, exportCanvas.width, exportCanvas.height);
+
+                updateProgress(80,'Encoding...');
+
+                exportCanvas.toBlob(async b=>{
+                    updateProgress(100,'Finalizing...');
+                    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                    if(isMobile&&navigator.share&&navigator.canShare){
+                        const file=new File([b],filename,{type:'image/jpeg'});
+                        try{
+                            await navigator.share({files:[file],title:'Frontier Photo'});
+                            hideProgress();
+                        }catch(err){
+                            if(err.name==='AbortError'){
+                                hideProgress();
+                            }else{
+                                hideProgress();
+                                alert('Share cancelled. Photo not saved.');
+                            }
+                        }
+                    }else{
+                        const url=URL.createObjectURL(b);
+                        const a=document.createElement('a');
+                        a.href=url;
+                        a.download=filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        setTimeout(()=>{
+                            hideProgress();
+                            alert('Photo downloaded! Check your Downloads folder or browser downloads.');
+                        },500);
+                    }
+                },'image/jpeg',settings.jpeg);
+            } catch (error) {
+                console.error('Error exporting photo:', error);
+                hideProgress();
+                alert('Export failed. Photo may be too large. Try reducing bloom/grain settings.');
+            }
+        }
 
         async function savePhoto(){
             haptic();
