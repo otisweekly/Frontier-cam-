@@ -4776,31 +4776,52 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                         });
                         hideUploadProgress();
                         setStatus('ready');
+                        // Note: User must tap "Save X Images" in the share sheet
                     }else{
-                        // Fallback: Try sharing one at a time
-                        for(const f of shareFiles){
-                            if(navigator.canShare({files:[f]})){
-                                await navigator.share({files:[f],title:f.name});
-                                await new Promise(resolve=>setTimeout(resolve,500));
-                            }
-                        }
-                        hideUploadProgress();
-                        setStatus('ready');
-                        alert(`Shared ${photoCount} photos + contact sheet! Save them to your camera roll.`);
+                        // Fallback: Download individual images on mobile (no ZIP)
+                        await downloadIndividualFiles(files,photoCount);
                     }
                 }catch(err){
                     if(err.name!=='AbortError'){
-                        // If share fails, fall back to ZIP on mobile too
-                        await createZipDownload(files,photoCount);
+                        // If share fails, download individual files instead of ZIP
+                        await downloadIndividualFiles(files,photoCount);
                     }else{
                         hideUploadProgress();
                         setStatus('ready');
                     }
                 }
+            }else if(isMobile){
+                // Mobile without share API: Download individual files
+                await downloadIndividualFiles(files,photoCount);
             }else{
                 // Desktop: Create ZIP download
                 await createZipDownload(files,photoCount);
             }
+        }
+
+        async function downloadIndividualFiles(files,photoCount){
+            // Download each file individually (for mobile when share API fails)
+            hideUploadProgress();
+
+            for(let i=0;i<files.length;i++){
+                const file=files[i];
+                const url=URL.createObjectURL(file.blob);
+                const a=document.createElement('a');
+                a.href=url;
+                a.download=file.filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Small delay between downloads to prevent browser blocking
+                if(i<files.length-1){
+                    await new Promise(resolve=>setTimeout(resolve,300));
+                }
+            }
+
+            setStatus('ready');
+            alert(`${photoCount} photos + contact sheet saved to Downloads folder.\n\nOn iPhone: Open Files app > Downloads folder > Tap photos > Share > Save to Photos`);
         }
 
         async function createZipDownload(files,photoCount){
