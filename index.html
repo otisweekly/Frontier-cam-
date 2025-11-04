@@ -1652,9 +1652,9 @@
                 return;
             }
 
-            if (files.length > 5) {
-                alert('Maximum 5 photos allowed per batch. Only first 5 will be loaded.');
-                files.length = 5;
+            if (files.length > 36) {
+                alert('Maximum 36 files allowed. Only first 36 will be loaded.');
+                files.length = 36;
             }
 
             // Reverse files to load like a real scanner (last to first, ending on frame 1)
