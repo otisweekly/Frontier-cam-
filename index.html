@@ -24,9 +24,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#3897AF">
-    <link rel="apple-touch-icon" href="Logo.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="Logo.svg">
-    <link rel="icon" type="image/svg+xml" href="Logo.svg">
+    <link rel="apple-touch-icon" href="logo.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.svg">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="manifest" href="/manifest.json">
     <style>
         @font-face {
@@ -82,7 +82,7 @@
         #uploadSection > div { transform:translateY(-15%); position:relative; z-index:2; }
         #uploadSection.hidden { display:none; }
         #uploadSection::before { content:''; position:absolute; top:20px; left:0; right:0; width:100%; height:132px; background:linear-gradient(to bottom, #0D626E 0%, #0D626E 12px, #1D727E 12px, #0D626E 18px, transparent 18px, transparent 30px, #0D626E 30px, #0D626E 42px, #1D727E 42px, #0D626E 48px, transparent 48px, transparent 60px, #0D626E 60px, #0D626E 72px, #1D727E 72px, #0D626E 78px, transparent 78px, transparent 90px, #0D626E 90px, #0D626E 102px, #1D727E 102px, #0D626E 108px, transparent 108px, transparent 120px, #0D626E 120px, #0D626E 132px, #1D727E 132px, #0D626E 138px, transparent 138px); box-shadow:inset 0 3px 6px rgba(0,0,0,0.4), inset 0 -3px 6px rgba(255,255,255,0.1); z-index:0; }
-        .logo-container { position:relative; margin-bottom:24px; padding:40px 50px; border:4px solid #0D626E; border-radius:4px; background:rgba(13, 98, 110, 0.3); display:flex; flex-direction:column; align-items:center; gap:8px; width:min(400px, 85vw); box-sizing:border-box; box-shadow:inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3), 0 4px 0 rgba(0,0,0,0.2); }
+        .logo-container { position:relative; margin-bottom:24px; padding:50px 50px 40px 50px; border:4px solid #0D626E; border-radius:4px; background:rgba(13, 98, 110, 0.3); display:flex; flex-direction:column; align-items:center; gap:8px; width:min(400px, 85vw); box-sizing:border-box; box-shadow:inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3), 0 4px 0 rgba(0,0,0,0.2); }
         .logo-container img { width:100%; max-width:280px; height:auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; filter:contrast(1.1); }
         .status-lights { position:absolute; right:15px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; }
         .status-light { width:12px; height:12px; border-radius:50%; border:2px solid #0D626E; opacity:0.4; }
@@ -326,6 +326,11 @@
         #cmykControls.active { transform:translateY(0); opacity:1; }
         #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
+        .brightness-auto-btn, .cmyk-link-btn { width:44px; height:44px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:8px; align-self:center; }
+        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
+        .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+        .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0) invert(1); }
         #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
@@ -353,7 +358,8 @@
         .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .history-done-btn { margin-top:10px; padding:14px; padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:#000; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; cursor:pointer; text-align:center; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; }
         .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
-        .cmyk-sliders { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+        .cmyk-sliders { display:grid; grid-template-columns:1fr 1fr 44px 1fr 1fr; gap:8px; align-items:start; }
+        .brightness-sliders { display:grid; grid-template-columns:1fr 1fr 44px 1fr 1fr; gap:8px; align-items:start; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
         .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; transition:all 0s; }
         .cmyk-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -426,7 +432,7 @@
 <body>
     <div id="uploadSection">
         <div class="logo-container">
-            <img src="Logo.svg" alt="Frontier">
+            <img src="logo.svg" alt="Frontier">
             <div class="status-lights">
                 <div class="status-light green" id="statusReady"></div>
                 <div class="status-light turquoise" id="statusProcessing"></div>
@@ -508,6 +514,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
+                <button class="cmyk-link-btn" id="linkBtn" onclick="toggleCMYLink()"><img src="Default_Unlinked.svg" alt="LINK"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="yellowValue" onclick="editCMYKCounter('yellow')">
                         <div class="cmyk-value-number">0</div>
@@ -533,7 +540,7 @@
             </div>
         </div>
         <div id="brightnessControls">
-            <div class="cmyk-sliders">
+            <div class="brightness-sliders">
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="brightnessValue" onclick="editBrightnessCounter('brightness')">
                         <div class="cmyk-value-number">0</div>
@@ -556,6 +563,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -657,7 +665,7 @@
     <div id="contactSheetView">
         <div class="contact-sheet-header">
             <div class="contact-sheet-header-top">
-                <img src="Logo.svg" alt="Frontier" class="contact-sheet-logo">
+                <img src="logo.svg" alt="Frontier" class="contact-sheet-logo">
                 <button class="contact-sheet-close" onclick="toggleContactSheetView()"><img src="Close.svg" alt="Close"></button>
             </div>
             <div class="contact-sheet-actions">
@@ -679,7 +687,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -767,8 +775,29 @@
         // Canvas tap handling
         function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
-        // Single tap compare - shows original image for 1 second (ONLY when zoomed in)
-        function singleTapCompare(){if(state.tapState.comparing)return;const canvas=document.getElementById('canvas'),p=state.photos[state.currentIndex];if(!p||!p.image)return;state.tapState.comparing=true;const ctx=canvas.getContext('2d',{alpha:false});ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(p.image,0,0);setTimeout(()=>{if(state.tapState.comparing){renderPhoto();state.tapState.comparing=false;}},1000);}
+        // Single tap compare - shows original unprocessed image for 1 second
+        function singleTapCompare(){
+            if(state.tapState.comparing) return;
+            const canvas=document.getElementById('canvas');
+            const p=state.photos[state.currentIndex];
+            if(!p||!p.image) return;
+
+            state.tapState.comparing=true;
+            const ctx=canvas.getContext('2d',{alpha:false});
+
+            // Draw original at same size as current canvas
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(p.original,0,0,canvas.width,canvas.height);
+
+            console.log('🔍 Showing original unprocessed image');
+
+            setTimeout(()=>{
+                if(state.tapState.comparing){
+                    renderPhoto();
+                    state.tapState.comparing=false;
+                }
+            },1000);
+        }
 
         // End compare view (called on touchend when releasing tap)
         function endCompare(){if(!state.tapState.comparing)return;renderPhoto();state.tapState.comparing=false;}
@@ -1093,6 +1122,7 @@
             let clickTimer=null;
 
             canvas.addEventListener('click',(e)=>{
+
                 clickCount++;
                 console.log('Desktop click - count:',clickCount);
 
@@ -1153,7 +1183,7 @@
 
         // Use original images for editing - bloom and effects need full resolution
         // OPTIMIZED: Use Blob URLs instead of toDataURL to avoid memory duplication
-        function downsampleImage(sourceImg, maxDimension = 3000) {
+        function downsampleImage(sourceImg, maxDimension = 3500) {
             return new Promise(resolve => {
                 console.log('Downsampling image:', sourceImg.width, 'x', sourceImg.height);
                 const w = sourceImg.width;
@@ -1372,9 +1402,11 @@
                         const { img, blobUrl } = await loadImageFromBlob(file);
                         console.log('Image loaded, starting downsample');
 
-                        // Downsample if needed (but keep original reference)
-                        const displayImg = await downsampleImage(img);
-                        console.log('Downsample complete, creating preview for instant editing');
+                        // Downsample if needed
+                        let displayImg = await downsampleImage(img);
+                        console.log('Downsample complete');
+
+                        console.log('Creating preview for instant editing');
 
                         // Create lightweight preview for instant interactive editing
                         const previewImg = await createPreviewImage(displayImg);
@@ -2102,7 +2134,7 @@
 const offscreenCanvas=document.createElement('canvas');
 offscreenCanvas.width=sourceImg.width;
 offscreenCanvas.height=sourceImg.height;
-const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:false});
+const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
 offscreenCtx.imageSmoothingEnabled=true;
 offscreenCtx.imageSmoothingQuality='high';
 offscreenCtx.drawImage(sourceImg,0,0);
@@ -2320,12 +2352,6 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
-                // Apply cooling correction for SUPRA to reduce strong yellows
-                // DISABLED: Testing pure FUJI 400H LUT without split toning
-                // if (profileId === 'supra') {
-                //     applySUPRACooling(imageData);
-                // }
-
                 // Apply black & white conversion for XXX preset
                 if (preset.blackAndWhite) {
                     applyBlackAndWhite(imageData);
@@ -2412,7 +2438,64 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        // SUPRA color correction - split toning for highlights and shadows
+        // RGB to HSL conversion
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return [h * 360, s * 100, l * 100]; // Return in degrees and percentages
+        }
+
+        // HSL to RGB conversion
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l; // achromatic
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return [r * 255, g * 255, b * 255];
+        }
+
+        // SUPRA color correction - FUJI 400H character with HSL-based split toning
         function applySUPRACooling(imageData) {
             const pixels = imageData.data;
 
@@ -2421,57 +2504,58 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 let g = pixels[i + 1];
                 let b = pixels[i + 2];
 
-                // Calculate luminance
+                // Calculate luminance (0-255)
                 const lum = (r + g + b) / 3;
+                const lumPercent = (lum / 255) * 100; // 0-100%
 
-                // Shadow factor (0-90 luminance)
-                let shadowFactor = 0;
-                if (lum < 90) {
-                    shadowFactor = 1.0 - (lum / 90); // 1.0 at black, fading to 0 at 90
+                // Convert to HSL
+                let [h, s, l] = rgbToHsl(r, g, b);
+
+                // SHADOWS (0-40% luminance)
+                // Hue: 210-240° (blue-cyan-magenta), Saturation: 15-25%, Balance: 35%
+                if (lumPercent <= 40) {
+                    const shadowFactor = (40 - lumPercent) / 40; // 1.0 at black, 0 at 40%
+                    const balance = 0.35 * shadowFactor; // 35% influence
+
+                    // Target hue: 225° (middle of 210-240 range)
+                    const targetHue = 225;
+                    h = h + (targetHue - h) * balance;
+
+                    // Target saturation: 20% (middle of 15-25 range)
+                    const targetSat = 20;
+                    s = s + (targetSat - s) * balance;
+
+                    // Shadow lift: FUJI 400H has lifted shadows
+                    l = l + (5 * shadowFactor);
                 }
 
-                // Midtone factor (90-180 luminance)
-                let midtoneFactor = 0;
-                if (lum >= 90 && lum < 180) {
-                    midtoneFactor = 1.0 - ((lum - 90) / 90); // 1.0 at 90, fading to 0 at 180
+                // HIGHLIGHTS (60-100% luminance)
+                // Hue: 50-70° (yellow-green, peachy), Saturation: 20-30%, Balance: 40%
+                if (lumPercent >= 60) {
+                    const highlightFactor = (lumPercent - 60) / 40; // 0 at 60%, 1.0 at 100%
+                    const balance = 0.40 * highlightFactor; // 40% influence
+
+                    // Target hue: 60° (middle of 50-70 range - peachy yellow)
+                    const targetHue = 60;
+                    h = h + (targetHue - h) * balance;
+
+                    // Target saturation: 25% (middle of 20-30 range)
+                    const targetSat = 25;
+                    s = s + (targetSat - s) * balance;
                 }
 
-                // Highlight factor (180+ luminance)
-                let highlightFactor = 0;
-                if (lum >= 180) {
-                    highlightFactor = (lum - 180) / 75; // 0 at 180, rising to 1.0 at 255
-                    highlightFactor = Math.min(1.0, highlightFactor);
-                }
+                // Clamp HSL values
+                h = h % 360;
+                if (h < 0) h += 360;
+                s = Math.max(0, Math.min(100, s));
+                l = Math.max(0, Math.min(100, l));
 
-                // SHADOWS: Blue-green tones (cyan shift)
-                if (shadowFactor > 0) {
-                    r = Math.max(0, Math.min(255, r - 8 * shadowFactor));   // Reduce red
-                    g = Math.max(0, Math.min(255, g + 3 * shadowFactor));   // Add green (for cyan/teal)
-                    b = Math.max(0, Math.min(255, b + 6 * shadowFactor));   // Add blue
-                }
+                // Convert back to RGB
+                [r, g, b] = hslToRgb(h, s, l);
 
-                // MIDTONES: Slight cooling (reduce yellows)
-                if (midtoneFactor > 0) {
-                    r = Math.max(0, Math.min(255, r - 4 * midtoneFactor));  // Slight red reduction
-                    b = Math.max(0, Math.min(255, b + 3 * midtoneFactor));  // Slight blue boost
-                }
-
-                // HIGHLIGHTS: Warmer tones
-                if (highlightFactor > 0) {
-                    r = Math.max(0, Math.min(255, r + 6 * highlightFactor));   // Add red warmth
-                    g = Math.max(0, Math.min(255, g + 3 * highlightFactor));   // Add slight yellow
-                    b = Math.max(0, Math.min(255, b - 4 * highlightFactor));   // Reduce blue (adds warmth)
-                }
-
-                // Lift shadows: brighten darker areas
-                const shadowLift = 12 * (shadowFactor + midtoneFactor * 0.5);
-                r = Math.max(0, Math.min(255, r + shadowLift));
-                g = Math.max(0, Math.min(255, g + shadowLift));
-                b = Math.max(0, Math.min(255, b + shadowLift));
-
-                pixels[i] = r;
-                pixels[i + 1] = g;
-                pixels[i + 2] = b;
+                pixels[i] = Math.max(0, Math.min(255, r));
+                pixels[i + 1] = Math.max(0, Math.min(255, g));
+                pixels[i + 2] = Math.max(0, Math.min(255, b));
             }
         }
 
@@ -3779,7 +3863,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         const FILM_PRESETS = {
             'supra': {
                 name: 'SUPRA',
-                lut: 'Frontier luts/Frontier_FUJI_400H.cube',
+                lut: 'Frontier luts/Fuji_Pro_400H_v3_REBUILT.cube',
                 description: 'Daylight balanced, fine grain'
             },
             'chrome': {
@@ -3935,7 +4019,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.575;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.655;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
@@ -4101,7 +4185,55 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
         function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadOptions=document.getElementById('downloadOptions'),downloadBtn=document.getElementById('downloadBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(downloadOptions.classList.contains('active')&&!downloadOptions.contains(e.target)&&!downloadBtn.contains(e.target)){closeDownloadOptions();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
 
-        function adjustCMYK(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel];const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
+        function adjustCMYK(channel,delta){
+            haptic();
+            const max=10,min=-10;
+
+            // If linked and adjusting C, M, or Y, adjust all three together
+            if(state.cmykLinked && (channel==='cyan'||channel==='magenta'||channel==='yellow')){
+                const channels=['cyan','magenta','yellow'];
+                channels.forEach(ch=>{
+                    const oldValue=state.settings[ch];
+                    const newValue=Math.max(min,Math.min(max,state.settings[ch]+delta));
+                    state.settings[ch]=newValue;
+                    document.getElementById(ch+'Value').querySelector('.cmyk-value-number').textContent=state.settings[ch];
+                    if(oldValue!==newValue){
+                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${newValue}`,ch,oldValue,newValue);
+                    }
+                });
+            } else {
+                // Normal single channel adjustment
+                const oldValue=state.settings[channel];
+                const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));
+                state.settings[channel]=newValue;
+                document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];
+                if(oldValue!==newValue){
+                    addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
+                }
+            }
+
+            updateCMYKIndicator();
+            saveCurrentPhotoSettings(true,true);
+            enablePreviewMode();
+            deferredRender();
+        }
+
+        function toggleCMYLink(){
+            haptic();
+            state.cmykLinked = !state.cmykLinked;
+            const linkBtn = document.getElementById('linkBtn');
+            const img = linkBtn.querySelector('img');
+
+            if(state.cmykLinked){
+                linkBtn.classList.add('active');
+                img.src = 'Active_Linked.svg';
+                console.log('🔗 CMY channels linked');
+            } else {
+                linkBtn.classList.remove('active');
+                img.src = 'Default_Unlinked.svg';
+                console.log('🔓 CMY channels unlinked');
+            }
+        }
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
@@ -4194,7 +4326,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 if(withLogo){
                     // Draw small logo at top left
                     const logoImg=new Image();
-                    logoImg.src='Logo.svg';
+                    logoImg.src='logo.svg';
                     logoImg.onload=()=>{
                         const logoW=logoHeight*2.5;
                         ctx.drawImage(logoImg,margin+1,margin+1,logoW,logoHeight-2);
@@ -4586,7 +4718,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             // Draw logo at top left
             const logoImg=new Image();
-            logoImg.src='Logo.svg';
+            logoImg.src='logo.svg';
             await new Promise(resolve=>{
                 logoImg.onload=()=>{
                     const actualAspect=logoImg.width/logoImg.height;
@@ -4830,7 +4962,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
             // Draw logo at top left
             const logoImg=new Image();
-            logoImg.src='Logo.svg';
+            logoImg.src='logo.svg';
             await new Promise(resolve=>{
                 logoImg.onload=()=>{
                     const actualAspect=logoImg.width/logoImg.height;
@@ -5155,6 +5287,185 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
 
+        // Auto-adjust brightness, contrast, shadows, and highlights based on image analysis
+        async function autoAdjustLevels() {
+            haptic();
+            const currentPhoto = state.photos[state.currentIndex];
+            if (!currentPhoto || !currentPhoto.image) {
+                console.log('❌ No current photo for auto-adjustment');
+                return;
+            }
+
+            const autoBtn = document.getElementById('autoBtn');
+            const isActive = autoBtn.classList.contains('active');
+
+            // If already active, turn OFF and reset to defaults
+            if (isActive) {
+                console.log('🔴 AUTO: Turning off, resetting to defaults');
+                autoBtn.classList.remove('active');
+
+                // Store old values for history
+                const oldBrightness = state.settings.brightness || 0;
+                const oldContrast = state.settings.contrast || 0;
+                const oldShadows = state.settings.shadows || 0;
+                const oldHighlights = state.settings.highlights || 0;
+
+                // Reset all to 0
+                state.settings.brightness = 0;
+                state.settings.contrast = 0;
+                state.settings.shadows = 0;
+                state.settings.highlights = 0;
+
+                // Update UI
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = 0;
+
+                // Add to history
+                if (oldBrightness !== 0) addToHistory(`RESET BRIGHTNESS: ${oldBrightness} → 0`, 'brightness', oldBrightness, 0);
+                if (oldContrast !== 0) addToHistory(`RESET CONTRAST: ${oldContrast} → 0`, 'contrast', oldContrast, 0);
+                if (oldShadows !== 0) addToHistory(`RESET SHADOWS: ${oldShadows} → 0`, 'shadows', oldShadows, 0);
+                if (oldHighlights !== 0) addToHistory(`RESET HIGHLIGHTS: ${oldHighlights} → 0`, 'highlights', oldHighlights, 0);
+
+                updateBrightnessIndicator();
+                saveCurrentPhotoSettings(true, true);
+                deferredRender();
+                return;
+            }
+
+            // Turn ON and apply auto-adjustments
+            autoBtn.classList.add('active');
+            console.log('🤖 AUTO: Analyzing image...');
+            setStatus('processing');
+
+            try {
+                // Create temporary canvas to analyze the image
+                const tempCanvas = document.createElement('canvas');
+                const ctx = tempCanvas.getContext('2d', { alpha: false, willReadFrequently: true });
+
+                // Use a smaller size for faster analysis (800px max)
+                const img = currentPhoto.image;
+                const scale = Math.min(1, 800 / Math.max(img.width, img.height));
+                tempCanvas.width = Math.floor(img.width * scale);
+                tempCanvas.height = Math.floor(img.height * scale);
+
+                ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+                const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const pixels = imageData.data;
+
+                // Build luminance histogram
+                const hist = new Array(256).fill(0);
+                let sumLum = 0;
+                const pixelCount = pixels.length / 4;
+
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const lum = Math.round(pixels[i] * 0.299 + pixels[i + 1] * 0.587 + pixels[i + 2] * 0.114);
+                    hist[lum]++;
+                    sumLum += lum;
+                }
+
+                // Calculate statistics
+                const avgLum = sumLum / pixelCount;
+
+                // Find percentiles
+                const findPercentile = (percentile) => {
+                    const target = pixelCount * percentile;
+                    let sum = 0;
+                    for (let i = 0; i < 256; i++) {
+                        sum += hist[i];
+                        if (sum >= target) return i;
+                    }
+                    return 255;
+                };
+
+                const p1 = findPercentile(0.01);   // 1st percentile (shadows)
+                const p5 = findPercentile(0.05);   // 5th percentile
+                const p50 = findPercentile(0.50);  // Median
+                const p95 = findPercentile(0.95);  // 95th percentile
+                const p99 = findPercentile(0.99);  // 99th percentile (highlights)
+
+                const range = p95 - p5;
+
+                console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
+
+                // Calculate adjustments (scale -10 to +10)
+                let brightness = 0;
+                let contrast = 0;
+                let shadows = 0;
+                let highlights = 0;
+
+                // BRIGHTNESS: Center the average around 128
+                const brightnessDelta = 128 - avgLum;
+                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 12.8)));
+
+                // CONTRAST: Expand if range is too narrow, compress if too wide
+                const idealRange = 180; // Target range
+                const contrastDelta = (idealRange - range) / idealRange;
+                contrast = Math.round(Math.max(-10, Math.min(10, contrastDelta * 8)));
+
+                // SHADOWS: Lift if shadows are crushed (p1 is too low)
+                if (p1 < 10) {
+                    shadows = Math.round(Math.max(0, Math.min(10, (10 - p1) / 2)));
+                } else if (p5 < 30) {
+                    shadows = Math.round(Math.max(0, Math.min(10, (30 - p5) / 6)));
+                }
+
+                // HIGHLIGHTS: Pull down if highlights are blown (p99 is too high)
+                if (p99 > 245) {
+                    highlights = Math.round(Math.max(-10, Math.min(0, (245 - p99) / 2)));
+                } else if (p95 > 225) {
+                    highlights = Math.round(Math.max(-10, Math.min(0, (225 - p95) / 6)));
+                }
+
+                console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
+
+                // Store old values for history
+                const oldBrightness = state.settings.brightness || 0;
+                const oldContrast = state.settings.contrast || 0;
+                const oldShadows = state.settings.shadows || 0;
+                const oldHighlights = state.settings.highlights || 0;
+
+                // Apply new values
+                state.settings.brightness = brightness;
+                state.settings.contrast = contrast;
+                state.settings.shadows = shadows;
+                state.settings.highlights = highlights;
+
+                // Update UI
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = brightness;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = contrast;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = shadows;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = highlights;
+
+                // Add to history
+                if (oldBrightness !== brightness) {
+                    addToHistory(`AUTO BRIGHTNESS: ${oldBrightness} → ${brightness}`, 'brightness', oldBrightness, brightness);
+                }
+                if (oldContrast !== contrast) {
+                    addToHistory(`AUTO CONTRAST: ${oldContrast} → ${contrast}`, 'contrast', oldContrast, contrast);
+                }
+                if (oldShadows !== shadows) {
+                    addToHistory(`AUTO SHADOWS: ${oldShadows} → ${shadows}`, 'shadows', oldShadows, shadows);
+                }
+                if (oldHighlights !== highlights) {
+                    addToHistory(`AUTO HIGHLIGHTS: ${oldHighlights} → ${highlights}`, 'highlights', oldHighlights, highlights);
+                }
+
+                updateBrightnessIndicator();
+                saveCurrentPhotoSettings(true, true);
+                await deferredRender();
+
+                console.log('✅ AUTO adjustment complete');
+                setStatus('ready');
+
+            } catch (err) {
+                console.error('❌ AUTO adjustment failed:', err);
+                setStatus('ready');
+                alert('Auto-adjustment failed. Please try manually adjusting the sliders.');
+            }
+        }
+
         function adjustBloom(d){haptic();state.settings.bloom=Math.max(-10,Math.min(10,state.settings.bloom+d));document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=state.settings.bloom;saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
 
         function adjustGrain(d){haptic();state.settings.grain=Math.max(0,Math.min(10,state.settings.grain+d));document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=state.settings.grain;saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
@@ -5273,14 +5584,14 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     {
                         // Use optimized Blob URL instead of FileReader
                         const { img, blobUrl } = await loadImageFromBlob(file);
-                        const displayImg = await downsampleImage(img);
+                        let displayImg = await downsampleImage(img);
 
                         state.photos.push({
                             name: file.name,
                             displayName: generateDisplayName('none', startIndex + i, fileExtension),
                             image: displayImg,
                             original: img,
-                            originalBlobUrl: blobUrl,  // Keep reference for potential cleanup
+                            originalBlobUrl: blobUrl,
                             uploadTime: uploadTime,
                             settings: { ...defaultSettings },
                             fileExtension: fileExtension
@@ -5408,7 +5719,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             updateNavButtons();
         }
 
-        function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='Logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
+        function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
 
         async function shareContactSheet(){
             try{
@@ -5493,6 +5804,8 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
                     applyGrain(imgData2.data,p.settings.grain||0);
                     ctx.putImageData(imgData2,0,0);
+
+                    // No badge on exports - only visible in UI
 
                     const blob=await new Promise(resolve=>tempCanvas.toBlob(resolve,'image/jpeg',0.95));
                     const filename=generateExportFilename(p,idx);
