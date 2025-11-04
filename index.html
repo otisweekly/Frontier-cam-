@@ -652,7 +652,7 @@
                     <div class="photo-counter" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.15)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8)';">
                         <img src="Contact.svg" class="contact-icon" alt="Contact Sheet">
                         <div>
-                            <div class="photo-counter-number" id="photoCounter">1/36</div>
+                            <div class="photo-counter-number" id="photoCounter">1/5</div>
                         </div>
                     </div>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
@@ -1652,9 +1652,9 @@
                 return;
             }
 
-            if (files.length > 36) {
-                alert('Maximum 36 files allowed. Only first 36 will be loaded.');
-                files.length = 36;
+            if (files.length > 5) {
+                alert('Maximum 5 photos allowed per batch. Only first 5 will be loaded.');
+                files.length = 5;
             }
 
             // Reverse files to load like a real scanner (last to first, ending on frame 1)
@@ -5737,8 +5737,8 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const files = Array.from(e.target.files);
             if (!files.length) return;
 
-            if (state.photos.length + files.length > 36) {
-                alert('Maximum 36 files total');
+            if (state.photos.length + files.length > 5) {
+                alert('Maximum 5 photos total. You can only add ' + (5 - state.photos.length) + ' more.');
                 return;
             }
 
