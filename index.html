@@ -3831,91 +3831,122 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const settings = qualitySettings[quality] || qualitySettings['high'];
 
             haptic();
-            const p=state.photos[state.currentIndex];
 
-            if(p.isVideo){
-                exportVideo();
+            // Filter out videos - only export photos
+            const photosToExport = state.photos.filter(p => !p.isVideo);
+
+            if(photosToExport.length === 0){
+                alert('No photos to export');
                 return;
             }
 
             try {
-                showProgress(`Exporting ${settings.label}...`,'photo');
-                const filename=generateExportFilename(p,state.currentIndex);
+                showProgress(`Exporting ${photosToExport.length} photo${photosToExport.length > 1 ? 's' : ''} (${settings.label})...`,'photo');
 
-                // Limit export resolution to 5000px for performance
-                const maxExportDim = 5000;
-                const origW = p.original.width;
-                const origH = p.original.height;
-                const needsDownsample = origW > maxExportDim || origH > maxExportDim;
+                const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const files = [];
 
-                let exportW = origW;
-                let exportH = origH;
-
-                if (needsDownsample) {
-                    const aspectRatio = origW / origH;
-                    if (origW > origH) {
-                        exportW = maxExportDim;
-                        exportH = maxExportDim / aspectRatio;
-                    } else {
-                        exportH = maxExportDim;
-                        exportW = maxExportDim * aspectRatio;
+                // Loop through all photos
+                for (let i = 0; i < photosToExport.length; i++) {
+                    if(state.download.cancelling) {
+                        hideProgress();
+                        return;
                     }
-                    console.log(`Downsampling export from ${origW}x${origH} to ${exportW}x${exportH}`);
-                }
 
-                const exportCanvas=document.createElement('canvas');
-                const ctx=exportCanvas.getContext('2d',{alpha:false});
-                exportCanvas.width=exportW;
-                exportCanvas.height=exportH;
+                    const p = photosToExport[i];
+                    const originalIndex = state.photos.indexOf(p);
+                    const filename = generateExportFilename(p, originalIndex);
 
-                updateProgress(30,'Processing...');
+                    const progressPercent = Math.floor((i / photosToExport.length) * 100);
+                    updateProgress(progressPercent, `Processing photo ${i + 1} of ${photosToExport.length}...`);
 
-                // Draw original (potentially downsampled)
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                ctx.drawImage(p.original, 0, 0, exportW, exportH);
+                    // Limit export resolution to 5000px for performance
+                    const maxExportDim = 5000;
+                    const origW = p.original.width;
+                    const origH = p.original.height;
+                    const needsDownsample = origW > maxExportDim || origH > maxExportDim;
 
-                // Apply effects
-                applyEffects(ctx, exportCanvas.width, exportCanvas.height);
+                    let exportW = origW;
+                    let exportH = origH;
 
-                updateProgress(80,'Encoding...');
-
-                exportCanvas.toBlob(async b=>{
-                    updateProgress(100,'Finalizing...');
-                    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-                    if(isMobile&&navigator.share&&navigator.canShare){
-                        const file=new File([b],filename,{type:'image/jpeg'});
-                        try{
-                            await navigator.share({files:[file],title:'Frontier Photo'});
-                            hideProgress();
-                        }catch(err){
-                            if(err.name==='AbortError'){
-                                hideProgress();
-                            }else{
-                                hideProgress();
-                                alert('Share cancelled. Photo not saved.');
-                            }
+                    if (needsDownsample) {
+                        const aspectRatio = origW / origH;
+                        if (origW > origH) {
+                            exportW = maxExportDim;
+                            exportH = maxExportDim / aspectRatio;
+                        } else {
+                            exportH = maxExportDim;
+                            exportW = maxExportDim * aspectRatio;
                         }
-                    }else{
-                        const url=URL.createObjectURL(b);
-                        const a=document.createElement('a');
-                        a.href=url;
-                        a.download=filename;
+                        console.log(`Downsampling export from ${origW}x${origH} to ${exportW}x${exportH}`);
+                    }
+
+                    const exportCanvas=document.createElement('canvas');
+                    const ctx=exportCanvas.getContext('2d',{alpha:false});
+                    exportCanvas.width=exportW;
+                    exportCanvas.height=exportH;
+
+                    // Draw original (potentially downsampled)
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(p.original, 0, 0, exportW, exportH);
+
+                    // Apply effects - use the photo's own settings
+                    const savedCurrentIndex = state.currentIndex;
+                    state.currentIndex = originalIndex;
+                    applyEffects(ctx, exportCanvas.width, exportCanvas.height);
+                    state.currentIndex = savedCurrentIndex;
+
+                    // Convert to blob
+                    const blob = await new Promise(resolve => {
+                        exportCanvas.toBlob(resolve, 'image/jpeg', settings.jpeg);
+                    });
+
+                    if(isMobile && navigator.share && navigator.canShare){
+                        // Collect all files for sharing on mobile
+                        const file = new File([blob], filename, {type:'image/jpeg'});
+                        files.push(file);
+                    } else {
+                        // Download immediately on desktop
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
-                        setTimeout(()=>{
-                            hideProgress();
-                            alert('Photo downloaded! Check your Downloads folder or browser downloads.');
-                        },500);
+
+                        // Small delay between downloads to prevent browser issues
+                        await new Promise(resolve => setTimeout(resolve, 200));
                     }
-                },'image/jpeg',settings.jpeg);
+                }
+
+                updateProgress(100, 'Finalizing...');
+
+                // Handle mobile sharing or show completion message
+                if(isMobile && navigator.share && navigator.canShare){
+                    try{
+                        await navigator.share({files: files, title: `Frontier Photos (${files.length})`});
+                        hideProgress();
+                    }catch(err){
+                        if(err.name==='AbortError'){
+                            hideProgress();
+                        }else{
+                            hideProgress();
+                            alert('Share cancelled. Photos not saved.');
+                        }
+                    }
+                } else {
+                    setTimeout(()=>{
+                        hideProgress();
+                        alert(`${photosToExport.length} photo${photosToExport.length > 1 ? 's' : ''} downloaded! Check your Downloads folder or browser downloads.`);
+                    },500);
+                }
             } catch (error) {
-                console.error('Error exporting photo:', error);
+                console.error('Error exporting photos:', error);
                 hideProgress();
-                alert('Export failed. Photo may be too large. Try reducing bloom/grain settings.');
+                alert('Export failed. Photos may be too large. Try reducing bloom/grain settings.');
             }
         }
 
