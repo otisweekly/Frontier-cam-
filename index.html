@@ -4227,7 +4227,30 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             if(state.cmykLinked){
                 linkBtn.classList.add('active');
                 img.src = 'Active_Linked.svg';
-                console.log('🔗 CMY channels linked');
+
+                // Sync all CMY values to the first non-zero value found
+                const cyan = state.settings.cyan || 0;
+                const magenta = state.settings.magenta || 0;
+                const yellow = state.settings.yellow || 0;
+
+                // Find first non-zero value, or use 0 if all are 0
+                const syncValue = cyan !== 0 ? cyan : (magenta !== 0 ? magenta : yellow);
+
+                // Update all channels to match
+                ['cyan', 'magenta', 'yellow'].forEach(ch => {
+                    const oldValue = state.settings[ch] || 0;
+                    if(oldValue !== syncValue) {
+                        state.settings[ch] = syncValue;
+                        document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent = syncValue;
+                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${syncValue}`, ch, oldValue, syncValue);
+                    }
+                });
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true, true);
+                deferredRender();
+
+                console.log(`🔗 CMY channels linked and synced to ${syncValue}`);
             } else {
                 linkBtn.classList.remove('active');
                 img.src = 'Default_Unlinked.svg';
