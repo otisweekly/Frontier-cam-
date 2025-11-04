@@ -755,7 +755,7 @@
         // Upload progress functions
         function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';document.getElementById('downloadProgress').classList.add('active');}
         function updateUploadProgress(percent,text=null){if(text)document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width=percent+'%';}
-        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');const progressBar=document.getElementById('downloadProgress');progressBar.classList.remove('active');progressBar.style.transform='';progressBar.style.opacity='';progressBar.style.display='';}
+        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');document.getElementById('downloadProgress').classList.remove('active');}
 
         // Detect standalone mode and apply compact spacing
         const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone||document.referrer.includes('android-app://');
@@ -4631,12 +4631,17 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const p=state.photos[state.currentIndex];
             const filename=p.displayName||`frontier_photo_${state.currentIndex+1}.jpg`;
 
+            await new Promise(r=>setTimeout(r,100));
             updateUploadProgress(30, `Exporting ${filename.substring(0,30)}...`);
 
             const currentCanvas=document.getElementById('canvas');
 
+            await new Promise(r=>setTimeout(r,200));
+
             currentCanvas.toBlob(async b=>{
                 updateUploadProgress(70, `Preparing ${filename.substring(0,30)}...`);
+                await new Promise(r=>setTimeout(r,100));
+
                 const file=new File([b],filename,{type:'image/jpeg'});
 
                 if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
@@ -4659,6 +4664,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     }
                 }else{
                     updateUploadProgress(90, 'Downloading...');
+                    await new Promise(r=>setTimeout(r,100));
                     fallbackDownload(b,filename);
                     updateUploadProgress(100, 'Complete! Image downloaded!');
                     await new Promise(r=>setTimeout(r,1500));
@@ -4894,20 +4900,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 }
                 // Mobile: No confirmation - just save directly to camera roll
 
-                // Show progress bar immediately with force
-                const progressBar = document.getElementById('downloadProgress');
+                // Show progress bar
                 showUploadProgress(`Processing ${photoCount} photos...`);
-
-                // Force visibility
-                progressBar.classList.add('active');
-                progressBar.style.display = 'block';
-                progressBar.style.transform = 'translateY(0)';
-                progressBar.style.opacity = '1';
-
                 setStatus('wait');
-
-                console.log('[Download Panel] Progress bar shown:', progressBar);
-                console.log('[Download Panel] Active:', progressBar.classList.contains('active'));
 
                 // Close download options (can animate away while we process)
                 closeDownloadOptions();
