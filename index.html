@@ -753,9 +753,9 @@
         function cancelDownload(){haptic();if(state.download.active){state.download.cancelling=true;if(state.download.mediaRecorder){state.download.mediaRecorder.stop();}hideProgress();}else if(state.upload.active){state.upload.cancelling=true;hideUploadProgress();}}
 
         // Upload progress functions
-        function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';document.getElementById('downloadProgress').classList.add('active');}
+        function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');const downloadBtn=document.getElementById('downloadBtn');const progressBar=document.getElementById('downloadProgress');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');downloadBtn.classList.add('active');progressBar.classList.add('active');canvasContainer.classList.add('download-open');editFooter.classList.add('download-open');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';}
         function updateUploadProgress(percent,text=null){if(text)document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width=percent+'%';}
-        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');document.getElementById('downloadProgress').classList.remove('active');}
+        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');const downloadBtn=document.getElementById('downloadBtn');const progressBar=document.getElementById('downloadProgress');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');downloadBtn.classList.remove('active');progressBar.classList.remove('active');canvasContainer.classList.remove('download-open');editFooter.classList.remove('download-open');}
 
         // Detect standalone mode and apply compact spacing
         const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone||document.referrer.includes('android-app://');
@@ -4193,14 +4193,18 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             if(state.cmykLinked && (channel==='cyan'||channel==='magenta'||channel==='yellow')){
                 const channels=['cyan','magenta','yellow'];
                 channels.forEach(ch=>{
-                    const oldValue=state.settings[ch];
-                    const newValue=Math.max(min,Math.min(max,state.settings[ch]+delta));
+                    const oldValue=state.settings[ch]||0;
+                    const newValue=Math.max(min,Math.min(max,(state.settings[ch]||0)+delta));
                     state.settings[ch]=newValue;
-                    document.getElementById(ch+'Value').querySelector('.cmyk-value-number').textContent=state.settings[ch];
+                    document.getElementById(ch+'Value').querySelector('.cmyk-value-number').textContent=newValue;
                     if(oldValue!==newValue){
                         addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${newValue}`,ch,oldValue,newValue);
                     }
                 });
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                enablePreviewMode();
+                deferredRender();
             } else {
                 // Normal single channel adjustment
                 const oldValue=state.settings[channel];
@@ -4210,12 +4214,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 if(oldValue!==newValue){
                     addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
                 }
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                enablePreviewMode();
+                deferredRender();
             }
-
-            updateCMYKIndicator();
-            saveCurrentPhotoSettings(true,true);
-            enablePreviewMode();
-            deferredRender();
         }
 
         function toggleCMYLink(){
