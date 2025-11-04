@@ -4800,19 +4800,28 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                             drawW=thumbSize*aspectRatio;
                         }
 
-                        // Scale down FIRST to thumbnail size (much faster!)
+                        // Scale down to 300px on long edge for high quality thumbnails
                         const tempCanvas=document.createElement('canvas');
                         const tctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
-                        tempCanvas.width=Math.floor(drawW);
-                        tempCanvas.height=Math.floor(drawH);
-                        tctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);
+                        const thumbLongEdge=300;
+                        let thumbW,thumbH;
+                        if(sourceImg.width>sourceImg.height){
+                            thumbW=thumbLongEdge;
+                            thumbH=Math.floor(thumbLongEdge/aspectRatio);
+                        }else{
+                            thumbH=thumbLongEdge;
+                            thumbW=Math.floor(thumbLongEdge*aspectRatio);
+                        }
+                        tempCanvas.width=thumbW;
+                        tempCanvas.height=thumbH;
+                        tctx.drawImage(sourceImg,0,0,thumbW,thumbH);
 
-                        // Apply effects to small thumbnail (not full res!)
+                        // Apply effects to high quality thumbnail
                         const savedSettings=state.settings;
                         state.settings=p.settings;
                         // CRITICAL: Preload LUT for this photo's profile
                         await preloadLUTForProfile(p.settings.profile);
-                        applyEffects(tctx,tempCanvas.width,tempCanvas.height);
+                        applyEffects(tctx,thumbW,thumbH);
                         state.settings=savedSettings;
 
                         const offsetX=x+(thumbSize-drawW)/2;
