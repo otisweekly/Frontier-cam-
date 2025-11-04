@@ -679,7 +679,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null};
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -1782,6 +1782,18 @@
                         }
                     },800);
                 }
+
+                // Regenerate download previews if panel is open (debounced)
+                if(settingsChanged){
+                    const downloadOptions=document.getElementById('downloadOptions');
+                    if(downloadOptions&&downloadOptions.classList.contains('active')){
+                        clearTimeout(state.downloadPreviewRegenerateTimer);
+                        state.downloadPreviewRegenerateTimer=setTimeout(()=>{
+                            generateDownloadPreviews();
+                            console.log('Download previews regenerated after settings change');
+                        },300);
+                    }
+                }
             }
         }
 
@@ -1885,6 +1897,15 @@
                     console.error('Failed to regenerate contact sheet:', err);
                 }
             },500);
+
+            // Also regenerate download previews if panel is open
+            const downloadOptions=document.getElementById('downloadOptions');
+            if(downloadOptions&&downloadOptions.classList.contains('active')){
+                setTimeout(()=>{
+                    generateDownloadPreviews();
+                    console.log('Download previews regenerated after HOLD apply');
+                },600);
+            }
         }
 
         async function loadPhotoSettings(idx){
@@ -4466,102 +4487,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             },'image/jpeg',0.92);
         }
 
-        async function saveContactSheet(){
-            haptic();
-            closeDownloadOptions();
-
-            const photoCount=state.photos.filter(p=>!p.isVideo).length;
-            if(photoCount===0){
-                alert('No photos to export');
-                return;
-            }
-
-            setStatus('loading');
-
-            const cols=3;
-            const rows=Math.ceil(photoCount/cols);
-            const thumbSize=400;
-            const margin=20;
-            const labelHeight=40;
-            const sheetW=cols*thumbSize+(cols+1)*margin;
-            const sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+60;
-
-            const sheet=document.createElement('canvas');
-            sheet.width=sheetW;
-            sheet.height=sheetH;
-            const sctx=sheet.getContext('2d',{alpha:false});
-
-            sctx.fillStyle='#000';
-            sctx.fillRect(0,0,sheetW,sheetH);
-
-            sctx.fillStyle='#fff';
-            sctx.font='bold 24px "PP Neue Bit", monospace';
-            sctx.textAlign='center';
-            sctx.fillText('FRONTIER DIGITAL PROCESSOR',sheetW/2,40);
-
-            let photoIndex=0;
-            for(let row=0;row<rows;row++){
-                for(let col=0;col<cols;col++){
-                    if(photoIndex>=photoCount)break;
-
-                    const p=state.photos.filter(p=>!p.isVideo)[photoIndex];
-                    const x=margin+col*(thumbSize+margin);
-                    const y=60+margin+row*(thumbSize+labelHeight+margin);
-
-                    const tempCanvas=document.createElement('canvas');
-                    const tctx=tempCanvas.getContext('2d',{alpha:false});
-                    tempCanvas.width=p.image.width;
-                    tempCanvas.height=p.image.height;
-                    tctx.drawImage(p.image,0,0);
-
-                    const savedSettings=state.settings;
-                    state.settings=p.settings;
-                    applyEffects(tctx,tempCanvas.width,tempCanvas.height);
-                    state.settings=savedSettings;
-
-                    const aspectRatio=p.image.width/p.image.height;
-                    let drawW=thumbSize,drawH=thumbSize;
-                    if(aspectRatio>1){
-                        drawH=thumbSize/aspectRatio;
-                    }else{
-                        drawW=thumbSize*aspectRatio;
-                    }
-
-                    const offsetX=x+(thumbSize-drawW)/2;
-                    const offsetY=y+(thumbSize-drawH)/2;
-
-                    sctx.fillStyle='#222';
-                    sctx.fillRect(x,y,thumbSize,thumbSize);
-                    sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);
-
-                    sctx.fillStyle='#fff';
-                    sctx.font='16px "PP Neue Bit", monospace';
-                    sctx.textAlign='center';
-                    sctx.fillText(`${photoIndex+1}`,x+thumbSize/2,y+thumbSize+25);
-
-                    photoIndex++;
-                }
-            }
-
-            sheet.toBlob(async b=>{
-                const file=new File([b],'frontier_contact_sheet.jpg',{type:'image/jpeg'});
-
-                if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-                    try{
-                        await navigator.share({files:[file],title:'Frontier Contact Sheet'});
-                        setStatus('ready');
-                    }catch(err){
-                        if(err.name!=='AbortError'){
-                            fallbackDownload(b,'contact_sheet.jpg');
-                        }
-                        setStatus('ready');
-                    }
-                }else{
-                    fallbackDownload(b,'contact_sheet.jpg');
-                    setStatus('ready');
-                }
-            },'image/jpeg',0.92);
-        }
+        // REMOVED: Legacy saveContactSheet() function - use generateAndAddContactSheet() instead
 
         async function saveAnimatedGif(){
             haptic();
@@ -4949,96 +4875,83 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             files.push({blob:sheetBlob,filename:'00_CONTACT_SHEET.jpg'});
 
             if(isMobile){
-                // Mobile: Save each photo individually to camera roll using Share API
+                // Mobile: Share ALL files at once to camera roll using Share API
                 console.log('Mobile detected. Share API available:', !!navigator.share, 'canShare available:', !!navigator.canShare);
 
                 if(navigator.share && navigator.canShare){
-                    let savedCount=0;
-                    for(let i=0;i<files.length;i++){
-                        const f=files[i];
-                        try{
-                            // Update progress - keep it visible
-                            const percent=Math.round(((i+1)/(files.length))*100);
-                            updateUploadProgress(percent,`Saving to camera roll ${i+1}/${files.length}...`);
-                            console.log(`Saving photo ${i+1}/${files.length}: ${f.filename}`);
+                    try{
+                        const shareFiles=files.map(f=>new File([f.blob],f.filename,{type:'image/jpeg'}));
 
-                            const file=new File([f.blob],f.filename,{type:'image/jpeg'});
+                        // Check if we can share all files at once
+                        if(navigator.canShare({files:shareFiles})){
+                            console.log(`Sharing ${shareFiles.length} files at once`);
 
-                            // Check if this specific file can be shared
-                            const canShareThis = navigator.canShare({files:[file]});
-                            console.log('Can share this file?', canShareThis);
+                            // Show final status before share dialog
+                            updateUploadProgress(100,'Complete! Opening share dialog...');
 
-                            if(canShareThis){
-                                await navigator.share({
-                                    files:[file],
-                                    title:'Frontier Photo'
-                                });
-                                savedCount++;
-                                console.log('Successfully saved',f.filename);
-                            }else{
-                                console.log('Cannot share file:',f.filename);
-                            }
+                            await navigator.share({
+                                files:shareFiles,
+                                title:'Frontier Photos',
+                                text:`${photoCount} photos + contact sheet`
+                            });
 
-                            // Small delay to show progress
-                            await new Promise(resolve=>setTimeout(resolve,100));
-                        }catch(err){
-                            if(err.name==='AbortError'){
-                                // User canceled - stop saving
-                                console.log('User canceled share at photo',i+1);
-                                break;
-                            }
-                            console.error('Share failed for',f.filename,err);
-                            // Continue with next photo even if one fails
+                            // Restore original settings and re-render
+                            state.settings={...originalSettings};
+                            state.currentIndex=originalIndex;
+                            await preloadLUTForProfile(state.settings.profile);
+                            renderPhoto();
+                            hideUploadProgress();
+                            setStatus('ready');
+
+                            alert(`Successfully saved ${shareFiles.length} images to camera roll!`);
+                            return; // Success
+                        }else{
+                            console.error('Cannot share files array');
                         }
+                    }catch(err){
+                        if(err.name==='AbortError'){
+                            // User canceled - restore and exit
+                            state.settings={...originalSettings};
+                            state.currentIndex=originalIndex;
+                            await preloadLUTForProfile(state.settings.profile);
+                            renderPhoto();
+                            hideUploadProgress();
+                            setStatus('ready');
+                            return;
+                        }
+                        console.error('Share API failed:',err);
                     }
-
-                    // Restore original settings and re-render
-                    state.settings={...originalSettings};
-                    state.currentIndex=originalIndex;
-                    await preloadLUTForProfile(state.settings.profile);
-                    renderPhoto();
-                    hideUploadProgress();
-                    setStatus('ready');
-
-                    if(savedCount>0){
-                        alert(`Successfully saved ${savedCount} photo${savedCount===1?'':'s'} to camera roll!`);
-                    }else{
-                        alert('No photos were saved. Please check console for errors.');
-                    }
-                }else{
-                    // No Share API available - download as files instead
-                    console.error('Share API not available. navigator.share:', navigator.share, 'navigator.canShare:', navigator.canShare);
-                    updateUploadProgress(0,'Downloading files...');
-
-                    // Download files one by one
-                    for(let i=0;i<files.length;i++){
-                        const f=files[i];
-                        const percent=Math.round(((i+1)/(files.length))*100);
-                        updateUploadProgress(percent,`Downloading ${i+1}/${files.length}: ${f.filename.substring(0,20)}...`);
-
-                        // Create download link
-                        const url=URL.createObjectURL(f.blob);
-                        const a=document.createElement('a');
-                        a.href=url;
-                        a.download=f.filename;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        setTimeout(()=>URL.revokeObjectURL(url),100);
-
-                        // Delay between downloads
-                        await new Promise(resolve=>setTimeout(resolve,500));
-                    }
-
-                    // Restore original settings and re-render
-                    state.settings={...originalSettings};
-                    state.currentIndex=originalIndex;
-                    await preloadLUTForProfile(state.settings.profile);
-                    renderPhoto();
-                    hideUploadProgress();
-                    setStatus('ready');
-                    alert(`${files.length} photos downloaded!`);
                 }
+
+                // Fallback: Download as files if Share API failed/unavailable
+                console.log('Falling back to file downloads');
+                updateUploadProgress(0,'Downloading files...');
+
+                for(let i=0;i<files.length;i++){
+                    const f=files[i];
+                    const percent=Math.round(((i+1)/(files.length))*100);
+                    updateUploadProgress(percent,`Downloading ${i+1}/${files.length}: ${f.filename.substring(0,20)}...`);
+
+                    const url=URL.createObjectURL(f.blob);
+                    const a=document.createElement('a');
+                    a.href=url;
+                    a.download=f.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(()=>URL.revokeObjectURL(url),100);
+
+                    await new Promise(resolve=>setTimeout(resolve,500));
+                }
+
+                // Restore original settings and re-render
+                state.settings={...originalSettings};
+                state.currentIndex=originalIndex;
+                await preloadLUTForProfile(state.settings.profile);
+                renderPhoto();
+                hideUploadProgress();
+                setStatus('ready');
+                alert(`${files.length} photos downloaded!`);
             }else{
                 // Desktop: Create ZIP download
                 await createZipDownload(files,photoCount,originalSettings,originalIndex);
