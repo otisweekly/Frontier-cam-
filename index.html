@@ -1652,9 +1652,9 @@
                 return;
             }
 
-            if (files.length > 36) {
-                alert('Maximum 36 files allowed. Only first 36 will be loaded.');
-                files.length = 36;
+            if (files.length > 5) {
+                alert('Maximum 5 photos allowed per batch. Only first 5 will be loaded.');
+                files.length = 5;
             }
 
             // Reverse files to load like a real scanner (last to first, ending on frame 1)
@@ -4987,9 +4987,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         async function saveAll(){
             try{
+                console.log('[saveAll] Starting...');
                 haptic();
 
                 const photoCount=state.photos.filter(p=>!p.isContactSheet).length;
+                console.log(`[saveAll] Photo count: ${photoCount}`);
                 if(photoCount===0){
                     alert('No photos to export');
                     return;
@@ -4997,18 +4999,22 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 // Detect if mobile
                 const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                console.log(`[saveAll] isMobile: ${isMobile}`);
 
                 if(!isMobile){
                     // Desktop: Export as ZIP - ask for confirmation
                     if(!confirm(`Export ${photoCount} photos + contact sheet as ZIP?`)){
+                        console.log('[saveAll] User cancelled');
                         return;
                     }
                 }
                 // Mobile: No confirmation - just save directly to camera roll
 
                 // Show progress bar
+                console.log('[saveAll] Showing progress bar...');
                 showUploadProgress(`Processing ${photoCount} photos...`);
                 setStatus('wait');
+                console.log('[saveAll] Progress bar should be visible now');
 
                 // Close download options (can animate away while we process)
                 closeDownloadOptions();
