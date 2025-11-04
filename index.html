@@ -326,11 +326,11 @@
         #cmykControls.active { transform:translateY(0); opacity:1; }
         #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
-        .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
-        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
-        .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
-        .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0) invert(1); }
+        .brightness-auto-btn, .cmyk-auto-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
+        .brightness-auto-btn:active, .cmyk-auto-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active, .cmyk-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
+        .brightness-auto-btn img, .cmyk-auto-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+        .brightness-auto-btn.active img, .cmyk-auto-btn.active img { filter:brightness(0) invert(1); }
         #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
@@ -514,7 +514,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="cmyk-link-btn" id="linkBtn" onclick="toggleCMYLink()"><img src="Default_Unlinked.svg" alt="LINK"></button>
+                <button class="cmyk-auto-btn" id="cmykAutoBtn" onclick="autoAdjustCMYK()"><img src="auto_cmyk.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="yellowValue" onclick="editCMYKCounter('yellow')">
                         <div class="cmyk-value-number">0</div>
@@ -563,7 +563,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto.svg" alt="AUTO"></button>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto_light.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -2561,7 +2561,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cyanAdjust=s.cyan*12;const magentaAdjust=s.magenta*12;const yellowAdjust=s.yellow*12;const densityAdjust=s.black*-12;const isLinkedSaturation=(s.cyan===s.magenta&&s.magenta===s.yellow&&s.cyan!==0);for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(isLinkedSaturation){const saturationValue=s.cyan;const saturationFactor=1+(saturationValue*0.2);const gray=(r+g+b)/3;r=gray+(r-gray)*saturationFactor;g=gray+(g-gray)*saturationFactor;b=gray+(b-gray)*saturationFactor;}else{r-=cyanAdjust;g-=magentaAdjust;b-=yellowAdjust;}if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r+=densityAdjust*factor;g+=densityAdjust*factor;b+=densityAdjust*factor;}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
+        function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cyanAdjust=s.cyan*12;const magentaAdjust=s.magenta*12;const yellowAdjust=s.yellow*12;const densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r-=cyanAdjust;g-=magentaAdjust;b-=yellowAdjust;if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r+=densityAdjust*factor;g+=densityAdjust*factor;b+=densityAdjust*factor;}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
         function applyBrightness(d,s){const brightness=s.brightness||0;const contrast=s.contrast||0;const shadows=s.shadows||0;const highlights=s.highlights||0;if(brightness===0&&contrast===0&&shadows===0&&highlights===0)return;const brightnessAdjust=brightness*12;const contrastFactor=1+(contrast*0.15);const shadowsAdjust=shadows*12;const highlightsAdjust=highlights*12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(brightnessAdjust!==0){r+=brightnessAdjust;g+=brightnessAdjust;b+=brightnessAdjust;}if(contrastFactor!==1){r=((r-128)*contrastFactor)+128;g=((g-128)*contrastFactor)+128;b=((b-128)*contrastFactor)+128;}if(shadowsAdjust!==0||highlightsAdjust!==0){const lum=(r+g+b)/3;if(lum<128&&shadowsAdjust!==0){const shadowFactor=(128-lum)/128;r+=shadowsAdjust*shadowFactor;g+=shadowsAdjust*shadowFactor;b+=shadowsAdjust*shadowFactor;}if(lum>=128&&highlightsAdjust!==0){const highlightFactor=(lum-128)/127;r+=highlightsAdjust*highlightFactor;g+=highlightsAdjust*highlightFactor;b+=highlightsAdjust*highlightFactor;}}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
@@ -4021,7 +4021,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.655;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*15;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
@@ -4190,76 +4190,168 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         function adjustCMYK(channel,delta){
             haptic();
             const max=10,min=-10;
-
-            // If linked and adjusting C, M, or Y, adjust all three together
-            if(state.cmykLinked && (channel==='cyan'||channel==='magenta'||channel==='yellow')){
-                const channels=['cyan','magenta','yellow'];
-                channels.forEach(ch=>{
-                    const oldValue=state.settings[ch]||0;
-                    const newValue=Math.max(min,Math.min(max,(state.settings[ch]||0)+delta));
-                    state.settings[ch]=newValue;
-                    document.getElementById(ch+'Value').querySelector('.cmyk-value-number').textContent=newValue;
-                    if(oldValue!==newValue){
-                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${newValue}`,ch,oldValue,newValue);
-                    }
-                });
-                updateCMYKIndicator();
-                saveCurrentPhotoSettings(true,true);
-                enablePreviewMode();
-                deferredRender();
-            } else {
-                // Normal single channel adjustment
-                const oldValue=state.settings[channel];
-                const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));
-                state.settings[channel]=newValue;
-                document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];
-                if(oldValue!==newValue){
-                    addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
-                }
-                updateCMYKIndicator();
-                saveCurrentPhotoSettings(true,true);
-                enablePreviewMode();
-                deferredRender();
+            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
+            const isAutoActive=cmykAutoBtn&&cmykAutoBtn.classList.contains('active');
+            if(isAutoActive){
+                cmykAutoBtn.classList.remove('active');
+                console.log('🔴 CMYK AUTO: Turned off due to manual adjustment');
             }
+            const oldValue=state.settings[channel];
+            const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));
+            state.settings[channel]=newValue;
+            document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];
+            if(oldValue!==newValue){
+                addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
+            }
+            updateCMYKIndicator();
+            saveCurrentPhotoSettings(true,true);
+            enablePreviewMode();
+            deferredRender();
         }
 
-        function toggleCMYLink(){
+        async function autoAdjustCMYK(){
             haptic();
-            state.cmykLinked = !state.cmykLinked;
-            const linkBtn = document.getElementById('linkBtn');
-            const img = linkBtn.querySelector('img');
+            const currentPhoto=state.photos[state.currentIndex];
+            if(!currentPhoto||!currentPhoto.image){
+                console.log('❌ No current photo for CMYK auto-adjustment');
+                return;
+            }
 
-            if(state.cmykLinked){
-                linkBtn.classList.add('active');
-                img.src = 'Active_Linked.svg';
+            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
+            const isActive=cmykAutoBtn.classList.contains('active');
 
-                // Sync all CMY values to the first non-zero value found
-                const cyan = state.settings.cyan || 0;
-                const magenta = state.settings.magenta || 0;
-                const yellow = state.settings.yellow || 0;
+            // If already active, turn OFF and reset to defaults
+            if(isActive){
+                console.log('🔴 CMYK AUTO: Turning off, resetting to defaults');
+                cmykAutoBtn.classList.remove('active');
 
-                // Find first non-zero value, or use 0 if all are 0
-                const syncValue = cyan !== 0 ? cyan : (magenta !== 0 ? magenta : yellow);
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
 
-                // Update all channels to match
-                ['cyan', 'magenta', 'yellow'].forEach(ch => {
-                    const oldValue = state.settings[ch] || 0;
-                    if(oldValue !== syncValue) {
-                        state.settings[ch] = syncValue;
-                        document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent = syncValue;
-                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${syncValue}`, ch, oldValue, syncValue);
-                    }
-                });
+                state.settings.cyan=0;
+                state.settings.magenta=0;
+                state.settings.yellow=0;
+                state.settings.black=0;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=0;
+
+                if(oldCyan!==0)addToHistory(`RESET CYAN: ${oldCyan} → 0`,'cyan',oldCyan,0);
+                if(oldMagenta!==0)addToHistory(`RESET MAGENTA: ${oldMagenta} → 0`,'magenta',oldMagenta,0);
+                if(oldYellow!==0)addToHistory(`RESET YELLOW: ${oldYellow} → 0`,'yellow',oldYellow,0);
+                if(oldBlack!==0)addToHistory(`RESET DENSITY: ${oldBlack} → 0`,'black',oldBlack,0);
 
                 updateCMYKIndicator();
-                saveCurrentPhotoSettings(true, true);
+                saveCurrentPhotoSettings(true,true);
                 deferredRender();
+                return;
+            }
 
-                console.log(`🔗 CMY channels linked and synced to ${syncValue}`);
-            } else {
-                linkBtn.classList.remove('active');
-                img.src = 'Default_Unlinked.svg';
-                console.log('🔓 CMY channels unlinked');
+            // Turn ON and apply auto-adjustments
+            cmykAutoBtn.classList.add('active');
+            console.log('🎨 CMYK AUTO: Analyzing color balance...');
+            setStatus('processing');
+
+            try{
+                const tempCanvas=document.createElement('canvas');
+                const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+
+                const img=currentPhoto.image;
+                const scale=Math.min(1,800/Math.max(img.width,img.height));
+                tempCanvas.width=Math.floor(img.width*scale);
+                tempCanvas.height=Math.floor(img.height*scale);
+
+                ctx.drawImage(img,0,0,tempCanvas.width,tempCanvas.height);
+                const imageData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+                const pixels=imageData.data;
+
+                let sumR=0,sumG=0,sumB=0,sumLum=0;
+                const pixelCount=pixels.length/4;
+
+                for(let i=0;i<pixels.length;i+=4){
+                    sumR+=pixels[i];
+                    sumG+=pixels[i+1];
+                    sumB+=pixels[i+2];
+                    sumLum+=pixels[i]*0.299+pixels[i+1]*0.587+pixels[i+2]*0.114;
+                }
+
+                const avgR=sumR/pixelCount;
+                const avgG=sumG/pixelCount;
+                const avgB=sumB/pixelCount;
+                const avgLum=sumLum/pixelCount;
+
+                console.log(`🎨 Color stats: R=${avgR.toFixed(1)}, G=${avgG.toFixed(1)}, B=${avgB.toFixed(1)}, Lum=${avgLum.toFixed(1)}`);
+
+                let cyan=0,magenta=0,yellow=0,black=0;
+
+                // Detect color cast and correct it
+                const avgGray=(avgR+avgG+avgB)/3;
+                const rCast=(avgR-avgGray)/avgGray;
+                const gCast=(avgG-avgGray)/avgGray;
+                const bCast=(avgB-avgGray)/avgGray;
+
+                // Cyan removes red cast
+                if(rCast>0.02){
+                    cyan=Math.round(Math.min(10,rCast*60));
+                }else if(rCast<-0.02){
+                    cyan=Math.round(Math.max(-10,rCast*60));
+                }
+
+                // Magenta removes green cast
+                if(gCast>0.02){
+                    magenta=Math.round(Math.min(10,gCast*60));
+                }else if(gCast<-0.02){
+                    magenta=Math.round(Math.max(-10,gCast*60));
+                }
+
+                // Yellow removes blue cast
+                if(bCast>0.02){
+                    yellow=Math.round(Math.min(10,bCast*60));
+                }else if(bCast<-0.02){
+                    yellow=Math.round(Math.max(-10,bCast*60));
+                }
+
+                // Density adjustment based on overall brightness
+                if(avgLum<100){
+                    black=Math.round(Math.min(5,(100-avgLum)/20));
+                }else if(avgLum>155){
+                    black=Math.round(Math.max(-5,(155-avgLum)/20));
+                }
+
+                console.log(`🎯 CMYK AUTO: C=${cyan}, M=${magenta}, Y=${yellow}, D=${black}`);
+
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
+
+                state.settings.cyan=cyan;
+                state.settings.magenta=magenta;
+                state.settings.yellow=yellow;
+                state.settings.black=black;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=cyan;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=magenta;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=yellow;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=black;
+
+                if(oldCyan!==cyan)addToHistory(`AUTO CYAN: ${oldCyan} → ${cyan}`,'cyan',oldCyan,cyan);
+                if(oldMagenta!==magenta)addToHistory(`AUTO MAGENTA: ${oldMagenta} → ${magenta}`,'magenta',oldMagenta,magenta);
+                if(oldYellow!==yellow)addToHistory(`AUTO YELLOW: ${oldYellow} → ${yellow}`,'yellow',oldYellow,yellow);
+                if(oldBlack!==black)addToHistory(`AUTO DENSITY: ${oldBlack} → ${black}`,'black',oldBlack,black);
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                deferredRender();
+                setStatus('ready');
+            }catch(err){
+                console.error('Error in CMYK auto-adjustment:',err);
+                cmykAutoBtn.classList.remove('active');
+                setStatus('ready');
             }
         }
 
@@ -5574,7 +5666,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings(true,true);deferredRender();return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings(true,true);deferredRender();}
 
-        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const linkBtn=document.getElementById('linkBtn');const isLinkActive=linkBtn&&linkBtn.classList.contains('active');const isCMYChannel=(type==='cyan'||type==='magenta'||type==='yellow');if(isLinkActive&&isCMYChannel){const channels=['cyan','magenta','yellow'];channels.forEach(ch=>{const oldVal=state.settings[ch];state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});linkBtn.classList.remove('active');const img=linkBtn.querySelector('img');img.src='Default_Unlinked.svg';state.cmykLinked=false;console.log('🔓 LINK: Cleared all CMY values and turned off LINK');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
+        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);const cmykAutoBtn=document.getElementById('cmykAutoBtn');const isAutoActive=cmykAutoBtn&&cmykAutoBtn.classList.contains('active');if(clearConfirm){if(isAutoActive){const channels=['cyan','magenta','yellow','black'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){const cName=ch==='black'?'DENSITY':ch.toUpperCase();addToHistory(`${cName}: ${oldVal} → 0`,ch,oldVal,0);}});cmykAutoBtn.classList.remove('active');console.log('🔴 CMYK AUTO: Cleared all values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}if(isAutoActive){cmykAutoBtn.classList.remove('active');console.log('🔴 CMYK AUTO: Turned off due to manual value entry');}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
 
         function frameCounterOptions(){haptic();if(confirm('View all photos?\n\n(Cancel to remove current photo)')){toggleContactSheetView();}else if(confirm('Remove current photo?')){removeCurrentPhoto();}}
 
