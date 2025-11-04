@@ -5419,7 +5419,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 // Calculate statistics
                 const avgLum = sumLum / pixelCount;
 
-                // Find percentiles
+                // Find percentiles with more detail
                 const findPercentile = (percentile) => {
                     const target = pixelCount * percentile;
                     let sum = 0;
@@ -5430,15 +5430,43 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     return 255;
                 };
 
-                const p1 = findPercentile(0.01);   // 1st percentile (shadows)
-                const p5 = findPercentile(0.05);   // 5th percentile
+                const p1 = findPercentile(0.01);   // Deep shadows
+                const p5 = findPercentile(0.05);
+                const p10 = findPercentile(0.10);  // Shadow detail
+                const p25 = findPercentile(0.25);  // Lower quartile
                 const p50 = findPercentile(0.50);  // Median
-                const p95 = findPercentile(0.95);  // 95th percentile
-                const p99 = findPercentile(0.99);  // 99th percentile (highlights)
+                const p75 = findPercentile(0.75);  // Upper quartile
+                const p90 = findPercentile(0.90);  // Highlight detail
+                const p95 = findPercentile(0.95);
+                const p99 = findPercentile(0.99);  // Bright highlights
 
+                // Analyze histogram distribution
                 const range = p95 - p5;
+                const iqr = p75 - p25; // Interquartile range (middle 50%)
 
-                console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
+                // Detect bimodal distribution (subject vs background)
+                let peakCount = 0;
+                let lastPeak = -1;
+                for (let i = 10; i < 246; i++) {
+                    if (hist[i] > hist[i-1] && hist[i] > hist[i+1] && hist[i] > pixelCount * 0.01) {
+                        if (lastPeak === -1 || i - lastPeak > 30) {
+                            peakCount++;
+                            lastPeak = i;
+                        }
+                    }
+                }
+                const isBimodal = peakCount >= 2;
+
+                // IMAGE CLASSIFICATION: Don't force all images to midtones!
+                let imageType = 'normal';
+                if (p50 < 80 && p75 < 140) {
+                    imageType = 'low-key'; // Dark/moody
+                } else if (p50 > 160 && p25 > 100) {
+                    imageType = 'high-key'; // Bright/airy
+                }
+
+                console.log(`📊 Stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p10=${p10}, p25=${p25}, p50=${p50}, p75=${p75}, p90=${p90}, p99=${p99}`);
+                console.log(`📊 Range=${range}, IQR=${iqr}, Type=${imageType}, Bimodal=${isBimodal}`);
 
                 // Calculate adjustments (scale -10 to +10)
                 let brightness = 0;
@@ -5446,27 +5474,50 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 let shadows = 0;
                 let highlights = 0;
 
-                // BRIGHTNESS: Center the average around 128
-                const brightnessDelta = 128 - avgLum;
-                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 12.8)));
+                // BRIGHTNESS: Respect image type, don't force everything to 128
+                let targetLum = 128;
+                if (imageType === 'low-key') {
+                    targetLum = 100; // Keep it dark
+                } else if (imageType === 'high-key') {
+                    targetLum = 156; // Keep it bright
+                }
+                const brightnessDelta = targetLum - avgLum;
+                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 15)));
 
-                // CONTRAST: Expand if range is too narrow, compress if too wide
-                const idealRange = 180; // Target range
-                const contrastDelta = (idealRange - range) / idealRange;
-                contrast = Math.round(Math.max(-10, Math.min(10, contrastDelta * 8)));
-
-                // SHADOWS: Lift if shadows are crushed (p1 is too low)
-                if (p1 < 10) {
-                    shadows = Math.round(Math.max(0, Math.min(10, (10 - p1) / 2)));
-                } else if (p5 < 30) {
-                    shadows = Math.round(Math.max(0, Math.min(10, (30 - p5) / 6)));
+                // CONTRAST: More nuanced based on IQR
+                if (iqr < 50) {
+                    // Very flat, needs contrast
+                    contrast = Math.round(Math.min(10, (50 - iqr) / 5));
+                } else if (iqr > 120) {
+                    // Too contrasty
+                    contrast = Math.round(Math.max(-10, (120 - iqr) / 10));
+                } else if (range < 140) {
+                    // Decent IQR but narrow range - gentle boost
+                    contrast = Math.round(Math.min(10, (160 - range) / 20));
                 }
 
-                // HIGHLIGHTS: Pull down if highlights are blown (p99 is too high)
-                if (p99 > 245) {
-                    highlights = Math.round(Math.max(-10, Math.min(0, (245 - p99) / 2)));
-                } else if (p95 > 225) {
-                    highlights = Math.round(Math.max(-10, Math.min(0, (225 - p95) / 6)));
+                // SHADOWS: More gradual approach
+                if (p1 < 5) {
+                    // Deep clipping, strong lift
+                    shadows = Math.round(Math.min(10, (15 - p1) / 2));
+                } else if (p5 < 15) {
+                    // Moderate shadow crush
+                    shadows = Math.round(Math.min(10, (25 - p5) / 3));
+                } else if (p10 < 30 && imageType !== 'low-key') {
+                    // Gentle shadow lift (unless intentionally dark)
+                    shadows = Math.round(Math.min(8, (35 - p10) / 4));
+                }
+
+                // HIGHLIGHTS: More gradual approach
+                if (p99 > 250) {
+                    // Severe clipping, strong recovery
+                    highlights = Math.round(Math.max(-10, (240 - p99) / 2));
+                } else if (p95 > 240) {
+                    // Moderate highlight blow
+                    highlights = Math.round(Math.max(-10, (230 - p95) / 3));
+                } else if (p90 > 230 && imageType !== 'high-key') {
+                    // Gentle highlight recovery (unless intentionally bright)
+                    highlights = Math.round(Math.max(-8, (225 - p90) / 4));
                 }
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
