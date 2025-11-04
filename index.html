@@ -4734,8 +4734,8 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             closeDownloadOptions();
             setStatus('wait'); // Orange pulsing light during download
 
-            // Small delay to ensure UI updates before starting heavy processing
-            await new Promise(resolve=>setTimeout(resolve,100));
+            // Wait for download options to fully close (300ms transition + buffer)
+            await new Promise(resolve=>setTimeout(resolve,350));
 
             showUploadProgress(`Processing ${photoCount} photos...`);
 
