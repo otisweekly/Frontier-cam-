@@ -4625,28 +4625,44 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         async function saveCurrentPhoto(){
             haptic();
             closeDownloadOptions();
-            setStatus('loading');
+
+            // Show progress bar
+            showUploadProgress('Processing photo...');
+            const p=state.photos[state.currentIndex];
+            const filename=p.displayName||`frontier_photo_${state.currentIndex+1}.jpg`;
+
+            updateUploadProgress(30, `Exporting ${filename.substring(0,30)}...`);
 
             const currentCanvas=document.getElementById('canvas');
-            const p=state.photos[state.currentIndex];
 
             currentCanvas.toBlob(async b=>{
-                const filename=p.displayName||`frontier_photo_${state.currentIndex+1}.jpg`;
+                updateUploadProgress(70, `Preparing ${filename.substring(0,30)}...`);
                 const file=new File([b],filename,{type:'image/jpeg'});
 
                 if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
                     try{
+                        updateUploadProgress(90, 'Ready to save...');
+                        await new Promise(r=>setTimeout(r,300));
+
                         await navigator.share({files:[file],title:'Frontier Photo'});
-                        setStatus('ready');
+
+                        updateUploadProgress(100, 'Complete! Image saved!');
+                        await new Promise(r=>setTimeout(r,1500));
+                        hideUploadProgress();
                     }catch(err){
                         if(err.name!=='AbortError'){
                             fallbackDownload(b,filename);
+                            updateUploadProgress(100, 'Complete! Image downloaded!');
+                            await new Promise(r=>setTimeout(r,1500));
                         }
-                        setStatus('ready');
+                        hideUploadProgress();
                     }
                 }else{
+                    updateUploadProgress(90, 'Downloading...');
                     fallbackDownload(b,filename);
-                    setStatus('ready');
+                    updateUploadProgress(100, 'Complete! Image downloaded!');
+                    await new Promise(r=>setTimeout(r,1500));
+                    hideUploadProgress();
                 }
             },'image/jpeg',0.92);
         }
