@@ -326,11 +326,11 @@
         #cmykControls.active { transform:translateY(0); opacity:1; }
         #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
-        .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
-        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
-        .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
-        .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0) invert(1); }
+        .brightness-auto-btn, .cmyk-auto-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
+        .brightness-auto-btn:active, .cmyk-auto-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active, .cmyk-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
+        .brightness-auto-btn img, .cmyk-auto-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+        .brightness-auto-btn.active img, .cmyk-auto-btn.active img { filter:brightness(0) invert(1); }
         #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
@@ -514,7 +514,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="cmyk-link-btn" id="linkBtn" onclick="toggleCMYLink()"><img src="Default_Unlinked.svg" alt="LINK"></button>
+                <button class="cmyk-auto-btn" id="cmykAutoBtn" onclick="autoAdjustCMYK()"><img src="auto_cmyk.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="yellowValue" onclick="editCMYKCounter('yellow')">
                         <div class="cmyk-value-number">0</div>
@@ -563,7 +563,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto.svg" alt="AUTO"></button>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto_light.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -1650,8 +1650,8 @@
                 return;
             }
 
-            if (files.length > 36) {
-                alert('Maximum 36 files allowed. Only first 36 will be loaded.');
+            if (files.length > 5) {
+                alert('Maximum 5 photos allowed. Only first 5 will be loaded.');
                 files.length = 36;
             }
 
@@ -4259,6 +4259,157 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
+
+        async function autoAdjustCMYK(){
+            haptic();
+            const currentPhoto=state.photos[state.currentIndex];
+            if(!currentPhoto||!currentPhoto.image){
+                console.log('❌ No current photo for CMYK auto-adjustment');
+                return;
+            }
+
+            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
+            const isActive=cmykAutoBtn.classList.contains('active');
+
+            // If already active, turn OFF and reset to defaults
+            if(isActive){
+                console.log('🔴 CMYK AUTO: Turning off, resetting to defaults');
+                cmykAutoBtn.classList.remove('active');
+
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
+
+                state.settings.cyan=0;
+                state.settings.magenta=0;
+                state.settings.yellow=0;
+                state.settings.black=0;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=0;
+
+                if(oldCyan!==0)addToHistory(`RESET CYAN: ${oldCyan} → 0`,'cyan',oldCyan,0);
+                if(oldMagenta!==0)addToHistory(`RESET MAGENTA: ${oldMagenta} → 0`,'magenta',oldMagenta,0);
+                if(oldYellow!==0)addToHistory(`RESET YELLOW: ${oldYellow} → 0`,'yellow',oldYellow,0);
+                if(oldBlack!==0)addToHistory(`RESET DENSITY: ${oldBlack} → 0`,'black',oldBlack,0);
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                deferredRender();
+                return;
+            }
+
+            // Turn ON and apply auto-adjustments
+            cmykAutoBtn.classList.add('active');
+            console.log('🎨 CMYK AUTO: Analyzing color balance...');
+            setStatus('processing');
+
+            try{
+                const tempCanvas=document.createElement('canvas');
+                const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+
+                const img=currentPhoto.image;
+                const scale=Math.min(1,800/Math.max(img.width,img.height));
+                tempCanvas.width=Math.floor(img.width*scale);
+                tempCanvas.height=Math.floor(img.height*scale);
+
+                ctx.drawImage(img,0,0,tempCanvas.width,tempCanvas.height);
+                const imageData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+                const pixels=imageData.data;
+
+                let sumR=0,sumG=0,sumB=0,sumLum=0;
+                const pixelCount=pixels.length/4;
+
+                for(let i=0;i<pixels.length;i+=4){
+                    sumR+=pixels[i];
+                    sumG+=pixels[i+1];
+                    sumB+=pixels[i+2];
+                    sumLum+=pixels[i]*0.299+pixels[i+1]*0.587+pixels[i+2]*0.114;
+                }
+
+                const avgR=sumR/pixelCount;
+                const avgG=sumG/pixelCount;
+                const avgB=sumB/pixelCount;
+                const avgLum=sumLum/pixelCount;
+
+                console.log(`🎨 Color stats: R=${avgR.toFixed(1)}, G=${avgG.toFixed(1)}, B=${avgB.toFixed(1)}, Lum=${avgLum.toFixed(1)}`);
+
+                let cyan=0,magenta=0,yellow=0,black=0;
+
+                // Detect color cast and correct it
+                const avgGray=(avgR+avgG+avgB)/3;
+                const rCast=(avgR-avgGray)/avgGray;
+                const gCast=(avgG-avgGray)/avgGray;
+                const bCast=(avgB-avgGray)/avgGray;
+
+                // Cyan removes red cast
+                if(rCast>0.02){
+                    cyan=Math.round(Math.min(10,rCast*60));
+                }else if(rCast<-0.02){
+                    cyan=Math.round(Math.max(-10,rCast*60));
+                }
+
+                // Magenta removes green cast
+                if(gCast>0.02){
+                    magenta=Math.round(Math.min(10,gCast*60));
+                }else if(gCast<-0.02){
+                    magenta=Math.round(Math.max(-10,gCast*60));
+                }
+
+                // Yellow removes blue cast
+                if(bCast>0.02){
+                    yellow=Math.round(Math.min(10,bCast*60));
+                }else if(bCast<-0.02){
+                    yellow=Math.round(Math.max(-10,bCast*60));
+                }
+
+                // Density adjustment based on overall brightness
+                if(avgLum<100){
+                    black=Math.round(Math.min(5,(100-avgLum)/20));
+                }else if(avgLum>155){
+                    black=Math.round(Math.max(-5,(155-avgLum)/20));
+                }
+
+                console.log(`🎯 CMYK AUTO: C=${cyan}, M=${magenta}, Y=${yellow}, D=${black}`);
+
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
+
+                state.settings.cyan=cyan;
+                state.settings.magenta=magenta;
+                state.settings.yellow=yellow;
+                state.settings.black=black;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=cyan;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=magenta;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=yellow;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=black;
+
+                if(oldCyan!==cyan)addToHistory(`AUTO CYAN: ${oldCyan} → ${cyan}`,'cyan',oldCyan,cyan);
+                if(oldMagenta!==magenta)addToHistory(`AUTO MAGENTA: ${oldMagenta} → ${magenta}`,'magenta',oldMagenta,magenta);
+                if(oldYellow!==yellow)addToHistory(`AUTO YELLOW: ${oldYellow} → ${yellow}`,'yellow',oldYellow,yellow);
+                if(oldBlack!==black)addToHistory(`AUTO DENSITY: ${oldBlack} → ${black}`,'black',oldBlack,black);
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                deferredRender();
+                setStatus('ready');
+            }catch(err){
+                console.error('Error in CMYK auto-adjustment:',err);
+                cmykAutoBtn.classList.remove('active');
+                setStatus('ready');
+            }
+        }
+
+        function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
+
+        function toggleBrightness(){haptic();closeIntensity();closeCMYK();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');brightnessControls.classList.toggle('active');brightnessToggle.classList.toggle('active');canvasContainer.classList.toggle('brightness-open');editFooter.classList.toggle('brightness-open');}
+
 
         function toggleBrightness(){haptic();closeIntensity();closeCMYK();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');brightnessControls.classList.toggle('active');brightnessToggle.classList.toggle('active');canvasContainer.classList.toggle('brightness-open');editFooter.classList.toggle('brightness-open');}
 
