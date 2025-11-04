@@ -664,7 +664,7 @@
                 <button class="contact-sheet-btn add-btn" onclick="addMorePhotos()">+ PHOTO</button>
                 <button class="contact-sheet-btn" id="selectBtn" onclick="toggleSelectMode()">SELECT</button>
                 <button class="contact-sheet-btn" id="deleteBtn" onclick="deleteSelectedPhotos()" style="display:none;">DELETE</button>
-                <button class="contact-sheet-btn" onclick="shareContactSheet()">SAVE</button>
+                <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SAVE ALL</button>
             </div>
             <div class="contact-sheet-title">CONTACT SHEET</div>
             <div class="contact-sheet-selection-info" id="selectionInfo" style="display:none;"></div>
@@ -1023,13 +1023,13 @@
                                     // Already zoomed: zoom out
                                     console.log('Zooming out');
                                     zoomState.justZoomed=true;
-                                    setTimeout(()=>{zoomState.justZoomed=false;},500);
+                                    setTimeout(()=>{zoomState.justZoomed=false;},800);
                                     resetZoom(canvas);
                                 }else{
                                     // Not zoomed: zoom in to 2.5x centered on tap point
                                     console.log('Zooming in to 2.5x at',lastTapX,lastTapY);
                                     zoomState.justZoomed=true;
-                                    setTimeout(()=>{zoomState.justZoomed=false;},500);
+                                    setTimeout(()=>{zoomState.justZoomed=false;},800);
                                     const canvasRect=canvas.getBoundingClientRect();
                                     zoomState.scale=2.5;
 
@@ -5305,9 +5305,45 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function toggleSelectMode(){haptic();state.contactSheet.selectMode=!state.contactSheet.selectMode;const btn=document.getElementById('selectBtn');const deleteBtn=document.getElementById('deleteBtn');if(state.contactSheet.selectMode){btn.classList.add('select-mode');btn.textContent='CANCEL';document.getElementById('selectionInfo').style.display='block';updateSelectionInfo();}else{btn.classList.remove('select-mode');btn.textContent='SELECT';state.contactSheet.selected=[];document.querySelectorAll('.contact-sheet-item').forEach(item=>item.classList.remove('selected'));document.getElementById('selectionInfo').style.display='none';deleteBtn.style.display='none';}}
+        function toggleSelectMode(){
+            haptic();
+            state.contactSheet.selectMode=!state.contactSheet.selectMode;
+            const btn=document.getElementById('selectBtn');
+            const deleteBtn=document.getElementById('deleteBtn');
+            const saveBtn=document.getElementById('saveBtn');
 
-        function updateSelectionInfo(){const count=state.contactSheet.selected.length;const info=document.getElementById('selectionInfo');const deleteBtn=document.getElementById('deleteBtn');if(count===0){info.textContent='TAP PHOTOS TO SELECT';deleteBtn.style.display='none';}else{info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;deleteBtn.style.display='block';}}
+            if(state.contactSheet.selectMode){
+                btn.classList.add('select-mode');
+                btn.textContent='CANCEL';
+                document.getElementById('selectionInfo').style.display='block';
+                updateSelectionInfo();
+            }else{
+                btn.classList.remove('select-mode');
+                btn.textContent='SELECT';
+                state.contactSheet.selected=[];
+                document.querySelectorAll('.contact-sheet-item').forEach(item=>item.classList.remove('selected'));
+                document.getElementById('selectionInfo').style.display='none';
+                deleteBtn.style.display='none';
+                saveBtn.textContent='SAVE ALL';
+            }
+        }
+
+        function updateSelectionInfo(){
+            const count=state.contactSheet.selected.length;
+            const info=document.getElementById('selectionInfo');
+            const deleteBtn=document.getElementById('deleteBtn');
+            const saveBtn=document.getElementById('saveBtn');
+
+            if(count===0){
+                info.textContent='TAP PHOTOS TO SELECT';
+                deleteBtn.style.display='none';
+                saveBtn.textContent='SAVE ALL';
+            }else{
+                info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;
+                deleteBtn.style.display='block';
+                saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
+            }
+        }
 
         async function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;setStatus('processing');const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';await populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();setStatus('ready');}
 
@@ -5344,7 +5380,105 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='Logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});if(p.isVideo){tempCanvas.width=p.video.videoWidth;tempCanvas.height=p.video.videoHeight;tctx.drawImage(p.video,0,0);}else{tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);}const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
 
-        async function shareContactSheet(){haptic();setStatus('wait');if(state.contactSheet.selected.length>0){const files=[];for(const idx of state.contactSheet.selected){const p=state.photos[idx];if(p.isVideo)continue;const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.original.width;tempCanvas.height=p.original.height;ctx.drawImage(p.original,0,0);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);ctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(ctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);ctx.putImageData(imgData2,0,0);const blob=await new Promise(resolve=>tempCanvas.toBlob(resolve,'image/jpeg',0.95));const filename=generateExportFilename(p,idx);files.push(new File([blob],filename,{type:'image/jpeg'}));}if(files.length===0){alert('No photos selected');setStatus('ready');return;}if(navigator.share&&navigator.canShare&&navigator.canShare({files:files})){try{await navigator.share({files:files,title:`Frontier Photos (${files.length})`});setStatus('ready');}catch(err){if(err.name!=='AbortError'){alert('Could not share photos');}setStatus('ready');}}else{alert('Share not supported on this device');setStatus('ready');}}else{const blob=await generateContactSheetImage();const now=new Date();const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');const file=new File([blob],`FRONTIER_CONTACT_SHEET_${date}_${time}.jpg`,{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Frontier Contact Sheet'});setStatus('ready');}catch(err){if(err.name!=='AbortError'){alert('Could not share contact sheet');}setStatus('ready');}}else{alert('Share not supported on this device');setStatus('ready');}}}
+        async function shareContactSheet(){
+            haptic();
+            setStatus('wait');
+
+            if(state.contactSheet.selected.length>0){
+                // Export selected photos
+                const selectedPhotos=state.contactSheet.selected.map(idx=>state.photos[idx]).filter(p=>!p.isVideo);
+                const photoCount=selectedPhotos.length;
+
+                if(photoCount===0){
+                    alert('No photos selected');
+                    setStatus('ready');
+                    return;
+                }
+
+                showUploadProgress(`Processing ${photoCount} photos...`);
+                const files=[];
+
+                for(let i=0;i<selectedPhotos.length;i++){
+                    const p=selectedPhotos[i];
+                    const idx=state.contactSheet.selected[i];
+
+                    const percent=Math.round(((i+1)/photoCount)*100);
+                    updateUploadProgress(percent,`Processing ${i+1}/${photoCount}...`);
+
+                    const tempCanvas=document.createElement('canvas');
+                    const ctx=tempCanvas.getContext('2d',{alpha:false});
+                    tempCanvas.width=p.original.width;
+                    tempCanvas.height=p.original.height;
+                    ctx.drawImage(p.original,0,0);
+
+                    // Preload LUT before applying
+                    await preloadLUTForProfile(p.settings.profile);
+
+                    const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+                    applyProfile(imgData,p.settings.profile);
+                    applyCMYK(imgData.data,p.settings);
+                    ctx.putImageData(imgData,0,0);
+
+                    if(p.settings.bloom!==0)applyBloom(ctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);
+
+                    const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+                    applyGrain(imgData2.data,p.settings.grain);
+                    ctx.putImageData(imgData2,0,0);
+
+                    const blob=await new Promise(resolve=>tempCanvas.toBlob(resolve,'image/jpeg',0.95));
+                    const filename=generateExportFilename(p,idx);
+                    files.push(new File([blob],filename,{type:'image/jpeg'}));
+                }
+
+                updateUploadProgress(100,`Ready to save ${files.length} images!`);
+
+                if(navigator.share&&navigator.canShare&&navigator.canShare({files:files})){
+                    try{
+                        await navigator.share({files:files,title:`Frontier Photos (${files.length})`});
+                        hideUploadProgress();
+                        setStatus('ready');
+                    }catch(err){
+                        hideUploadProgress();
+                        if(err.name!=='AbortError'){
+                            alert('Could not share photos');
+                        }
+                        setStatus('ready');
+                    }
+                }else{
+                    hideUploadProgress();
+                    alert('Share not supported on this device');
+                    setStatus('ready');
+                }
+            }else{
+                // Export full contact sheet
+                showUploadProgress('Generating contact sheet...');
+                const blob=await generateContactSheetImage();
+                const now=new Date();
+                const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');
+                const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');
+                const file=new File([blob],`FRONTIER_CONTACT_SHEET_${date}_${time}.jpg`,{type:'image/jpeg'});
+
+                updateUploadProgress(100,'Ready to save contact sheet!');
+
+                if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+                    try{
+                        await navigator.share({files:[file],title:'Frontier Contact Sheet'});
+                        hideUploadProgress();
+                        setStatus('ready');
+                    }catch(err){
+                        hideUploadProgress();
+                        if(err.name!=='AbortError'){
+                            alert('Could not share contact sheet');
+                        }
+                        setStatus('ready');
+                    }
+                }else{
+                    hideUploadProgress();
+                    alert('Share not supported on this device');
+                    setStatus('ready');
+                }
+            }
+        }
 
         function generateExportFilename(photo,index){const now=new Date();const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');const profile=photo.settings.profile!=='none'?photo.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(index+1).padStart(3,'0');let editInfo='';if(photo.settings.bloom!==0)editInfo+=`_B${photo.settings.bloom}`;if(photo.settings.grain>0)editInfo+=`_G${photo.settings.grain}`;if(photo.settings.cyan!==0||photo.settings.magenta!==0||photo.settings.yellow!==0||photo.settings.black!==0){editInfo+=`_CMYK`;}const extension=photo.fileExtension||'jpg';return `FRONTIER_${profile}_${frameNum}_${date}_${time}${editInfo}.${extension}`;}
 
