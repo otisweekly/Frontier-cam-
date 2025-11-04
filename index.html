@@ -2321,9 +2321,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
                 // Apply cooling correction for SUPRA to reduce strong yellows
-                if (profileId === 'supra') {
-                    applySUPRACooling(imageData);
-                }
+                // DISABLED: Testing pure FUJI 400H LUT without split toning
+                // if (profileId === 'supra') {
+                //     applySUPRACooling(imageData);
+                // }
 
                 // Apply black & white conversion for XXX preset
                 if (preset.blackAndWhite) {
