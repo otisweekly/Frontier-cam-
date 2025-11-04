@@ -5177,7 +5177,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             files.push({blob:sheetBlob,filename:'00_CONTACT_SHEET.jpg'});
 
             // Show completion
-            updateUploadProgress(100,`Complete! ${files.length} images ready`);
+            updateUploadProgress(100,'Download complete!');
 
             console.log('[Download Panel] User agent:', navigator.userAgent);
             console.log('[Download Panel] isMobile:', isMobile);
@@ -5195,7 +5195,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                         if(navigator.canShare({files:shareFiles})){
                             console.log(`iOS: Sharing ${shareFiles.length} files`);
-                            updateUploadProgress(100,`Ready to save ${shareFiles.length} images!`);
+                            updateUploadProgress(100,'Download complete!');
                             await new Promise(r=>setTimeout(r,800));
 
                             await navigator.share({
@@ -5205,7 +5205,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                             });
 
                             // Success - show completion and auto-close
-                            updateUploadProgress(100,`Complete! ${shareFiles.length} images saved!`);
+                            updateUploadProgress(100,'Download complete!');
                             await new Promise(r=>setTimeout(r,1500));
 
                             state.settings={...originalSettings};
