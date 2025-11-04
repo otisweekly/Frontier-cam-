@@ -755,7 +755,7 @@
         // Upload progress functions
         function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';document.getElementById('downloadProgress').classList.add('active');}
         function updateUploadProgress(percent,text=null){if(text)document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width=percent+'%';}
-        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');document.getElementById('downloadProgress').classList.remove('active');}
+        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');const progressBar=document.getElementById('downloadProgress');progressBar.classList.remove('active');progressBar.style.transform='';progressBar.style.opacity='';progressBar.style.display='';}
 
         // Detect standalone mode and apply compact spacing
         const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone||document.referrer.includes('android-app://');
@@ -5081,7 +5081,10 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                                 text:`${photoCount} photos + contact sheet`
                             });
 
-                            // Success - restore and exit
+                            // Success - show completion and auto-close
+                            updateUploadProgress(100,`Complete! ${shareFiles.length} images saved!`);
+                            await new Promise(r=>setTimeout(r,1500));
+
                             state.settings={...originalSettings};
                             state.currentIndex=originalIndex;
                             await preloadLUTForProfile(state.settings.profile);
