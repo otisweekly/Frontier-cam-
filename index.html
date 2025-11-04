@@ -326,7 +326,7 @@
         #cmykControls.active { transform:translateY(0); opacity:1; }
         #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
-        .brightness-auto-btn, .cmyk-link-btn { width:44px; height:44px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:8px; align-self:center; }
+        .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
         .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
         .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
@@ -358,8 +358,8 @@
         .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .history-done-btn { margin-top:10px; padding:14px; padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:#000; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; cursor:pointer; text-align:center; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; }
         .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
-        .cmyk-sliders { display:grid; grid-template-columns:1fr 1fr 44px 1fr 1fr; gap:8px; align-items:start; }
-        .brightness-sliders { display:grid; grid-template-columns:1fr 1fr 44px 1fr 1fr; gap:8px; align-items:start; }
+        .cmyk-sliders { display:grid; grid-template-columns:1fr 1fr 36px 1fr 1fr; gap:8px; align-items:start; }
+        .brightness-sliders { display:grid; grid-template-columns:1fr 1fr 36px 1fr 1fr; gap:8px; align-items:start; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
         .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; transition:all 0s; }
         .cmyk-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
