@@ -336,6 +336,11 @@
         .cmyk-arrows { display:flex; gap:4px; }
         .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
         .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn, .cmyk-auto-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
+        .brightness-auto-btn:active, .cmyk-auto-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active, .cmyk-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
+        .brightness-auto-btn img, .cmyk-auto-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+        .brightness-auto-btn.active img, .cmyk-auto-btn.active img { filter:brightness(0) invert(1); }
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
@@ -471,6 +476,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
+                <button class="cmyk-auto-btn" id="cmykAutoBtn" onclick="autoAdjustCMYK()"><img src="auto_cmyk.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="yellowValue" onclick="editCMYKCounter('yellow')">
                         <div class="cmyk-value-number">0</div>
@@ -519,6 +525,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto_light.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -3526,6 +3533,152 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function updateCMYKIndicator(){const cmykToggle=document.getElementById('cmykToggle');const hasSettings=state.settings.cyan!==0||state.settings.magenta!==0||state.settings.yellow!==0||state.settings.black!==0;if(hasSettings){cmykToggle.classList.add('has-settings');}else{cmykToggle.classList.remove('has-settings');}}
 
+        async function autoAdjustCMYK(){
+            haptic();
+            const currentPhoto=state.photos[state.currentIndex];
+            if(!currentPhoto||!currentPhoto.image){
+                console.log('❌ No current photo for CMYK auto-adjustment');
+                return;
+            }
+
+            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
+            const isActive=cmykAutoBtn.classList.contains('active');
+
+            // If already active, turn OFF and reset to defaults
+            if(isActive){
+                console.log('🔴 CMYK AUTO: Turning off, resetting to defaults');
+                cmykAutoBtn.classList.remove('active');
+
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
+
+                state.settings.cyan=0;
+                state.settings.magenta=0;
+                state.settings.yellow=0;
+                state.settings.black=0;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=0;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=0;
+
+                if(oldCyan!==0)addToHistory(`RESET CYAN: ${oldCyan} → 0`,'cyan',oldCyan,0);
+                if(oldMagenta!==0)addToHistory(`RESET MAGENTA: ${oldMagenta} → 0`,'magenta',oldMagenta,0);
+                if(oldYellow!==0)addToHistory(`RESET YELLOW: ${oldYellow} → 0`,'yellow',oldYellow,0);
+                if(oldBlack!==0)addToHistory(`RESET DENSITY: ${oldBlack} → 0`,'black',oldBlack,0);
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                deferredRender();
+                return;
+            }
+
+            // Turn ON and apply auto-adjustments
+            cmykAutoBtn.classList.add('active');
+            console.log('🎨 CMYK AUTO: Analyzing color balance...');
+            setStatus('processing');
+
+            try{
+                const tempCanvas=document.createElement('canvas');
+                const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+
+                const img=currentPhoto.image;
+                const scale=Math.min(1,800/Math.max(img.width,img.height));
+                tempCanvas.width=Math.floor(img.width*scale);
+                tempCanvas.height=Math.floor(img.height*scale);
+
+                ctx.drawImage(img,0,0,tempCanvas.width,tempCanvas.height);
+                const imageData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+                const pixels=imageData.data;
+
+                let sumR=0,sumG=0,sumB=0,sumLum=0;
+                const pixelCount=pixels.length/4;
+
+                for(let i=0;i<pixels.length;i+=4){
+                    sumR+=pixels[i];
+                    sumG+=pixels[i+1];
+                    sumB+=pixels[i+2];
+                    sumLum+=pixels[i]*0.299+pixels[i+1]*0.587+pixels[i+2]*0.114;
+                }
+
+                const avgR=sumR/pixelCount;
+                const avgG=sumG/pixelCount;
+                const avgB=sumB/pixelCount;
+                const avgLum=sumLum/pixelCount;
+
+                console.log(`🎨 Color stats: R=${avgR.toFixed(1)}, G=${avgG.toFixed(1)}, B=${avgB.toFixed(1)}, Lum=${avgLum.toFixed(1)}`);
+
+                let cyan=0,magenta=0,yellow=0,black=0;
+
+                // Detect color cast and correct it
+                const avgGray=(avgR+avgG+avgB)/3;
+                const rCast=(avgR-avgGray)/avgGray;
+                const gCast=(avgG-avgGray)/avgGray;
+                const bCast=(avgB-avgGray)/avgGray;
+
+                // Cyan removes red cast
+                if(rCast>0.02){
+                    cyan=Math.round(Math.min(10,rCast*60));
+                }else if(rCast<-0.02){
+                    cyan=Math.round(Math.max(-10,rCast*60));
+                }
+
+                // Magenta removes green cast
+                if(gCast>0.02){
+                    magenta=Math.round(Math.min(10,gCast*60));
+                }else if(gCast<-0.02){
+                    magenta=Math.round(Math.max(-10,gCast*60));
+                }
+
+                // Yellow removes blue cast
+                if(bCast>0.02){
+                    yellow=Math.round(Math.min(10,bCast*60));
+                }else if(bCast<-0.02){
+                    yellow=Math.round(Math.max(-10,bCast*60));
+                }
+
+                // Density adjustment based on overall brightness
+                if(avgLum<100){
+                    black=Math.round(Math.min(5,(100-avgLum)/20));
+                }else if(avgLum>155){
+                    black=Math.round(Math.max(-5,(155-avgLum)/20));
+                }
+
+                console.log(`🎯 CMYK AUTO: C=${cyan}, M=${magenta}, Y=${yellow}, D=${black}`);
+
+                const oldCyan=state.settings.cyan||0;
+                const oldMagenta=state.settings.magenta||0;
+                const oldYellow=state.settings.yellow||0;
+                const oldBlack=state.settings.black||0;
+
+                state.settings.cyan=cyan;
+                state.settings.magenta=magenta;
+                state.settings.yellow=yellow;
+                state.settings.black=black;
+
+                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=cyan;
+                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=magenta;
+                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=yellow;
+                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=black;
+
+                if(oldCyan!==cyan)addToHistory(`AUTO CYAN: ${oldCyan} → ${cyan}`,'cyan',oldCyan,cyan);
+                if(oldMagenta!==magenta)addToHistory(`AUTO MAGENTA: ${oldMagenta} → ${magenta}`,'magenta',oldMagenta,magenta);
+                if(oldYellow!==yellow)addToHistory(`AUTO YELLOW: ${oldYellow} → ${yellow}`,'yellow',oldYellow,yellow);
+                if(oldBlack!==black)addToHistory(`AUTO DENSITY: ${oldBlack} → ${black}`,'black',oldBlack,black);
+
+                updateCMYKIndicator();
+                saveCurrentPhotoSettings(true,true);
+                deferredRender();
+                setStatus('ready');
+            }catch(err){
+                console.error('Error in CMYK auto-adjustment:',err);
+                cmykAutoBtn.classList.remove('active');
+                setStatus('ready');
+            }
+        }
+
         function toggleBrightness(){haptic();closeIntensity();closeCMYK();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');brightnessControls.classList.toggle('active');brightnessToggle.classList.toggle('active');canvasContainer.classList.toggle('brightness-open');editFooter.classList.toggle('brightness-open');}
 
         function closeBrightness(){const brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(brightnessControls.classList.contains('active')){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');}}
@@ -3675,6 +3828,235 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();enablePreviewMode();if(!state.videoMode)deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
+
+        async function autoAdjustLevels() {
+            haptic();
+            const currentPhoto = state.photos[state.currentIndex];
+            if (!currentPhoto || !currentPhoto.image) {
+                console.log('❌ No current photo for auto-adjustment');
+                return;
+            }
+
+            const autoBtn = document.getElementById('autoBtn');
+            const isActive = autoBtn.classList.contains('active');
+
+            // If already active, turn OFF and reset to defaults
+            if (isActive) {
+                console.log('🔴 AUTO: Turning off, resetting to defaults');
+                autoBtn.classList.remove('active');
+
+                // Store old values for history
+                const oldBrightness = state.settings.brightness || 0;
+                const oldContrast = state.settings.contrast || 0;
+                const oldShadows = state.settings.shadows || 0;
+                const oldHighlights = state.settings.highlights || 0;
+
+                // Reset all to 0
+                state.settings.brightness = 0;
+                state.settings.contrast = 0;
+                state.settings.shadows = 0;
+                state.settings.highlights = 0;
+
+                // Update UI
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = 0;
+
+                // Add to history
+                if (oldBrightness !== 0) addToHistory(`RESET BRIGHTNESS: ${oldBrightness} → 0`, 'brightness', oldBrightness, 0);
+                if (oldContrast !== 0) addToHistory(`RESET CONTRAST: ${oldContrast} → 0`, 'contrast', oldContrast, 0);
+                if (oldShadows !== 0) addToHistory(`RESET SHADOWS: ${oldShadows} → 0`, 'shadows', oldShadows, 0);
+                if (oldHighlights !== 0) addToHistory(`RESET HIGHLIGHTS: ${oldHighlights} → 0`, 'highlights', oldHighlights, 0);
+
+                updateBrightnessIndicator();
+                saveCurrentPhotoSettings(true, true);
+                deferredRender();
+                return;
+            }
+
+            // Turn ON and apply auto-adjustments
+            autoBtn.classList.add('active');
+            console.log('🤖 AUTO: Analyzing image...');
+            setStatus('processing');
+
+            try {
+                // Create temporary canvas to analyze the image
+                const tempCanvas = document.createElement('canvas');
+                const ctx = tempCanvas.getContext('2d', { alpha: false, willReadFrequently: true });
+
+                // Use a smaller size for faster analysis (800px max)
+                const img = currentPhoto.image;
+                const scale = Math.min(1, 800 / Math.max(img.width, img.height));
+                tempCanvas.width = Math.floor(img.width * scale);
+                tempCanvas.height = Math.floor(img.height * scale);
+
+                ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+                const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const pixels = imageData.data;
+
+                // Build luminance histogram
+                const hist = new Array(256).fill(0);
+                let sumLum = 0;
+                const pixelCount = pixels.length / 4;
+
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const lum = Math.round(pixels[i] * 0.299 + pixels[i + 1] * 0.587 + pixels[i + 2] * 0.114);
+                    hist[lum]++;
+                    sumLum += lum;
+                }
+
+                // Calculate statistics
+                const avgLum = sumLum / pixelCount;
+
+                // Find percentiles with more detail
+                const findPercentile = (percentile) => {
+                    const target = pixelCount * percentile;
+                    let sum = 0;
+                    for (let i = 0; i < 256; i++) {
+                        sum += hist[i];
+                        if (sum >= target) return i;
+                    }
+                    return 255;
+                };
+
+                const p1 = findPercentile(0.01);   // Deep shadows
+                const p5 = findPercentile(0.05);
+                const p10 = findPercentile(0.10);  // Shadow detail
+                const p25 = findPercentile(0.25);  // Lower quartile
+                const p50 = findPercentile(0.50);  // Median
+                const p75 = findPercentile(0.75);  // Upper quartile
+                const p90 = findPercentile(0.90);  // Highlight detail
+                const p95 = findPercentile(0.95);
+                const p99 = findPercentile(0.99);  // Bright highlights
+
+                // Analyze histogram distribution
+                const range = p95 - p5;
+                const iqr = p75 - p25; // Interquartile range (middle 50%)
+
+                // Detect bimodal distribution (subject vs background)
+                let peakCount = 0;
+                let lastPeak = -1;
+                for (let i = 10; i < 246; i++) {
+                    if (hist[i] > hist[i-1] && hist[i] > hist[i+1] && hist[i] > pixelCount * 0.01) {
+                        if (lastPeak === -1 || i - lastPeak > 30) {
+                            peakCount++;
+                            lastPeak = i;
+                        }
+                    }
+                }
+                const isBimodal = peakCount >= 2;
+
+                // IMAGE CLASSIFICATION: Don't force all images to midtones!
+                let imageType = 'normal';
+                if (p50 < 80 && p75 < 140) {
+                    imageType = 'low-key'; // Dark/moody
+                } else if (p50 > 160 && p25 > 100) {
+                    imageType = 'high-key'; // Bright/airy
+                }
+
+                console.log(`📊 Stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p10=${p10}, p25=${p25}, p50=${p50}, p75=${p75}, p90=${p90}, p99=${p99}`);
+                console.log(`📊 Range=${range}, IQR=${iqr}, Type=${imageType}, Bimodal=${isBimodal}`);
+
+                // Calculate adjustments (scale -10 to +10)
+                let brightness = 0;
+                let contrast = 0;
+                let shadows = 0;
+                let highlights = 0;
+
+                // BRIGHTNESS: Respect image type, don't force everything to 128
+                let targetLum = 128;
+                if (imageType === 'low-key') {
+                    targetLum = 100; // Keep it dark
+                } else if (imageType === 'high-key') {
+                    targetLum = 156; // Keep it bright
+                }
+                const brightnessDelta = targetLum - avgLum;
+                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 15)));
+
+                // CONTRAST: More nuanced based on IQR
+                if (iqr < 50) {
+                    // Very flat, needs contrast
+                    contrast = Math.round(Math.min(10, (50 - iqr) / 5));
+                } else if (iqr > 120) {
+                    // Too contrasty
+                    contrast = Math.round(Math.max(-10, (120 - iqr) / 10));
+                } else if (range < 140) {
+                    // Decent IQR but narrow range - gentle boost
+                    contrast = Math.round(Math.min(10, (160 - range) / 20));
+                }
+
+                // SHADOWS: More gradual approach
+                if (p1 < 5) {
+                    // Deep clipping, strong lift
+                    shadows = Math.round(Math.min(10, (15 - p1) / 2));
+                } else if (p5 < 15) {
+                    // Moderate shadow crush
+                    shadows = Math.round(Math.min(10, (25 - p5) / 3));
+                } else if (p10 < 30 && imageType !== 'low-key') {
+                    // Gentle shadow lift (unless intentionally dark)
+                    shadows = Math.round(Math.min(8, (35 - p10) / 4));
+                }
+
+                // HIGHLIGHTS: More gradual approach
+                if (p99 > 250) {
+                    // Severe clipping, strong recovery
+                    highlights = Math.round(Math.max(-10, (240 - p99) / 2));
+                } else if (p95 > 240) {
+                    // Moderate highlight blow
+                    highlights = Math.round(Math.max(-10, (230 - p95) / 3));
+                } else if (p90 > 230 && imageType !== 'high-key') {
+                    // Gentle highlight recovery (unless intentionally bright)
+                    highlights = Math.round(Math.max(-8, (225 - p90) / 4));
+                }
+
+                console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
+
+                // Store old values for history
+                const oldBrightness = state.settings.brightness || 0;
+                const oldContrast = state.settings.contrast || 0;
+                const oldShadows = state.settings.shadows || 0;
+                const oldHighlights = state.settings.highlights || 0;
+
+                // Apply new values
+                state.settings.brightness = brightness;
+                state.settings.contrast = contrast;
+                state.settings.shadows = shadows;
+                state.settings.highlights = highlights;
+
+                // Update UI
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = brightness;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = contrast;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = shadows;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = highlights;
+
+                // Add to history
+                if (oldBrightness !== brightness) {
+                    addToHistory(`AUTO BRIGHTNESS: ${oldBrightness} → ${brightness}`, 'brightness', oldBrightness, brightness);
+                }
+                if (oldContrast !== contrast) {
+                    addToHistory(`AUTO CONTRAST: ${oldContrast} → ${contrast}`, 'contrast', oldContrast, contrast);
+                }
+                if (oldShadows !== shadows) {
+                    addToHistory(`AUTO SHADOWS: ${oldShadows} → ${shadows}`, 'shadows', oldShadows, shadows);
+                }
+                if (oldHighlights !== highlights) {
+                    addToHistory(`AUTO HIGHLIGHTS: ${oldHighlights} → ${highlights}`, 'highlights', oldHighlights, highlights);
+                }
+
+                updateBrightnessIndicator();
+                saveCurrentPhotoSettings(true, true);
+                await deferredRender();
+
+                console.log('✅ AUTO adjustment complete');
+                setStatus('ready');
+
+            } catch (err) {
+                console.error('❌ AUTO adjustment failed:', err);
+                setStatus('ready');
+                alert('Auto-adjustment failed. Please try manually adjusting the sliders.');
+            }
+        }
 
         function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings();if(!state.videoMode)deferredRender();}
 
