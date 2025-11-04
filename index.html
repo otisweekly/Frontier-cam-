@@ -5389,23 +5389,34 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             haptic();
             setStatus('wait');
 
+            // Determine which photos to export
+            let photosToExport;
+            let indices;
+
             if(state.contactSheet.selected.length>0){
-                // Export selected photos
-                const selectedPhotos=state.contactSheet.selected.map(idx=>state.photos[idx]).filter(p=>!p.isVideo);
-                const photoCount=selectedPhotos.length;
+                // Export only selected photos
+                indices=state.contactSheet.selected;
+                photosToExport=indices.map(idx=>state.photos[idx]).filter(p=>!p.isVideo&&!p.isContactSheet);
+            }else{
+                // Export ALL photos (not contact sheet)
+                photosToExport=state.photos.filter(p=>!p.isVideo&&!p.isContactSheet);
+                indices=photosToExport.map((p,i)=>state.photos.indexOf(p));
+            }
 
-                if(photoCount===0){
-                    alert('No photos selected');
-                    setStatus('ready');
-                    return;
-                }
+            const photoCount=photosToExport.length;
 
-                showUploadProgress(`Processing ${photoCount} photos...`);
-                const files=[];
+            if(photoCount===0){
+                alert('No photos to export');
+                setStatus('ready');
+                return;
+            }
 
-                for(let i=0;i<selectedPhotos.length;i++){
-                    const p=selectedPhotos[i];
-                    const idx=state.contactSheet.selected[i];
+            showUploadProgress(`Processing ${photoCount} photos...`);
+            const files=[];
+
+            for(let i=0;i<photosToExport.length;i++){
+                const p=photosToExport[i];
+                const idx=indices[i];
 
                     const percent=Math.round(((i+1)/photoCount)*100);
                     updateUploadProgress(percent,`Processing ${i+1}/${photoCount}...`);
@@ -5437,51 +5448,22 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 updateUploadProgress(100,`Ready to save ${files.length} images!`);
 
-                if(navigator.share&&navigator.canShare&&navigator.canShare({files:files})){
-                    try{
-                        await navigator.share({files:files,title:`Frontier Photos (${files.length})`});
-                        hideUploadProgress();
-                        setStatus('ready');
-                    }catch(err){
-                        hideUploadProgress();
-                        if(err.name!=='AbortError'){
-                            alert('Could not share photos');
-                        }
-                        setStatus('ready');
-                    }
-                }else{
+            if(navigator.share&&navigator.canShare&&navigator.canShare({files:files})){
+                try{
+                    await navigator.share({files:files,title:`Frontier Photos (${files.length})`});
                     hideUploadProgress();
-                    alert('Share not supported on this device');
+                    setStatus('ready');
+                }catch(err){
+                    hideUploadProgress();
+                    if(err.name!=='AbortError'){
+                        alert('Could not share photos');
+                    }
                     setStatus('ready');
                 }
             }else{
-                // Export full contact sheet
-                showUploadProgress('Generating contact sheet...');
-                const blob=await generateContactSheetImage();
-                const now=new Date();
-                const date=now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}).replace(/\//g,'-');
-                const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}).replace(/:/g,'');
-                const file=new File([blob],`FRONTIER_CONTACT_SHEET_${date}_${time}.jpg`,{type:'image/jpeg'});
-
-                updateUploadProgress(100,'Ready to save contact sheet!');
-
-                if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-                    try{
-                        await navigator.share({files:[file],title:'Frontier Contact Sheet'});
-                        hideUploadProgress();
-                        setStatus('ready');
-                    }catch(err){
-                        hideUploadProgress();
-                        if(err.name!=='AbortError'){
-                            alert('Could not share contact sheet');
-                        }
-                        setStatus('ready');
-                    }
-                }else{
-                    hideUploadProgress();
-                    alert('Share not supported on this device');
-                    setStatus('ready');
-                }
+                hideUploadProgress();
+                alert('Share not supported on this device');
+                setStatus('ready');
             }
         }
 
