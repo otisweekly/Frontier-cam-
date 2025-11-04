@@ -1,7 +1,7 @@
 // Frontier Digital Processor - Service Worker
 // Provides offline support and caching for better PWA performance
 
-const CACHE_NAME = 'frontier-v1';
+const CACHE_NAME = 'frontier-v2-20251104';
 const urlsToCache = [
   '/',
   '/index.html',
