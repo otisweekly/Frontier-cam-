@@ -5233,7 +5233,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 // Mobile fallback (Android or iOS Share failed): Individual downloads
                 console.log('Mobile: Downloading files individually');
-                updateUploadProgress(0,'Downloading files...');
+                // Don't reset to 0% - continue from current progress
 
                 for(let i=0;i<files.length;i++){
                     const f=files[i];
@@ -5264,7 +5264,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }else{
                 // Desktop: Download files individually
                 console.log('Desktop: Downloading files individually');
-                updateUploadProgress(0,'Downloading files...');
+                // Don't reset to 0% - continue from current progress
 
                 for(let i=0;i<files.length;i++){
                     const f=files[i];
