@@ -950,6 +950,7 @@
                 ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
                 : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
             ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
+            ctx.letterSpacing = `${fontSize * 0.02}px`; // 2% tracking
             ctx.textAlign = 'center'; // Center the text horizontally
             ctx.textBaseline = 'bottom';
 
