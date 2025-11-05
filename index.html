@@ -389,8 +389,6 @@
         .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px 15px 10px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid #333; z-index:10; align-items:flex-start; }
         .contact-sheet-header-top { display:flex; justify-content:space-between; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:160px; height:auto; }
-        .contact-sheet-add-photo { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:14px; font-weight:700; cursor:pointer; padding:6px 12px; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; margin-left:auto; margin-right:10px; }
-        .contact-sheet-add-photo:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close { position:relative; width:36px; height:36px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; }
         .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
@@ -672,13 +670,12 @@
         <div class="contact-sheet-header">
             <div class="contact-sheet-header-top">
                 <img src="logo.svg" alt="Frontier" class="contact-sheet-logo">
-                <button class="contact-sheet-add-photo" onclick="addMorePhotos()">+ PHOTO</button>
                 <button class="contact-sheet-close" onclick="toggleContactSheetView()"><img src="Close.svg" alt="Close"></button>
             </div>
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
         <div class="contact-sheet-footer">
-            <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SELECT IMAGES</button>
+            <button class="contact-sheet-btn" id="saveBtn" onclick="handleContactSheetAction()">ADD PHOTO</button>
         </div>
     </div>
     <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
@@ -6178,13 +6175,25 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const saveBtn=document.getElementById('saveBtn');
 
             if(count===0){
-                saveBtn.textContent='SELECT IMAGES';
+                saveBtn.textContent='ADD PHOTO';
                 saveBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
                 saveBtn.style.color='#fff';
             }else{
                 saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
                 saveBtn.style.background='#3897AF';
                 saveBtn.style.color='#fff';
+            }
+        }
+
+        // Handle contact sheet button action - add photo or save selected images
+        function handleContactSheetAction(){
+            const count=state.contactSheet.selected.length;
+            if(count===0){
+                // No selection: add more photos
+                addMorePhotos();
+            }else{
+                // Photos selected: save them
+                shareContactSheet();
             }
         }
 
