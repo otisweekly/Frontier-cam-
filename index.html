@@ -6318,14 +6318,17 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 if(isMobile&&isIOS&&navigator.share&&navigator.canShare){
                     // iOS only: Use Share API to save to camera roll
                     console.log('[Contact Modal] Using iOS Share API');
-                    updateUploadProgress(100,`Ready to save ${photoCount} photos + contact sheet!`);
+                    updateUploadProgress(100,`Opening share sheet...`);
 
-                    // Keep progress bar visible
-                    await new Promise(r=>setTimeout(r,800));
+                    // Minimal delay to show final progress, but keep user gesture context
+                    await new Promise(r=>setTimeout(r,100));
 
                     try{
                         if(navigator.canShare({files:files})){
-                            await navigator.share({files:files,title:`Frontier Photos (${files.length})`});
+                            await navigator.share({
+                                files:files,
+                                title:`Save ${photoCount} Image${photoCount===1?'':'s'}`
+                            });
                         }else{
                             throw new Error('Cannot share files');
                         }
