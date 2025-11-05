@@ -6874,6 +6874,13 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // Don't trigger shortcuts if user is typing in an input field
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+            // Only allow shortcuts when edit section is active (photos are loaded)
+            const editSection = document.getElementById('editSection');
+            if (!editSection || !editSection.classList.contains('active')) {
+                console.log('Edit section not active, shortcuts disabled');
+                return;
+            }
+
             const cmd = e.metaKey || e.ctrlKey;
             const shift = e.shiftKey;
             const key = e.key.toLowerCase();
@@ -7026,8 +7033,11 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             if (key === 'b') {
                 e.preventDefault();
                 console.log('B pressed - toggling borders');
-                triggerButtonPress('[onclick="toggleFilmBorder()"]');
-                toggleBorders();
+                const btn = document.querySelector('[onclick="toggleFilmBorder()"]');
+                if (btn) {
+                    triggerButtonPress('[onclick="toggleFilmBorder()"]');
+                    btn.click();
+                }
                 return;
             }
 
