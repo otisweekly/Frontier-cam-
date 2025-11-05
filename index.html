@@ -452,12 +452,12 @@
         .guide-content { padding:24px; overflow-y:auto; flex:1; }
         .guide-step { display:none; }
         .guide-step.active { display:block; animation:fadeIn 0.2s ease; }
-        .guide-step h2 { font-family:'PP Neue Bit',monospace; font-size:20px; margin:0 0 16px 0; color:#000; }
-        .guide-step p { font-family:'PP Fuji',sans-serif; font-size:16px; line-height:1.6; margin:0 0 12px 0; color:#000; }
-        .guide-step ul { font-family:'PP Fuji',sans-serif; font-size:16px; line-height:1.8; margin:12px 0; padding-left:24px; color:#000; }
+        .guide-step h2 { font-family:'PP Neue Bit',monospace; font-size:26px; margin:0 0 16px 0; color:#000; }
+        .guide-step p { font-family:'PP Fuji',sans-serif; font-size:21px; line-height:0.96; margin:0 0 12px 0; color:#000; }
+        .guide-step ul { font-family:'PP Fuji',sans-serif; font-size:21px; line-height:1.08; margin:12px 0; padding-left:24px; color:#000; }
         .guide-step ul li { margin-bottom:8px; }
 
-        .guide-footer { background:#4A4A4A; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .guide-footer { background:#4A4A4A; padding:16px 24px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); display:flex; justify-content:space-between; align-items:center; gap:16px; }
         .guide-progress { font-family:'PP Neue Bit',monospace; font-size:14px; color:#fff; }
         .guide-nav { display:flex; gap:12px; }
         .guide-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; padding:10px 20px; }
@@ -723,8 +723,12 @@
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
-        const BORDER_VERSION = 2;
+        const BORDER_VERSION = 3;
         let borderCache = {};
+
+        // Force clear any old cached borders from browser
+        console.log('🗑️ Clearing old border cache (v3)');
+        borderCache = {};
 
         // Load film border PNG based on aspect ratio and preset
         async function loadFilmBorder(borderType, preset) {
@@ -993,7 +997,8 @@
 
             // Render text with glow and noise (optimized for performance)
             ctx.save();
-            console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
+            console.log(`🎬 Rendering metadata (v3): fontSize=${fontSize}px, letterSpacing=${ctx.letterSpacing}, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
+            console.log(`📝 Text opacities: Glow=0.44, Stroke=0.44, Main=0.33`);
 
             // Pass 1: Glow layer - normal blend, keeps the nice glow effect
             ctx.globalCompositeOperation = 'source-over';
