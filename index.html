@@ -672,11 +672,10 @@
                 <img src="logo.svg" alt="Frontier" class="contact-sheet-logo">
                 <button class="contact-sheet-close" onclick="toggleContactSheetView()"><img src="Close.svg" alt="Close"></button>
             </div>
-            <div class="contact-sheet-selection-info" id="selectionInfo">SELECT PHOTOS</div>
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
         <div class="contact-sheet-footer">
-            <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SAVE</button>
+            <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SELECT IMAGES</button>
         </div>
     </div>
     <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
@@ -6143,18 +6142,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function updateSelectionInfo(){
             const count=state.contactSheet.selected.length;
-            const info=document.getElementById('selectionInfo');
             const saveBtn=document.getElementById('saveBtn');
 
             if(count===0){
-                info.textContent='SELECT PHOTOS';
-                info.classList.remove('has-selection');
-                saveBtn.textContent='SAVE';
+                saveBtn.textContent='SELECT IMAGES';
                 saveBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
                 saveBtn.style.color='#fff';
             }else{
-                info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;
-                info.classList.add('has-selection');
                 saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
                 saveBtn.style.background='#3897AF';
                 saveBtn.style.color='#fff';
