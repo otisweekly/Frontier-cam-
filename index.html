@@ -706,7 +706,7 @@
             // Determine border path based on type
             let borderPath;
             if (borderType === '3-2') {
-                // 3:2 borders - generic for now
+                // 3:2 borders - generic (no extension in filename)
                 borderPath = 'border-effects/border-3-2';
             } else {
                 // 4:5 borders - preset-specific
@@ -776,6 +776,11 @@
 
                 // Load border (always load vertical version)
                 let border = await loadFilmBorder(borderType, preset);
+
+                if (!border) {
+                    console.error('❌ Failed to load border, aborting');
+                    return false;
+                }
 
                 // For horizontal 4:5 images, rotate border 90° CCW
                 let needsRotation = borderType === '4-5' && isHorizontal;
