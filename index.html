@@ -4960,6 +4960,43 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
             updateUploadProgress(30, `Exporting ${filename.substring(0,30)}...`);
 
+            let blob;
+
+            // Handle contact sheet differently
+            if(p.isContactSheet){
+                updateUploadProgress(50, 'Generating contact sheet...');
+                blob = await generateContactSheetImage();
+                updateUploadProgress(70, `Preparing ${filename.substring(0,30)}...`);
+                const file=new File([blob],filename,{type:'image/jpeg'});
+
+                if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+                    try{
+                        updateUploadProgress(90, 'Ready to save...');
+                        await new Promise(r=>setTimeout(r,300));
+
+                        await navigator.share({files:[file],title:'Frontier Contact Sheet'});
+
+                        updateUploadProgress(100, 'Complete! Image saved!');
+                        await new Promise(r=>setTimeout(r,1500));
+                        hideUploadProgress();
+                    }catch(err){
+                        if(err.name!=='AbortError'){
+                            fallbackDownload(blob,filename);
+                            updateUploadProgress(100, 'Complete! Image downloaded!');
+                            await new Promise(r=>setTimeout(r,1500));
+                        }
+                        hideUploadProgress();
+                    }
+                }else{
+                    updateUploadProgress(90, 'Downloading...');
+                    fallbackDownload(blob,filename);
+                    updateUploadProgress(100, 'Complete! Image downloaded!');
+                    await new Promise(r=>setTimeout(r,1500));
+                    hideUploadProgress();
+                }
+                return;
+            }
+
             const currentCanvas=document.getElementById('canvas');
 
             // Create export canvas (with or without border)
