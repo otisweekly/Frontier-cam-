@@ -961,7 +961,8 @@
             ctx.save();
             console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
 
-            // Pass 1: Glow layer - reduced opacity by 40% total
+            // Pass 1: Glow layer - normal blend, keeps the nice glow effect
+            ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 0.44;
             ctx.fillStyle = textColor;
             ctx.shadowColor = shadowColor;
@@ -970,14 +971,16 @@
             ctx.shadowBlur = 160;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Darker stroke outline - reduced opacity by 40% total
+            // Pass 2: Darker stroke outline - use multiply to blend with border
+            ctx.globalCompositeOperation = 'multiply';
             ctx.globalAlpha = 0.56;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
             ctx.lineWidth = fontSize * 0.08;
             ctx.shadowBlur = 60;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text with subtle blur - reduced opacity by 40% total
+            // Pass 3: Main text with multiply blend for better integration
+            ctx.globalCompositeOperation = 'multiply';
             ctx.globalAlpha = 0.52;
             ctx.shadowBlur = 30;
             ctx.fillStyle = textColor;
