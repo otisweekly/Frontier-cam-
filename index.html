@@ -931,18 +931,28 @@
             ctx.save();
             console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
 
-            // Pass 1: Glow layer (separate opacity for glow)
-            ctx.globalAlpha = 0.6;
+            // Pass 1: Heavy glow/blur layer
+            ctx.globalAlpha = 0.7;
             ctx.fillStyle = textColor;
             ctx.shadowColor = shadowColor;
-            ctx.shadowBlur = 280;
+            ctx.shadowBlur = 320;
             ctx.fillText(metadataText, textX, textY);
-            ctx.shadowBlur = 180;
+            ctx.shadowBlur = 240;
+            ctx.fillText(metadataText, textX, textY);
+            ctx.shadowBlur = 160;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Main text with noise and lower opacity
-            ctx.globalAlpha = 0.75; // Lower opacity for main text
-            ctx.shadowBlur = 0;
+            // Pass 2: Darker stroke outline
+            ctx.globalAlpha = 0.9;
+            ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
+            ctx.lineWidth = fontSize * 0.08; // Proportional stroke width
+            ctx.shadowBlur = 80;
+            ctx.strokeText(metadataText, textX, textY);
+
+            // Pass 3: Main text with subtle blur and noise
+            ctx.globalAlpha = 0.8;
+            ctx.shadowBlur = 40;
+            ctx.fillStyle = textColor;
 
             // Add subtle noise to text by rendering with slight offsets
             const noiseAmount = 0.5;
