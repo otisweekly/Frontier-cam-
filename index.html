@@ -6848,6 +6848,317 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
         function toggleDarkMode(){document.body.classList.toggle('dark-mode');const isDark=document.body.classList.contains('dark-mode');document.querySelector('.edit-header').style.background=isDark?'#1a1a1a':'#000';document.querySelector('.edit-footer').style.background=isDark?'#1a1a1a':'#8C8C8C';document.querySelector('.canvas-container').style.background=isDark?'#000':'#8C8C8C';}
 
         function copySettings(){const s=state.settings;const text=JSON.stringify(s,null,2);navigator.clipboard.writeText(text).then(()=>alert('Settings copied to clipboard!'));console.log('Current settings:',s);}
+
+        // Keyboard Shortcuts System
+        let intensityAdjustMode = false;
+
+        document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts if user is typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            const cmd = e.metaKey || e.ctrlKey;
+            const shift = e.shiftKey;
+            const key = e.key.toLowerCase();
+
+            // Arrow keys - Navigate photos (when not in intensity adjust mode)
+            if (key === 'arrowright' && !intensityAdjustMode) {
+                e.preventDefault();
+                nextPhoto();
+                return;
+            }
+            if (key === 'arrowleft' && !intensityAdjustMode) {
+                e.preventDefault();
+                prevPhoto();
+                return;
+            }
+
+            // Intensity adjust mode with arrows
+            if (intensityAdjustMode) {
+                if (key === 'arrowup' || key === 'arrowright') {
+                    e.preventDefault();
+                    adjustIntensity(0.01);
+                    return;
+                }
+                if (key === 'arrowdown' || key === 'arrowleft') {
+                    e.preventDefault();
+                    adjustIntensity(-0.01);
+                    return;
+                }
+                if (key === 'escape') {
+                    e.preventDefault();
+                    intensityAdjustMode = false;
+                    console.log('Intensity adjust mode: OFF');
+                    return;
+                }
+            }
+
+            // Cmd+H - Hold settings
+            if (cmd && !shift && key === 'h') {
+                e.preventDefault();
+                toggleHold();
+                return;
+            }
+
+            // Cmd+Shift+H - Remove hold
+            if (cmd && shift && key === 'h') {
+                e.preventDefault();
+                if (state.holdSettings) {
+                    toggleHold(); // Turn off hold
+                }
+                return;
+            }
+
+            // - key: Decrease grain
+            if (key === '-' || key === '_') {
+                e.preventDefault();
+                adjustGrain(-0.05);
+                return;
+            }
+
+            // + or = key: Increase grain
+            if (key === '+' || key === '=') {
+                e.preventDefault();
+                adjustGrain(0.05);
+                return;
+            }
+
+            // 1 key: Decrease bloom
+            if (key === '1') {
+                e.preventDefault();
+                adjustBloom(-0.05);
+                return;
+            }
+
+            // 2 key: Increase bloom
+            if (key === '2') {
+                e.preventDefault();
+                adjustBloom(0.05);
+                return;
+            }
+
+            // S - Supra preset
+            if (key === 's' && !cmd) {
+                e.preventDefault();
+                changePreset('supra');
+                return;
+            }
+
+            // C - Chrome preset
+            if (key === 'c' && !cmd) {
+                e.preventDefault();
+                changePreset('chrome');
+                return;
+            }
+
+            // X - XXX preset
+            if (key === 'x') {
+                e.preventDefault();
+                changePreset('xxx');
+                return;
+            }
+
+            // Control key - Open contact sheet modal
+            if (key === 'control') {
+                e.preventDefault();
+                if (!document.getElementById('contactSheetView').classList.contains('active')) {
+                    toggleContactSheetView();
+                }
+                return;
+            }
+
+            // Cmd+S - Save multiple modal
+            if (cmd && key === 's') {
+                e.preventDefault();
+                toggleSaveMultiple();
+                return;
+            }
+
+            // I - Toggle intensity adjust mode
+            if (key === 'i') {
+                e.preventDefault();
+                intensityAdjustMode = !intensityAdjustMode;
+                console.log('Intensity adjust mode:', intensityAdjustMode ? 'ON (use arrows)' : 'OFF');
+                return;
+            }
+
+            // B - Toggle borders
+            if (key === 'b') {
+                e.preventDefault();
+                toggleBorders();
+                return;
+            }
+
+            // Escape - Close modals
+            if (key === 'escape') {
+                e.preventDefault();
+                const contactSheet = document.getElementById('contactSheetView');
+                if (contactSheet.classList.contains('active')) {
+                    toggleContactSheetView();
+                }
+                return;
+            }
+
+            // Cmd+N - New order
+            if (cmd && key === 'n') {
+                e.preventDefault();
+                startNewOrder();
+                return;
+            }
+
+            // Cmd+O or Cmd+U - Upload photos
+            if (cmd && (key === 'o' || key === 'u')) {
+                e.preventDefault();
+                document.getElementById('fileInput').click();
+                return;
+            }
+
+            // P - Cycle profiles
+            if (key === 'p') {
+                e.preventDefault();
+                cycleProfile();
+                return;
+            }
+
+            // Delete/Backspace - Delete current photo
+            if (key === 'delete' || key === 'backspace') {
+                e.preventDefault();
+                deleteCurrentPhoto();
+                return;
+            }
+
+            // Home - First photo
+            if (key === 'home') {
+                e.preventDefault();
+                jumpToPhoto(0);
+                return;
+            }
+
+            // End - Last photo
+            if (key === 'end') {
+                e.preventDefault();
+                jumpToPhoto(state.photos.length - 1);
+                return;
+            }
+
+            // ? - Show keyboard shortcuts help
+            if (key === '?' && shift) {
+                e.preventDefault();
+                showKeyboardShortcuts();
+                return;
+            }
+        });
+
+        // Helper functions for keyboard shortcuts
+        function adjustGrain(delta) {
+            if (state.photos.length === 0) return;
+            haptic();
+            state.settings.grain = Math.max(0, Math.min(1, state.settings.grain + delta));
+            updateControlValue('grain', state.settings.grain);
+            state.holdDirty = state.holdSettings;
+            renderPhoto();
+        }
+
+        function adjustBloom(delta) {
+            if (state.photos.length === 0) return;
+            haptic();
+            state.settings.bloom = Math.max(0, Math.min(1, state.settings.bloom + delta));
+            updateControlValue('bloom', state.settings.bloom);
+            state.holdDirty = state.holdSettings;
+            renderPhoto();
+        }
+
+        function adjustIntensity(delta) {
+            if (state.photos.length === 0) return;
+            haptic();
+            state.settings.intensity = Math.max(0, Math.min(1, state.settings.intensity + delta));
+            updateControlValue('intensity', state.settings.intensity);
+            state.holdDirty = state.holdSettings;
+            renderPhoto();
+        }
+
+        function toggleBorders() {
+            if (state.photos.length === 0) return;
+            haptic();
+            state.settings.filmBorder = !state.settings.filmBorder;
+            const borderBtn = document.querySelector('[onclick="toggleFilmBorder()"]');
+            if (borderBtn) {
+                borderBtn.classList.toggle('active', state.settings.filmBorder);
+            }
+            state.holdDirty = state.holdSettings;
+            renderPhoto();
+        }
+
+        function cycleProfile() {
+            if (state.photos.length === 0) return;
+            haptic();
+            const profiles = ['none', 'portra', 'ektar', 'provia', 'velvia'];
+            const currentIndex = profiles.indexOf(state.settings.profile);
+            const nextIndex = (currentIndex + 1) % profiles.length;
+            changeProfile(profiles[nextIndex]);
+        }
+
+        function deleteCurrentPhoto() {
+            if (state.photos.length === 0) return;
+            if (confirm('Delete this photo?')) {
+                haptic();
+                state.photos.splice(state.currentIndex, 1);
+                if (state.photos.length === 0) {
+                    state.currentIndex = 0;
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d', {alpha: false});
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    setStatus('ready');
+                } else {
+                    if (state.currentIndex >= state.photos.length) {
+                        state.currentIndex = state.photos.length - 1;
+                    }
+                    renderPhoto();
+                }
+            }
+        }
+
+        function jumpToPhoto(index) {
+            if (state.photos.length === 0) return;
+            if (index < 0 || index >= state.photos.length) return;
+            haptic();
+            state.currentIndex = index;
+            renderPhoto();
+        }
+
+        function showKeyboardShortcuts() {
+            const shortcuts = `
+KEYBOARD SHORTCUTS:
+
+Navigation:
+  ← →          Navigate photos
+  Home/End     First/Last photo
+  Delete       Delete current photo
+
+Effects:
+  - / +        Grain
+  1 / 2        Bloom (1=decrease, 2=increase)
+  I + Arrows   Intensity adjust mode
+
+Presets:
+  S            Supra preset
+  C            Chrome preset
+  X            XXX preset
+  P            Cycle profiles
+
+Actions:
+  B            Toggle borders
+  Cmd+H        Hold settings
+  Cmd+Shift+H  Remove hold
+  Control      Contact sheet
+  Cmd+S        Save multiple
+  Cmd+N        New order
+  Cmd+O/U      Upload photos
+  Esc          Close modals
+  Shift+?      Show this help
+            `.trim();
+            alert(shortcuts);
+        }
     </script>
 </body>
 </html>
