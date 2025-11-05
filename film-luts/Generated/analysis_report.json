@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "total_images": 572,
+    "daylight_count": 534,
+    "tungsten_count": 38,
+    "processing_time_seconds": 161.0455060005188,
+    "daylight_percentage": 93.35664335664336,
+    "tungsten_percentage": 6.643356643356643
+  },
+  "characteristics": {
+    "daylight": {
+      "avg_color_temp_k": 5213,
+      "characteristics": "Natural light, higher blue content, cleaner highlights"
+    },
+    "tungsten": {
+      "avg_color_temp_k": 3927,
+      "characteristics": "Warm artificial light, amber shift, gentle shadows"
+    }
+  },
+  "lut_properties": {
+    "resolution": "33x33x33",
+    "color_space": "Linear RGB (for WebAssembly processing)",
+    "characteristics": [
+      "Soft highlight compression (film rolloff)",
+      "Gentle shadow transitions (no crushed blacks)",
+      "Grain-friendly contrast (preserves grain structure)",
+      "Organic color relationships (scanned film look)",
+      "Optimized for 32-bit float linear processing"
+    ]
+  },
+  "usage_recommendations": {
+    "SUPRA.cube": "Use for outdoor/daylight scenes. Best for natural light portraits, landscapes, street photography.",
+    "CHROME.cube": "Use for indoor/tungsten scenes. Best for night photography, warm interior lighting, artificial light sources."
+  }
+}

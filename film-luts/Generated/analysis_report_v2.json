@@ -1,0 +1,38 @@
+{
+  "version": "2.0",
+  "approach": "Identity mapping + Film characteristics",
+  "lut_properties": {
+    "resolution": "33x33x33",
+    "color_space": "Linear RGB (sRGB gamma decoded)",
+    "method": "Algorithmic film emulation"
+  },
+  "characteristics": {
+    "SUPRA": {
+      "name": "Daylight Film Emulation",
+      "color_temperature": "~5500K (neutral daylight)",
+      "tone_curve": "Soft highlight rolloff (10%), gentle shadow lift (2%)",
+      "contrast": "Film S-curve (12% strength)",
+      "color_grading": "Subtle blue lift in shadows, clean highlights",
+      "use_case": "Outdoor photography, natural light, portraits, landscapes"
+    },
+    "CHROME": {
+      "name": "Tungsten Film Emulation",
+      "color_temperature": "~3200K (warm tungsten)",
+      "tone_curve": "Soft highlight rolloff (12%), shadow lift (2.5%)",
+      "contrast": "Gentle film S-curve (10% strength)",
+      "color_grading": "Warm amber shift, golden midtones, glowing highlights",
+      "use_case": "Indoor photography, night scenes, warm artificial light"
+    }
+  },
+  "technical_notes": [
+    "All processing done in linear RGB with gamma correction",
+    "Tone curves preserve film latitude (grain-friendly)",
+    "Color shifts applied in sRGB for perceptual accuracy",
+    "Highlight rolloff prevents clipping (film-like)",
+    "Shadow lift preserves detail (no crushed blacks)"
+  ],
+  "files_generated": [
+    "film-luts/Generated/SUPRA.cube",
+    "film-luts/Generated/CHROME.cube"
+  ]
+}
