@@ -6852,7 +6852,18 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
         // Keyboard Shortcuts System
         let intensityAdjustMode = false;
 
+        // Helper function to visually trigger button press
+        function triggerButtonPress(selector) {
+            const btn = document.querySelector(selector);
+            if (btn) {
+                btn.classList.add('active');
+                setTimeout(() => btn.classList.remove('active'), 150);
+            }
+        }
+
         document.addEventListener('keydown', (e) => {
+            console.log('Key pressed:', e.key, 'Meta:', e.metaKey, 'Ctrl:', e.ctrlKey, 'Shift:', e.shiftKey);
+
             // Don't trigger shortcuts if user is typing in an input field
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
@@ -6984,6 +6995,8 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // B - Toggle borders
             if (key === 'b') {
                 e.preventDefault();
+                console.log('B pressed - toggling borders');
+                triggerButtonPress('[onclick="toggleFilmBorder()"]');
                 toggleBorders();
                 return;
             }
