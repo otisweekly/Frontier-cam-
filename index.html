@@ -971,17 +971,17 @@
             ctx.shadowBlur = 160;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Darker stroke outline - multiply with 100% opacity
+            // Pass 2: Darker stroke outline - multiply with 66% opacity
             ctx.globalCompositeOperation = 'multiply';
-            ctx.globalAlpha = 1.0;
+            ctx.globalAlpha = 0.66;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
             ctx.lineWidth = fontSize * 0.08;
             ctx.shadowBlur = 60;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text - multiply with 100% opacity for visibility
+            // Pass 3: Main text - multiply with 44% opacity
             ctx.globalCompositeOperation = 'multiply';
-            ctx.globalAlpha = 1.0;
+            ctx.globalAlpha = 0.44;
             ctx.shadowBlur = 30;
             ctx.fillStyle = textColor;
 
