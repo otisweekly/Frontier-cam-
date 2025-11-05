@@ -831,27 +831,10 @@
                 // Draw photo (aspect-fill, may extend beyond canvas)
                 bctx.drawImage(canvas, offsetX, offsetY, drawW, drawH);
 
-                // Apply LUT to border before overlaying
-                // Create temp canvas for border with LUT applied
-                const borderCanvas = document.createElement('canvas');
-                borderCanvas.width = border.width;
-                borderCanvas.height = border.height;
-                const borderCtx = borderCanvas.getContext('2d', {alpha: true, willReadFrequently: true});
-
-                // Draw border to temp canvas
-                borderCtx.drawImage(border, 0, 0);
-
-                // Apply preset/LUT to border if not 'none'
-                if (settings.profile && settings.profile !== 'none') {
-                    const borderImgData = borderCtx.getImageData(0, 0, border.width, border.height);
-                    applyProfile(borderImgData, settings.profile);
-                    borderCtx.putImageData(borderImgData, 0, 0);
-                    console.log(`🎨 Applied ${settings.profile} preset to border`);
-                }
-
-                // Draw color-graded border overlay on top (covers excess)
+                // Draw border overlay on top (covers excess)
+                // Note: borders are now preset-specific, so no LUT needed
                 bctx.filter = 'blur(2px)';
-                bctx.drawImage(borderCanvas, 0, 0);
+                bctx.drawImage(border, 0, 0);
                 bctx.filter = 'none';
 
                 // Add metadata text OVER the border (not under it)
