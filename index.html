@@ -415,7 +415,7 @@
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
         .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:center; font-weight:700; padding:10px 0; }
         .contact-sheet-selection-info.has-selection { color:#3897AF; }
-        .contact-sheet-footer { position:sticky; bottom:0; background:#000; padding:15px; border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
+        .contact-sheet-footer { position:sticky; bottom:0; background:#000; padding:15px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
         .contact-sheet-footer .contact-sheet-btn { background:#B3B3B3; color:#000; width:100%; max-width:400px; }
         .contact-sheet-footer .contact-sheet-btn.has-selection { background:#3897AF; color:#fff; }
 
@@ -691,28 +691,31 @@
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
 
-        // Film border cache
-        let borderCache = {
-            'horizontal-3-2': null,
-            'vertical-2-3': null,
-            'horizontal-4-5': null,
-            'vertical-5-4': null
-        };
+        // Film border cache - keyed by "borderType-preset"
+        let borderCache = {};
 
-        // Load film border PNG based on aspect ratio
-        async function loadFilmBorder(borderType) {
-            if (borderCache[borderType]) {
-                return borderCache[borderType];
+        // Load film border PNG based on aspect ratio and preset
+        async function loadFilmBorder(borderType, preset) {
+            const cacheKey = `${borderType}-${preset}`;
+            if (borderCache[cacheKey]) {
+                return borderCache[cacheKey];
             }
 
-            const borderPaths = {
-                'horizontal-3-2': 'border-effects/border-3-2-horizontal.png',
-                'vertical-2-3': 'border-effects/border-3-2-vertical.png',
-                'horizontal-4-5': 'border-effects/border-horizontal.png',
-                'vertical-5-4': 'border-effects/border_vertical.png'
-            };
+            // Map preset names to lowercase for file naming
+            const presetName = preset === 'none' ? 'supra' : preset.toLowerCase();
 
-            const borderPath = borderPaths[borderType];
+            // Determine border path based on type
+            let borderPath;
+            if (borderType === '3-2') {
+                // 3:2 borders - generic for now
+                borderPath = 'border-effects/border-3-2';
+            } else {
+                // 4:5 borders - preset-specific
+                borderPath = `border-effects/border-4-5_${presetName}.png`;
+            }
+
+            console.log(`🎞️ Loading border: ${borderPath} for ${borderType} ${preset}`);
+
             if (!borderPath) {
                 console.error(`❌ Unknown border type: ${borderType}`);
                 return null;
@@ -736,15 +739,15 @@
                         // Convert canvas to image for caching
                         const downsizedImg = new Image();
                         downsizedImg.onload = () => {
-                            borderCache[borderType] = downsizedImg;
-                            console.log(`✅ Loaded ${borderType} film border: ${img.width}x${img.height} → ${downsizedImg.width}x${downsizedImg.height}`);
+                            borderCache[cacheKey] = downsizedImg;
+                            console.log(`✅ Loaded ${borderType} ${preset} border: ${img.width}x${img.height} → ${downsizedImg.width}x${downsizedImg.height}`);
                             resolve(downsizedImg);
                         };
                         downsizedImg.src = canvas.toDataURL('image/png');
                     } else {
                         // Use original size
-                        borderCache[borderType] = img;
-                        console.log(`✅ Loaded ${borderType} film border:`, img.width, 'x', img.height);
+                        borderCache[cacheKey] = img;
+                        console.log(`✅ Loaded ${borderType} ${preset} border:`, img.width, 'x', img.height);
                         resolve(img);
                     }
                 };
@@ -763,26 +766,41 @@
                 const isHorizontal = canvas.width > canvas.height;
                 const aspectRatio = canvas.width / canvas.height;
 
-                // Detect if 3:2 / 2:3 (generous tolerance to catch frames very close to 3:2)
-                const is3to2 = isHorizontal && Math.abs(aspectRatio - 1.5) < 0.15; // ±15% tolerance
-                const is2to3 = !isHorizontal && Math.abs(aspectRatio - 0.667) < 0.10; // ±10% tolerance
+                // Detect if 3:2 (generous tolerance)
+                const is3to2 = Math.abs(aspectRatio - 1.5) < 0.15 || Math.abs(aspectRatio - 0.667) < 0.10;
 
-                // Select border type based on aspect ratio
-                let borderType;
-                if (is3to2) {
-                    borderType = 'horizontal-3-2';
-                } else if (is2to3) {
-                    borderType = 'vertical-2-3';
-                } else if (isHorizontal) {
-                    borderType = 'horizontal-4-5';
-                } else {
-                    borderType = 'vertical-5-4';
+                // Select border type: '3-2' or '4-5'
+                const borderType = is3to2 ? '3-2' : '4-5';
+                const preset = settings.profile || 'supra';
+
+                console.log(`🎞️ Border selection: ${canvas.width}x${canvas.height} (ratio: ${aspectRatio.toFixed(2)}) → ${borderType} ${preset} ${isHorizontal ? 'horizontal' : 'vertical'}`);
+
+                // Load border (always load vertical version)
+                let border = await loadFilmBorder(borderType, preset);
+
+                // For horizontal 4:5 images, rotate border 90° CCW
+                let needsRotation = borderType === '4-5' && isHorizontal;
+                if (needsRotation) {
+                    console.log('🔄 Rotating 4:5 border 90° CCW for horizontal image');
+                    const rotatedCanvas = document.createElement('canvas');
+                    rotatedCanvas.width = border.height;
+                    rotatedCanvas.height = border.width;
+                    const rotCtx = rotatedCanvas.getContext('2d', {alpha: true});
+
+                    // Rotate 90° CCW: translate, rotate, draw
+                    rotCtx.translate(0, rotatedCanvas.height);
+                    rotCtx.rotate(-Math.PI / 2);
+                    rotCtx.drawImage(border, 0, 0);
+
+                    // Convert to image for use
+                    const rotatedImg = new Image();
+                    await new Promise((resolve) => {
+                        rotatedImg.onload = resolve;
+                        rotatedImg.src = rotatedCanvas.toDataURL('image/png');
+                    });
+                    border = rotatedImg;
+                    console.log(`✅ Rotated border: ${rotatedCanvas.width}x${rotatedCanvas.height}`);
                 }
-
-                console.log(`🎞️ Border selection: ${canvas.width}x${canvas.height} (ratio: ${aspectRatio.toFixed(2)}) → ${borderType}`);
-
-                // Load border
-                const border = await loadFilmBorder(borderType);
 
                 // Create temp canvas with border dimensions (with transparency)
                 const borderedCanvas = document.createElement('canvas');
@@ -889,7 +907,7 @@
         // Render film metadata text (date, preset, frame number)
         async function renderFilmMetadata(ctx, width, height, settings, photoData, isHorizontal, borderType) {
             // Skip metadata entirely for 3:2 borders
-            if (borderType === 'horizontal-3-2' || borderType === 'vertical-2-3') {
+            if (borderType === '3-2') {
                 console.log('🎬 Skipping metadata for 3:2 border');
                 return;
             }
