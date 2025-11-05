@@ -147,7 +147,7 @@
         #editSection.active { display:flex; }
 
         .top-nav-bar { position:fixed; top:0; left:0; right:0; height:78px; background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); isolation:isolate; }
-        .edit-status-light { position:fixed; top:15px; left:62px; width:8px; height:8px; border-radius:50%; border:1.5px solid #4A4A4A; z-index:151; opacity:0.4; }
+        .edit-status-light { position:fixed; top:15px; left:67px; width:8px; height:8px; border-radius:50%; border:1.5px solid #4A4A4A; z-index:151; opacity:0.4; }
         .edit-status-light.active { opacity:1; box-shadow:0 0 12px currentColor; border:1px solid rgba(255,255,255,0.2); }
         .edit-status-light.green { background:#4ADE80; color:#4ADE80; }
         .edit-status-light.green.active { animation:pulse-green-gentle 3s ease-in-out infinite; }
@@ -270,7 +270,7 @@
         #brightnessToggle.has-settings img { filter:brightness(0) invert(1); }
 
         /* Progress Bar */
-        #downloadProgress { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:999999; transform:translateY(0); transition:transform 0.3s ease, opacity 0.3s ease; opacity:1; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); pointer-events:auto; }
+        #downloadProgress { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:99999; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); }
         #downloadProgress.active { transform:translateY(0); opacity:1; }
         .progress-content { display:flex; align-items:center; gap:6px; }
         .progress-bar-container { flex:1; height:44px; background:#4A4A4A; border:3px solid #000; border-radius:4px; overflow:hidden; position:relative; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); }
@@ -285,6 +285,12 @@
         .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5) !important; cursor:not-allowed; pointer-events:none; }
         .nav-btn.disabled img { opacity:0.25; }
+        .borders-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
+        .borders-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .borders-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .borders-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .borders-btn img { filter:brightness(0); }
+        .borders-btn.active img { filter:brightness(0) invert(1); }
         #downloadBtn { font-size:20px; }
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -326,11 +332,11 @@
         #cmykControls.active { transform:translateY(0); opacity:1; }
         #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
-        .brightness-auto-btn, .cmyk-auto-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
-        .brightness-auto-btn:active, .cmyk-auto-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .brightness-auto-btn.active, .cmyk-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
-        .brightness-auto-btn img, .cmyk-auto-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
-        .brightness-auto-btn.active img, .cmyk-auto-btn.active img { filter:brightness(0) invert(1); }
+        .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
+        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
+        .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+        .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0) invert(1); }
         #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
@@ -485,11 +491,6 @@
             <div class="film-interframe" id="filmInterframe"></div>
             <div class="hold-flash" id="holdFlash">SETTINGS HELD • TAP AGAIN TO RELEASE</div>
         </div>
-        <div class="background-toggle-bar">
-            <button class="bg-toggle-btn grey active" onclick="setBackground('grey')" id="bgGrey" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
-            <button class="bg-toggle-btn white" onclick="setBackground('white')" id="bgWhite" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
-            <button class="bg-toggle-btn black" onclick="setBackground('black')" id="bgBlack" ontouchstart="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #000, inset 0 2px 4px rgba(0,0,0,0.2)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"></button>
-        </div>
         <div id="cmykControls">
             <div class="cmyk-sliders">
                 <div class="cmyk-slider">
@@ -514,7 +515,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="cmyk-auto-btn" id="cmykAutoBtn" onclick="autoAdjustCMYK()"><img src="auto_cmyk.svg" alt="AUTO"></button>
+                <button class="cmyk-link-btn" id="linkBtn" onclick="toggleCMYLink()"><img src="Default_Unlinked.svg" alt="LINK"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="yellowValue" onclick="editCMYKCounter('yellow')">
                         <div class="cmyk-value-number">0</div>
@@ -563,7 +564,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto_light.svg" alt="AUTO"></button>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -655,6 +656,7 @@
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
+                    <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders.svg" style="width:32px;height:32px;" alt="Borders"></button>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
@@ -687,7 +689,224 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[]},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
+
+        // Film border cache
+        let borderCache = {
+            'horizontal-3-2': null,
+            'vertical-2-3': null,
+            'horizontal-4-5': null,
+            'vertical-5-4': null
+        };
+
+        // Load film border PNG based on aspect ratio
+        async function loadFilmBorder(borderType) {
+            if (borderCache[borderType]) {
+                return borderCache[borderType];
+            }
+
+            const borderPaths = {
+                'horizontal-3-2': 'border-effects/border-3-2-horizontal.png',
+                'vertical-2-3': 'border-effects/border-3-2-vertical.png',
+                'horizontal-4-5': 'border-effects/border-horizontal.png',
+                'vertical-5-4': 'border-effects/border_vertical.png'
+            };
+
+            const borderPath = borderPaths[borderType];
+            if (!borderPath) {
+                console.error(`❌ Unknown border type: ${borderType}`);
+                return null;
+            }
+
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    borderCache[borderType] = img;
+                    console.log(`✅ Loaded ${borderType} film border:`, img.width, 'x', img.height);
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    console.error(`❌ Failed to load ${borderType} film border`);
+                    reject(new Error(`Failed to load ${borderType} border`));
+                };
+                img.src = borderPath;
+            });
+        }
+
+        // Apply film border to canvas with metadata
+        async function applyFilmBorder(canvas, ctx, settings, photoData) {
+            try {
+                // Determine orientation and aspect ratio
+                const isHorizontal = canvas.width > canvas.height;
+                const aspectRatio = canvas.width / canvas.height;
+
+                // Detect if 3:2 / 2:3 (generous tolerance to catch frames very close to 3:2)
+                const is3to2 = isHorizontal && Math.abs(aspectRatio - 1.5) < 0.15; // ±15% tolerance
+                const is2to3 = !isHorizontal && Math.abs(aspectRatio - 0.667) < 0.10; // ±10% tolerance
+
+                // Select border type based on aspect ratio
+                let borderType;
+                if (is3to2) {
+                    borderType = 'horizontal-3-2';
+                } else if (is2to3) {
+                    borderType = 'vertical-2-3';
+                } else if (isHorizontal) {
+                    borderType = 'horizontal-4-5';
+                } else {
+                    borderType = 'vertical-5-4';
+                }
+
+                console.log(`🎞️ Border selection: ${canvas.width}x${canvas.height} (ratio: ${aspectRatio.toFixed(2)}) → ${borderType}`);
+
+                // Load border
+                const border = await loadFilmBorder(borderType);
+
+                // Create temp canvas with border dimensions (with transparency)
+                const borderedCanvas = document.createElement('canvas');
+                borderedCanvas.width = border.width;
+                borderedCanvas.height = border.height;
+                const bctx = borderedCanvas.getContext('2d', {alpha: true});
+
+                // Keep transparent background (no fill)
+
+                // Calculate aspect-fill (cover) - maintain ratio, crop excess
+                const photoAspect = canvas.width / canvas.height;
+                const borderAspect = border.width / border.height;
+
+                let drawW, drawH, offsetX, offsetY;
+                if (photoAspect > borderAspect) {
+                    // Photo is wider - fit to height, crop sides
+                    drawH = border.height;
+                    drawW = border.height * photoAspect;
+                    offsetX = -(drawW - border.width) / 2;
+                    offsetY = 0;
+                } else {
+                    // Photo is taller - fit to width, crop top/bottom
+                    drawW = border.width;
+                    drawH = border.width / photoAspect;
+                    offsetX = 0;
+                    offsetY = -(drawH - border.height) / 2;
+                }
+
+                // Draw photo (aspect-fill, may extend beyond canvas)
+                bctx.drawImage(canvas, offsetX, offsetY, drawW, drawH);
+
+                // Apply LUT to border before overlaying
+                // Create temp canvas for border with LUT applied
+                const borderCanvas = document.createElement('canvas');
+                borderCanvas.width = border.width;
+                borderCanvas.height = border.height;
+                const borderCtx = borderCanvas.getContext('2d', {alpha: true, willReadFrequently: true});
+
+                // Draw border to temp canvas
+                borderCtx.drawImage(border, 0, 0);
+
+                // Apply preset/LUT to border if not 'none'
+                if (settings.profile && settings.profile !== 'none') {
+                    const borderImgData = borderCtx.getImageData(0, 0, border.width, border.height);
+                    applyProfile(borderImgData, settings.profile);
+                    borderCtx.putImageData(borderImgData, 0, 0);
+                    console.log(`🎨 Applied ${settings.profile} preset to border`);
+                }
+
+                // Draw color-graded border overlay on top (covers excess)
+                bctx.filter = 'blur(2px)';
+                bctx.drawImage(borderCanvas, 0, 0);
+                bctx.filter = 'none';
+
+                // Add metadata text OVER the border (not under it)
+                renderFilmMetadata(bctx, borderedCanvas.width, borderedCanvas.height, settings, photoData, isHorizontal, borderType);
+
+                // Copy back to original canvas
+                canvas.width = borderedCanvas.width;
+                canvas.height = borderedCanvas.height;
+                ctx.drawImage(borderedCanvas, 0, 0);
+
+                return true;
+            } catch (error) {
+                console.error('Error applying film border:', error);
+                return false;
+            }
+        }
+
+        // Render film metadata text (date, preset, frame number)
+        function renderFilmMetadata(ctx, width, height, settings, photoData, isHorizontal, borderType) {
+            // Skip metadata entirely for 3:2 borders
+            if (borderType === 'horizontal-3-2' || borderType === 'vertical-2-3') {
+                console.log('🎬 Skipping metadata for 3:2 border');
+                return;
+            }
+
+            // Get metadata
+            const date = photoData.uploadTime || new Date();
+            const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '.');
+
+            const preset = settings.profile !== 'none' ? settings.profile.toUpperCase() : 'ORIGINAL';
+            const frameNum = String((photoData.frameNumber || 1)).padStart(2, '0');
+
+            // Metadata text format: "25.11.04 - FRONTIER • SUPRA_01"
+            const metadataText = `${dateStr} - FRONTIER • ${preset}_${frameNum}`;
+
+            // Text styling - adjusted per orientation
+            const isHorizontalBorder = width > height;
+            const fontSize = isHorizontalBorder
+                ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
+                : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
+            ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
+
+            // Position at 50% from right edge (more centered), very close to bottom
+            const textX = width * 0.50; // 50% from right edge (centered horizontally)
+            const textY = height * 0.998; // 0.2% from bottom edge (percentage-based)
+
+            // Render text with glow and noise
+            ctx.save();
+            console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}`);
+
+            // Pass 1: Glow layer (separate opacity for glow)
+            ctx.globalAlpha = 0.6;
+            ctx.fillStyle = '#FF3333';
+            ctx.shadowColor = 'rgba(255, 51, 51, 0.9)';
+            ctx.shadowBlur = 210;
+            ctx.fillText(metadataText, textX, textY);
+            ctx.shadowBlur = 140;
+            ctx.fillText(metadataText, textX, textY);
+
+            // Pass 2: Main text with noise and lower opacity
+            ctx.globalAlpha = 0.75; // Lower opacity for main text
+            ctx.shadowBlur = 0;
+
+            // Add subtle noise to text by rendering with slight offsets
+            const noiseAmount = 0.5;
+            for(let i = 0; i < 3; i++) {
+                const offsetX = (Math.random() - 0.5) * noiseAmount;
+                const offsetY = (Math.random() - 0.5) * noiseAmount;
+                ctx.fillText(metadataText, textX + offsetX, textY + offsetY);
+            }
+
+            ctx.restore();
+        }
+
+        // Toggle film border setting
+        function toggleFilmBorder() {
+            haptic();
+            state.settings.filmBorder = !state.settings.filmBorder;
+            console.log('🎞️ Film border toggled to:', state.settings.filmBorder);
+
+            const btn = document.getElementById('filmBorderBtn');
+            if (btn) {
+                console.log('🔘 Button found, adding/removing active class');
+                btn.classList.toggle('active', state.settings.filmBorder);
+                console.log('🔘 Button classes:', btn.className);
+            } else {
+                console.log('⚠️ Button NOT found!');
+            }
+
+            // Save and re-render
+            saveCurrentPhotoSettings(true, true);
+            deferredRender();
+        }
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
@@ -753,9 +972,9 @@
         function cancelDownload(){haptic();if(state.download.active){state.download.cancelling=true;if(state.download.mediaRecorder){state.download.mediaRecorder.stop();}hideProgress();}else if(state.upload.active){state.upload.cancelling=true;hideUploadProgress();}}
 
         // Upload progress functions
-        function showUploadProgress(text='Loading files...'){console.log('[showUploadProgress] Called with:',text);state.upload.active=true;state.upload.cancelling=false;setStatus('loading');const downloadBtn=document.getElementById('downloadBtn');const progressBar=document.getElementById('downloadProgress');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');console.log('[showUploadProgress] Element:',progressBar,'Has active?',progressBar.classList.contains('active'));downloadBtn.classList.add('active');progressBar.classList.add('active');canvasContainer.classList.add('download-open');editFooter.classList.add('download-open');console.log('[showUploadProgress] After add active:',progressBar.classList.toString());document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';console.log('[showUploadProgress] Complete - should be visible');}
+        function showUploadProgress(text='Loading files...'){state.upload.active=true;state.upload.cancelling=false;setStatus('loading');document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width='0%';document.getElementById('downloadProgress').classList.add('active');}
         function updateUploadProgress(percent,text=null){if(text)document.getElementById('progressText').textContent=text;document.getElementById('progressBarFill').style.width=percent+'%';}
-        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');const downloadBtn=document.getElementById('downloadBtn');const progressBar=document.getElementById('downloadProgress');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');downloadBtn.classList.remove('active');progressBar.classList.remove('active');canvasContainer.classList.remove('download-open');editFooter.classList.remove('download-open');}
+        function hideUploadProgress(){state.upload.active=false;state.upload.cancelling=false;setStatus('ready');const progressBar=document.getElementById('downloadProgress');progressBar.classList.remove('active');progressBar.style.transform='';progressBar.style.opacity='';progressBar.style.display='';}
 
         // Detect standalone mode and apply compact spacing
         const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone||document.referrer.includes('android-app://');
@@ -783,7 +1002,6 @@
             if(!p||!p.image) return;
 
             state.tapState.comparing=true;
-            setStatus('processing');
             const ctx=canvas.getContext('2d',{alpha:false});
 
             // Draw original at same size as current canvas
@@ -796,13 +1014,12 @@
                 if(state.tapState.comparing){
                     renderPhoto();
                     state.tapState.comparing=false;
-                    setStatus('ready');
                 }
             },1000);
         }
 
         // End compare view (called on touchend when releasing tap)
-        function endCompare(){if(!state.tapState.comparing)return;renderPhoto();state.tapState.comparing=false;setStatus('ready');}
+        function endCompare(){if(!state.tapState.comparing)return;renderPhoto();state.tapState.comparing=false;}
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -1395,7 +1612,8 @@
                         brightness: 0,
                         contrast: 0,
                         shadows: 0,
-                        highlights: 0
+                        highlights: 0,
+                        filmBorder: false
                     };
 
                     {
@@ -1944,6 +2162,7 @@
                 if(state.settings.contrast===undefined)state.settings.contrast=0;
                 if(state.settings.shadows===undefined)state.settings.shadows=0;
                 if(state.settings.highlights===undefined)state.settings.highlights=0;
+                if(state.settings.filmBorder===undefined)state.settings.filmBorder=false;
                 console.log('✅ State settings now:', JSON.stringify(state.settings));
 
                 // CRITICAL: Preload LUT for the profile (ensures effects are applied)
@@ -1965,6 +2184,13 @@
                 if(state.settings.profile!=='none'){
                     const btn=document.querySelector(`#photoProfiles .preset-btn[onclick*="${state.settings.profile}"]`);
                     if(btn)btn.classList.add('active');
+                }
+                const filmBorderBtn=document.getElementById('filmBorderBtn');
+                if(filmBorderBtn){
+                    console.log('🎞️ Updating border button, filmBorder =', state.settings.filmBorder);
+                    filmBorderBtn.classList.toggle('active',state.settings.filmBorder);
+                } else {
+                    console.log('⚠️ Border button not found!');
                 }
                 updateCMYKIndicator();
                 updateBrightnessIndicator();
@@ -2091,7 +2317,7 @@
                 setStatus('ready');
             }
         }
-        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
+        function backToUpload(){haptic();if(!confirm('Start a new order?\n\nThis will discard all current photos and settings.')){return;}state.photos=[];state.currentIndex=0;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false};state.history=[];state.historyIndex=-1;document.getElementById('editSection').classList.remove('active');document.getElementById('uploadSection').classList.remove('hidden');document.body.style.background='#37A4A4';}
 
         async function renderPhoto(){
             try {
@@ -2136,15 +2362,25 @@
 const offscreenCanvas=document.createElement('canvas');
 offscreenCanvas.width=sourceImg.width;
 offscreenCanvas.height=sourceImg.height;
-const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
+const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:true,willReadFrequently:true});
 offscreenCtx.imageSmoothingEnabled=true;
 offscreenCtx.imageSmoothingQuality='high';
 offscreenCtx.drawImage(sourceImg,0,0);
 await loadPhotoSettings(state.currentIndex);
 applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
+
+// Apply film border if enabled (before final canvas copy)
+if(state.settings.filmBorder){
+    await applyFilmBorder(offscreenCanvas,offscreenCtx,state.settings,{
+        ...p,
+        frameNumber:state.currentIndex+1,
+        uploadTime:p.uploadTime||new Date()
+    });
+}
+
 // Now copy the fully processed image to visible canvas in one operation
-canvas.width=sourceImg.width;canvas.height=sourceImg.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=sourceImg.width/sourceImg.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:false});
-ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;setStatus('ready');
+canvas.width=offscreenCanvas.width;canvas.height=offscreenCanvas.height;const maxW=window.innerWidth-30;const maxH=window.innerHeight-330-parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')||'0');const imageAspect=offscreenCanvas.width/offscreenCanvas.height;const containerAspect=maxW/maxH;let displayW,displayH;if(imageAspect>containerAspect){displayW=maxW;displayH=maxW/imageAspect;}else{displayH=maxH;displayW=maxH*imageAspect;}displayW=Math.min(displayW,maxW);displayH=Math.min(displayH,maxH);canvas.style.width=displayW+'px';canvas.style.height=displayH+'px';canvas.style.objectFit='contain';const ctx=canvas.getContext('2d',{alpha:true});
+ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas);gesturesSetup=true;}state.renderPending=false;setStatus('ready');
             } catch (err) {
                 console.error('Error in renderPhoto:', err);
                 state.renderPending=false;
@@ -2561,7 +2797,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cyanAdjust=s.cyan*12;const magentaAdjust=s.magenta*12;const yellowAdjust=s.yellow*12;const densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r-=cyanAdjust;g-=magentaAdjust;b-=yellowAdjust;if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r+=densityAdjust*factor;g+=densityAdjust*factor;b+=densityAdjust*factor;}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
+        function applyCMYK(d,s){if(s.cyan===0&&s.magenta===0&&s.yellow===0&&s.black===0)return;const cA=s.cyan*2.5,mA=s.magenta*2.5,yA=s.yellow*2.5,densityAdjust=s.black*-12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];r=Math.max(0,Math.min(255,r-cA));g=Math.max(0,Math.min(255,g+cA*0.5));b=Math.max(0,Math.min(255,b+cA*0.5));r=Math.max(0,Math.min(255,r+mA*0.5));g=Math.max(0,Math.min(255,g-mA));b=Math.max(0,Math.min(255,b+mA*0.5));r=Math.max(0,Math.min(255,r+yA*0.5));g=Math.max(0,Math.min(255,g+yA*0.5));b=Math.max(0,Math.min(255,b-yA));if(densityAdjust!==0){const lum=(r+g+b)/3;const factor=1+(255-lum)/255*0.5;r=Math.max(0,Math.min(255,r+densityAdjust*factor));g=Math.max(0,Math.min(255,g+densityAdjust*factor));b=Math.max(0,Math.min(255,b+densityAdjust*factor));}d[i]=r;d[i+1]=g;d[i+2]=b;}}
 
         function applyBrightness(d,s){const brightness=s.brightness||0;const contrast=s.contrast||0;const shadows=s.shadows||0;const highlights=s.highlights||0;if(brightness===0&&contrast===0&&shadows===0&&highlights===0)return;const brightnessAdjust=brightness*12;const contrastFactor=1+(contrast*0.15);const shadowsAdjust=shadows*12;const highlightsAdjust=highlights*12;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(brightnessAdjust!==0){r+=brightnessAdjust;g+=brightnessAdjust;b+=brightnessAdjust;}if(contrastFactor!==1){r=((r-128)*contrastFactor)+128;g=((g-128)*contrastFactor)+128;b=((b-128)*contrastFactor)+128;}if(shadowsAdjust!==0||highlightsAdjust!==0){const lum=(r+g+b)/3;if(lum<128&&shadowsAdjust!==0){const shadowFactor=(128-lum)/128;r+=shadowsAdjust*shadowFactor;g+=shadowsAdjust*shadowFactor;b+=shadowsAdjust*shadowFactor;}if(lum>=128&&highlightsAdjust!==0){const highlightFactor=(lum-128)/127;r+=highlightsAdjust*highlightFactor;g+=highlightsAdjust*highlightFactor;b+=highlightsAdjust*highlightFactor;}}d[i]=Math.max(0,Math.min(255,r));d[i+1]=Math.max(0,Math.min(255,g));d[i+2]=Math.max(0,Math.min(255,b));}}
 
@@ -4021,7 +4257,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*15;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.655;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
 
         function toggleControl(c){}
 
@@ -4178,7 +4414,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function deleteChange(idx){haptic();if(!confirm('Delete this change from history?'))return;state.history.splice(idx,1);if(state.historyIndex>=idx)state.historyIndex--;renderHistoryList();}
 
-        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);deferredRender();toggleHistoryPanel();}
+        async function clearAllHistory(){haptic();if(!confirm('Clear all history? This will reset all settings to default.'))return;state.history=[];state.historyIndex=-1;state.settings={profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false};await preloadLUTForProfile('none');updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);deferredRender();toggleHistoryPanel();}
 
         function toggleCMYK(){haptic();closeIntensity();closeBrightness();closeMoreDialog();closeHistoryPanel();closeDownloadProgress();const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');cmykControls.classList.toggle('active');cmykToggle.classList.toggle('active');canvasContainer.classList.toggle('cmyk-open');editFooter.classList.toggle('cmyk-open');}
 
@@ -4190,168 +4426,73 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
         function adjustCMYK(channel,delta){
             haptic();
             const max=10,min=-10;
-            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
-            const isAutoActive=cmykAutoBtn&&cmykAutoBtn.classList.contains('active');
-            if(isAutoActive){
-                cmykAutoBtn.classList.remove('active');
-                console.log('🔴 CMYK AUTO: Turned off due to manual adjustment');
+
+            // If linked and adjusting C, M, or Y, adjust all three together
+            if(state.cmykLinked && (channel==='cyan'||channel==='magenta'||channel==='yellow')){
+                const channels=['cyan','magenta','yellow'];
+                channels.forEach(ch=>{
+                    const oldValue=state.settings[ch];
+                    const newValue=Math.max(min,Math.min(max,state.settings[ch]+delta));
+                    state.settings[ch]=newValue;
+                    document.getElementById(ch+'Value').querySelector('.cmyk-value-number').textContent=state.settings[ch];
+                    if(oldValue!==newValue){
+                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${newValue}`,ch,oldValue,newValue);
+                    }
+                });
+            } else {
+                // Normal single channel adjustment
+                const oldValue=state.settings[channel];
+                const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));
+                state.settings[channel]=newValue;
+                document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];
+                if(oldValue!==newValue){
+                    addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
+                }
             }
-            const oldValue=state.settings[channel];
-            const newValue=Math.max(min,Math.min(max,state.settings[channel]+delta));
-            state.settings[channel]=newValue;
-            document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];
-            if(oldValue!==newValue){
-                addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);
-            }
+
             updateCMYKIndicator();
             saveCurrentPhotoSettings(true,true);
             enablePreviewMode();
             deferredRender();
         }
 
-        async function autoAdjustCMYK(){
+        function toggleCMYLink(){
             haptic();
-            const currentPhoto=state.photos[state.currentIndex];
-            if(!currentPhoto||!currentPhoto.image){
-                console.log('❌ No current photo for CMYK auto-adjustment');
-                return;
-            }
+            state.cmykLinked = !state.cmykLinked;
+            const linkBtn = document.getElementById('linkBtn');
+            const img = linkBtn.querySelector('img');
 
-            const cmykAutoBtn=document.getElementById('cmykAutoBtn');
-            const isActive=cmykAutoBtn.classList.contains('active');
+            if(state.cmykLinked){
+                linkBtn.classList.add('active');
+                img.src = 'Active_Linked.svg';
 
-            // If already active, turn OFF and reset to defaults
-            if(isActive){
-                console.log('🔴 CMYK AUTO: Turning off, resetting to defaults');
-                cmykAutoBtn.classList.remove('active');
+                // Sync all CMY values to the first non-zero value found
+                const cyan = state.settings.cyan || 0;
+                const magenta = state.settings.magenta || 0;
+                const yellow = state.settings.yellow || 0;
 
-                const oldCyan=state.settings.cyan||0;
-                const oldMagenta=state.settings.magenta||0;
-                const oldYellow=state.settings.yellow||0;
-                const oldBlack=state.settings.black||0;
+                // Find first non-zero value, or use 0 if all are 0
+                const syncValue = cyan !== 0 ? cyan : (magenta !== 0 ? magenta : yellow);
 
-                state.settings.cyan=0;
-                state.settings.magenta=0;
-                state.settings.yellow=0;
-                state.settings.black=0;
-
-                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=0;
-                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=0;
-                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=0;
-                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=0;
-
-                if(oldCyan!==0)addToHistory(`RESET CYAN: ${oldCyan} → 0`,'cyan',oldCyan,0);
-                if(oldMagenta!==0)addToHistory(`RESET MAGENTA: ${oldMagenta} → 0`,'magenta',oldMagenta,0);
-                if(oldYellow!==0)addToHistory(`RESET YELLOW: ${oldYellow} → 0`,'yellow',oldYellow,0);
-                if(oldBlack!==0)addToHistory(`RESET DENSITY: ${oldBlack} → 0`,'black',oldBlack,0);
+                // Update all channels to match
+                ['cyan', 'magenta', 'yellow'].forEach(ch => {
+                    const oldValue = state.settings[ch] || 0;
+                    if(oldValue !== syncValue) {
+                        state.settings[ch] = syncValue;
+                        document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent = syncValue;
+                        addToHistory(`${ch.toUpperCase()}: ${oldValue} → ${syncValue}`, ch, oldValue, syncValue);
+                    }
+                });
 
                 updateCMYKIndicator();
-                saveCurrentPhotoSettings(true,true);
+                saveCurrentPhotoSettings(true, true);
                 deferredRender();
-                return;
-            }
 
-            // Turn ON and apply auto-adjustments
-            cmykAutoBtn.classList.add('active');
-            console.log('🎨 CMYK AUTO: Analyzing color balance...');
-            setStatus('processing');
-
-            try{
-                const tempCanvas=document.createElement('canvas');
-                const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
-
-                const img=currentPhoto.image;
-                const scale=Math.min(1,800/Math.max(img.width,img.height));
-                tempCanvas.width=Math.floor(img.width*scale);
-                tempCanvas.height=Math.floor(img.height*scale);
-
-                ctx.drawImage(img,0,0,tempCanvas.width,tempCanvas.height);
-                const imageData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
-                const pixels=imageData.data;
-
-                let sumR=0,sumG=0,sumB=0,sumLum=0;
-                const pixelCount=pixels.length/4;
-
-                for(let i=0;i<pixels.length;i+=4){
-                    sumR+=pixels[i];
-                    sumG+=pixels[i+1];
-                    sumB+=pixels[i+2];
-                    sumLum+=pixels[i]*0.299+pixels[i+1]*0.587+pixels[i+2]*0.114;
-                }
-
-                const avgR=sumR/pixelCount;
-                const avgG=sumG/pixelCount;
-                const avgB=sumB/pixelCount;
-                const avgLum=sumLum/pixelCount;
-
-                console.log(`🎨 Color stats: R=${avgR.toFixed(1)}, G=${avgG.toFixed(1)}, B=${avgB.toFixed(1)}, Lum=${avgLum.toFixed(1)}`);
-
-                let cyan=0,magenta=0,yellow=0,black=0;
-
-                // Detect color cast and correct it
-                const avgGray=(avgR+avgG+avgB)/3;
-                const rCast=(avgR-avgGray)/avgGray;
-                const gCast=(avgG-avgGray)/avgGray;
-                const bCast=(avgB-avgGray)/avgGray;
-
-                // Cyan removes red cast
-                if(rCast>0.02){
-                    cyan=Math.round(Math.min(10,rCast*60));
-                }else if(rCast<-0.02){
-                    cyan=Math.round(Math.max(-10,rCast*60));
-                }
-
-                // Magenta removes green cast
-                if(gCast>0.02){
-                    magenta=Math.round(Math.min(10,gCast*60));
-                }else if(gCast<-0.02){
-                    magenta=Math.round(Math.max(-10,gCast*60));
-                }
-
-                // Yellow removes blue cast
-                if(bCast>0.02){
-                    yellow=Math.round(Math.min(10,bCast*60));
-                }else if(bCast<-0.02){
-                    yellow=Math.round(Math.max(-10,bCast*60));
-                }
-
-                // Density adjustment based on overall brightness
-                if(avgLum<100){
-                    black=Math.round(Math.min(5,(100-avgLum)/20));
-                }else if(avgLum>155){
-                    black=Math.round(Math.max(-5,(155-avgLum)/20));
-                }
-
-                console.log(`🎯 CMYK AUTO: C=${cyan}, M=${magenta}, Y=${yellow}, D=${black}`);
-
-                const oldCyan=state.settings.cyan||0;
-                const oldMagenta=state.settings.magenta||0;
-                const oldYellow=state.settings.yellow||0;
-                const oldBlack=state.settings.black||0;
-
-                state.settings.cyan=cyan;
-                state.settings.magenta=magenta;
-                state.settings.yellow=yellow;
-                state.settings.black=black;
-
-                document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=cyan;
-                document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=magenta;
-                document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=yellow;
-                document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=black;
-
-                if(oldCyan!==cyan)addToHistory(`AUTO CYAN: ${oldCyan} → ${cyan}`,'cyan',oldCyan,cyan);
-                if(oldMagenta!==magenta)addToHistory(`AUTO MAGENTA: ${oldMagenta} → ${magenta}`,'magenta',oldMagenta,magenta);
-                if(oldYellow!==yellow)addToHistory(`AUTO YELLOW: ${oldYellow} → ${yellow}`,'yellow',oldYellow,yellow);
-                if(oldBlack!==black)addToHistory(`AUTO DENSITY: ${oldBlack} → ${black}`,'black',oldBlack,black);
-
-                updateCMYKIndicator();
-                saveCurrentPhotoSettings(true,true);
-                deferredRender();
-                setStatus('ready');
-            }catch(err){
-                console.error('Error in CMYK auto-adjustment:',err);
-                cmykAutoBtn.classList.remove('active');
-                setStatus('ready');
+                console.log(`🔗 CMY channels linked and synced to ${syncValue}`);
+            } else {
+                linkBtn.classList.remove('active');
+                img.src = 'Default_Unlinked.svg';
+                console.log('🔓 CMY channels unlinked');
             }
         }
 
@@ -4728,17 +4869,28 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             const p=state.photos[state.currentIndex];
             const filename=p.displayName||`frontier_photo_${state.currentIndex+1}.jpg`;
 
-            await new Promise(r=>setTimeout(r,100));
             updateUploadProgress(30, `Exporting ${filename.substring(0,30)}...`);
 
             const currentCanvas=document.getElementById('canvas');
 
-            await new Promise(r=>setTimeout(r,200));
+            // Create export canvas (with or without border)
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = currentCanvas.width;
+            exportCanvas.height = currentCanvas.height;
+            const exportCtx = exportCanvas.getContext('2d', {alpha: false});
+            exportCtx.drawImage(currentCanvas, 0, 0);
 
-            currentCanvas.toBlob(async b=>{
+            // Apply film border if enabled
+            if (state.settings.filmBorder) {
+                updateUploadProgress(50, 'Adding film border...');
+                await applyFilmBorder(exportCanvas, exportCtx, state.settings, {
+                    ...p,
+                    frameNumber: state.currentIndex + 1
+                });
+            }
+
+            exportCanvas.toBlob(async b=>{
                 updateUploadProgress(70, `Preparing ${filename.substring(0,30)}...`);
-                await new Promise(r=>setTimeout(r,100));
-
                 const file=new File([b],filename,{type:'image/jpeg'});
 
                 if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
@@ -4761,7 +4913,6 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     }
                 }else{
                     updateUploadProgress(90, 'Downloading...');
-                    await new Promise(r=>setTimeout(r,100));
                     fallbackDownload(b,filename);
                     updateUploadProgress(100, 'Complete! Image downloaded!');
                     await new Promise(r=>setTimeout(r,1500));
@@ -4892,30 +5043,46 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                             drawW=thumbSize*aspectRatio;
                         }
 
-                        // Scale down to 300px on long edge for high quality thumbnails
+                        // Scale down FIRST to thumbnail size (much faster!)
                         const tempCanvas=document.createElement('canvas');
                         const tctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});
-                        const thumbLongEdge=300;
-                        let thumbW,thumbH;
-                        if(sourceImg.width>sourceImg.height){
-                            thumbW=thumbLongEdge;
-                            thumbH=Math.floor(thumbLongEdge/aspectRatio);
-                        }else{
-                            thumbH=thumbLongEdge;
-                            thumbW=Math.floor(thumbLongEdge*aspectRatio);
-                        }
-                        tempCanvas.width=thumbW;
-                        tempCanvas.height=thumbH;
-                        tctx.drawImage(sourceImg,0,0,thumbW,thumbH);
+                        tempCanvas.width=Math.floor(drawW);
+                        tempCanvas.height=Math.floor(drawH);
+                        tctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);
 
-                        // Apply effects to high quality thumbnail
+                        // Apply effects to small thumbnail (not full res!)
                         const savedSettings=state.settings;
                         state.settings=p.settings;
                         // CRITICAL: Preload LUT for this photo's profile
                         await preloadLUTForProfile(p.settings.profile);
-                        applyEffects(tctx,thumbW,thumbH);
+                        applyEffects(tctx,tempCanvas.width,tempCanvas.height);
+
+                        // Apply film border if enabled (then scale down to fit)
+                        if(p.settings.filmBorder){
+                            await applyFilmBorder(tempCanvas,tctx,p.settings,{
+                                ...p,
+                                frameNumber:photoIndex+1,
+                                uploadTime:p.uploadTime||new Date()
+                            });
+
+                            // Border changed canvas size - need to scale back down to fit thumbnail
+                            const borderedW=tempCanvas.width;
+                            const borderedH=tempCanvas.height;
+                            const borderedAspect=borderedW/borderedH;
+
+                            // Calculate new thumbnail size to fit
+                            if(borderedAspect>1){
+                                drawH=thumbSize/borderedAspect;
+                                drawW=thumbSize;
+                            }else{
+                                drawW=thumbSize*borderedAspect;
+                                drawH=thumbSize;
+                            }
+                        }
+
                         state.settings=savedSettings;
 
+                        // Calculate centering offset
                         const offsetX=x+(thumbSize-drawW)/2;
                         const offsetY=y+(thumbSize-drawH)/2;
 
@@ -4987,11 +5154,9 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         async function saveAll(){
             try{
-                console.log('[saveAll] Starting...');
                 haptic();
 
                 const photoCount=state.photos.filter(p=>!p.isContactSheet).length;
-                console.log(`[saveAll] Photo count: ${photoCount}`);
                 if(photoCount===0){
                     alert('No photos to export');
                     return;
@@ -4999,22 +5164,29 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 // Detect if mobile
                 const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                console.log(`[saveAll] isMobile: ${isMobile}`);
 
                 if(!isMobile){
                     // Desktop: Export as ZIP - ask for confirmation
                     if(!confirm(`Export ${photoCount} photos + contact sheet as ZIP?`)){
-                        console.log('[saveAll] User cancelled');
                         return;
                     }
                 }
                 // Mobile: No confirmation - just save directly to camera roll
 
-                // Show progress bar
-                console.log('[saveAll] Showing progress bar...');
+                // Show progress bar immediately with force
+                const progressBar = document.getElementById('downloadProgress');
                 showUploadProgress(`Processing ${photoCount} photos...`);
+
+                // Force visibility
+                progressBar.classList.add('active');
+                progressBar.style.display = 'block';
+                progressBar.style.transform = 'translateY(0)';
+                progressBar.style.opacity = '1';
+
                 setStatus('wait');
-                console.log('[saveAll] Progress bar should be visible now');
+
+                console.log('[Download Panel] Progress bar shown:', progressBar);
+                console.log('[Download Panel] Active:', progressBar.classList.contains('active'));
 
                 // Close download options (can animate away while we process)
                 closeDownloadOptions();
@@ -5051,6 +5223,14 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 state.settings=p.settings;
                 await preloadLUTForProfile(p.settings.profile);
                 applyEffects(tctx,tempCanvas.width,tempCanvas.height);
+
+                // Apply film border if enabled
+                if (p.settings.filmBorder) {
+                    await applyFilmBorder(tempCanvas, tctx, p.settings, {
+                        ...p,
+                        frameNumber: i + 1
+                    });
+                }
 
                 // Convert to blob
                 const blob=await new Promise(resolve=>{
@@ -5177,7 +5357,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             files.push({blob:sheetBlob,filename:'00_CONTACT_SHEET.jpg'});
 
             // Show completion
-            updateUploadProgress(100,'Download complete!');
+            updateUploadProgress(100,`Complete! ${files.length} images ready`);
 
             console.log('[Download Panel] User agent:', navigator.userAgent);
             console.log('[Download Panel] isMobile:', isMobile);
@@ -5195,7 +5375,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                         if(navigator.canShare({files:shareFiles})){
                             console.log(`iOS: Sharing ${shareFiles.length} files`);
-                            updateUploadProgress(100,'Download complete!');
+                            updateUploadProgress(100,`Ready to save ${shareFiles.length} images!`);
                             await new Promise(r=>setTimeout(r,800));
 
                             await navigator.share({
@@ -5205,7 +5385,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                             });
 
                             // Success - show completion and auto-close
-                            updateUploadProgress(100,'Download complete!');
+                            updateUploadProgress(100,`Complete! ${shareFiles.length} images saved!`);
                             await new Promise(r=>setTimeout(r,1500));
 
                             state.settings={...originalSettings};
@@ -5233,7 +5413,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
                 // Mobile fallback (Android or iOS Share failed): Individual downloads
                 console.log('Mobile: Downloading files individually');
-                // Don't reset to 0% - continue from current progress
+                updateUploadProgress(0,'Downloading files...');
 
                 for(let i=0;i<files.length;i++){
                     const f=files[i];
@@ -5264,7 +5444,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }else{
                 // Desktop: Download files individually
                 console.log('Desktop: Downloading files individually');
-                // Don't reset to 0% - continue from current progress
+                updateUploadProgress(0,'Downloading files...');
 
                 for(let i=0;i<files.length;i++){
                     const f=files[i];
@@ -5430,11 +5610,11 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
             }
         }
 
-        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){autoBtn.classList.remove('active');console.log('🔴 AUTO: Turned off due to manual adjustment');}const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
+        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
 
-        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){const channels=['brightness','contrast','shadows','highlights'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});autoBtn.classList.remove('active');console.log('🔴 AUTO: Cleared all brightness values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){autoBtn.classList.remove('active');console.log('🔴 AUTO: Turned off due to manual value entry');}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
+        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){const channels=['brightness','contrast','shadows','highlights'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});autoBtn.classList.remove('active');console.log('🔴 AUTO: Cleared all brightness values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
 
         // Auto-adjust brightness, contrast, shadows, and highlights based on image analysis
         async function autoAdjustLevels() {
@@ -5517,7 +5697,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 // Calculate statistics
                 const avgLum = sumLum / pixelCount;
 
-                // Find percentiles with more detail
+                // Find percentiles
                 const findPercentile = (percentile) => {
                     const target = pixelCount * percentile;
                     let sum = 0;
@@ -5528,43 +5708,15 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     return 255;
                 };
 
-                const p1 = findPercentile(0.01);   // Deep shadows
-                const p5 = findPercentile(0.05);
-                const p10 = findPercentile(0.10);  // Shadow detail
-                const p25 = findPercentile(0.25);  // Lower quartile
+                const p1 = findPercentile(0.01);   // 1st percentile (shadows)
+                const p5 = findPercentile(0.05);   // 5th percentile
                 const p50 = findPercentile(0.50);  // Median
-                const p75 = findPercentile(0.75);  // Upper quartile
-                const p90 = findPercentile(0.90);  // Highlight detail
-                const p95 = findPercentile(0.95);
-                const p99 = findPercentile(0.99);  // Bright highlights
+                const p95 = findPercentile(0.95);  // 95th percentile
+                const p99 = findPercentile(0.99);  // 99th percentile (highlights)
 
-                // Analyze histogram distribution
                 const range = p95 - p5;
-                const iqr = p75 - p25; // Interquartile range (middle 50%)
 
-                // Detect bimodal distribution (subject vs background)
-                let peakCount = 0;
-                let lastPeak = -1;
-                for (let i = 10; i < 246; i++) {
-                    if (hist[i] > hist[i-1] && hist[i] > hist[i+1] && hist[i] > pixelCount * 0.01) {
-                        if (lastPeak === -1 || i - lastPeak > 30) {
-                            peakCount++;
-                            lastPeak = i;
-                        }
-                    }
-                }
-                const isBimodal = peakCount >= 2;
-
-                // IMAGE CLASSIFICATION: Don't force all images to midtones!
-                let imageType = 'normal';
-                if (p50 < 80 && p75 < 140) {
-                    imageType = 'low-key'; // Dark/moody
-                } else if (p50 > 160 && p25 > 100) {
-                    imageType = 'high-key'; // Bright/airy
-                }
-
-                console.log(`📊 Stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p10=${p10}, p25=${p25}, p50=${p50}, p75=${p75}, p90=${p90}, p99=${p99}`);
-                console.log(`📊 Range=${range}, IQR=${iqr}, Type=${imageType}, Bimodal=${isBimodal}`);
+                console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
 
                 // Calculate adjustments (scale -10 to +10)
                 let brightness = 0;
@@ -5572,50 +5724,27 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                 let shadows = 0;
                 let highlights = 0;
 
-                // BRIGHTNESS: Respect image type, don't force everything to 128
-                let targetLum = 128;
-                if (imageType === 'low-key') {
-                    targetLum = 100; // Keep it dark
-                } else if (imageType === 'high-key') {
-                    targetLum = 156; // Keep it bright
-                }
-                const brightnessDelta = targetLum - avgLum;
-                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 15)));
+                // BRIGHTNESS: Center the average around 128
+                const brightnessDelta = 128 - avgLum;
+                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 12.8)));
 
-                // CONTRAST: More nuanced based on IQR
-                if (iqr < 50) {
-                    // Very flat, needs contrast
-                    contrast = Math.round(Math.min(10, (50 - iqr) / 5));
-                } else if (iqr > 120) {
-                    // Too contrasty
-                    contrast = Math.round(Math.max(-10, (120 - iqr) / 10));
-                } else if (range < 140) {
-                    // Decent IQR but narrow range - gentle boost
-                    contrast = Math.round(Math.min(10, (160 - range) / 20));
+                // CONTRAST: Expand if range is too narrow, compress if too wide
+                const idealRange = 180; // Target range
+                const contrastDelta = (idealRange - range) / idealRange;
+                contrast = Math.round(Math.max(-10, Math.min(10, contrastDelta * 8)));
+
+                // SHADOWS: Lift if shadows are crushed (p1 is too low)
+                if (p1 < 10) {
+                    shadows = Math.round(Math.max(0, Math.min(10, (10 - p1) / 2)));
+                } else if (p5 < 30) {
+                    shadows = Math.round(Math.max(0, Math.min(10, (30 - p5) / 6)));
                 }
 
-                // SHADOWS: More gradual approach
-                if (p1 < 5) {
-                    // Deep clipping, strong lift
-                    shadows = Math.round(Math.min(10, (15 - p1) / 2));
-                } else if (p5 < 15) {
-                    // Moderate shadow crush
-                    shadows = Math.round(Math.min(10, (25 - p5) / 3));
-                } else if (p10 < 30 && imageType !== 'low-key') {
-                    // Gentle shadow lift (unless intentionally dark)
-                    shadows = Math.round(Math.min(8, (35 - p10) / 4));
-                }
-
-                // HIGHLIGHTS: More gradual approach
-                if (p99 > 250) {
-                    // Severe clipping, strong recovery
-                    highlights = Math.round(Math.max(-10, (240 - p99) / 2));
-                } else if (p95 > 240) {
-                    // Moderate highlight blow
-                    highlights = Math.round(Math.max(-10, (230 - p95) / 3));
-                } else if (p90 > 230 && imageType !== 'high-key') {
-                    // Gentle highlight recovery (unless intentionally bright)
-                    highlights = Math.round(Math.max(-8, (225 - p90) / 4));
+                // HIGHLIGHTS: Pull down if highlights are blown (p99 is too high)
+                if (p99 > 245) {
+                    highlights = Math.round(Math.max(-10, Math.min(0, (245 - p99) / 2)));
+                } else if (p95 > 225) {
+                    highlights = Math.round(Math.max(-10, Math.min(0, (225 - p95) / 6)));
                 }
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
@@ -5672,7 +5801,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function editCounter(type){haptic();const currentValue=state.settings[type];const clearConfirm=confirm(`Clear ${type.toUpperCase()} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){state.settings[type]=0;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent='0';if(currentValue!==0){addToHistory(`${type.toUpperCase()}: ${currentValue} → 0`,type,currentValue,0);}saveCurrentPhotoSettings(true,true);deferredRender();return;}const minVal=type==='bloom'?-10:0;const maxVal=10;const rangeText=type==='bloom'?'(-10 to +10)':'(0-10)';const options=`Current: ${currentValue}\n\nEnter new value ${rangeText}:`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<minVal||newValue>maxVal){alert(`Please enter a number between ${minVal} and ${maxVal}`);return;}state.settings[type]=newValue;document.getElementById(`${type}ValueBig`).querySelector('.slider-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${type.toUpperCase()}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}saveCurrentPhotoSettings(true,true);deferredRender();}
 
-        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);const cmykAutoBtn=document.getElementById('cmykAutoBtn');const isAutoActive=cmykAutoBtn&&cmykAutoBtn.classList.contains('active');if(clearConfirm){if(isAutoActive){const channels=['cyan','magenta','yellow','black'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){const cName=ch==='black'?'DENSITY':ch.toUpperCase();addToHistory(`${cName}: ${oldVal} → 0`,ch,oldVal,0);}});cmykAutoBtn.classList.remove('active');console.log('🔴 CMYK AUTO: Cleared all values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}if(isAutoActive){cmykAutoBtn.classList.remove('active');console.log('🔴 CMYK AUTO: Turned off due to manual value entry');}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
+        function editCMYKCounter(type){haptic();const currentValue=state.settings[type];const displayName=type==='black'?'DENSITY':type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const linkBtn=document.getElementById('linkBtn');const isLinkActive=linkBtn&&linkBtn.classList.contains('active');const isCMYChannel=(type==='cyan'||type==='magenta'||type==='yellow');if(isLinkActive&&isCMYChannel){const channels=['cyan','magenta','yellow'];channels.forEach(ch=>{const oldVal=state.settings[ch];state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});linkBtn.classList.remove('active');const img=linkBtn.querySelector('img');img.src='Default_Unlinked.svg';state.cmykLinked=false;console.log('🔓 LINK: Cleared all CMY values and turned off LINK');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateCMYKIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
 
         function frameCounterOptions(){haptic();if(confirm('View all photos?\n\n(Cancel to remove current photo)')){toggleContactSheetView();}else if(confirm('Remove current photo?')){removeCurrentPhoto();}}
 
@@ -5684,7 +5813,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);deferredRender();alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
 
-        function updateUIFromSettings(){const s=state.settings;const container='photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();}
+        function updateUIFromSettings(){const s=state.settings;const container='photoProfiles';document.querySelectorAll(`#${container} .preset-btn`).forEach(btn=>{const profileMatch=btn.getAttribute('onclick').match(/setProfile\('(\w+)'\)/);if(profileMatch){const profile=profileMatch[1];btn.classList.toggle('active',profile===s.profile);}});const filmBorderBtn=document.getElementById('filmBorderBtn');if(filmBorderBtn){filmBorderBtn.classList.toggle('active',s.filmBorder);}document.getElementById('bloomValueBig').querySelector('.slider-value-number').textContent=s.bloom;document.getElementById('grainValueBig').querySelector('.slider-value-number').textContent=s.grain;document.getElementById('cyanValue').querySelector('.cmyk-value-number').textContent=s.cyan;document.getElementById('magentaValue').querySelector('.cmyk-value-number').textContent=s.magenta;document.getElementById('yellowValue').querySelector('.cmyk-value-number').textContent=s.yellow;document.getElementById('blackValue').querySelector('.cmyk-value-number').textContent=s.black;document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent=s.brightness||0;document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent=s.contrast||0;document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent=s.shadows||0;document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent=s.highlights||0;updateCMYKIndicator();updateBrightnessIndicator();updateIntensityIndicator();}
 
         async function copyToClipboard(){haptic();closeMoreDialog();try{const settingsText=JSON.stringify(state.settings,null,2);await navigator.clipboard.writeText(settingsText);alert('Settings copied to clipboard!');}catch(err){alert('Could not copy settings to clipboard.');}}
 
@@ -5777,7 +5906,12 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
                     cyan: 0,
                     magenta: 0,
                     yellow: 0,
-                    black: 0
+                    black: 0,
+                    brightness: 0,
+                    contrast: 0,
+                    shadows: 0,
+                    highlights: 0,
+                    filmBorder: false
                 };
 
                 try {
@@ -5888,7 +6022,7 @@ ctx.drawImage(offscreenCanvas,0,0);if(!gesturesSetup){setupCanvasGestures(canvas
 
         async function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;setStatus('processing');const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';await populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();setStatus('ready');}
 
-        async function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';for(let idx=0;idx<state.photos.length;idx++){const p=state.photos[idx];const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(!p.isContactSheet){const sourceImg=p.image;const maxDim=300;const scale=Math.min(maxDim/sourceImg.width,maxDim/sourceImg.height);const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});tempCanvas.width=Math.floor(sourceImg.width*scale);tempCanvas.height=Math.floor(sourceImg.height*scale);await preloadLUTForProfile(p.settings.profile);ctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);applyBrightness(imgData.data,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);ctx.putImageData(imgData2,0,0);const img=document.createElement('img');img.src=tempCanvas.toDataURL('image/jpeg',0.85);item.appendChild(img);}else{const img=document.createElement('img');img.src=p.image.src||p.image;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(idx+1).padStart(2,'0');filenameText.textContent=`Frontier-${profileText}_${frameNum}`;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);};}
+        async function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';for(let idx=0;idx<state.photos.length;idx++){const p=state.photos[idx];const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(!p.isContactSheet){const sourceImg=p.image;const maxDim=200;const scale=Math.min(maxDim/sourceImg.width,maxDim/sourceImg.height);const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});tempCanvas.width=Math.floor(sourceImg.width*scale);tempCanvas.height=Math.floor(sourceImg.height*scale);await preloadLUTForProfile(p.settings.profile);ctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);ctx.putImageData(imgData2,0,0);if(p.settings.filmBorder){await applyFilmBorder(tempCanvas,ctx,p.settings,{...p,frameNumber:idx+1,uploadTime:p.uploadTime||new Date()});}const img=document.createElement('img');img.src=tempCanvas.toDataURL('image/jpeg',0.8);item.appendChild(img);}else{const img=document.createElement('img');img.src=p.image.src||p.image;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(idx+1).padStart(2,'0');filenameText.textContent=`Frontier-${profileText}_${frameNum}`;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);};}
 
         function handleContactSheetItemClick(idx){haptic();if(state.contactSheet.selectMode){togglePhotoSelection(idx);}else{selectPhotoFromSheet(idx);}}
 

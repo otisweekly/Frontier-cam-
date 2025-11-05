@@ -1,0 +1,48 @@
+{
+  "version": "3.0",
+  "approach": "Hybrid - Base film emulation LUT + Frontier scan characteristics",
+  "base_luts": {
+    "SUPRA_v3": {
+      "base": "ClassicPrint 16mm DWG LUT v3 800T.cube",
+      "base_description": "High-speed tungsten film stock with character",
+      "refinements": "534 daylight scan characteristics (~5213K)",
+      "characteristics": [
+        "800T film emulation foundation",
+        "Clean highlight rendering (from scans)",
+        "Subtle blue lift in shadows (scan analysis)",
+        "Natural daylight color balance",
+        "Film grain-friendly latitude"
+      ]
+    },
+    "CHROME_v3": {
+      "base": "ClassicPrint 16mm DWG LUT v3 Technicolor.cube",
+      "base_description": "Classic Hollywood cinema look",
+      "refinements": "38 tungsten scan characteristics (~3927K)",
+      "characteristics": [
+        "Technicolor film emulation foundation",
+        "Warm amber shift (from scans)",
+        "Golden midtones (scan analysis)",
+        "Gentle warm glow in highlights",
+        "Warm shadow detail (no crushed blacks)"
+      ]
+    }
+  },
+  "technical_process": [
+    "1. Load proven film emulation base LUT (800T or Technicolor)",
+    "2. Apply base LUT transformation to get film character",
+    "3. Apply scan-based color refinements in sRGB space",
+    "4. Output combined transformation as new LUT",
+    "5. All color math done in linear RGB with gamma correction"
+  ],
+  "scan_analysis_used": {
+    "daylight_scans": 534,
+    "daylight_avg_temp": "5213K",
+    "tungsten_scans": 38,
+    "tungsten_avg_temp": "3927K",
+    "source": "Frontier scanner JPEG scans"
+  },
+  "files_generated": [
+    "film-luts/Generated/SUPRA_v3.cube",
+    "film-luts/Generated/CHROME_v3.cube"
+  ]
+}
