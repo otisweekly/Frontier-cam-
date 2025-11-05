@@ -2492,15 +2492,20 @@ offscreenCtx.imageSmoothingEnabled=true;
 offscreenCtx.imageSmoothingQuality='high';
 offscreenCtx.drawImage(sourceImg,0,0);
 await loadPhotoSettings(state.currentIndex);
-applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height);
+applyEffects(offscreenCtx,offscreenCanvas.width,offscreenCanvas.height,!state.settings.filmBorder);
 
-// Apply film border if enabled (before final canvas copy)
+// Apply film border if enabled (before grain, so grain affects border too)
 if(state.settings.filmBorder){
     await applyFilmBorder(offscreenCanvas,offscreenCtx,state.settings,{
         ...p,
         frameNumber:state.currentIndex+1,
         uploadTime:p.uploadTime||new Date()
     });
+
+    // Apply grain AFTER border so it affects both photo and border
+    const imgData2=offscreenCtx.getImageData(0,0,offscreenCanvas.width,offscreenCanvas.height),d2=imgData2.data;
+    applyGrain(d2,state.settings.grain);
+    offscreenCtx.putImageData(imgData2,0,0);
 }
 
 // Now copy the fully processed image to visible canvas in one operation
@@ -2515,7 +2520,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         }
 
 
-        function applyEffects(ctx,w,h){
+        function applyEffects(ctx,w,h,skipGrain=false){
             // Step 1: Apply LUT-based film emulation (sync using preloaded LUT)
             const imgData=ctx.getImageData(0,0,w,h);
             applyProfile(imgData, state.settings.profile);
@@ -2530,10 +2535,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             // Step 3: Apply bloom
             if(state.settings.bloom!==0)applyBloom(ctx,w,h,state.settings.bloom);
 
-            // Step 4: Apply grain
-            const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;
-            applyGrain(d2,state.settings.grain);
-            ctx.putImageData(imgData2,0,0);
+            // Step 4: Apply grain (skip if border is enabled - grain will be applied after border merge)
+            if(!skipGrain){
+                const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;
+                applyGrain(d2,state.settings.grain);
+                ctx.putImageData(imgData2,0,0);
+            }
         }
 
         function applyPixelation(ctx,w,h){const pixelSize=8;const tempCanvas=document.createElement('canvas');const tempCtx=tempCanvas.getContext('2d',{alpha:false});const smallW=Math.floor(w/pixelSize);const smallH=Math.floor(h/pixelSize);tempCanvas.width=smallW;tempCanvas.height=smallH;tempCtx.imageSmoothingEnabled=true;tempCtx.imageSmoothingQuality='low';tempCtx.drawImage(ctx.canvas,0,0,w,h,0,0,smallW,smallH);ctx.imageSmoothingEnabled=false;ctx.drawImage(tempCanvas,0,0,smallW,smallH,0,0,w,h);ctx.imageSmoothingEnabled=true;}
@@ -5067,13 +5074,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const exportCtx = exportCanvas.getContext('2d', {alpha: false});
             exportCtx.drawImage(currentCanvas, 0, 0);
 
-            // Apply film border if enabled
+            // Apply film border if enabled (grain will be applied after to affect both photo and border)
             if (state.settings.filmBorder) {
                 updateUploadProgress(50, 'Adding film border...');
                 await applyFilmBorder(exportCanvas, exportCtx, state.settings, {
                     ...p,
                     frameNumber: state.currentIndex + 1
                 });
+
+                // Apply grain AFTER border so it affects both photo and border
+                const imgData2=exportCtx.getImageData(0,0,exportCanvas.width,exportCanvas.height),d2=imgData2.data;
+                applyGrain(d2,state.settings.grain);
+                exportCtx.putImageData(imgData2,0,0);
             }
 
             exportCanvas.toBlob(async b=>{
