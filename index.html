@@ -6885,8 +6885,7 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
 
         function copySettings(){const s=state.settings;const text=JSON.stringify(s,null,2);navigator.clipboard.writeText(text).then(()=>alert('Settings copied to clipboard!'));console.log('Current settings:',s);}
 
-        // Keyboard Shortcuts System
-        let intensityAdjustMode = false;
+        // Keyboard Shortcuts System (Simplified)
 
         // Helper function to visually trigger button press
         function triggerButtonPress(selector) {
@@ -6898,24 +6897,20 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
         }
 
         document.addEventListener('keydown', (e) => {
-            console.log('Key pressed:', e.key, 'Meta:', e.metaKey, 'Ctrl:', e.ctrlKey, 'Shift:', e.shiftKey);
-
             // Don't trigger shortcuts if user is typing in an input field
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
             // Only allow shortcuts when edit section is active (photos are loaded)
             const editSection = document.getElementById('editSection');
             if (!editSection || !editSection.classList.contains('active')) {
-                console.log('Edit section not active, shortcuts disabled');
                 return;
             }
 
             const cmd = e.metaKey || e.ctrlKey;
-            const shift = e.shiftKey;
             const key = e.key.toLowerCase();
 
-            // Arrow keys - Navigate photos (when not in intensity adjust mode)
-            if (key === 'arrowright' && !intensityAdjustMode) {
+            // Arrow keys - Navigate photos
+            if (key === 'arrowright') {
                 e.preventDefault();
                 const btn = document.getElementById('nextBtn');
                 if (btn) {
@@ -6924,7 +6919,7 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 nextPhoto();
                 return;
             }
-            if (key === 'arrowleft' && !intensityAdjustMode) {
+            if (key === 'arrowleft') {
                 e.preventDefault();
                 const btn = document.getElementById('prevBtn');
                 if (btn) {
@@ -6934,80 +6929,9 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 return;
             }
 
-            // Intensity adjust mode with arrows
-            if (intensityAdjustMode) {
-                if (key === 'arrowup' || key === 'arrowright') {
-                    e.preventDefault();
-                    adjustIntensity(0.01);
-                    return;
-                }
-                if (key === 'arrowdown' || key === 'arrowleft') {
-                    e.preventDefault();
-                    adjustIntensity(-0.01);
-                    return;
-                }
-                if (key === 'escape') {
-                    e.preventDefault();
-                    intensityAdjustMode = false;
-                    console.log('Intensity adjust mode: OFF');
-                    return;
-                }
-            }
-
-            // Cmd+H - Hold settings
-            if (cmd && !shift && key === 'h') {
-                e.preventDefault();
-                console.log('Cmd+H pressed - toggle hold');
-                const btn = document.querySelector('[onclick="toggleHold()"]');
-                if (btn) {
-                    btn.click();
-                }
-                return;
-            }
-
-            // Cmd+Shift+H - Remove hold
-            if (cmd && shift && key === 'h') {
-                e.preventDefault();
-                console.log('Cmd+Shift+H pressed - remove hold');
-                const btn = document.querySelector('[onclick="toggleHold()"]');
-                if (btn && state.holdSettings) {
-                    btn.click();
-                }
-                return;
-            }
-
-            // - key: Decrease grain
-            if (key === '-' || key === '_') {
-                e.preventDefault();
-                adjustGrain(-0.05);
-                return;
-            }
-
-            // + or = key: Increase grain
-            if (key === '+' || key === '=') {
-                e.preventDefault();
-                adjustGrain(0.05);
-                return;
-            }
-
-            // 1 key: Decrease bloom
-            if (key === '1') {
-                e.preventDefault();
-                adjustBloom(-0.05);
-                return;
-            }
-
-            // 2 key: Increase bloom
-            if (key === '2') {
-                e.preventDefault();
-                adjustBloom(0.05);
-                return;
-            }
-
             // S - Supra preset
             if (key === 's' && !cmd) {
                 e.preventDefault();
-                console.log('S pressed - supra preset');
                 const btn = document.querySelector('[onclick*="supra"]');
                 if (btn) {
                     btn.click();
@@ -7018,7 +6942,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // C - Chrome preset
             if (key === 'c' && !cmd) {
                 e.preventDefault();
-                console.log('C pressed - chrome preset');
                 const btn = document.querySelector('[onclick*="chrome"]');
                 if (btn) {
                     btn.click();
@@ -7029,7 +6952,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // X - XXX preset
             if (key === 'x') {
                 e.preventDefault();
-                console.log('X pressed - xxx preset');
                 const btn = document.querySelector('[onclick*="xxx"]');
                 if (btn) {
                     btn.click();
@@ -7037,97 +6959,13 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 return;
             }
 
-            // Control key - Open contact sheet modal
-            if (key === 'control') {
-                e.preventDefault();
-                if (!document.getElementById('contactSheetView').classList.contains('active')) {
-                    toggleContactSheetView();
-                }
-                return;
-            }
-
-            // Cmd+S - Save multiple modal
-            if (cmd && key === 's') {
-                e.preventDefault();
-                toggleSaveMultiple();
-                return;
-            }
-
-            // I - Toggle intensity adjust mode
-            if (key === 'i') {
-                e.preventDefault();
-                intensityAdjustMode = !intensityAdjustMode;
-                console.log('Intensity adjust mode:', intensityAdjustMode ? 'ON (use arrows)' : 'OFF');
-                return;
-            }
-
             // B - Toggle borders
             if (key === 'b') {
                 e.preventDefault();
-                console.log('B pressed - toggling borders');
                 const btn = document.querySelector('[onclick="toggleFilmBorder()"]');
                 if (btn) {
                     btn.click();
                 }
-                return;
-            }
-
-            // Escape - Close modals
-            if (key === 'escape') {
-                e.preventDefault();
-                const contactSheet = document.getElementById('contactSheetView');
-                if (contactSheet.classList.contains('active')) {
-                    toggleContactSheetView();
-                }
-                return;
-            }
-
-            // Cmd+N - New order
-            if (cmd && key === 'n') {
-                e.preventDefault();
-                startNewOrder();
-                return;
-            }
-
-            // Cmd+O or Cmd+U - Upload photos
-            if (cmd && (key === 'o' || key === 'u')) {
-                e.preventDefault();
-                document.getElementById('fileInput').click();
-                return;
-            }
-
-            // P - Cycle profiles
-            if (key === 'p') {
-                e.preventDefault();
-                cycleProfile();
-                return;
-            }
-
-            // Delete/Backspace - Delete current photo
-            if (key === 'delete' || key === 'backspace') {
-                e.preventDefault();
-                deleteCurrentPhoto();
-                return;
-            }
-
-            // Home - First photo
-            if (key === 'home') {
-                e.preventDefault();
-                jumpToPhoto(0);
-                return;
-            }
-
-            // End - Last photo
-            if (key === 'end') {
-                e.preventDefault();
-                jumpToPhoto(state.photos.length - 1);
-                return;
-            }
-
-            // ? - Show keyboard shortcuts help
-            if (key === '?' && shift) {
-                e.preventDefault();
-                showKeyboardShortcuts();
                 return;
             }
         });
