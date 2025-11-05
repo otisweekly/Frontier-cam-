@@ -435,6 +435,33 @@
         body.standalone-mode .history-done-btn { padding-bottom:7px !important; }
         body.standalone-mode .contact-sheet-close { bottom:10px !important; }
         body.standalone-mode .contact-sheet-grid { padding-bottom:45px !important; }
+        /* Interactive Guide */
+        #guideOverlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:flex-end; animation:fadeIn 0.3s ease; }
+        #guideOverlay.active { display:flex; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        #guideModal { background:#6A6A6A; width:100%; max-width:600px; max-height:70vh; border-radius:12px 12px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; animation:slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+
+        .guide-header { background:#000; padding:20px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center; }
+        .guide-title { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#fff; }
+        .guide-close { background:transparent; border:none; color:#fff; font-size:32px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center; }
+
+        .guide-content { padding:24px; overflow-y:auto; flex:1; }
+        .guide-step { display:none; }
+        .guide-step.active { display:block; animation:fadeIn 0.2s ease; }
+        .guide-step h2 { font-family:'PP Neue Bit',monospace; font-size:20px; margin:0 0 16px 0; color:#000; }
+        .guide-step p { font-family:'PP Fuji',sans-serif; font-size:16px; line-height:1.6; margin:0 0 12px 0; color:#000; }
+        .guide-step ul { font-family:'PP Fuji',sans-serif; font-size:16px; line-height:1.8; margin:12px 0; padding-left:24px; color:#000; }
+        .guide-step ul li { margin-bottom:8px; }
+
+        .guide-footer { background:#4A4A4A; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .guide-progress { font-family:'PP Neue Bit',monospace; font-size:14px; color:#fff; }
+        .guide-nav { display:flex; gap:12px; }
+        .guide-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; padding:10px 20px; }
+        .guide-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
+        .guide-btn.primary { background:#3897AF; color:#fff; }
+        .guide-btn:disabled { opacity:0.5; cursor:not-allowed; }
     </style>
 </head>
 <body>
@@ -597,6 +624,8 @@
             <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div id="moreDialog">
+            <button class="more-dialog-btn" onclick="startNewOrder()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">NEW ORDER</button>
+            <button class="more-dialog-btn" onclick="openGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
             <button class="more-dialog-btn" onclick="copyToClipboard()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">COPY</button>
             <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
             <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
@@ -7214,6 +7243,142 @@ Actions:
             `.trim();
             alert(shortcuts);
         }
+
+        // Interactive Guide System
+        const guideSteps = [
+            {
+                title: "Welcome to Frontier",
+                content: `
+                    <p>This guide will help you get started with the Frontier Digital Processor.</p>
+                    <p>Process your photos like a professional film lab technician with authentic Frontier scanner workflows.</p>
+                    <p>Let's walk through the key features!</p>
+                `
+            },
+            {
+                title: "Upload & Navigation",
+                content: `
+                    <p>Start by uploading your photos using the "ADD PHOTOS" button.</p>
+                    <ul>
+                        <li><strong>Arrow buttons:</strong> Navigate between photos</li>
+                        <li><strong>Keyboard arrows (←/→):</strong> Quick photo navigation</li>
+                        <li><strong>Swipe:</strong> Swipe left/right on mobile</li>
+                        <li><strong>Gallery icon:</strong> Top-left hamburger menu for options</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Film Profiles & Presets",
+                content: `
+                    <p>Choose your film look with authentic color profiles:</p>
+                    <ul>
+                        <li><strong>SUPRA (S key):</strong> Fujifilm Superia - vibrant consumer film</li>
+                        <li><strong>CHROME (C key):</strong> Chrome/slide film - saturated colors</li>
+                        <li><strong>XXX (X key):</strong> Experimental cross-processed look</li>
+                        <li><strong>Intensity slider:</strong> Control how strong the effect is</li>
+                    </ul>
+                    <p>Use the keyboard shortcuts for quick preset switching!</p>
+                `
+            },
+            {
+                title: "Adjustments & Effects",
+                content: `
+                    <p>Fine-tune your photos with professional controls:</p>
+                    <ul>
+                        <li><strong>CMYK:</strong> Advanced color correction (cyan, magenta, yellow, black)</li>
+                        <li><strong>Brightness:</strong> Exposure, contrast, shadows, highlights</li>
+                        <li><strong>Bloom:</strong> Halation glow effect (1/2 keys)</li>
+                        <li><strong>Grain:</strong> Film grain texture (+/- keys)</li>
+                        <li><strong>Borders (B key):</strong> Authentic film frame borders with metadata</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Export & Save",
+                content: `
+                    <p>Save your processed photos:</p>
+                    <ul>
+                        <li><strong>DOWNLOAD button:</strong> Choose save options</li>
+                        <li><strong>Save Current:</strong> Export just this photo</li>
+                        <li><strong>Save All:</strong> Export all photos with contact sheet</li>
+                        <li><strong>Contact Sheet:</strong> View and select multiple photos</li>
+                        <li><strong>Hold settings (Cmd+H):</strong> Apply same edits to next photo</li>
+                    </ul>
+                    <p>You're ready to start processing! Enjoy the Frontier experience.</p>
+                `
+            }
+        ];
+
+        let currentGuideStep = 0;
+
+        function openGuide() {
+            haptic();
+            closeMoreDialog();
+            currentGuideStep = 0;
+            renderGuideStep();
+            document.getElementById('guideOverlay').classList.add('active');
+        }
+
+        function closeGuide() {
+            haptic();
+            document.getElementById('guideOverlay').classList.remove('active');
+        }
+
+        function renderGuideStep() {
+            const content = document.getElementById('guideContent');
+            const progress = document.getElementById('guideProgress');
+            const backBtn = document.getElementById('guideBack');
+            const nextBtn = document.getElementById('guideNext');
+
+            const step = guideSteps[currentGuideStep];
+
+            content.innerHTML = `
+                <div class="guide-step active">
+                    <h2>${step.title}</h2>
+                    ${step.content}
+                </div>
+            `;
+
+            progress.textContent = `${currentGuideStep + 1} / ${guideSteps.length}`;
+
+            backBtn.disabled = currentGuideStep === 0;
+            nextBtn.textContent = currentGuideStep === guideSteps.length - 1 ? 'DONE' : 'NEXT';
+        }
+
+        function nextGuideStep() {
+            haptic();
+            if (currentGuideStep === guideSteps.length - 1) {
+                closeGuide();
+            } else {
+                currentGuideStep++;
+                renderGuideStep();
+            }
+        }
+
+        function prevGuideStep() {
+            haptic();
+            if (currentGuideStep > 0) {
+                currentGuideStep--;
+                renderGuideStep();
+            }
+        }
     </script>
+    <!-- Interactive Guide -->
+    <div id="guideOverlay" onclick="if(event.target===this) closeGuide()">
+        <div id="guideModal">
+            <div class="guide-header">
+                <div class="guide-title">GUIDE</div>
+                <button class="guide-close" onclick="closeGuide()">&times;</button>
+            </div>
+            <div class="guide-content" id="guideContent"></div>
+            <div class="guide-footer">
+                <div class="guide-progress" id="guideProgress">1 / 5</div>
+                <div class="guide-nav">
+                    <button class="guide-btn" id="guideBack" onclick="prevGuideStep()">BACK</button>
+                    <button class="guide-btn primary" id="guideNext" onclick="nextGuideStep()">NEXT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
