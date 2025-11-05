@@ -502,7 +502,7 @@
             <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
-            <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu()" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
+            <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu(event)" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="toggleDownloadOptions()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
         <div id="downloadProgress">
@@ -719,12 +719,14 @@
     <script>
         const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
 
-        // Film border cache - keyed by "borderType-preset"
+        // Film border cache - keyed by "borderType-preset-version"
+        // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
+        const BORDER_VERSION = 2;
         let borderCache = {};
 
         // Load film border PNG based on aspect ratio and preset
         async function loadFilmBorder(borderType, preset) {
-            const cacheKey = `${borderType}-${preset}`;
+            const cacheKey = `${borderType}-${preset}-v${BORDER_VERSION}`;
             if (borderCache[cacheKey]) {
                 return borderCache[cacheKey];
             }
@@ -799,7 +801,7 @@
             console.log(`🔄 Preloading borders for preset: ${preset}`);
 
             borderTypes.forEach(borderType => {
-                const cacheKey = `${borderType}-${preset}`;
+                const cacheKey = `${borderType}-${preset}-v${BORDER_VERSION}`;
 
                 // Skip if already cached
                 if (borderCache[cacheKey]) {
@@ -6055,7 +6057,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);deferredRender();updateNavButtons();}
 
-        function toggleExportMenu(){haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
+        function toggleExportMenu(e){if(e){e.stopPropagation();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
 
         function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
 
