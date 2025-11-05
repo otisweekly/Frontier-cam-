@@ -386,9 +386,9 @@
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
-        .contact-sheet-header { position:sticky; top:0; background:#000; padding:20px 15px 15px; display:flex; flex-direction:column; gap:15px; border-bottom:2px solid #333; z-index:10; align-items:center; }
-        .contact-sheet-header-top { display:flex; justify-content:center; align-items:center; width:100%; position:relative; }
-        .contact-sheet-logo { width:200px; height:auto; }
+        .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px 15px 10px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid #333; z-index:10; align-items:flex-start; }
+        .contact-sheet-header-top { display:flex; justify-content:flex-start; align-items:center; width:100%; position:relative; }
+        .contact-sheet-logo { width:160px; height:auto; }
         .contact-sheet-close { position:fixed; top:15px; right:15px; width:36px; height:36px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
         .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
@@ -413,11 +413,9 @@
         .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.2); }
         .contact-sheet-edit-btn svg { width:14px; height:14px; }
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
-        .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:center; font-weight:700; padding:10px 0; }
+        .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:left; font-weight:700; padding:0; }
         .contact-sheet-selection-info.has-selection { color:#3897AF; }
-        .contact-sheet-footer { position:sticky; bottom:0; background:#000; padding:15px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
-        .contact-sheet-footer .contact-sheet-btn { background:#B3B3B3; color:#000; width:100%; max-width:400px; }
-        .contact-sheet-footer .contact-sheet-btn.has-selection { background:#3897AF; color:#fff; }
+        .contact-sheet-footer { position:fixed; bottom:0; left:0; right:0; background:#000; padding:15px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
 
         @media (max-width:360px) {
             .action-btn { font-size:9px; padding:6px 10px; }
@@ -701,8 +699,10 @@
                 return borderCache[cacheKey];
             }
 
-            // Map preset names to lowercase for file naming
-            const presetName = preset === 'none' ? 'supra' : preset.toLowerCase();
+            // Map preset names for file naming
+            let presetName = preset === 'none' ? 'supra' : preset.toLowerCase();
+            // XXX preset uses capital letters in filename
+            if (presetName === 'xxx') presetName = 'XXX';
 
             // Determine border path based on type
             let borderPath;
@@ -6113,12 +6113,14 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 info.textContent='SELECT PHOTOS';
                 info.classList.remove('has-selection');
                 saveBtn.textContent='SAVE';
-                saveBtn.classList.remove('has-selection');
+                saveBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
+                saveBtn.style.color='#fff';
             }else{
                 info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;
                 info.classList.add('has-selection');
                 saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
-                saveBtn.classList.add('has-selection');
+                saveBtn.style.background='#3897AF';
+                saveBtn.style.color='#fff';
             }
         }
 
