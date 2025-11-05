@@ -413,7 +413,11 @@
         .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.2); }
         .contact-sheet-edit-btn svg { width:14px; height:14px; }
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
-        .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#3897AF; text-align:center; font-weight:700; }
+        .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:center; font-weight:700; padding:10px 0; }
+        .contact-sheet-selection-info.has-selection { color:#3897AF; }
+        .contact-sheet-footer { position:sticky; bottom:0; background:#000; padding:15px; border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
+        .contact-sheet-footer .contact-sheet-btn { background:#B3B3B3; color:#000; width:100%; max-width:400px; }
+        .contact-sheet-footer .contact-sheet-btn.has-selection { background:#3897AF; color:#fff; }
 
         @media (max-width:360px) {
             .action-btn { font-size:9px; padding:6px 10px; }
@@ -670,16 +674,12 @@
                 <img src="logo.svg" alt="Frontier" class="contact-sheet-logo">
                 <button class="contact-sheet-close" onclick="toggleContactSheetView()"><img src="Close.svg" alt="Close"></button>
             </div>
-            <div class="contact-sheet-actions">
-                <button class="contact-sheet-btn add-btn" onclick="addMorePhotos()">+ PHOTO</button>
-                <button class="contact-sheet-btn" id="selectBtn" onclick="toggleSelectMode()">SELECT</button>
-                <button class="contact-sheet-btn" id="deleteBtn" onclick="deleteSelectedPhotos()" style="display:none;">DELETE</button>
-                <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SAVE ALL</button>
-            </div>
-            <div class="contact-sheet-title">CONTACT SHEET</div>
-            <div class="contact-sheet-selection-info" id="selectionInfo" style="display:none;"></div>
+            <div class="contact-sheet-selection-info" id="selectionInfo">SELECT PHOTOS</div>
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
+        <div class="contact-sheet-footer">
+            <button class="contact-sheet-btn" id="saveBtn" onclick="shareContactSheet()">SAVE</button>
+        </div>
     </div>
     <input type="file" id="addMoreInput" accept="image/*" multiple style="display:none;">
 
@@ -721,8 +721,8 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = () => {
-                    // Downsize border to max 2000px on longest side for performance
-                    const maxDimension = 2000;
+                    // Downsize border to max 1200px on longest side for instant performance
+                    const maxDimension = 1200;
                     const scale = Math.min(maxDimension / Math.max(img.width, img.height), 1);
 
                     if (scale < 1) {
@@ -6049,15 +6049,16 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 if(galleryIcon)galleryIcon.classList.remove('active');
                 state.contactSheet.selectMode=false;
                 state.contactSheet.selected=[];
-                document.getElementById('selectBtn').classList.remove('select-mode');
-                document.getElementById('selectionInfo').style.display='none';
-                document.getElementById('deleteBtn').style.display='none';
                 setStatus('ready');
             }else{
                 // Show view immediately
                 view.classList.add('active');
                 if(galleryIcon)galleryIcon.classList.add('active');
+                // Auto-enable select mode
+                state.contactSheet.selectMode=true;
+                state.contactSheet.selected=[];
                 await populateContactSheet();
+                updateSelectionInfo();
                 setStatus('ready');
             }
         }
@@ -6088,21 +6089,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         function updateSelectionInfo(){
             const count=state.contactSheet.selected.length;
             const info=document.getElementById('selectionInfo');
-            const deleteBtn=document.getElementById('deleteBtn');
             const saveBtn=document.getElementById('saveBtn');
 
             if(count===0){
-                info.textContent='SELECT UP TO 5 PHOTOS';
-                deleteBtn.style.display='none';
-                saveBtn.textContent='SAVE ALL';
-                saveBtn.style.background='#B3B3B3';
-                saveBtn.style.color='#000';
+                info.textContent='SELECT PHOTOS';
+                info.classList.remove('has-selection');
+                saveBtn.textContent='SAVE';
+                saveBtn.classList.remove('has-selection');
             }else{
                 info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;
-                deleteBtn.style.display='block';
+                info.classList.add('has-selection');
                 saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
-                saveBtn.style.background='#3897AF';
-                saveBtn.style.color='#fff';
+                saveBtn.classList.add('has-selection');
             }
         }
 
