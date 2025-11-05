@@ -4762,6 +4762,15 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 drawGifFrame();
                 state.gifPreviewInterval=setInterval(drawGifFrame,400);
             },100); // End setTimeout - defer heavy processing
+
+            // Update "SAVE ALL" button text based on photo count (second button)
+            const downloadButtons = document.querySelectorAll('.download-card-btn');
+            const saveAllBtn = downloadButtons[1]; // Second button is SAVE ALL
+            if (saveAllBtn && photoCount > 5) {
+                saveAllBtn.textContent = 'SAVE MULTIPLE';
+            } else if (saveAllBtn) {
+                saveAllBtn.textContent = 'SAVE ALL';
+            }
         }
 
         function previewInCanvas(type){
@@ -5159,6 +5168,17 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 const photoCount=state.photos.filter(p=>!p.isContactSheet).length;
                 if(photoCount===0){
                     alert('No photos to export');
+                    return;
+                }
+
+                // If more than 5 photos, open contact sheet in select mode
+                if(photoCount > 5){
+                    closeDownloadOptions();
+                    await toggleContactSheetView();
+                    // Enable select mode automatically
+                    if(!state.contactSheet.selectMode){
+                        toggleSelectMode();
+                    }
                     return;
                 }
 
@@ -6010,13 +6030,17 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const saveBtn=document.getElementById('saveBtn');
 
             if(count===0){
-                info.textContent='TAP PHOTOS TO SELECT';
+                info.textContent='SELECT UP TO 5 PHOTOS';
                 deleteBtn.style.display='none';
                 saveBtn.textContent='SAVE ALL';
+                saveBtn.style.background='#B3B3B3';
+                saveBtn.style.color='#000';
             }else{
                 info.textContent=`${count} PHOTO${count===1?'':'S'} SELECTED`;
                 deleteBtn.style.display='block';
                 saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
+                saveBtn.style.background='#3897AF';
+                saveBtn.style.color='#fff';
             }
         }
 
@@ -6026,7 +6050,23 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function handleContactSheetItemClick(idx){haptic();if(state.contactSheet.selectMode){togglePhotoSelection(idx);}else{selectPhotoFromSheet(idx);}}
 
-        async function togglePhotoSelection(idx){const selectedIndex=state.contactSheet.selected.indexOf(idx);if(selectedIndex>-1){state.contactSheet.selected.splice(selectedIndex,1);}else{state.contactSheet.selected.push(idx);}await populateContactSheet();updateSelectionInfo();}
+        async function togglePhotoSelection(idx){
+            const selectedIndex=state.contactSheet.selected.indexOf(idx);
+            if(selectedIndex>-1){
+                // Deselect
+                state.contactSheet.selected.splice(selectedIndex,1);
+            }else{
+                // Check if already at 5 photo limit
+                if(state.contactSheet.selected.length >= 5){
+                    alert('You can select up to 5 photos maximum.\n\nContact sheet will be included automatically.');
+                    return;
+                }
+                // Select
+                state.contactSheet.selected.push(idx);
+            }
+            await populateContactSheet();
+            updateSelectionInfo();
+        }
 
         async function editPhotoName(idx){haptic();const p=state.photos[idx];const currentName=p.displayName||p.name;const newName=prompt('Edit filename:',currentName);if(newName&&newName.trim()!==''&&newName!==currentName){state.photos[idx].displayName=newName.trim();await populateContactSheet();}}
 
@@ -6053,7 +6093,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             updateNavButtons();
         }
 
-        function generateContactSheetImage(){return new Promise(async resolve=>{const logoImg=new Image();logoImg.src='logo.svg';await new Promise(r=>logoImg.onload=r);const cols=6,rows=Math.ceil(state.photos.length/cols),thumbSize=400,margin=20,labelHeight=80,headerHeight=120,sheetW=cols*thumbSize+(cols+1)*margin,sheetH=rows*thumbSize+rows*labelHeight+(rows+1)*margin+headerHeight;const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoHeight=60;const logoWidth=logoHeight*2.5;sctx.drawImage(logoImg,margin,30,logoWidth,logoHeight);sctx.fillStyle='#3897AF';sctx.font='bold 32px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText('CONTACT SHEET',sheetW-margin,75);let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){if(photoIndex>=state.photos.length)break;const p=state.photos[photoIndex];const x=margin+col*(thumbSize+margin);const y=headerHeight+margin+row*(thumbSize+labelHeight+margin);const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=p.image.width;tempCanvas.height=p.image.height;tctx.drawImage(p.image,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize,drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.fillStyle='#1a1a1a';sctx.fillRect(x,y,thumbSize,thumbSize);sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#2a2a2a';sctx.fillRect(x,y+thumbSize,thumbSize,labelHeight);sctx.fillStyle='#3897AF';sctx.font='bold 28px "PP Neue Bit", monospace';sctx.textAlign='left';const frameNum=String(photoIndex+1).padStart(3,'0');sctx.fillText(frameNum,x+10,y+thumbSize+28);sctx.fillStyle='#666';sctx.font='bold 11px "PP Neue Bit", monospace';sctx.fillText('UPLOADS',x+10,y+thumbSize+43);sctx.fillStyle='#ccc';sctx.font='20px "PP Neue Bit", monospace';sctx.textAlign='left';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});sctx.fillText(`${date} ${time}`,x+10,y+thumbSize+68);const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';sctx.fillStyle='#999';sctx.font='16px "PP Neue Bit", monospace';sctx.textAlign='right';sctx.fillText(profileText,x+thumbSize-10,y+thumbSize+68);photoIndex++;}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.92);});}
+        function generateContactSheetImage(){return new Promise(async resolve=>{const exportWidth=3200;const sheetW=exportWidth;const sheetH=exportWidth*(5/4);const padding=24;const margin=60;const logoHeight=138;const labelHeight=72;const photoCount=state.photos.length;let cols=3;if(photoCount<=3)cols=3;else if(photoCount<=8)cols=4;else if(photoCount<=15)cols=5;else cols=6;const rows=Math.ceil(photoCount/cols);const availableGridWidth=sheetW-margin*2;const availableGridHeight=sheetH-margin*2-logoHeight-padding;const thumbSizeByWidth=Math.floor((availableGridWidth-padding*(cols-1))/cols);const availableHeightForThumbs=availableGridHeight-rows*labelHeight-(rows-1)*padding;const thumbSizeByHeight=Math.floor(availableHeightForThumbs/rows);const thumbSize=Math.min(thumbSizeByWidth,thumbSizeByHeight);const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoImg=new Image();logoImg.src='logo.svg';await new Promise(resolve=>{logoImg.onload=()=>{const actualAspect=logoImg.width/logoImg.height;const logoH=logoHeight-6;const logoW=logoH*actualAspect;sctx.drawImage(logoImg,margin+5,margin+5,logoW,logoH);resolve();};});let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){const x=margin+col*(thumbSize+padding);const y=margin+logoHeight+padding+row*(thumbSize+labelHeight+padding);if(photoIndex<photoCount){const p=state.photos[photoIndex];const sourceImg=p.image;const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=sourceImg.width;tempCanvas.height=sourceImg.height;tctx.drawImage(sourceImg,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);const aspectRatio=sourceImg.width/sourceImg.height;let drawW=thumbSize;let drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);sctx.fillStyle='#666';sctx.font='24px "PP Neue Bit", monospace';sctx.textAlign='center';const filename=(p.displayName||p.name).substring(0,30);const date=p.uploadTime?p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'}):'--/--/--';sctx.fillText(`${filename}`,x+thumbSize/2,y+thumbSize+32);sctx.fillText(`${date}`,x+thumbSize/2,y+thumbSize+60);photoIndex++;}}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.95);});}
 
         async function shareContactSheet(){
             try{
@@ -6078,6 +6118,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 const photoCount=indicesToExport.length;
                 if(photoCount===0){
                     alert('No photos to export');
+                    return;
+                }
+
+                // Enforce 5 photo limit (contact sheet is automatically included)
+                if(photoCount > 5){
+                    alert(`You can select up to 5 photos maximum.\n\nYou have ${photoCount} photos selected.\n\nContact sheet will be included automatically.`);
                     return;
                 }
 
@@ -6107,6 +6153,11 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 await new Promise(r=>setTimeout(r,100));
 
                 const files=[];
+
+                // Generate contact sheet first and add to files
+                updateUploadProgress(0,'Generating contact sheet...');
+                const contactSheetBlob = await generateContactSheetImage();
+                files.push(new File([contactSheetBlob],'Frontier_Contact_Sheet.jpg',{type:'image/jpeg'}));
 
                 for(let i=0;i<indicesToExport.length;i++){
                     const idx=indicesToExport[i];
@@ -6139,6 +6190,15 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     applyGrain(imgData2.data,p.settings.grain||0);
                     ctx.putImageData(imgData2,0,0);
 
+                    // Apply film border if enabled
+                    if(p.settings.filmBorder){
+                        await applyFilmBorder(tempCanvas,ctx,p.settings,{
+                            ...p,
+                            frameNumber:idx+1,
+                            uploadTime:p.uploadTime||new Date()
+                        });
+                    }
+
                     // No badge on exports - only visible in UI
 
                     const blob=await new Promise(resolve=>tempCanvas.toBlob(resolve,'image/jpeg',0.95));
@@ -6158,7 +6218,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 if(isMobile&&isIOS&&navigator.share&&navigator.canShare){
                     // iOS only: Use Share API to save to camera roll
                     console.log('[Contact Modal] Using iOS Share API');
-                    updateUploadProgress(100,`Ready to save ${files.length} images!`);
+                    updateUploadProgress(100,`Ready to save ${photoCount} photos + contact sheet!`);
 
                     // Keep progress bar visible
                     await new Promise(r=>setTimeout(r,800));
@@ -6196,7 +6256,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                         // Small delay between downloads to avoid browser blocking
                         await new Promise(resolve=>setTimeout(resolve,100));
                     }
-                    updateUploadProgress(100,`Downloaded ${files.length} images!`);
+                    updateUploadProgress(100,`Downloaded ${photoCount} photos + contact sheet!`);
                     await new Promise(resolve=>setTimeout(resolve,1500));
                 }
 
