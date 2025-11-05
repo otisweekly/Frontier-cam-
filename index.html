@@ -305,11 +305,11 @@
         .borders-btn img { filter:brightness(0); }
         .borders-btn.active img { filter:brightness(0) invert(1); }
         .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
-        .copy-paste-btn.holding { background:#FF8C00; color:#fff; }
+        .copy-paste-btn.holding { background:#8CBABB; color:#000; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn img { filter:brightness(0); }
-        .copy-paste-btn.holding img { filter:brightness(0) invert(1); }
+        .copy-paste-btn.holding img { filter:brightness(0); }
         #downloadBtn { font-size:20px; }
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -482,7 +482,7 @@
         .guide-step ul li { margin-bottom:8px; }
         .guide-step strong { font-weight:700; color:#fff; }
 
-        .guide-footer { background:#4A4A4A; padding:16px 24px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .guide-footer { background:#4A4A4A; padding:16px 24px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 60px); display:flex; justify-content:space-between; align-items:center; gap:16px; }
         .guide-progress { font-family:'PP Neue Bit',monospace; font-size:22px; color:#fff; }
         .guide-nav { display:flex; gap:12px; }
         .guide-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; padding:10px 20px; }

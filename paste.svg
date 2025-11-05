@@ -1,10 +1,9 @@
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M23.25 12.75H9.25V26.75H23.25V12.75Z" stroke="black" stroke-width="3"/>
-<path d="M9 23.7822L12.9404 19.875L20 26.875" stroke="black" stroke-width="3"/>
-<path d="M18 16.875V18.875" stroke="black" stroke-width="3"/>
-<path d="M10.8125 8.1875H15.8125" stroke="black" stroke-width="3"/>
-<path d="M22.8125 8.1875H17.8125" stroke="black" stroke-width="3"/>
-<path d="M24.8125 8.1875H27.8125V11.1875" stroke="black" stroke-width="3"/>
-<path d="M27.8125 18.1875V13.1875" stroke="black" stroke-width="3"/>
-<path d="M27.8125 25.1875V20.1875" stroke="black" stroke-width="3"/>
+<path d="M22 26.2667L25.3158 30L31.5 24.5" stroke="black" stroke-width="3"/>
+<path d="M8.1875 25.1875L8.1875 20.1875" stroke="black" stroke-width="3"/>
+<path d="M8.1875 13.1875L8.1875 18.1875" stroke="black" stroke-width="3"/>
+<path d="M8.1875 11.1875L8.1875 8.1875L11.1875 8.1875" stroke="black" stroke-width="3"/>
+<path d="M18.1875 8.1875L13.1875 8.1875" stroke="black" stroke-width="3"/>
+<path d="M25.1875 8.1875L20.1875 8.1875" stroke="black" stroke-width="3"/>
+<path d="M18.3846 27H13V13H27V22.6923" stroke="black" stroke-width="3"/>
 </svg>
