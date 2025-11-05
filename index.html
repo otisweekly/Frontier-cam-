@@ -445,17 +445,22 @@
         body.standalone-mode .history-done-btn { padding-bottom:7px !important; }
         body.standalone-mode .contact-sheet-close { bottom:10px !important; }
         body.standalone-mode .contact-sheet-grid { padding-bottom:45px !important; }
-        /* Interactive Guide */
-        #guideOverlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:flex-end; animation:fadeIn 0.3s ease; }
-        #guideOverlay.active { display:flex; }
+        /* Interactive Guide - Full Screen */
+        #guideOverlay { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:10000; animation:fadeIn 0.3s ease; }
+        #guideOverlay.active { display:block; }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-        #guideModal { background:#6A6A6A; width:100%; max-width:600px; max-height:70vh; border-radius:12px 12px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; animation:slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+        #guideModal { background:#6A6A6A; width:100%; height:100%; display:flex; flex-direction:column; }
 
-        .guide-header { background:#000; padding:20px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center; }
-        .guide-title { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#fff; }
-        .guide-close { background:transparent; border:none; color:#fff; font-size:32px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center; }
+        .guide-header { background:#000; padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #6A6A6A; }
+        .guide-logo { height:36px; width:auto; }
+        .guide-close { background:#D4CEC8; border:3px solid #fff; border-radius:4px; color:#000; font-size:24px; font-weight:700; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 0 #666, inset 0 1px 0 rgba(255,255,255,0.3); font-family:'PP Neue Bit',monospace; }
+        .guide-close:active { transform:translateY(3px); box-shadow:0 3px 0 #666, inset 0 2px 3px rgba(0,0,0,0.3); }
+
+        .guide-chapters { padding:24px; overflow-y:auto; flex:1; display:none; }
+        .guide-chapters.active { display:block; }
+        .guide-chapter-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:20px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; padding:16px; margin-bottom:16px; width:100%; text-align:left; display:block; }
+        .guide-chapter-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         .guide-content { padding:24px; overflow-y:auto; flex:1; }
         .guide-step { display:none; }
@@ -7183,14 +7188,34 @@ Actions:
             haptic();
             closeMoreDialog();
             closeNavDialog();
-            currentGuideStep = 0;
-            renderGuideStep();
+            // Show chapter list
+            document.getElementById('guideChapters').classList.add('active');
+            document.getElementById('guideContent').style.display = 'none';
+            document.querySelector('.guide-footer').style.display = 'none';
             document.getElementById('guideOverlay').classList.add('active');
         }
 
         function closeGuide() {
             haptic();
             document.getElementById('guideOverlay').classList.remove('active');
+        }
+
+        function openChapter(chapterIndex) {
+            haptic();
+            currentGuideStep = chapterIndex;
+            // Hide chapter list, show content
+            document.getElementById('guideChapters').classList.remove('active');
+            document.getElementById('guideContent').style.display = 'block';
+            document.querySelector('.guide-footer').style.display = 'flex';
+            renderGuideStep();
+        }
+
+        function backToChapters() {
+            haptic();
+            // Show chapter list, hide content
+            document.getElementById('guideChapters').classList.add('active');
+            document.getElementById('guideContent').style.display = 'none';
+            document.querySelector('.guide-footer').style.display = 'none';
         }
 
         function renderGuideStep() {
@@ -7233,14 +7258,26 @@ Actions:
         }
     </script>
     <!-- Interactive Guide -->
-    <div id="guideOverlay" onclick="if(event.target===this) closeGuide()">
+    <div id="guideOverlay">
         <div id="guideModal">
             <div class="guide-header">
-                <div class="guide-title">GUIDE</div>
-                <button class="guide-close" onclick="closeGuide()">&times;</button>
+                <img src="Logo.svg" alt="Frontier" class="guide-logo">
+                <button class="guide-close" onclick="closeGuide()">X</button>
             </div>
+
+            <!-- Chapter Selection -->
+            <div class="guide-chapters active" id="guideChapters">
+                <button class="guide-chapter-btn" onclick="openChapter(0)">1. Welcome to Frontier</button>
+                <button class="guide-chapter-btn" onclick="openChapter(1)">2. Upload & Navigation</button>
+                <button class="guide-chapter-btn" onclick="openChapter(2)">3. Film Profiles & Presets</button>
+                <button class="guide-chapter-btn" onclick="openChapter(3)">4. Adjustments & Effects</button>
+                <button class="guide-chapter-btn" onclick="openChapter(4)">5. Export & Save</button>
+            </div>
+
+            <!-- Chapter Content -->
             <div class="guide-content" id="guideContent"></div>
             <div class="guide-footer">
+                <button class="guide-btn" onclick="backToChapters()">CHAPTERS</button>
                 <div class="guide-progress" id="guideProgress">1 / 5</div>
                 <div class="guide-nav">
                     <button class="guide-btn" id="guideBack" onclick="prevGuideStep()">BACK</button>
