@@ -829,6 +829,35 @@
             }
         }
 
+        // Transform a color through the current preset/LUT
+        function transformColorThroughPreset(r, g, b, settings) {
+            // If no preset, return original color
+            if (!settings.profile || settings.profile === 'none') {
+                return { r, g, b };
+            }
+
+            // Create a 1x1 canvas with the color
+            const canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+            // Fill with the color
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            ctx.fillRect(0, 0, 1, 1);
+
+            // Get image data and apply preset
+            const imageData = ctx.getImageData(0, 0, 1, 1);
+            applyProfile(imageData, settings.profile);
+
+            // Read back transformed color
+            return {
+                r: imageData.data[0],
+                g: imageData.data[1],
+                b: imageData.data[2]
+            };
+        }
+
         // Render film metadata text (date, preset, frame number)
         function renderFilmMetadata(ctx, width, height, settings, photoData, isHorizontal, borderType) {
             // Skip metadata entirely for 3:2 borders
@@ -847,6 +876,11 @@
             // Metadata text format: "25.11.04 - FRONTIER • SUPRA_01"
             const metadataText = `${dateStr} - FRONTIER • ${preset}_${frameNum}`;
 
+            // Transform red color through preset
+            const transformedColor = transformColorThroughPreset(255, 51, 51, settings);
+            const textColor = `rgb(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b})`;
+            const shadowColor = `rgba(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b}, 0.9)`;
+
             // Text styling - adjusted per orientation
             const isHorizontalBorder = width > height;
             const fontSize = isHorizontalBorder
@@ -862,12 +896,12 @@
 
             // Render text with glow and noise
             ctx.save();
-            console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}`);
+            console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
 
             // Pass 1: Glow layer (separate opacity for glow)
             ctx.globalAlpha = 0.6;
-            ctx.fillStyle = '#FF3333';
-            ctx.shadowColor = 'rgba(255, 51, 51, 0.9)';
+            ctx.fillStyle = textColor;
+            ctx.shadowColor = shadowColor;
             ctx.shadowBlur = 210;
             ctx.fillText(metadataText, textX, textY);
             ctx.shadowBlur = 140;
