@@ -927,17 +927,15 @@
             const textX = width * 0.50; // 50% from right edge (centered horizontally)
             const textY = height * 0.998; // 0.2% from bottom edge (percentage-based)
 
-            // Render text with glow and noise
+            // Render text with glow and noise (optimized for performance)
             ctx.save();
             console.log(`🎬 Rendering metadata: fontSize=${fontSize}px, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
 
-            // Pass 1: Heavy glow/blur layer
+            // Pass 1: Glow layer (2 passes instead of 3)
             ctx.globalAlpha = 0.7;
             ctx.fillStyle = textColor;
             ctx.shadowColor = shadowColor;
-            ctx.shadowBlur = 320;
-            ctx.fillText(metadataText, textX, textY);
-            ctx.shadowBlur = 240;
+            ctx.shadowBlur = 280;
             ctx.fillText(metadataText, textX, textY);
             ctx.shadowBlur = 160;
             ctx.fillText(metadataText, textX, textY);
@@ -945,18 +943,17 @@
             // Pass 2: Darker stroke outline
             ctx.globalAlpha = 0.9;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
-            ctx.lineWidth = fontSize * 0.08; // Proportional stroke width
-            ctx.shadowBlur = 80;
+            ctx.lineWidth = fontSize * 0.08;
+            ctx.shadowBlur = 60;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text with subtle blur and noise
+            // Pass 3: Main text with subtle blur (reduced noise passes from 3 to 2)
             ctx.globalAlpha = 0.8;
-            ctx.shadowBlur = 40;
+            ctx.shadowBlur = 30;
             ctx.fillStyle = textColor;
 
-            // Add subtle noise to text by rendering with slight offsets
             const noiseAmount = 0.5;
-            for(let i = 0; i < 3; i++) {
+            for(let i = 0; i < 2; i++) {
                 const offsetX = (Math.random() - 0.5) * noiseAmount;
                 const offsetY = (Math.random() - 0.5) * noiseAmount;
                 ctx.fillText(metadataText, textX + offsetX, textY + offsetY);
@@ -1528,7 +1525,7 @@
             return new Promise(resolve => {
                 const w = sourceImg.width;
                 const h = sourceImg.height;
-                const maxPreviewDim = 640;  // Smaller = faster processing
+                const maxPreviewDim = 480;  // Smaller = faster processing (reduced from 640)
 
                 const aspectRatio = w / h;
                 let newW, newH;
@@ -1572,12 +1569,12 @@
             if (state.previewDebounceTimer) {
                 clearTimeout(state.previewDebounceTimer);
             }
-            // Schedule return to full quality after 50ms of no adjustments (instant feedback)
+            // Schedule return to full quality after 100ms of no adjustments (reduced re-renders)
             state.previewDebounceTimer = setTimeout(() => {
                 state.usePreview = false;
                 console.log('Switching to full quality');
                 deferredRender();
-            }, 50);
+            }, 100);
         }
 
         // =====================================================================
@@ -2439,7 +2436,7 @@
 const offscreenCanvas=document.createElement('canvas');
 offscreenCanvas.width=sourceImg.width;
 offscreenCanvas.height=sourceImg.height;
-const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:true,willReadFrequently:true});
+const offscreenCtx=offscreenCanvas.getContext('2d',{alpha:true});
 offscreenCtx.imageSmoothingEnabled=true;
 offscreenCtx.imageSmoothingQuality='high';
 offscreenCtx.drawImage(sourceImg,0,0);
@@ -4334,7 +4331,20 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d,int){if(int<1)return;const strength=int*12*0.655;for(let i=0;i<d.length;i+=4){const lum=(d[i]+d[i+1]+d[i+2])/3;const lumFactor=1+(255-lum)/255*0.3;const n=(Math.random()-0.5)*strength*lumFactor;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}}
+        function applyGrain(d, int) {
+            if (int < 1) return;
+            const strength = int * 12 * 0.655;
+            // Optimize: process every pixel for low grain, sample for high grain (imperceptible)
+            const step = int > 5 ? 8 : 4; // Skip more pixels at higher grain levels
+            for (let i = 0; i < d.length; i += step) {
+                const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
+                const lumFactor = 1 + (255 - lum) / 255 * 0.3;
+                const n = (Math.random() - 0.5) * strength * lumFactor;
+                d[i] = Math.max(0, Math.min(255, d[i] + n));
+                d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + n));
+                d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + n));
+            }
+        }
 
         function toggleControl(c){}
 
