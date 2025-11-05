@@ -971,17 +971,17 @@
             ctx.shadowBlur = 160;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Darker stroke outline - multiply with 66% opacity
-            ctx.globalCompositeOperation = 'multiply';
+            // Pass 2: Darker stroke outline - normal blend with 66% opacity
+            ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 0.66;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
             ctx.lineWidth = fontSize * 0.08;
             ctx.shadowBlur = 60;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text - multiply with 66% opacity
-            ctx.globalCompositeOperation = 'multiply';
-            ctx.globalAlpha = 0.66;
+            // Pass 3: Main text - normal blend with 44% opacity
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 0.44;
             ctx.shadowBlur = 30;
             ctx.fillStyle = textColor;
 
@@ -6906,15 +6906,23 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // Cmd+H - Hold settings
             if (cmd && !shift && key === 'h') {
                 e.preventDefault();
-                toggleHold();
+                console.log('Cmd+H pressed - toggle hold');
+                const btn = document.querySelector('[onclick="toggleHold()"]');
+                if (btn) {
+                    triggerButtonPress('[onclick="toggleHold()"]');
+                    btn.click();
+                }
                 return;
             }
 
             // Cmd+Shift+H - Remove hold
             if (cmd && shift && key === 'h') {
                 e.preventDefault();
-                if (state.holdSettings) {
-                    toggleHold(); // Turn off hold
+                console.log('Cmd+Shift+H pressed - remove hold');
+                const btn = document.querySelector('[onclick="toggleHold()"]');
+                if (btn && state.holdSettings) {
+                    triggerButtonPress('[onclick="toggleHold()"]');
+                    btn.click();
                 }
                 return;
             }
@@ -6950,21 +6958,36 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // S - Supra preset
             if (key === 's' && !cmd) {
                 e.preventDefault();
-                changePreset('supra');
+                console.log('S pressed - supra preset');
+                const btn = document.querySelector('[onclick*="supra"]');
+                if (btn) {
+                    triggerButtonPress('[onclick*="supra"]');
+                    btn.click();
+                }
                 return;
             }
 
             // C - Chrome preset
             if (key === 'c' && !cmd) {
                 e.preventDefault();
-                changePreset('chrome');
+                console.log('C pressed - chrome preset');
+                const btn = document.querySelector('[onclick*="chrome"]');
+                if (btn) {
+                    triggerButtonPress('[onclick*="chrome"]');
+                    btn.click();
+                }
                 return;
             }
 
             // X - XXX preset
             if (key === 'x') {
                 e.preventDefault();
-                changePreset('xxx');
+                console.log('X pressed - xxx preset');
+                const btn = document.querySelector('[onclick*="xxx"]');
+                if (btn) {
+                    triggerButtonPress('[onclick*="xxx"]');
+                    btn.click();
+                }
                 return;
             }
 
