@@ -950,7 +950,7 @@
                 ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
                 : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
             ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
-            ctx.letterSpacing = `${fontSize * 0.03}px`; // 3% tracking
+            ctx.letterSpacing = `${fontSize * 0.02}px`; // 2% tracking
             ctx.textAlign = 'center'; // Center the text horizontally
             ctx.textBaseline = 'bottom';
 
@@ -972,17 +972,17 @@
             ctx.shadowBlur = 200;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Darker stroke outline - normal blend with 66% opacity
+            // Pass 2: Outer stroke - normal blend with 44% opacity
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.66;
+            ctx.globalAlpha = 0.44;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.5)}, ${Math.floor(transformedColor.g * 0.5)}, ${Math.floor(transformedColor.b * 0.5)})`;
             ctx.lineWidth = fontSize * 0.08;
             ctx.shadowBlur = 80;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text - normal blend with 44% opacity
+            // Pass 3: Main text - normal blend with 33% opacity
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.44;
+            ctx.globalAlpha = 0.33;
             ctx.shadowBlur = 40;
             ctx.fillStyle = textColor;
 
