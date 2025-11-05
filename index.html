@@ -809,10 +809,12 @@
                     return false;
                 }
 
-                // For horizontal 4:5 images, rotate border 90° CCW
-                let needsRotation = borderType === '4-5' && isHorizontal;
+                // Rotate border 90° CCW for:
+                // 1. Horizontal 4:5 images (landscape 4:5 uses rotated 4:5 border)
+                // 2. Vertical 3:2 images (portrait 2:3 uses rotated 3:2 border)
+                let needsRotation = (borderType === '4-5' && isHorizontal) || (borderType === '3-2' && !isHorizontal);
                 if (needsRotation) {
-                    console.log('🔄 Rotating 4:5 border 90° CCW for horizontal image');
+                    console.log(`🔄 Rotating ${borderType} border 90° CCW for ${isHorizontal ? 'horizontal' : 'vertical'} image`);
                     const rotatedCanvas = document.createElement('canvas');
                     rotatedCanvas.width = border.height;
                     rotatedCanvas.height = border.width;
