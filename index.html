@@ -838,7 +838,7 @@
                 bctx.filter = 'none';
 
                 // Add metadata text OVER the border (not under it)
-                renderFilmMetadata(bctx, borderedCanvas.width, borderedCanvas.height, settings, photoData, isHorizontal, borderType);
+                await renderFilmMetadata(bctx, borderedCanvas.width, borderedCanvas.height, settings, photoData, isHorizontal, borderType);
 
                 // Copy back to original canvas
                 canvas.width = borderedCanvas.width;
@@ -853,11 +853,14 @@
         }
 
         // Transform a color through the current preset/LUT
-        function transformColorThroughPreset(r, g, b, settings) {
+        async function transformColorThroughPreset(r, g, b, settings) {
             // If no preset, return original color
             if (!settings.profile || settings.profile === 'none') {
                 return { r, g, b };
             }
+
+            // Ensure LUT is loaded for this profile
+            await preloadLUTForProfile(settings.profile);
 
             // Create a 1x1 canvas with the color
             const canvas = document.createElement('canvas');
@@ -873,6 +876,8 @@
             const imageData = ctx.getImageData(0, 0, 1, 1);
             applyProfile(imageData, settings.profile);
 
+            console.log(`🎨 Text color transform: rgb(${r},${g},${b}) → rgb(${imageData.data[0]},${imageData.data[1]},${imageData.data[2]}) [${settings.profile}]`);
+
             // Read back transformed color
             return {
                 r: imageData.data[0],
@@ -882,7 +887,7 @@
         }
 
         // Render film metadata text (date, preset, frame number)
-        function renderFilmMetadata(ctx, width, height, settings, photoData, isHorizontal, borderType) {
+        async function renderFilmMetadata(ctx, width, height, settings, photoData, isHorizontal, borderType) {
             // Skip metadata entirely for 3:2 borders
             if (borderType === 'horizontal-3-2' || borderType === 'vertical-2-3') {
                 console.log('🎬 Skipping metadata for 3:2 border');
@@ -900,7 +905,7 @@
             const metadataText = `${dateStr} - FRONTIER • ${preset}_${frameNum}`;
 
             // Transform red color through preset
-            const transformedColor = transformColorThroughPreset(255, 51, 51, settings);
+            const transformedColor = await transformColorThroughPreset(255, 51, 51, settings);
             const textColor = `rgb(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b})`;
             const shadowColor = `rgba(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b}, 0.9)`;
 
