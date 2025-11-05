@@ -415,7 +415,7 @@
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
         .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:left; font-weight:700; padding:0; }
         .contact-sheet-selection-info.has-selection { color:#3897AF; }
-        .contact-sheet-footer { position:fixed; bottom:0; left:0; right:0; background:#000; padding:15px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); border-top:2px solid #333; z-index:10; display:flex; justify-content:center; }
+        .contact-sheet-footer { position:fixed; bottom:0; left:0; right:0; background:#000; padding:15px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 20px); border-top:2px solid #333; z-index:10; display:flex; justify-content:center; gap:10px; }
 
         @media (max-width:360px) {
             .action-btn { font-size:9px; padding:6px 10px; }
@@ -6224,20 +6224,35 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 saveBtn.textContent='ADD PHOTO';
                 saveBtn.style.background='#3897AF';
                 saveBtn.style.color='#fff';
+                saveBtn.classList.remove('select-mode');
+                saveBtn.style.transform='';
+                saveBtn.style.boxShadow='';
                 if(saveAllBtn) saveAllBtn.style.display='none';
             }else{
-                // Save-multiple mode: SELECT IMAGES → SAVE X IMAGES, show SAVE ALL
+                // Save-multiple mode: SELECT IMAGES (black/down) → SAVE X IMAGES (turquoise)
                 if(count===0){
+                    // No selection: SELECT IMAGES button in down state (black)
                     saveBtn.textContent='SELECT IMAGES';
-                    saveBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
+                    saveBtn.style.background='#000';
                     saveBtn.style.color='#fff';
+                    saveBtn.classList.add('select-mode');
+                    saveBtn.style.transform='translateY(5px)';
+                    saveBtn.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
                 }else{
+                    // Has selection: SAVE X IMAGES button in turquoise
                     saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
                     saveBtn.style.background='#3897AF';
                     saveBtn.style.color='#fff';
+                    saveBtn.classList.remove('select-mode');
+                    saveBtn.style.transform='';
+                    saveBtn.style.boxShadow='';
                 }
-                // Show SAVE ALL button in save-multiple mode
-                if(saveAllBtn) saveAllBtn.style.display='block';
+                // Show SAVE ALL button in save-multiple mode (always turquoise)
+                if(saveAllBtn){
+                    saveAllBtn.style.display='block';
+                    saveAllBtn.style.background='#3897AF';
+                    saveAllBtn.style.color='#fff';
+                }
             }
         }
 
