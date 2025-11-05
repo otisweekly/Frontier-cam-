@@ -4919,9 +4919,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             // Update "SAVE ALL" button text based on photo count (second button)
             const downloadButtons = document.querySelectorAll('.download-card-btn');
             const saveAllBtn = downloadButtons[1]; // Second button is SAVE ALL
-            if (saveAllBtn && photoCount > 5) {
-                saveAllBtn.textContent = 'SAVE MULTIPLE';
-            } else if (saveAllBtn) {
+            if (saveAllBtn) {
                 saveAllBtn.textContent = 'SAVE ALL';
             }
         }
