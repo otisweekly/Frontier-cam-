@@ -675,6 +675,7 @@
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
         <div class="contact-sheet-footer">
+            <button class="contact-sheet-btn" id="newOrderBtn" onclick="startNewOrder()" style="display:none;">NEW ORDER</button>
             <button class="contact-sheet-btn" id="saveBtn" onclick="handleContactSheetAction()">ADD PHOTO</button>
             <button class="contact-sheet-btn" id="saveAllBtn" onclick="saveAllPhotos()" style="display:none;">SAVE ALL</button>
         </div>
@@ -6075,6 +6076,50 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function addMorePhotos(){haptic();document.getElementById('addMoreInput').click();}
 
+        async function startNewOrder(){
+            haptic();
+
+            // Confirm with user
+            if(!confirm('Start a new order?\n\nThis will remove all current photos and open the upload dialog.')){
+                return;
+            }
+
+            // Close contact sheet modal
+            const view=document.getElementById('contactSheetView');
+            if(view.classList.contains('active')){
+                toggleContactSheetView();
+            }
+
+            // Show progress if there are many photos
+            const photoCount=state.photos.length;
+            if(photoCount>5){
+                showUploadProgress('Clearing photos...');
+                setStatus('processing');
+                await new Promise(r=>setTimeout(r,100));
+            }
+
+            // Clear all photos
+            state.photos=[];
+            state.currentIndex=0;
+
+            if(photoCount>5){
+                updateUploadProgress(100,'Photos cleared');
+                await new Promise(r=>setTimeout(r,500));
+                hideUploadProgress();
+            }
+
+            // Reset canvas
+            const canvas=document.getElementById('canvas');
+            const ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true});
+            ctx.fillStyle='#000';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            setStatus('ready');
+
+            // Trigger upload dialog
+            document.getElementById('fileInput').click();
+        }
+
         document.getElementById('addMoreInput').addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             if (!files.length) return;
@@ -6217,10 +6262,16 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const count=state.contactSheet.selected.length;
             const saveBtn=document.getElementById('saveBtn');
             const saveAllBtn=document.getElementById('saveAllBtn');
+            const newOrderBtn=document.getElementById('newOrderBtn');
             const mode = state.contactSheet.mode || 'navigation';
 
             if(mode === 'navigation'){
-                // Navigation mode: ADD PHOTO button always turquoise, hide SAVE ALL
+                // Navigation mode: Show NEW ORDER (grey) and ADD PHOTO (turquoise), hide SAVE ALL
+                if(newOrderBtn){
+                    newOrderBtn.style.display='block';
+                    newOrderBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
+                    newOrderBtn.style.color='#fff';
+                }
                 saveBtn.textContent='ADD PHOTO';
                 saveBtn.style.background='#3897AF';
                 saveBtn.style.color='#fff';
@@ -6229,7 +6280,9 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 saveBtn.style.boxShadow='';
                 if(saveAllBtn) saveAllBtn.style.display='none';
             }else{
-                // Save-multiple mode: SELECT IMAGES (black/down) → SAVE X IMAGES (turquoise)
+                // Save-multiple mode: Hide NEW ORDER, show SELECT IMAGES / SAVE ALL
+                if(newOrderBtn) newOrderBtn.style.display='none';
+
                 if(count===0){
                     // No selection: SELECT IMAGES button in down state (black)
                     saveBtn.textContent='SELECT IMAGES';
