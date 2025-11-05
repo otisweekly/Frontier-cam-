@@ -1099,6 +1099,12 @@
             },300);
         },1000);
 
+        // Preload all borders at startup for instant application
+        console.log('🚀 Preloading all film borders at startup...');
+        ['supra', 'chrome', 'xxx'].forEach(preset => {
+            preloadBordersInBackground(preset);
+        });
+
         // Canvas tap handling
         function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
