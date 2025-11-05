@@ -1,5 +1,7 @@
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M23.25 12.75H9.25V26.75H23.25V12.75Z" stroke="black" stroke-width="3"/>
+<path d="M9 23.7822L12.9404 19.875L20 26.875" stroke="black" stroke-width="3"/>
+<path d="M18 16.875V18.875" stroke="black" stroke-width="3"/>
 <path d="M10.8125 8.1875H15.8125" stroke="black" stroke-width="3"/>
 <path d="M22.8125 8.1875H17.8125" stroke="black" stroke-width="3"/>
 <path d="M24.8125 8.1875H27.8125V11.1875" stroke="black" stroke-width="3"/>

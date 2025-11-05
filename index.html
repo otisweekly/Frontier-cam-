@@ -304,6 +304,12 @@
         .borders-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .borders-btn img { filter:brightness(0); }
         .borders-btn.active img { filter:brightness(0) invert(1); }
+        .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
+        .copy-paste-btn.holding { background:#FF8C00; color:#fff; }
+        .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .copy-paste-btn img { filter:brightness(0); }
+        .copy-paste-btn.holding img { filter:brightness(0) invert(1); }
         #downloadBtn { font-size:20px; }
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -712,6 +718,7 @@
                         </div>
                     </div>
                     <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders.svg" style="width:32px;height:32px;" alt="Borders"></button>
+                    <button class="copy-paste-btn" onclick="toggleCopyPaste()" id="copyPasteBtn"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
@@ -741,7 +748,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null};
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
@@ -1077,6 +1084,33 @@
             // Save and re-render
             saveCurrentPhotoSettings(true, true);
             deferredRender();
+        }
+
+        function toggleCopyPaste() {
+            haptic();
+            const btn = document.getElementById('copyPasteBtn');
+            const icon = document.getElementById('copyPasteIcon');
+
+            if (!state.copiedSettings) {
+                // Copy settings
+                state.copiedSettings = JSON.parse(JSON.stringify(state.settings));
+                btn.classList.add('holding');
+                icon.src = 'paste.svg';
+                console.log('📋 Settings copied, button now orange');
+            } else {
+                // Paste settings
+                state.settings = JSON.parse(JSON.stringify(state.copiedSettings));
+                state.copiedSettings = null;
+                btn.classList.remove('holding');
+                icon.src = 'Copy.svg';
+                console.log('📋 Settings pasted, button now grey');
+
+                // Update UI and render
+                updateUIFromSettings();
+                updatePresetButtonText();
+                saveCurrentPhotoSettings(true, true);
+                deferredRender();
+            }
         }
 
         // Mobile Debug Console - Enhanced to capture errors
