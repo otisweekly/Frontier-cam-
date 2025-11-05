@@ -745,11 +745,11 @@
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
-        const BORDER_VERSION = 12;
+        const BORDER_VERSION = 13;
         let borderCache = {};
 
         // Force clear any old cached borders from browser
-        console.log('🗑️ Clearing old border cache (v12)');
+        console.log('🗑️ Clearing old border cache (v13)');
         borderCache = {};
 
         // Load film border PNG based on aspect ratio and preset
@@ -1009,7 +1009,7 @@
                 ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
                 : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
             ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
-            ctx.letterSpacing = `${fontSize * 0.05}px`; // 5% tracking (increased for better spacing)
+            ctx.letterSpacing = `${fontSize * 0.12}px`; // 12% tracking (much more spacing)
             ctx.textAlign = 'center'; // Center the text horizontally
             ctx.textBaseline = 'bottom';
 
@@ -1019,31 +1019,31 @@
 
             // Render text with glow and noise (optimized for performance)
             ctx.save();
-            console.log(`🎬 Rendering metadata (v12): fontSize=${fontSize}px, letterSpacing=${ctx.letterSpacing}, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
-            console.log(`📝 Text opacities: Glow=0.24, Stroke=0.21, Main=0.156, Tracking=5%, Noise=2.5px x8`);
+            console.log(`🎬 Rendering metadata (v13): fontSize=${fontSize}px, letterSpacing=${ctx.letterSpacing}, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
+            console.log(`📝 Text opacities: Glow=0.12, Stroke=0.15, Main=0.10, Tracking=12%, Noise=2.5px x8`);
 
-            // Pass 1: Glow layer - prominent red halo
+            // Pass 1: Glow layer - subtle red halo (reduced strength)
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.24;
+            ctx.globalAlpha = 0.12;
             ctx.fillStyle = textColor;
             ctx.shadowColor = shadowColor;
-            ctx.shadowBlur = 320;
-            ctx.fillText(metadataText, textX, textY);
             ctx.shadowBlur = 180;
+            ctx.fillText(metadataText, textX, textY);
+            ctx.shadowBlur = 100;
             ctx.fillText(metadataText, textX, textY);
 
             // Pass 2: Outer stroke - subtle definition
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.21;
+            ctx.globalAlpha = 0.15;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.65)}, ${Math.floor(transformedColor.g * 0.65)}, ${Math.floor(transformedColor.b * 0.65)})`;
             ctx.lineWidth = fontSize * 0.08;
-            ctx.shadowBlur = 60;
+            ctx.shadowBlur = 40;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text - fuzzy core with heavy grain noise
+            // Pass 3: Main text - fuzzy core with heavy grain noise (much softer)
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.156; // Reduced by 15% from 0.184 (v12)
-            ctx.shadowBlur = 35;
+            ctx.globalAlpha = 0.10; // Much lower opacity (v13)
+            ctx.shadowBlur = 25;
             ctx.fillStyle = textColor;
 
             // Add heavy film grain noise to text for fuzzy appearance
@@ -1052,7 +1052,7 @@
                 const offsetX = (Math.random() - 0.5) * noiseAmount;
                 const offsetY = (Math.random() - 0.5) * noiseAmount;
                 const alphaVariation = 0.8 + Math.random() * 0.4; // Vary opacity 0.8-1.2
-                ctx.globalAlpha = 0.156 * alphaVariation;
+                ctx.globalAlpha = 0.10 * alphaVariation;
                 ctx.fillText(metadataText, textX + offsetX, textY + offsetY);
             }
 
