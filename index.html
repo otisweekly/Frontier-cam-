@@ -387,9 +387,11 @@
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
         .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px 15px 10px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid #333; z-index:10; align-items:flex-start; }
-        .contact-sheet-header-top { display:flex; justify-content:flex-start; align-items:center; width:100%; position:relative; }
+        .contact-sheet-header-top { display:flex; justify-content:space-between; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:160px; height:auto; }
-        .contact-sheet-close { position:fixed; top:15px; right:15px; width:36px; height:36px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:100; }
+        .contact-sheet-add-photo { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:14px; font-weight:700; cursor:pointer; padding:6px 12px; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; margin-left:auto; margin-right:10px; }
+        .contact-sheet-add-photo:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-close { position:relative; width:36px; height:36px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; }
         .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
         .contact-sheet-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:0 15px; }
@@ -670,6 +672,7 @@
         <div class="contact-sheet-header">
             <div class="contact-sheet-header-top">
                 <img src="logo.svg" alt="Frontier" class="contact-sheet-logo">
+                <button class="contact-sheet-add-photo" onclick="addMorePhotos()">+ PHOTO</button>
                 <button class="contact-sheet-close" onclick="toggleContactSheetView()"><img src="Close.svg" alt="Close"></button>
             </div>
         </div>
@@ -909,8 +912,8 @@
             // Metadata text format: "25.11.04 - FRONTIER • SUPRA_01"
             const metadataText = `${dateStr} - FRONTIER • ${preset}_${frameNum}`;
 
-            // Transform red color through preset (darker red)
-            const transformedColor = await transformColorThroughPreset(180, 35, 35, settings);
+            // Transform red color through preset (darker red, lower blue)
+            const transformedColor = await transformColorThroughPreset(180, 35, 25, settings);
             const textColor = `rgb(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b})`;
             const shadowColor = `rgba(${transformedColor.r}, ${transformedColor.g}, ${transformedColor.b}, 0.9)`;
 
@@ -1073,14 +1076,36 @@
             if(state.tapState.comparing) return;
             const canvas=document.getElementById('canvas');
             const p=state.photos[state.currentIndex];
-            if(!p||!p.image) return;
+            if(!p||!p.original) return;
 
             state.tapState.comparing=true;
-            const ctx=canvas.getContext('2d',{alpha:false});
 
-            // Draw original at same size as current canvas
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.drawImage(p.original,0,0,canvas.width,canvas.height);
+            // Set canvas to original image dimensions (without borders)
+            canvas.width = p.original.width;
+            canvas.height = p.original.height;
+
+            // Update display size to fit container while maintaining aspect ratio
+            const maxW = window.innerWidth - 30;
+            const maxH = window.innerHeight - 330 - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab') || '0');
+            const imageAspect = p.original.width / p.original.height;
+            const containerAspect = maxW / maxH;
+            let displayW, displayH;
+
+            if (imageAspect > containerAspect) {
+                displayW = maxW;
+                displayH = maxW / imageAspect;
+            } else {
+                displayH = maxH;
+                displayW = maxH * imageAspect;
+            }
+
+            canvas.style.width = displayW + 'px';
+            canvas.style.height = displayH + 'px';
+            canvas.style.objectFit = 'contain';
+
+            const ctx=canvas.getContext('2d',{alpha:false});
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(p.original, 0, 0);
 
             console.log('🔍 Showing original unprocessed image');
 
