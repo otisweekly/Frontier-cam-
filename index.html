@@ -771,7 +771,7 @@
 
                 // Select border type: '3-2' or '4-5'
                 const borderType = is3to2 ? '3-2' : '4-5';
-                const preset = settings.profile || 'supra';
+                const preset = (settings.profile && settings.profile !== 'none') ? settings.profile : 'supra';
 
                 console.log(`🎞️ Border selection: ${canvas.width}x${canvas.height} (ratio: ${aspectRatio.toFixed(2)}) → ${borderType} ${preset} ${isHorizontal ? 'horizontal' : 'vertical'}`);
 
@@ -6144,7 +6144,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Select
                 state.contactSheet.selected.push(idx);
             }
-            await populateContactSheet();
+
+            // Just toggle the selected class on this item instead of regenerating everything
+            const items = document.querySelectorAll('.contact-sheet-item');
+            if(items[idx]){
+                items[idx].classList.toggle('selected', state.contactSheet.selected.includes(idx));
+            }
+
             updateSelectionInfo();
         }
 
