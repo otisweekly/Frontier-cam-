@@ -933,9 +933,10 @@
             const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '.');
 
             const preset = settings.profile !== 'none' ? settings.profile.toUpperCase() : 'ORIGINAL';
-            const frameNum = String((photoData.frameNumber || 1)).padStart(2, '0');
+            // Frame counter shows "00" when frameNumber is 0 or undefined
+            const frameNum = String((photoData.frameNumber || 0)).padStart(2, '0');
 
-            // Metadata text format: "25.11.04 - FRONTIER • SUPRA_01"
+            // Metadata text format: "25.11.04 - FRONTIER • SUPRA_00"
             const metadataText = `${dateStr} - FRONTIER • ${preset}_${frameNum}`;
 
             // Transform red color through preset (darker red, lower blue)
@@ -949,7 +950,7 @@
                 ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
                 : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
             ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
-            ctx.textAlign = 'left';
+            ctx.textAlign = 'center'; // Center the text horizontally
             ctx.textBaseline = 'bottom';
 
             // Position at 50% from right edge (more centered), very close to bottom
@@ -6086,10 +6087,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 return;
             }
 
-            // Close contact sheet modal
+            // Close contact sheet modal first
             const view=document.getElementById('contactSheetView');
-            if(view.classList.contains('active')){
+            const wasOpen = view.classList.contains('active');
+            if(wasOpen){
                 toggleContactSheetView();
+                // Wait for modal close animation to complete
+                await new Promise(r=>setTimeout(r,400));
             }
 
             // Show progress if there are many photos
@@ -6117,6 +6121,9 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             ctx.fillRect(0,0,canvas.width,canvas.height);
 
             setStatus('ready');
+
+            // Wait a bit more before triggering upload to ensure UI is ready
+            await new Promise(r=>setTimeout(r,100));
 
             // Trigger upload dialog
             document.getElementById('fileInput').click();
