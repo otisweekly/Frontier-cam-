@@ -717,7 +717,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false};
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
@@ -6057,7 +6057,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);deferredRender();updateNavButtons();}
 
-        function toggleExportMenu(e){if(e){e.stopPropagation();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');}}
+        function toggleExportMenu(e){if(e){e.stopPropagation();e.preventDefault();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');state.moreMenuJustOpened=false;}else{dialog.classList.add('active');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');state.moreMenuJustOpened=true;setTimeout(()=>{state.moreMenuJustOpened=false;},300);}}
 
         function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
 
@@ -6119,6 +6119,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         function addMorePhotos(){haptic();document.getElementById('addMoreInput').click();}
 
         async function startNewOrder(){
+            // Prevent accidental trigger when menu just opened
+            if(state.moreMenuJustOpened){
+                console.log('🛑 Menu just opened, ignoring NEW ORDER click');
+                return;
+            }
+
             haptic();
 
             // Confirm with user
