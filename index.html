@@ -6888,11 +6888,19 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
             // Arrow keys - Navigate photos (when not in intensity adjust mode)
             if (key === 'arrowright' && !intensityAdjustMode) {
                 e.preventDefault();
+                const btn = document.getElementById('nextBtn');
+                if (btn) {
+                    triggerButtonPress('#nextBtn');
+                }
                 nextPhoto();
                 return;
             }
             if (key === 'arrowleft' && !intensityAdjustMode) {
                 e.preventDefault();
+                const btn = document.getElementById('prevBtn');
+                if (btn) {
+                    triggerButtonPress('#prevBtn');
+                }
                 prevPhoto();
                 return;
             }
@@ -6923,7 +6931,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('Cmd+H pressed - toggle hold');
                 const btn = document.querySelector('[onclick="toggleHold()"]');
                 if (btn) {
-                    triggerButtonPress('[onclick="toggleHold()"]');
                     btn.click();
                 }
                 return;
@@ -6935,7 +6942,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('Cmd+Shift+H pressed - remove hold');
                 const btn = document.querySelector('[onclick="toggleHold()"]');
                 if (btn && state.holdSettings) {
-                    triggerButtonPress('[onclick="toggleHold()"]');
                     btn.click();
                 }
                 return;
@@ -6975,7 +6981,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('S pressed - supra preset');
                 const btn = document.querySelector('[onclick*="supra"]');
                 if (btn) {
-                    triggerButtonPress('[onclick*="supra"]');
                     btn.click();
                 }
                 return;
@@ -6987,7 +6992,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('C pressed - chrome preset');
                 const btn = document.querySelector('[onclick*="chrome"]');
                 if (btn) {
-                    triggerButtonPress('[onclick*="chrome"]');
                     btn.click();
                 }
                 return;
@@ -6999,7 +7003,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('X pressed - xxx preset');
                 const btn = document.querySelector('[onclick*="xxx"]');
                 if (btn) {
-                    triggerButtonPress('[onclick*="xxx"]');
                     btn.click();
                 }
                 return;
@@ -7035,7 +7038,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 console.log('B pressed - toggling borders');
                 const btn = document.querySelector('[onclick="toggleFilmBorder()"]');
                 if (btn) {
-                    triggerButtonPress('[onclick="toggleFilmBorder()"]');
                     btn.click();
                 }
                 return;
