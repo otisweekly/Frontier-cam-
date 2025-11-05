@@ -6437,17 +6437,11 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         async function saveAllPhotos(){
             haptic();
 
-            // Gather all non-contact-sheet photo indices
-            const indicesToExport = [];
-            for(let i=0;i<state.photos.length;i++){
-                if(!state.photos[i].isContactSheet){
-                    indicesToExport.push(i);
-                }
-            }
+            // Clear any existing selection and download all photos
+            state.contactSheet.selected = [];
 
-            // SAVE ALL now opens the save-multiple modal instead of downloading directly
-            // This allows users to review what will be downloaded
-            toggleSaveMultiple();
+            // Call shareContactSheet to download all photos with contact sheet
+            await shareContactSheet(0.95);
         }
 
         function generateContactSheetImage(){return new Promise(async resolve=>{const exportWidth=3200;const sheetW=exportWidth;const sheetH=exportWidth*(5/4);const padding=24;const margin=60;const logoHeight=138;const labelHeight=72;
