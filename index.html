@@ -149,8 +149,8 @@
         #editSection { display:none; flex-direction:column; width:100vw; height:100vh; height:100dvh; background:#6A6A6A; position:fixed; top:0; left:0; }
         #editSection.active { display:flex; }
 
-        .top-nav-bar { position:fixed; top:0; left:0; right:0; height:78px; background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); isolation:isolate; }
-        .edit-status-light { position:fixed; top:15px; left:57px; width:8px; height:8px; border-radius:50%; border:1.5px solid #4A4A4A; z-index:151; opacity:0.4; }
+        .top-nav-bar { position:fixed; top:0; left:0; right:0; height:calc(78px + env(safe-area-inset-top)); padding-top:env(safe-area-inset-top); background:#6A6A6A; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); border-bottom:2px solid rgba(0,0,0,0.4); isolation:isolate; }
+        .edit-status-light { position:fixed; top:calc(15px + env(safe-area-inset-top)); left:57px; width:8px; height:8px; border-radius:50%; border:1.5px solid #4A4A4A; z-index:151; opacity:0.4; }
         .edit-status-light.active { opacity:1; box-shadow:0 0 12px currentColor; border:1px solid rgba(255,255,255,0.2); }
         .edit-status-light.green { background:#4ADE80; color:#4ADE80; }
         .edit-status-light.green.active { animation:pulse-green-gentle 3s ease-in-out infinite; }
@@ -161,14 +161,14 @@
         .edit-status-light.red { background:#EF4444; color:#EF4444; }
         .edit-status-light.red.active { animation:blink-red 800ms ease-in-out infinite; }
 
-        .gallery-icon { position:fixed; top:15px; left:15px; width:40px; height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
+        .gallery-icon { position:fixed; top:calc(15px + env(safe-area-inset-top)); left:15px; width:40px; height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
         .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .gallery-icon.active svg line { stroke:#fff !important; }
         .gallery-icon:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .gallery-icon svg { width:20px; height:20px; }
         .gallery-icon svg line { stroke:#000; }
 
-        .top-controls { position:fixed; top:15px; right:10px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
+        .top-controls { position:fixed; top:calc(15px + env(safe-area-inset-top)); right:10px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
         .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:5px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; cursor:pointer; will-change:transform, box-shadow; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
         .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
@@ -177,22 +177,22 @@
         #holdBtn.active img { filter:brightness(0) invert(1) !important; }
         .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; z-index:1; }
-        .canvas-container.cmyk-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
-        .canvas-container.brightness-open { padding-top:calc(78px + 140px); padding-bottom:15px; }
-        .canvas-container.intensity-open { padding-top:calc(78px + 170px); padding-bottom:15px; }
-        .canvas-container.more-open { padding-top:calc(78px + 170px); padding-bottom:15px; }
-        .canvas-container.download-options-open { padding-top:calc(78px + 190px); padding-bottom:15px; }
-        .canvas-container.history-open { padding-top:calc(78px + 30vh); padding-bottom:15px; }
-        .canvas-container.download-open { padding-top:calc(78px + 90px); padding-bottom:15px; }
-        #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 340px - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; position:relative; z-index:100; touch-action: none; }
-        .canvas-container.cmyk-open #canvas { max-height:calc(100vh - 78px - 140px - 30px); }
-        .canvas-container.brightness-open #canvas { max-height:calc(100vh - 78px - 140px - 30px); }
-        .canvas-container.intensity-open #canvas { max-height:calc(100vh - 78px - 170px - 30px); }
-        .canvas-container.more-open #canvas { max-height:calc(100vh - 78px - 170px - 30px); }
-        .canvas-container.download-options-open #canvas { max-height:calc(100vh - 78px - 190px - 30px); }
-        .canvas-container.history-open #canvas { max-height:calc(100vh - 78px - 30vh - 30px); }
-        .canvas-container.download-open #canvas { max-height:calc(100vh - 78px - 90px - 30px); }
+        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + env(safe-area-inset-top) + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; z-index:1; }
+        .canvas-container.cmyk-open { padding-top:calc(78px + env(safe-area-inset-top) + 140px); padding-bottom:15px; }
+        .canvas-container.brightness-open { padding-top:calc(78px + env(safe-area-inset-top) + 140px); padding-bottom:15px; }
+        .canvas-container.intensity-open { padding-top:calc(78px + env(safe-area-inset-top) + 170px); padding-bottom:15px; }
+        .canvas-container.more-open { padding-top:calc(78px + env(safe-area-inset-top) + 170px); padding-bottom:15px; }
+        .canvas-container.download-options-open { padding-top:calc(78px + env(safe-area-inset-top) + 190px); padding-bottom:15px; }
+        .canvas-container.history-open { padding-top:calc(78px + env(safe-area-inset-top) + 30vh); padding-bottom:15px; }
+        .canvas-container.download-open { padding-top:calc(78px + env(safe-area-inset-top) + 90px); padding-bottom:15px; }
+        #canvas { max-width:calc(100vw - 30px); max-height:calc(100vh - 340px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); width:auto; height:auto; object-fit:contain; cursor:pointer; transform-origin:center center; will-change:transform; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; position:relative; z-index:100; touch-action: none; }
+        .canvas-container.cmyk-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 140px - 30px); }
+        .canvas-container.brightness-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 140px - 30px); }
+        .canvas-container.intensity-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 170px - 30px); }
+        .canvas-container.more-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 170px - 30px); }
+        .canvas-container.download-options-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 190px - 30px); }
+        .canvas-container.history-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 30vh - 30px); }
+        .canvas-container.download-open #canvas { max-height:calc(100vh - 78px - env(safe-area-inset-top) - 90px - 30px); }
 
 
 
@@ -242,22 +242,22 @@
         .edit-footer.download-open { transform:translateY(100%); }
 
         /* Hamburger Nav Dialog */
-        #navDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(3,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
+        #navDialog { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(3,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
         #navDialog.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         #navDialog.just-opened { pointer-events:none !important; }
         #navDialog.just-opened .nav-dialog-btn { pointer-events:none !important; }
         .nav-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .nav-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
-        #moreDialog { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
+        #moreDialog { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
         #moreDialog.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         #moreDialog.just-opened { pointer-events:none !important; }
         #moreDialog.just-opened .more-dialog-btn { pointer-events:none !important; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
         .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
-        #intensityControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:150px; display:flex; align-items:center; justify-content:center; }
+        #intensityControls { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:150px; display:flex; align-items:center; justify-content:center; }
         #intensityControls.active { transform:translateY(0); opacity:1; pointer-events:auto; }
-        #downloadOptions { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; min-height:150px; }
+        #downloadOptions { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; min-height:150px; }
         #downloadOptions.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         .download-card { display:flex; flex-direction:column; align-items:center; gap:6px; }
         .download-card-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; font-weight:700; color:#fff; text-align:center; margin-bottom:4px; }
@@ -283,7 +283,7 @@
         #brightnessToggle.has-settings img { filter:brightness(0) invert(1); }
 
         /* Progress Bar */
-        #downloadProgress { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:99999; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); }
+        #downloadProgress { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; z-index:99999; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); }
         #downloadProgress.active { transform:translateY(0); opacity:1; }
         .progress-content { display:flex; align-items:center; gap:6px; }
         .progress-bar-container { flex:1; height:44px; background:#4A4A4A; border:3px solid #000; border-radius:4px; overflow:hidden; position:relative; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); }
@@ -305,7 +305,7 @@
         .borders-btn img { filter:brightness(0); }
         .borders-btn.active img { filter:brightness(0) invert(1); }
         .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
-        .copy-paste-btn.holding { background:#8CBABB; color:#000; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .copy-paste-btn.holding { background:#8CBABB; color:#000; }
         .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn img { filter:brightness(0); }
@@ -314,11 +314,11 @@
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:flex-start; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px; transition:all 0s; will-change:transform, box-shadow; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:flex-start; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px 12px 8px 4px; transition:all 0s; will-change:transform, box-shadow; }
         .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
 
         .photo-counter > div { display:flex; flex-direction:column; align-items:center; flex:1; }
-        .photo-counter .contact-icon { height:100%; width:auto; margin-left:12px; margin-right:0; align-self:stretch; object-fit:contain; flex-shrink:0; }
+        .photo-counter .contact-icon { height:100%; width:auto; margin-left:4px; margin-right:0; align-self:stretch; object-fit:contain; flex-shrink:0; }
         .photo-counter-number { font-size:26px; font-weight:700; line-height:1; text-align:center; width:100%; }
         .photo-counter-label { font-size:9px; font-weight:700; color:#666; margin-top:2px; letter-spacing:0.5px; }
         .save-btn { font-family:'PP Neue Bit','PP Fuji',monospace; padding:0 40px; background:#3897AF; border:3px solid #0A5A6C; border-radius:4px; color:#fff; font-size:18px; font-weight:700; cursor:pointer; box-shadow:0 5px 0 #222222; transition:all 0s; text-transform:uppercase; display:flex; align-items:center; justify-content:center; white-space:nowrap; margin-left:auto; }
@@ -347,16 +347,16 @@
         .slider-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .slider-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
 
-        #cmykControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #cmykControls { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #cmykControls.active { transform:translateY(0); opacity:1; }
-        #brightnessControls { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
+        #brightnessControls { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
         .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
         .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .brightness-auto-btn.active, .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#3897AF; }
         .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
         .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0) invert(1); }
-        #historyPanel { position:fixed; top:78px; left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:100; transform:translateY(calc(-100% - 78px)); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
+        #historyPanel { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - env(safe-area-inset-top) - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
         #historyPanel.active { transform:translateY(0); opacity:1; }
 
         #guidePanel { position:fixed; top:0; left:0; right:0; bottom:0; background:#000; z-index:250; transform:translateY(100%); transition:transform 0.3s ease; overflow-y:auto; padding:20px; padding-top:calc(env(safe-area-inset-top, 0px) + 120px); padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 40px); }
@@ -405,7 +405,7 @@
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
-        .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px 15px 30px 8px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid #333; z-index:10; align-items:flex-start; }
+        .contact-sheet-header { position:sticky; top:0; background:#000; padding:15px 15px 30px 15px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid #333; z-index:10; align-items:flex-start; }
         .contact-sheet-header-top { display:flex; justify-content:space-between; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:160px; height:auto; }
         .contact-sheet-close { position:relative; width:40px; height:40px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; }
@@ -468,21 +468,24 @@
         .guide-modal-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .guide-modal-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
 
-        .guide-chapters { padding:48px 24px 24px 24px; overflow-y:auto; flex:1; display:none; }
+        .guide-chapters { padding:10px 24px calc(env(safe-area-inset-bottom, 20px) + 80px) 24px; overflow-y:auto; flex:1; display:none; position:relative; }
         .guide-chapters.active { display:block; }
         .guide-chapter-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:26px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; padding:16px; margin-bottom:16px; width:100%; text-align:left; display:block; }
         .guide-chapter-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .guide-chapters-credit { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#B3B3B3; position:fixed; bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); left:24px; z-index:10001; display:none; }
+        .guide-chapters.active .guide-chapters-credit { display:block; }
 
-        .guide-content { padding:48px 24px 24px 24px; overflow-y:auto; flex:1; max-width:800px; margin:0 auto; }
+        .guide-content { padding:10px 24px 24px 24px; overflow-y:auto; flex:1; max-width:800px; margin:0 auto; display:flex; align-items:flex-start; justify-content:flex-start; }
         .guide-step { display:none; }
         .guide-step.active { display:block; animation:fadeIn 0.2s ease; }
-        .guide-step h2 { font-family:'PP Neue Bit',monospace; font-size:30px; margin:0 0 16px 0; color:#37A4A4; text-align:center; }
-        .guide-step p { font-family:'PP Neue Bit',monospace; font-size:25px; line-height:0.96; margin:0 0 12px 0; color:#B3B3B3; text-align:center; }
-        .guide-step ul { font-family:'PP Neue Bit',monospace; font-size:25px; line-height:1.08; margin:12px 0; padding-left:24px; color:#B3B3B3; }
+        .guide-step h2 { font-family:'PP Neue Bit',monospace; font-size:30px; margin:0 0 16px 0; color:#37A4A4; text-align:left; }
+        .guide-step p { font-family:'PP Neue Bit',monospace; font-size:25px; line-height:0.96; margin:0 0 12px 0; color:#B3B3B3; text-align:left; }
+        .guide-step ul { font-family:'PP Neue Bit',monospace; font-size:25px; line-height:1.08; margin:12px 0; padding-left:24px; color:#B3B3B3; text-align:left; }
         .guide-step ul li { margin-bottom:8px; }
         .guide-step strong { font-weight:700; color:#fff; }
 
-        .guide-footer { background:#4A4A4A; padding:16px 24px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 60px); display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .guide-footer { background:#4A4A4A; padding:16px 24px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 60px); display:flex; flex-direction:column; gap:16px; position:relative; }
+        .guide-footer-top { display:flex; justify-content:space-between; align-items:center; width:100%; }
         .guide-progress { font-family:'PP Neue Bit',monospace; font-size:22px; color:#fff; }
         .guide-nav { display:flex; gap:12px; }
         .guide-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; padding:10px 20px; }
@@ -529,7 +532,6 @@
             <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
             <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
             <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
-            <button class="settings-btn" id="moreBtn" onclick="toggleExportMenu(event)" title="More" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="More.svg" alt="More"></button>
             <button class="settings-btn" id="downloadBtn" onclick="toggleDownloadOptions()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
         <div id="downloadProgress">
@@ -655,12 +657,6 @@
             <button class="nav-dialog-btn" onclick="openGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
             <button class="nav-dialog-btn" onclick="startNewOrder()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">NEW ORDER</button>
         </div>
-        <div id="moreDialog">
-            <button class="more-dialog-btn" onclick="copyToClipboard()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">COPY</button>
-            <button class="more-dialog-btn" onclick="pasteSettings()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">PASTE</button>
-            <button class="more-dialog-btn" onclick="shareCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">SHARE</button>
-            <button class="more-dialog-btn" onclick="deleteCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">DELETE</button>
-        </div>
         <div id="intensityControls">
             <div class="intensity-slider-container">
                 <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
@@ -735,6 +731,8 @@
         </div>
         <div class="contact-sheet-grid" id="contactSheetGrid"></div>
         <div class="contact-sheet-footer">
+            <button class="contact-sheet-btn" id="selectBtn" onclick="toggleSelectMode()" style="display:none;background:linear-gradient(180deg, #707070 0%, #505050 100%);">SELECT</button>
+            <button class="contact-sheet-btn" id="deleteBtn" onclick="deleteSelectedPhotos()" style="display:none;background:linear-gradient(180deg, #C84B4B 0%, #A03030 100%);border-color:#8B2020;">DELETE</button>
             <button class="contact-sheet-btn" id="newOrderBtn" onclick="startNewOrder()" style="display:none;">NEW ORDER</button>
             <button class="contact-sheet-btn" id="saveBtn" onclick="handleContactSheetAction()">ADD PHOTO</button>
             <button class="contact-sheet-btn" id="saveAllBtn" onclick="saveAllPhotos()" style="display:none;">SAVE ALL</button>
@@ -748,11 +746,11 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false,doubleTapHappened:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null};
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
-        const BORDER_VERSION = 13;
+        const BORDER_VERSION = 17;
         let borderCache = {};
 
         // Force clear any old cached borders from browser
@@ -1015,8 +1013,8 @@
             const fontSize = isHorizontalBorder
                 ? Math.max(width, height) * 0.0176  // Smaller for horizontal (1.76%)
                 : Math.max(width, height) * 0.0224; // Normal for vertical (2.24%)
-            ctx.font = `bold ${fontSize}px "PP Neue Bit", monospace`;
-            ctx.letterSpacing = `${fontSize * 0.12}px`; // 12% tracking (much more spacing)
+            ctx.font = `400 ${fontSize}px "PP Neue Bit", monospace`; // Regular weight
+            ctx.letterSpacing = `${fontSize * 0.01}px`; // 1% tracking (minimal spacing)
             ctx.textAlign = 'center'; // Center the text horizontally
             ctx.textBaseline = 'bottom';
 
@@ -1026,40 +1024,40 @@
 
             // Render text with glow and noise (optimized for performance)
             ctx.save();
-            console.log(`🎬 Rendering metadata (v13): fontSize=${fontSize}px, letterSpacing=${ctx.letterSpacing}, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
-            console.log(`📝 Text opacities: Glow=0.12, Stroke=0.15, Main=0.10, Tracking=12%, Noise=2.5px x8`);
+            console.log(`🎬 Rendering metadata (v17): fontSize=${fontSize}px, letterSpacing=${ctx.letterSpacing}, at (${textX}, ${textY}), canvas=${width}x${height}, color=${textColor}`);
+            console.log(`📝 Text opacities: Glow=0.005, Stroke=0.06, Main=0.05, Tracking=1%, Weight=Regular, Noise=2.5px x8`);
 
-            // Pass 1: Glow layer - subtle red halo (reduced strength)
+            // Pass 1: Glow layer - minimal red halo (v17: drastically reduced)
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.12;
+            ctx.globalAlpha = 0.005;
             ctx.fillStyle = textColor;
             ctx.shadowColor = shadowColor;
-            ctx.shadowBlur = 180;
+            ctx.shadowBlur = 30;
             ctx.fillText(metadataText, textX, textY);
-            ctx.shadowBlur = 100;
+            ctx.shadowBlur = 20;
             ctx.fillText(metadataText, textX, textY);
 
-            // Pass 2: Outer stroke - subtle definition
+            // Pass 2: Outer stroke - minimal definition (v17: much lower)
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.15;
+            ctx.globalAlpha = 0.06;
             ctx.strokeStyle = `rgb(${Math.floor(transformedColor.r * 0.65)}, ${Math.floor(transformedColor.g * 0.65)}, ${Math.floor(transformedColor.b * 0.65)})`;
             ctx.lineWidth = fontSize * 0.08;
-            ctx.shadowBlur = 40;
+            ctx.shadowBlur = 20;
             ctx.strokeText(metadataText, textX, textY);
 
-            // Pass 3: Main text - fuzzy core with heavy grain noise (much softer)
+            // Pass 3: Main text - very subtle fuzzy core with grain noise (v17: extremely soft)
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 0.10; // Much lower opacity (v13)
-            ctx.shadowBlur = 25;
+            ctx.globalAlpha = 0.05;
+            ctx.shadowBlur = 15;
             ctx.fillStyle = textColor;
 
-            // Add heavy film grain noise to text for fuzzy appearance
+            // Add heavy film grain noise to text for fuzzy appearance (v17: reduced base opacity)
             const noiseAmount = 2.5;
             for(let i = 0; i < 8; i++) {
                 const offsetX = (Math.random() - 0.5) * noiseAmount;
                 const offsetY = (Math.random() - 0.5) * noiseAmount;
                 const alphaVariation = 0.8 + Math.random() * 0.4; // Vary opacity 0.8-1.2
-                ctx.globalAlpha = 0.10 * alphaVariation;
+                ctx.globalAlpha = 0.06 * alphaVariation; // v17: reduced from 0.10 to 0.06
                 ctx.fillText(metadataText, textX + offsetX, textY + offsetY);
             }
 
@@ -1091,26 +1089,36 @@
             const btn = document.getElementById('copyPasteBtn');
             const icon = document.getElementById('copyPasteIcon');
 
-            if (!state.copiedSettings) {
-                // Copy settings
-                state.copiedSettings = JSON.parse(JSON.stringify(state.settings));
-                btn.classList.add('holding');
-                icon.src = 'paste.svg';
-                console.log('📋 Settings copied, button now orange');
-            } else {
-                // Paste settings
-                state.settings = JSON.parse(JSON.stringify(state.copiedSettings));
-                state.copiedSettings = null;
-                btn.classList.remove('holding');
-                icon.src = 'Copy.svg';
-                console.log('📋 Settings pasted, button now grey');
+            // Add pressed state
+            btn.style.transform = 'translateY(5px)';
+            btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
 
-                // Update UI and render
-                updateUIFromSettings();
-                updatePresetButtonText();
-                saveCurrentPhotoSettings(true, true);
-                deferredRender();
-            }
+            // Wait for press animation, then spring back up with new state
+            setTimeout(() => {
+                btn.style.transform = '';
+                btn.style.boxShadow = '';
+
+                if (!state.copiedSettings) {
+                    // Copy settings
+                    state.copiedSettings = JSON.parse(JSON.stringify(state.settings));
+                    btn.classList.add('holding');
+                    icon.src = 'paste.svg';
+                    console.log('📋 Settings copied, button now teal');
+                } else {
+                    // Paste settings
+                    state.settings = JSON.parse(JSON.stringify(state.copiedSettings));
+                    state.copiedSettings = null;
+                    btn.classList.remove('holding');
+                    icon.src = 'Copy.svg';
+                    console.log('📋 Settings pasted, button now grey');
+
+                    // Update UI and render
+                    updateUIFromSettings();
+                    updatePresetButtonText();
+                    saveCurrentPhotoSettings(true, true);
+                    deferredRender();
+                }
+            }, 150);
         }
 
         // Mobile Debug Console - Enhanced to capture errors
@@ -1205,7 +1213,7 @@
         // Canvas tap handling
         function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
-        // Single tap compare - shows original unprocessed image for 1 second
+        // Single tap compare - shows original unprocessed image with orange indicator for 1600ms
         function singleTapCompare(){
             if(state.tapState.comparing) return;
             const canvas=document.getElementById('canvas');
@@ -1213,6 +1221,21 @@
             if(!p||!p.original) return;
 
             state.tapState.comparing=true;
+
+            // Show orange pulsing indicator
+            const indicator=document.getElementById('intensityIndicator');
+            indicator.style.color='#FF8C00';
+            indicator.style.animation='pulse-orange-steady 800ms ease-in-out infinite';
+            indicator.style.fontSize='20px';
+            indicator.style.width='20px';
+            indicator.style.height='20px';
+            indicator.style.borderRadius='50%';
+            indicator.style.background='#FF8C00';
+            indicator.style.top='15px';
+            indicator.style.left='50%';
+            indicator.style.transform='translateX(-50%)';
+            indicator.textContent='';
+            indicator.classList.add('active');
 
             // Set canvas to original image dimensions (without borders)
             canvas.width = p.original.width;
@@ -1241,18 +1264,47 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(p.original, 0, 0);
 
-            console.log('🔍 Showing original unprocessed image');
+            console.log('🔍 Showing original unprocessed image with orange indicator');
 
             setTimeout(()=>{
                 if(state.tapState.comparing){
                     renderPhoto();
                     state.tapState.comparing=false;
+                    // Hide orange indicator
+                    indicator.classList.remove('active');
+                    indicator.style.animation='';
+                    indicator.style.fontSize='';
+                    indicator.style.width='';
+                    indicator.style.height='';
+                    indicator.style.borderRadius='';
+                    indicator.style.background='';
+                    indicator.style.top='';
+                    indicator.style.left='';
+                    indicator.style.transform='';
                 }
-            },1000);
+            },1600); // Show for 1600ms
         }
 
         // End compare view (called on touchend when releasing tap)
-        function endCompare(){if(!state.tapState.comparing)return;renderPhoto();state.tapState.comparing=false;}
+        function endCompare(){
+            if(!state.tapState.comparing)return;
+            renderPhoto();
+            state.tapState.comparing=false;
+            // Hide orange indicator
+            const indicator=document.getElementById('intensityIndicator');
+            if(indicator){
+                indicator.classList.remove('active');
+                indicator.style.animation='';
+                indicator.style.fontSize='';
+                indicator.style.width='';
+                indicator.style.height='';
+                indicator.style.borderRadius='';
+                indicator.style.background='';
+                indicator.style.top='';
+                indicator.style.left='';
+                indicator.style.transform='';
+            }
+        }
 
         // Pinch-to-zoom and pan handling
         let zoomState={scale:1,x:0,y:0,lastDistance:0,isPinching:false,isPanning:false,lastTouchX:0,lastTouchY:0};
@@ -1293,7 +1345,7 @@
             document.querySelector('.top-controls').style.display='flex';
             document.body.style.background='#6A6A6A';
             const canvasContainer=document.getElementById('canvasContainer');
-            canvasContainer.style.paddingTop='calc(78px + 8px)';
+            canvasContainer.style.paddingTop='calc(78px + env(safe-area-inset-top) + 8px)';
             canvasContainer.style.paddingBottom='calc(230px + env(safe-area-inset-bottom, 0px) + 15px)';
             canvasContainer.style.background='#4A4A4A';
             console.log('Exited fullscreen mode');
@@ -1484,17 +1536,19 @@
 
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
-                                // Single tap to view original
-                                if(!state.panelJustClosed&&!zoomState.justZoomed){
+                                // Single tap to view original - only if double tap didn't happen
+                                if(!state.panelJustClosed&&!zoomState.justZoomed&&!state.tapState.doubleTapHappened){
                                     console.log('Single tap detected, showing original');
                                     singleTapCompare();
                                 }else{
-                                    console.log('Single tap ignored (panel just closed or just zoomed)');
+                                    console.log('Single tap ignored (panel just closed, just zoomed, or double tap happened)');
                                 }
                                 state.tapState.count=0;
+                                state.tapState.doubleTapHappened=false;
                             },450); // Longer delay to prevent double-tap interference
                         }else if(state.tapState.count===2){
                             clearTimeout(state.tapState.timer);
+                            state.tapState.doubleTapHappened=true; // Block single tap from firing
                             e.preventDefault(); // Prevent browser double-tap zoom
                             console.log('Double tap detected! Scale:',zoomState.scale);
                             // Double tap: Simple zoom in/out
@@ -4691,7 +4745,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         function closeCMYK(){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');if(cmykControls.classList.contains('active')){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');}}
 
         // Close panels when clicking/tapping outside (including on canvas for CMYK/brightness)
-        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadOptions=document.getElementById('downloadOptions'),downloadBtn=document.getElementById('downloadBtn'),navDialog=document.getElementById('navDialog'),navBtn=document.getElementById('navBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(navDialog.classList.contains('active')&&!navDialog.contains(e.target)&&!navBtn.contains(e.target)){navDialog.classList.remove('active');navDialog.classList.remove('just-opened');navBtn.classList.remove('active');state.navMenuJustOpened=false;panelWasClosed=true;}if(moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(downloadOptions.classList.contains('active')&&!downloadOptions.contains(e.target)&&!downloadBtn.contains(e.target)){closeDownloadOptions();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
+        function handleOutsideInteraction(e){const cmykControls=document.getElementById('cmykControls'),cmykToggle=document.getElementById('cmykToggle'),brightnessControls=document.getElementById('brightnessControls'),brightnessToggle=document.getElementById('brightnessToggle'),intensityControls=document.getElementById('intensityControls'),intensityBtn=document.getElementById('intensityBtn'),moreDialog=document.getElementById('moreDialog'),moreBtn=document.getElementById('moreBtn'),historyPanel=document.getElementById('historyPanel'),clearBtn=document.getElementById('clearBtn'),downloadProgress=document.getElementById('downloadProgress'),downloadOptions=document.getElementById('downloadOptions'),downloadBtn=document.getElementById('downloadBtn'),navDialog=document.getElementById('navDialog'),navBtn=document.getElementById('navBtn'),canvasContainer=document.getElementById('canvasContainer'),editFooter=document.querySelector('.edit-footer');let panelWasClosed=false;if(cmykControls.classList.contains('active')&&!cmykControls.contains(e.target)&&!cmykToggle.contains(e.target)){cmykControls.classList.remove('active');cmykToggle.classList.remove('active');canvasContainer.classList.remove('cmyk-open');editFooter.classList.remove('cmyk-open');panelWasClosed=true;}if(brightnessControls.classList.contains('active')&&!brightnessControls.contains(e.target)&&!brightnessToggle.contains(e.target)){brightnessControls.classList.remove('active');brightnessToggle.classList.remove('active');canvasContainer.classList.remove('brightness-open');editFooter.classList.remove('brightness-open');panelWasClosed=true;}if(navDialog.classList.contains('active')&&!navDialog.contains(e.target)&&!navBtn.contains(e.target)){navDialog.classList.remove('active');navDialog.classList.remove('just-opened');navBtn.classList.remove('active');state.navMenuJustOpened=false;panelWasClosed=true;}if(moreDialog&&moreBtn&&moreDialog.classList.contains('active')&&!moreDialog.contains(e.target)&&!moreBtn.contains(e.target)){moreDialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');panelWasClosed=true;}if(historyPanel.classList.contains('active')&&!historyPanel.contains(e.target)&&!clearBtn.contains(e.target)){historyPanel.classList.remove('active');clearBtn.classList.remove('active');canvasContainer.classList.remove('history-open');editFooter.classList.remove('history-open');panelWasClosed=true;}if(downloadProgress.classList.contains('active')&&!downloadProgress.contains(e.target)&&!downloadBtn.contains(e.target)){hideProgress();panelWasClosed=true;}if(downloadOptions.classList.contains('active')&&!downloadOptions.contains(e.target)&&!downloadBtn.contains(e.target)){closeDownloadOptions();panelWasClosed=true;}if(intensityControls.classList.contains('active')&&!intensityControls.contains(e.target)&&!intensityBtn.contains(e.target)){closeIntensity();panelWasClosed=true;}if(panelWasClosed){state.panelJustClosed=true;setTimeout(()=>{state.panelJustClosed=false;},100);}}document.addEventListener('click',handleOutsideInteraction);
 
         function adjustCMYK(channel,delta){
             haptic();
@@ -4779,6 +4833,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             closeMoreDialog();
             closeHistoryPanel();
             closeDownloadProgress();
+            closeNavDialog();
 
             const intensityControls=document.getElementById('intensityControls');
             const intensityBtn=document.getElementById('intensityBtn');
@@ -5150,38 +5205,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
             let blob;
 
-            // Handle contact sheet differently
+            // Handle contact sheet differently - always download as image
             if(p.isContactSheet){
                 updateUploadProgress(50, 'Generating contact sheet...');
                 blob = await generateContactSheetImage();
                 updateUploadProgress(70, `Preparing ${filename.substring(0,30)}...`);
-                const file=new File([blob],filename,{type:'image/jpeg'});
 
-                if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-                    try{
-                        updateUploadProgress(90, 'Ready to save...');
-                        await new Promise(r=>setTimeout(r,300));
-
-                        await navigator.share({files:[file],title:'Frontier Contact Sheet'});
-
-                        updateUploadProgress(100, 'Complete! Image saved!');
-                        await new Promise(r=>setTimeout(r,1500));
-                        hideUploadProgress();
-                    }catch(err){
-                        if(err.name!=='AbortError'){
-                            fallbackDownload(blob,filename);
-                            updateUploadProgress(100, 'Complete! Image downloaded!');
-                            await new Promise(r=>setTimeout(r,1500));
-                        }
-                        hideUploadProgress();
-                    }
-                }else{
-                    updateUploadProgress(90, 'Downloading...');
-                    fallbackDownload(blob,filename);
-                    updateUploadProgress(100, 'Complete! Image downloaded!');
-                    await new Promise(r=>setTimeout(r,1500));
-                    hideUploadProgress();
-                }
+                // Always use fallback download for contact sheets (no share dialog)
+                updateUploadProgress(90, 'Downloading...');
+                fallbackDownload(blob,filename);
+                updateUploadProgress(100, 'Complete! Image downloaded!');
+                await new Promise(r=>setTimeout(r,1500));
+                hideUploadProgress();
                 return;
             }
 
@@ -5481,14 +5516,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     return;
                 }
 
-                // If more than 5 photos, open contact sheet in save-multiple mode
-                if(photoCount > 5){
-                    closeDownloadOptions();
-                    await toggleContactSheetView('save-multiple');
-                    return;
-                }
+                // Always open contact sheet in save-multiple mode
+                closeDownloadOptions();
+                await toggleContactSheetView('save-multiple');
+                return;
 
-                // Detect if mobile
+                // Detect if mobile (deprecated - keeping for reference)
                 const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
                 if(!isMobile){
@@ -6044,33 +6077,151 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
                 console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
 
-                // Calculate adjustments (scale -10 to +10)
+                // ============================================================
+                // IMPROVED ALGORITHM - Professional Minilab Style
+                // Based on Fuji Frontier techniques and modern auto-levels
+                // ============================================================
+
                 let brightness = 0;
                 let contrast = 0;
                 let shadows = 0;
                 let highlights = 0;
 
-                // BRIGHTNESS: Center the average around 128
-                const brightnessDelta = 128 - avgLum;
-                brightness = Math.round(Math.max(-10, Math.min(10, brightnessDelta / 12.8)));
+                // Detect scene type for intelligent adjustment
+                const p10 = findPercentile(0.10);
+                const p90 = findPercentile(0.90);
+                const p2 = findPercentile(0.02);
+                const p98 = findPercentile(0.98);
 
-                // CONTRAST: Expand if range is too narrow, compress if too wide
-                const idealRange = 180; // Target range
-                const contrastDelta = (idealRange - range) / idealRange;
-                contrast = Math.round(Math.max(-10, Math.min(10, contrastDelta * 8)));
+                const isLowKey = p50 < 90 && p90 < 160;      // Dark/moody image
+                const isHighKey = p50 > 165 && p10 > 95;      // Bright/airy image
+                const isBacklit = (p98 - p2) > 200 && p50 < 115; // High contrast with dark midpoint
 
-                // SHADOWS: Lift if shadows are crushed (p1 is too low)
-                if (p1 < 10) {
-                    shadows = Math.round(Math.max(0, Math.min(10, (10 - p1) / 2)));
-                } else if (p5 < 30) {
-                    shadows = Math.round(Math.max(0, Math.min(10, (30 - p5) / 6)));
+                console.log(`🎭 Scene detection: lowKey=${isLowKey}, highKey=${isHighKey}, backlit=${isBacklit}`);
+
+                // 1. AUTO-LEVELS: Intelligent black/white point clipping
+                // Clip 1% on shadows, 0.5% on highlights (professional minilab standard)
+                const blackPoint = p1;
+                const whitePoint = findPercentile(0.995);
+                const dynamicRange = whitePoint - blackPoint;
+
+                // Target: stretch to use 10-245 range (preserve some headroom)
+                const targetBlack = 10;
+                const targetWhite = 245;
+                const targetRange = targetWhite - targetBlack;
+
+                // Calculate optimal black/white point adjustment
+                let autoLevelsStrength = 0;
+                if (dynamicRange < 150) {
+                    // Image has low contrast, needs stretching
+                    autoLevelsStrength = (targetRange - dynamicRange) / targetRange;
+                } else if (blackPoint > 25 || whitePoint < 235) {
+                    // Image doesn't use full range but has good contrast
+                    autoLevelsStrength = 0.4;
                 }
 
-                // HIGHLIGHTS: Pull down if highlights are blown (p99 is too high)
-                if (p99 > 245) {
-                    highlights = Math.round(Math.max(-10, Math.min(0, (245 - p99) / 2)));
-                } else if (p95 > 225) {
-                    highlights = Math.round(Math.max(-10, Math.min(0, (225 - p95) / 6)));
+                // 2. BRIGHTNESS: Use median (p50) instead of mean for robustness
+                // Target median at 118 for film-like exposure (slightly darker than digital 128)
+                const targetMedian = isLowKey ? 100 : isHighKey ? 135 : 118;
+                const medianDelta = targetMedian - p50;
+
+                // Scale brightness more intelligently based on how far off we are
+                if (Math.abs(medianDelta) > 50) {
+                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 10)));
+                } else if (Math.abs(medianDelta) > 25) {
+                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 14)));
+                } else {
+                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 18)));
+                }
+
+                // For backlit images, boost brightness more aggressively
+                if (isBacklit && brightness > 0) {
+                    brightness = Math.min(10, Math.round(brightness * 1.3));
+                }
+
+                // 3. CONTRAST: Use p10-p90 range (excludes extreme outliers)
+                const midtoneRange = p90 - p10;
+                const idealMidtoneRange = isLowKey ? 120 : isHighKey ? 100 : 140;
+
+                // Calculate contrast based on midtone distribution
+                const contrastRatio = midtoneRange / idealMidtoneRange;
+                if (contrastRatio < 0.7) {
+                    // Too flat, increase contrast
+                    contrast = Math.round(Math.min(10, (1 - contrastRatio) * 12));
+                } else if (contrastRatio > 1.3) {
+                    // Too contrasty, reduce
+                    contrast = Math.round(Math.max(-10, -((contrastRatio - 1) * 8)));
+                } else {
+                    // Good range, apply auto-levels strength instead
+                    contrast = Math.round(autoLevelsStrength * 6);
+                }
+
+                // Backlit images need more contrast to separate subject
+                if (isBacklit) {
+                    contrast = Math.min(10, contrast + 2);
+                }
+
+                // 4. SHADOWS: Intelligent shadow recovery
+                // Check if shadows are crushed (p2 < 15) or blocked (p5 < 35)
+                const shadowsCrushed = p2 < 15;
+                const shadowsBlocked = p5 < 35;
+
+                if (shadowsCrushed) {
+                    // Severe crushing, lift aggressively
+                    shadows = Math.round(Math.min(10, (20 - p2) / 1.5));
+                } else if (shadowsBlocked) {
+                    // Moderate blocking, lift moderately
+                    shadows = Math.round(Math.min(10, (40 - p5) / 4));
+                } else if (p10 < 50 && !isLowKey) {
+                    // Slightly dark shadows in normal image
+                    shadows = Math.round(Math.min(6, (55 - p10) / 8));
+                }
+
+                // Don't lift shadows in intentional low-key images
+                if (isLowKey) {
+                    shadows = Math.round(shadows * 0.3);
+                }
+
+                // Backlit images need strong shadow recovery
+                if (isBacklit) {
+                    shadows = Math.min(10, Math.max(shadows, 6));
+                }
+
+                // 5. HIGHLIGHTS: Intelligent highlight recovery
+                // Check if highlights are blown (p98 > 245) or clipped (p95 > 230)
+                const highlightsBlown = p98 > 245;
+                const highlightsClipped = p95 > 230;
+
+                if (highlightsBlown) {
+                    // Severe clipping, pull down aggressively
+                    highlights = Math.round(Math.max(-10, (240 - p98) / 1.5));
+                } else if (highlightsClipped) {
+                    // Moderate clipping, pull down moderately
+                    highlights = Math.round(Math.max(-10, (228 - p95) / 4));
+                } else if (p90 > 215 && !isHighKey) {
+                    // Slightly hot highlights in normal image
+                    highlights = Math.round(Math.max(-6, (210 - p90) / 8));
+                }
+
+                // Don't pull down highlights in intentional high-key images
+                if (isHighKey) {
+                    highlights = Math.round(highlights * 0.3);
+                }
+
+                // 6. BALANCE: Prevent over-correction in opposite directions
+                // If we're lifting shadows significantly, be gentler with brightness
+                if (shadows > 5 && brightness > 0) {
+                    brightness = Math.round(brightness * 0.7);
+                }
+
+                // If we're pulling highlights significantly, be gentler with brightness
+                if (highlights < -5 && brightness < 0) {
+                    brightness = Math.round(brightness * 0.7);
+                }
+
+                // If both shadows and highlights need work, reduce contrast boost
+                if (shadows > 4 && highlights < -4 && contrast > 0) {
+                    contrast = Math.round(contrast * 0.6);
                 }
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
@@ -6144,13 +6295,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function removeCurrentPhoto(){if(state.photos.length===1){alert('Cannot remove last photo');return;}const removedIndex=state.currentIndex;state.photos.splice(removedIndex,1);if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}loadPhotoSettings(state.currentIndex);deferredRender();updateNavButtons();}
 
-        function toggleNavMenu(e){if(e){e.stopPropagation();e.preventDefault();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();closeMoreDialog();const dialog=document.getElementById('navDialog');const navBtn=document.getElementById('navBtn');if(dialog.classList.contains('active')){dialog.classList.remove('active');dialog.classList.remove('just-opened');navBtn.classList.remove('active');state.navMenuJustOpened=false;}else{dialog.classList.add('active');dialog.classList.add('just-opened');navBtn.classList.add('active');state.navMenuJustOpened=true;setTimeout(()=>{state.navMenuJustOpened=false;dialog.classList.remove('just-opened');},350);}}
+        function toggleNavMenu(e){if(e){e.stopPropagation();e.preventDefault();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();closeMoreDialog();closeIntensity();const dialog=document.getElementById('navDialog');const navBtn=document.getElementById('navBtn');if(dialog.classList.contains('active')){dialog.classList.remove('active');dialog.classList.remove('just-opened');navBtn.classList.remove('active');state.navMenuJustOpened=false;}else{dialog.classList.add('active');dialog.classList.add('just-opened');navBtn.classList.add('active');state.navMenuJustOpened=true;setTimeout(()=>{state.navMenuJustOpened=false;dialog.classList.remove('just-opened');},350);}}
 
         function closeNavDialog(){haptic();const dialog=document.getElementById('navDialog');const navBtn=document.getElementById('navBtn');dialog.classList.remove('active');navBtn.classList.remove('active');}
 
-        function toggleExportMenu(e){if(e){e.stopPropagation();e.preventDefault();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();closeNavDialog();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog.classList.contains('active')){dialog.classList.remove('active');dialog.classList.remove('just-opened');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');state.moreMenuJustOpened=false;}else{dialog.classList.add('active');dialog.classList.add('just-opened');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');state.moreMenuJustOpened=true;setTimeout(()=>{state.moreMenuJustOpened=false;dialog.classList.remove('just-opened');},350);}}
+        function toggleExportMenu(e){if(e){e.stopPropagation();e.preventDefault();}haptic();closeCMYK();closeBrightness();closeHistoryPanel();closeDownloadProgress();closeNavDialog();closeIntensity();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(!dialog||!moreBtn)return;if(dialog.classList.contains('active')){dialog.classList.remove('active');dialog.classList.remove('just-opened');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');state.moreMenuJustOpened=false;}else{dialog.classList.add('active');dialog.classList.add('just-opened');moreBtn.classList.add('active');canvasContainer.classList.add('more-open');editFooter.classList.add('more-open');state.moreMenuJustOpened=true;setTimeout(()=>{state.moreMenuJustOpened=false;dialog.classList.remove('just-opened');},350);}}
 
-        function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');dialog.classList.remove('active');moreBtn.classList.remove('active');canvasContainer.classList.remove('more-open');editFooter.classList.remove('more-open');}
+        function closeMoreDialog(){haptic();const dialog=document.getElementById('moreDialog');const moreBtn=document.getElementById('moreBtn');const canvasContainer=document.getElementById('canvasContainer');const editFooter=document.querySelector('.edit-footer');if(dialog)dialog.classList.remove('active');if(moreBtn)moreBtn.classList.remove('active');if(canvasContainer)canvasContainer.classList.remove('more-open');if(editFooter)editFooter.classList.remove('more-open');}
 
         function pasteSettings(){haptic();closeMoreDialog();navigator.clipboard.readText().then(text=>{try{const settings=JSON.parse(text);if(settings.profile!==undefined){state.settings={...state.settings,...settings};updateUIFromSettings();updatePresetButtonText();saveCurrentPhotoSettings(true,true);deferredRender();alert('Settings pasted successfully!');}else{alert('Invalid settings format');}}catch(e){alert('Could not paste settings. Make sure you copied valid settings.');console.error(e);}}).catch(err=>{alert('Could not access clipboard. Please check permissions.');console.error(err);});}
 
@@ -6385,23 +6536,23 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             haptic();
             state.contactSheet.selectMode=!state.contactSheet.selectMode;
             const btn=document.getElementById('selectBtn');
-            const deleteBtn=document.getElementById('deleteBtn');
-            const saveBtn=document.getElementById('saveBtn');
 
             if(state.contactSheet.selectMode){
-                btn.classList.add('select-mode');
-                btn.textContent='CANCEL';
-                document.getElementById('selectionInfo').style.display='block';
-                updateSelectionInfo();
+                // Entering select mode
+                if(btn){
+                    btn.classList.add('select-mode');
+                    btn.textContent='CANCEL';
+                }
             }else{
-                btn.classList.remove('select-mode');
-                btn.textContent='SELECT';
+                // Exiting select mode - clear selection
+                if(btn){
+                    btn.classList.remove('select-mode');
+                    btn.textContent='SELECT';
+                }
                 state.contactSheet.selected=[];
                 document.querySelectorAll('.contact-sheet-item').forEach(item=>item.classList.remove('selected'));
-                document.getElementById('selectionInfo').style.display='none';
-                deleteBtn.style.display='none';
-                saveBtn.textContent='SAVE ALL';
             }
+            updateSelectionInfo();
         }
 
         function updateSelectionInfo(){
@@ -6409,10 +6560,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const saveBtn=document.getElementById('saveBtn');
             const saveAllBtn=document.getElementById('saveAllBtn');
             const newOrderBtn=document.getElementById('newOrderBtn');
+            const deleteBtn=document.getElementById('deleteBtn');
+            const selectBtn=document.getElementById('selectBtn');
             const mode = state.contactSheet.mode || 'navigation';
 
             if(mode === 'navigation'){
-                // Navigation mode: Show NEW ORDER (grey) and ADD PHOTO (turquoise), hide SAVE ALL
+                // Navigation mode: Show SELECT (transforms to DELETE when photos selected), NEW ORDER, ADD PHOTO
                 if(newOrderBtn){
                     newOrderBtn.style.display='block';
                     newOrderBtn.style.background='linear-gradient(180deg, #707070 0%, #505050 100%)';
@@ -6425,26 +6578,58 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 saveBtn.style.transform='';
                 saveBtn.style.boxShadow='';
                 if(saveAllBtn) saveAllBtn.style.display='none';
+
+                // Show SELECT button or DELETE button based on selection and selectMode
+                if(state.contactSheet.selectMode && count > 0){
+                    // In select mode with photos selected: show DELETE button (up state)
+                    if(selectBtn) selectBtn.style.display='none';
+                    if(deleteBtn){
+                        deleteBtn.style.display='block';
+                        deleteBtn.style.transform='';
+                        deleteBtn.style.boxShadow='';
+                    }
+                }else if(state.contactSheet.selectMode){
+                    // In select mode with no photos selected: show SELECT button in down state
+                    if(selectBtn){
+                        selectBtn.style.display='block';
+                        selectBtn.textContent='SELECT';
+                        selectBtn.style.transform='translateY(5px)';
+                        selectBtn.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
+                    }
+                    if(deleteBtn) deleteBtn.style.display='none';
+                }else{
+                    // Not in select mode: show SELECT button in up state
+                    if(selectBtn){
+                        selectBtn.style.display='block';
+                        selectBtn.textContent='SELECT';
+                        selectBtn.style.transform='';
+                        selectBtn.style.boxShadow='';
+                    }
+                    if(deleteBtn) deleteBtn.style.display='none';
+                }
             }else{
-                // Save-multiple mode: Hide NEW ORDER, show SELECT IMAGES / SAVE ALL
+                // Save-multiple mode: Hide SELECT and NEW ORDER, show SELECT IMAGES / SAVE ALL / DELETE
+                if(selectBtn) selectBtn.style.display='none';
                 if(newOrderBtn) newOrderBtn.style.display='none';
 
                 if(count===0){
-                    // No selection: SELECT IMAGES button in down state (black)
+                    // No selection: SELECT IMAGES button in down state (black), hide DELETE
                     saveBtn.textContent='SELECT IMAGES';
                     saveBtn.style.background='#000';
                     saveBtn.style.color='#fff';
                     saveBtn.classList.add('select-mode');
                     saveBtn.style.transform='translateY(5px)';
                     saveBtn.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
+                    if(deleteBtn) deleteBtn.style.display='none';
                 }else{
-                    // Has selection: SAVE X IMAGES button in turquoise
+                    // Has selection: SAVE X IMAGES button in turquoise, show DELETE button
                     saveBtn.textContent=`SAVE ${count} IMAGE${count===1?'':'S'}`;
                     saveBtn.style.background='#3897AF';
                     saveBtn.style.color='#fff';
                     saveBtn.classList.remove('select-mode');
                     saveBtn.style.transform='';
                     saveBtn.style.boxShadow='';
+                    if(deleteBtn) deleteBtn.style.display='block';
                 }
                 // Show SAVE ALL button in save-multiple mode (always turquoise)
                 if(saveAllBtn){
@@ -6471,7 +6656,48 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
         }
 
-        async function deleteSelectedPhotos(){haptic();if(state.contactSheet.selected.length===0){alert('No photos selected');return;}if(state.contactSheet.selected.length>=state.photos.length){alert('Cannot delete all photos.\nAt least one photo must remain.');return;}if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))return;setStatus('processing');const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);sortedIndices.forEach(idx=>{state.photos.splice(idx,1);});if(state.currentIndex>=state.photos.length){state.currentIndex=state.photos.length-1;}state.contactSheet.selected=[];state.contactSheet.selectMode=false;document.getElementById('selectBtn').classList.remove('select-mode');document.getElementById('selectBtn').textContent='SELECT';document.getElementById('selectionInfo').style.display='none';document.getElementById('deleteBtn').style.display='none';await populateContactSheet();loadPhotoSettings(state.currentIndex);deferredRender();setStatus('ready');}
+        async function deleteSelectedPhotos(){
+            haptic();
+            if(state.contactSheet.selected.length===0){
+                alert('No photos selected');
+                return;
+            }
+            if(state.contactSheet.selected.length>=state.photos.length){
+                alert('Cannot delete all photos.\nAt least one photo must remain.');
+                return;
+            }
+            if(!confirm(`Delete ${state.contactSheet.selected.length} photo${state.contactSheet.selected.length===1?'':'s'}?`))
+                return;
+
+            setStatus('processing');
+
+            // Delete selected photos
+            const sortedIndices=state.contactSheet.selected.sort((a,b)=>b-a);
+            sortedIndices.forEach(idx=>{
+                state.photos.splice(idx,1);
+            });
+
+            // Adjust current index if needed
+            if(state.currentIndex>=state.photos.length){
+                state.currentIndex=state.photos.length-1;
+            }
+
+            // Clear selection and exit select mode
+            state.contactSheet.selected=[];
+            state.contactSheet.selectMode=false;
+            const selectBtn = document.getElementById('selectBtn');
+            if(selectBtn){
+                selectBtn.classList.remove('select-mode');
+                selectBtn.textContent='SELECT';
+            }
+
+            // Repopulate contact sheet and update UI
+            await populateContactSheet();
+            updateSelectionInfo();
+            loadPhotoSettings(state.currentIndex);
+            deferredRender();
+            setStatus('ready');
+        }
 
         async function populateContactSheet(){const grid=document.getElementById('contactSheetGrid');grid.innerHTML='';for(let idx=0;idx<state.photos.length;idx++){const p=state.photos[idx];const item=document.createElement('div');item.className='contact-sheet-item';if(idx===state.currentIndex)item.classList.add('current');if(state.contactSheet.selected.includes(idx))item.classList.add('selected');item.onclick=()=>handleContactSheetItemClick(idx);if(!p.isContactSheet){const sourceImg=p.image;const maxDim=200;const scale=Math.min(maxDim/sourceImg.width,maxDim/sourceImg.height);const tempCanvas=document.createElement('canvas');const ctx=tempCanvas.getContext('2d',{alpha:false,willReadFrequently:true});tempCanvas.width=Math.floor(sourceImg.width*scale);tempCanvas.height=Math.floor(sourceImg.height*scale);await preloadLUTForProfile(p.settings.profile);ctx.drawImage(sourceImg,0,0,tempCanvas.width,tempCanvas.height);const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);ctx.putImageData(imgData,0,0);const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);ctx.putImageData(imgData2,0,0);if(p.settings.filmBorder){await applyFilmBorder(tempCanvas,ctx,p.settings,{...p,frameNumber:idx+1,uploadTime:p.uploadTime||new Date()});}const img=document.createElement('img');img.src=tempCanvas.toDataURL('image/jpeg',0.8);item.appendChild(img);}else{const img=document.createElement('img');img.src=p.image.src||p.image;item.appendChild(img);}const label=document.createElement('div');label.className='contact-sheet-label';label.onclick=(e)=>e.stopPropagation();const filenameRow=document.createElement('div');filenameRow.className='contact-sheet-filename';const filenameText=document.createElement('div');filenameText.className='contact-sheet-filename-text';const profileText=p.settings.profile!=='none'?p.settings.profile.toUpperCase():'ORIGINAL';const frameNum=String(idx+1).padStart(2,'0');filenameText.textContent=`Frontier-${profileText}_${frameNum}`;const editBtn=document.createElement('div');editBtn.className='contact-sheet-edit-btn';editBtn.innerHTML='<img src="Edit.svg" style="width:100%;height:100%;object-fit:contain;" alt="Edit">';editBtn.onclick=(e)=>{e.stopPropagation();editPhotoName(idx);};filenameRow.appendChild(filenameText);filenameRow.appendChild(editBtn);const datetime=document.createElement('div');datetime.className='contact-sheet-datetime';const date=p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});const time=p.uploadTime.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});datetime.textContent=`${date} ${time}`;label.appendChild(filenameRow);label.appendChild(datetime);item.appendChild(label);grid.appendChild(item);};}
 
@@ -7071,15 +7297,6 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
         });
 
         // Helper functions for keyboard shortcuts
-        function adjustIntensity(delta) {
-            if (state.photos.length === 0) return;
-            haptic();
-            state.settings.intensity = Math.max(0, Math.min(1, state.settings.intensity + delta));
-            updateControlValue('intensity', state.settings.intensity);
-            state.holdDirty = state.holdSettings;
-            renderPhoto();
-        }
-
         function toggleBorders() {
             if (state.photos.length === 0) return;
             haptic();
@@ -7179,24 +7396,24 @@ Actions:
                 content: `
                     <p>Start by uploading your photos using the "ADD PHOTOS" button on the home screen.</p>
                     <ul>
-                        <li><strong>Arrow buttons (bottom of screen):</strong> Navigate between photos</li>
-                        <li><strong>Keyboard arrows (←/→):</strong> Quick photo navigation</li>
-                        <li><strong>Swipe:</strong> Swipe left/right on mobile</li>
-                        <li><strong>Hamburger icon (top-left):</strong> Access EXIT, NEW ORDER, and GUIDE options</li>
-                        <li><strong>Three dots (top-right):</strong> COPY, PASTE, SHARE, and DELETE</li>
+                        <li><strong>Arrow buttons (bottom of screen)</strong><br>Navigate between photos</li>
+                        <li><strong>Keyboard arrows (←/→)</strong><br>Quick photo navigation</li>
+                        <li><strong>Swipe</strong><br>Swipe left/right on mobile</li>
+                        <li><strong>Hamburger icon (top-left)</strong><br>Access EXIT, NEW ORDER, and GUIDE options</li>
+                        <li><strong>Three dots (top-right)</strong><br>COPY, PASTE, SHARE, and DELETE</li>
                     </ul>
                 `
             },
             {
                 title: "Film Profiles & Presets",
                 content: `
-                    <p><strong>Preset buttons (top of screen):</strong> Choose your film look with authentic color profiles:</p>
+                    <p><strong>Preset buttons (top of screen)</strong><br>Choose your film look with authentic color profiles:</p>
                     <ul>
-                        <li><strong>SUPRA (S key):</strong> Fujifilm Superia - vibrant consumer film</li>
-                        <li><strong>CHROME (C key):</strong> Chrome/slide film - saturated colors</li>
-                        <li><strong>XXX (X key):</strong> Experimental cross-processed look</li>
+                        <li><strong>SUPRA (S key)</strong><br>Fujifilm Superia - vibrant consumer film</li>
+                        <li><strong>CHROME (C key)</strong><br>Chrome/slide film - saturated colors</li>
+                        <li><strong>XXX (X key)</strong><br>Experimental cross-processed look</li>
                     </ul>
-                    <p><strong>Intensity slider (below preset buttons):</strong> Drag left/right to control how strong the film effect is applied. Tap to fine-tune.</p>
+                    <p><strong>Intensity slider (below preset buttons)</strong><br>Drag left/right to control how strong the film effect is applied. Tap to fine-tune.</p>
                     <p>Tip: Use keyboard shortcuts (S, C, X) for quick preset switching!</p>
                 `
             },
@@ -7204,35 +7421,35 @@ Actions:
                 title: "Adjustments & Effects",
                 content: `
                     <p>Fine-tune your photos with professional controls:</p>
-                    <p><strong>Top control buttons (tap to toggle panels):</strong></p>
+                    <p><strong>Top control buttons (tap to toggle panels)</strong></p>
                     <ul>
-                        <li><strong>CMYK button:</strong> Color density controls
+                        <li><strong>CMYK button</strong><br>Color density controls
                             <br>• Opens panel with C/M/Y/K sliders
                             <br>• Adjust each channel -10 to +10
                             <br>• Link icon locks C/M/Y channels together</li>
-                        <li><strong>Brightness button:</strong> Exposure controls
+                        <li><strong>Brightness button</strong><br>Exposure controls
                             <br>• Opens panel with brightness, contrast, shadows, highlights sliders</li>
-                        <li><strong>Intensity button:</strong> Control preset strength (0-100)</li>
+                        <li><strong>Intensity button</strong><br>Control preset strength (0-100)</li>
                     </ul>
-                    <p><strong>Effects (in footer, always visible):</strong></p>
+                    <p><strong>Effects (in footer, always visible)</strong></p>
                     <ul>
-                        <li><strong>Bloom:</strong> Halation glow effect -10 to +10 (1/2 keys)</li>
-                        <li><strong>Grain:</strong> Film grain texture 0-10 (+/- keys)</li>
-                        <li><strong>Borders button (B key):</strong> Toggle film frame with red metadata</li>
+                        <li><strong>Bloom</strong><br>Halation glow effect -10 to +10 (1/2 keys)</li>
+                        <li><strong>Grain</strong><br>Film grain texture 0-10 (+/- keys)</li>
+                        <li><strong>Borders button (B key)</strong><br>Toggle film frame with red metadata</li>
                     </ul>
                 `
             },
             {
                 title: "Export & Save",
                 content: `
-                    <p><strong>DOWNLOAD button (bottom of screen):</strong> Save your processed photos:</p>
+                    <p><strong>DOWNLOAD button (bottom of screen)</strong><br>Save your processed photos:</p>
                     <ul>
-                        <li><strong>SAVE CURRENT:</strong> Export just the current photo as PNG</li>
-                        <li><strong>SAVE ALL (>5 photos):</strong> Opens contact sheet to select which photos to save</li>
-                        <li><strong>SAVE ALL (≤5 photos):</strong> Saves all photos + contact sheet as ZIP</li>
+                        <li><strong>SAVE CURRENT</strong><br>Export just the current photo as PNG</li>
+                        <li><strong>SAVE ALL (>5 photos)</strong><br>Opens contact sheet to select which photos to save</li>
+                        <li><strong>SAVE ALL (≤5 photos)</strong><br>Saves all photos + contact sheet as ZIP</li>
                     </ul>
-                    <p><strong>Contact Sheet (hamburger menu):</strong> View all photos in a grid, tap to navigate or select multiple for batch export</p>
-                    <p><strong>Hold settings (Cmd+H or three-dot menu → COPY/PASTE):</strong> Apply same edits across multiple photos</p>
+                    <p><strong>Contact Sheet (hamburger menu)</strong><br>View all photos in a grid, tap to navigate or select multiple for batch export</p>
+                    <p><strong>Hold settings (Cmd+H or three-dot menu → COPY/PASTE)</strong><br>Apply same edits across multiple photos</p>
                     <p>You're ready to start processing! Enjoy the Frontier experience.</p>
                 `
             }
@@ -7330,16 +7547,19 @@ Actions:
                 <button class="guide-chapter-btn" onclick="openChapter(2)">3. Film Profiles & Presets</button>
                 <button class="guide-chapter-btn" onclick="openChapter(3)">4. Adjustments & Effects</button>
                 <button class="guide-chapter-btn" onclick="openChapter(4)">5. Export & Save</button>
+                <div class="guide-chapters-credit">@OTISWEEKLY®</div>
             </div>
 
             <!-- Chapter Content -->
             <div class="guide-content" id="guideContent"></div>
             <div class="guide-footer">
-                <button class="guide-btn" onclick="backToChapters()">CHAPTERS</button>
-                <div class="guide-progress" id="guideProgress">1 / 5</div>
-                <div class="guide-nav">
-                    <button class="guide-btn" id="guideBack" onclick="prevGuideStep()">BACK</button>
-                    <button class="guide-btn primary" id="guideNext" onclick="nextGuideStep()">NEXT</button>
+                <div class="guide-footer-top">
+                    <button class="guide-btn" onclick="backToChapters()">CHAPTERS</button>
+                    <div class="guide-progress" id="guideProgress">1 / 5</div>
+                    <div class="guide-nav">
+                        <button class="guide-btn" id="guideBack" onclick="prevGuideStep()">BACK</button>
+                        <button class="guide-btn primary" id="guideNext" onclick="nextGuideStep()">NEXT</button>
+                    </div>
                 </div>
             </div>
         </div>
