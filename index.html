@@ -5413,6 +5413,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 return;
             }
 
+            // Check if GIF library is loaded
+            if(typeof GIF === 'undefined'){
+                alert('GIF library not loaded. Please refresh the page and try again.');
+                console.error('GIF library (gif.js) not loaded');
+                return;
+            }
+
             try {
                 // Show upload progress UI
                 showUploadProgress(0, 'Preparing GIF export...');
@@ -5422,8 +5429,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 const gif = new GIF({
                     workers: 2,
                     quality: 10,
-                    width: maxDimension,
-                    height: Math.floor(maxDimension * 0.8), // Will be adjusted per photo
                     workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
                 });
 
