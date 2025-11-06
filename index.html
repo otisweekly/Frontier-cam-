@@ -641,7 +641,7 @@
                         <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
-                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img src="auto.svg" alt="AUTO"></button>
+                <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img id="autoIcon" src="auto-off.svg" alt="AUTO"></button>
                 <div class="cmyk-slider">
                     <div class="cmyk-value" id="shadowsValue" onclick="editBrightnessCounter('shadows')">
                         <div class="cmyk-value-number">0</div>
@@ -6418,11 +6418,11 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
         }
 
-        function adjustBrightness(channel,delta){haptic();if(state.autoActive){state.autoActive=false;const autoBtn=document.getElementById('autoBtn');if(autoBtn){autoBtn.classList.remove('active');}console.log('🔓 AUTO: Released due to manual adjustment');}const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
+        function adjustBrightness(channel,delta){haptic();if(state.autoActive){state.autoActive=false;const autoBtn=document.getElementById('autoBtn');if(autoBtn){autoBtn.classList.remove('active');document.getElementById('autoIcon').src='auto-off.svg';}console.log('🔓 AUTO: Released due to manual adjustment');}const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
 
-        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){const channels=['brightness','contrast','shadows','highlights'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});autoBtn.classList.remove('active');console.log('🔴 AUTO: Cleared all brightness values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
+        function editBrightnessCounter(type){haptic();const currentValue=state.settings[type]||0;const displayName=type.toUpperCase();const clearConfirm=confirm(`Clear ${displayName} to 0?\n\n(Cancel to enter a custom value)`);if(clearConfirm){const autoBtn=document.getElementById('autoBtn');const isAutoActive=autoBtn&&autoBtn.classList.contains('active');if(isAutoActive){const channels=['brightness','contrast','shadows','highlights'];channels.forEach(ch=>{const oldVal=state.settings[ch]||0;state.settings[ch]=0;document.getElementById(`${ch}Value`).querySelector('.cmyk-value-number').textContent='0';if(oldVal!==0){addToHistory(`${ch.toUpperCase()}: ${oldVal} → 0`,ch,oldVal,0);}});autoBtn.classList.remove('active');document.getElementById('autoIcon').src='auto-off.svg';console.log('🔴 AUTO: Cleared all brightness values and turned off AUTO');}else{state.settings[type]=0;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent='0';if(currentValue!==0){addToHistory(`${displayName}: ${currentValue} → 0`,type,currentValue,0);}}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();return;}const options=`Current: ${currentValue}\n\nEnter new value (-10 to +10):`;const input=prompt(options,currentValue);if(input===null)return;const newValue=parseInt(input);if(isNaN(newValue)||newValue<-10||newValue>10){alert('Please enter a number between -10 and +10');return;}state.settings[type]=newValue;document.getElementById(`${type}Value`).querySelector('.cmyk-value-number').textContent=newValue;if(currentValue!==newValue){addToHistory(`${displayName}: ${currentValue} → ${newValue}`,type,currentValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);deferredRender();}
 
         // Auto-adjust brightness, contrast, shadows, and highlights based on image analysis
         async function autoAdjustLevels() {
@@ -6440,6 +6440,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log('🔓 AUTO: Releasing and resetting to zero');
                 state.autoActive = false;
                 autoBtn.classList.remove('active');
+                document.getElementById('autoIcon').src = 'auto-off.svg';
 
                 // Store old values for history
                 const oldBrightness = state.settings.brightness || 0;
@@ -6629,6 +6630,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Set button active and update state
                 state.autoActive = true;
                 autoBtn.classList.add('active');
+                document.getElementById('autoIcon').src = 'auto-on.svg';
 
                 console.log('✅ AUTO adjustment complete and staying active');
                 setStatus('ready');
@@ -6638,6 +6640,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 setStatus('ready');
                 state.autoActive = false;
                 autoBtn.classList.remove('active');
+                document.getElementById('autoIcon').src = 'auto-off.svg';
                 alert('Auto-adjustment failed. Please try manually adjusting the sliders.');
             }
         }
