@@ -4956,15 +4956,15 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const currentCanvas=document.getElementById('canvas');
             const isViewingContactSheet=currentPhoto&&currentPhoto.isContactSheet;
 
-            // Common contact sheet setup
+            // Common contact sheet setup - HIGH QUALITY PREVIEW (3x upgrade)
             const photoCount=state.photos.filter(p=>!p.isContactSheet).length;
             const cols=3;
             const rows=Math.ceil(photoCount/cols);
-            const padding=3;
-            const margin=4;
-            const logoHeight=18;
-            const thumbSize=54;
-            const labelHeight=12;
+            const padding=9;           // 3 → 9 (3x)
+            const margin=12;            // 4 → 12 (3x)
+            const logoHeight=54;        // 18 → 54 (3x)
+            const thumbSize=160;        // 54 → 160 (3x upgrade for sharp previews)
+            const labelHeight=36;       // 12 → 36 (3x)
             const sheetW=margin+cols*thumbSize+(cols-1)*padding+margin;
             const sheetH=margin+logoHeight+padding+rows*(thumbSize+labelHeight)+(rows-1)*padding+margin;
 
@@ -5025,10 +5025,10 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                             ctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);
 
                             ctx.fillStyle='#666';
-                            ctx.font='4px "PP Neue Bit", monospace';
+                            ctx.font='12px "PP Neue Bit", monospace';  // 4px → 12px (3x)
                             ctx.textAlign='center';
                             const filename=(p.displayName||p.name).substring(0,10);
-                            ctx.fillText(filename,x+thumbSize/2,y+thumbSize+5);
+                            ctx.fillText(filename,x+thumbSize/2,y+thumbSize+15);  // 5 → 15 (3x)
 
                             photoIndex++;
                         }
