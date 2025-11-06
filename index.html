@@ -753,8 +753,8 @@
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
-                    <button class="copy-paste-btn" id="copyPasteBtn" onclick="toggleCopyPaste()"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
                     <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders-off.svg" style="width:32px;height:32px;" alt="Borders" id="borderIcon"></button>
+                    <button class="copy-paste-btn" id="copyPasteBtn" onclick="toggleCopyPaste()"><img id="copyPasteIcon" src="copy-off.svg" style="width:28px;height:28px;" alt="Copy"></button>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
@@ -1148,7 +1148,7 @@
                     // Copy settings
                     state.copiedSettings = JSON.parse(JSON.stringify(state.settings));
                     btn.classList.add('holding');
-                    icon.src = 'paste.svg';
+                    icon.src = 'copy-on.svg';
                     console.log('📋 Settings copied, button now teal');
 
                     // Show first-time tooltip
@@ -1235,7 +1235,7 @@
             // Clear the copied settings
             state.copiedSettings = null;
             btn.classList.remove('holding');
-            icon.src = 'Copy.svg';
+            icon.src = 'copy-off.svg';
 
             // Show confirmation
             holdFlash.textContent = 'COPIED SETTINGS CLEARED';
