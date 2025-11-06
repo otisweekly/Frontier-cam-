@@ -270,12 +270,13 @@
         .download-card-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         /* GIF Preview Modal */
-        .gif-preview-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; opacity:0; transition:opacity 0.3s ease; }
+        .gif-preview-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 80px); opacity:0; transition:opacity 0.3s ease; }
         .gif-preview-modal.active { display:flex; opacity:1; }
-        .gif-preview-content { position:relative; max-width:90vw; max-height:80vh; display:flex; align-items:center; justify-content:center; }
-        .gif-preview-canvas { max-width:100%; max-height:80vh; border:3px solid #3897AF; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); background:#000; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; }
-        .gif-close-btn { position:absolute; top:-50px; right:0; background:#B3B3B3; border:3px solid #000; border-radius:50%; width:40px; height:40px; font-size:24px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; line-height:1; }
+        .gif-preview-content { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .gif-preview-canvas { max-width:100%; max-height:100%; width:auto; height:auto; border:3px solid #3897AF; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); background:#000; object-fit:contain; }
+        .gif-close-btn { position:absolute; top:20px; right:20px; background:#B3B3B3; border:3px solid #000; border-radius:4px; width:44px; height:44px; font-family:'PP Neue Bit',monospace; font-size:20px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; line-height:1; }
         .gif-close-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .gif-preview-credit { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#B3B3B3; position:fixed; bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); left:24px; z-index:201; }
 
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
         .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
@@ -699,8 +700,9 @@
         <div id="gifPreviewModal" class="gif-preview-modal" onclick="closeGifPreview()">
             <div class="gif-preview-content" onclick="event.stopPropagation()">
                 <canvas id="gifPreviewCanvas" class="gif-preview-canvas"></canvas>
-                <button class="gif-close-btn" onclick="closeGifPreview()">✕</button>
+                <button class="gif-close-btn" onclick="event.stopPropagation(); closeGifPreview()">✕</button>
             </div>
+            <div class="gif-preview-credit">@OTISWEEKLY®</div>
         </div>
 
         <div class="edit-footer">
