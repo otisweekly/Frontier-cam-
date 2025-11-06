@@ -177,7 +177,7 @@
         .gallery-icon svg line { stroke:#000; }
 
         .top-controls { position:fixed; top:calc(15px + env(safe-area-inset-top)); right:10px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
-        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:5px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; cursor:pointer; will-change:transform, box-shadow; }
+        .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:5px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:none; cursor:pointer; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
         .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
@@ -312,17 +312,17 @@
 
         .footer-bottom { width:100%; }
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
-        .nav-btn { flex:1; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; }
+        .nav-btn { flex:1; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:none; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5) !important; cursor:not-allowed; pointer-events:none; }
         .nav-btn.disabled img { opacity:0.25; }
-        .borders-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
+        .borders-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:none; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .borders-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .borders-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .borders-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .borders-btn img { filter:brightness(0); }
         .borders-btn.active img { filter:brightness(0) invert(1); }
-        .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; }
+        .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:none; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .copy-paste-btn.holding { background:#8CBABB; color:#000; }
         .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -332,7 +332,7 @@
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
         .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px; transition:all 0s; will-change:transform, box-shadow; gap:6px; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:8px; transition:none; will-change:transform, box-shadow; gap:6px; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
 
         .photo-counter > div { display:flex; flex-direction:column; align-items:center; flex:1; }
