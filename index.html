@@ -268,6 +268,15 @@
         .download-preview { width:100%; aspect-ratio:10/8; background:#4A4A4A; border:2px solid #222; border-radius:4px; object-fit:cover; }
         .download-card-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; text-align:center; padding:8px 16px; line-height:1; pointer-events:auto; width:100%; }
         .download-card-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+
+        /* GIF Preview Modal */
+        .gif-preview-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; opacity:0; transition:opacity 0.3s ease; }
+        .gif-preview-modal.active { display:flex; opacity:1; }
+        .gif-preview-content { position:relative; max-width:90vw; max-height:80vh; display:flex; align-items:center; justify-content:center; }
+        .gif-preview-canvas { max-width:100%; max-height:80vh; border:3px solid #3897AF; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); background:#000; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; }
+        .gif-close-btn { position:absolute; top:-50px; right:0; background:#B3B3B3; border:3px solid #000; border-radius:50%; width:40px; height:40px; font-size:24px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; line-height:1; }
+        .gif-close-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
         .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
         .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
@@ -685,6 +694,15 @@
                 <button class="download-card-btn" onclick="saveAnimatedGif()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE GIF</button>
             </div>
         </div>
+
+        <!-- GIF Preview Modal -->
+        <div id="gifPreviewModal" class="gif-preview-modal" onclick="closeGifPreview()">
+            <div class="gif-preview-content" onclick="event.stopPropagation()">
+                <canvas id="gifPreviewCanvas" class="gif-preview-canvas"></canvas>
+                <button class="gif-close-btn" onclick="closeGifPreview()">✕</button>
+            </div>
+        </div>
+
         <div class="edit-footer">
             <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
@@ -5196,46 +5214,81 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
 
             if(type==='gif'){
-                setStatus('processing');
-                // Show animated GIF preview in main canvas
-                const frames=[];
-                state.photos.forEach((p,i)=>{
-                    const frameCanvas=document.createElement('canvas');
-                    const frameCtx=frameCanvas.getContext('2d',{alpha:false});
-                    frameCanvas.width=p.image.width;
-                    frameCanvas.height=p.image.height;
-                    frameCtx.drawImage(p.image,0,0);
+                // Show animated GIF preview in modal overlay
+                closeDownloadOptions();
 
-                    const savedSettings=state.settings;
-                    state.settings=p.settings;
-                    applyEffects(frameCtx,frameCanvas.width,frameCanvas.height);
-                    state.settings=savedSettings;
+                const modal = document.getElementById('gifPreviewModal');
+                const canvas = document.getElementById('gifPreviewCanvas');
+                const ctx = canvas.getContext('2d', {alpha: false});
+
+                // Reuse frames from preview if available, otherwise generate
+                const photos = state.photos.filter(p => !p.isContactSheet);
+                if(photos.length === 0) return;
+
+                const frames = [];
+
+                // Calculate preview dimensions (max 800px on longest side)
+                const maxDim = 800;
+                let previewW, previewH;
+                const firstImg = photos[0].image;
+                const aspectRatio = firstImg.width / firstImg.height;
+                if(firstImg.width > firstImg.height){
+                    previewW = Math.min(firstImg.width, maxDim);
+                    previewH = Math.floor(previewW / aspectRatio);
+                } else {
+                    previewH = Math.min(firstImg.height, maxDim);
+                    previewW = Math.floor(previewH * aspectRatio);
+                }
+
+                canvas.width = previewW;
+                canvas.height = previewH;
+
+                // Generate frames (reuse from download preview if available)
+                photos.forEach((p, i) => {
+                    const frameCanvas = document.createElement('canvas');
+                    const frameCtx = frameCanvas.getContext('2d', {alpha: false});
+                    frameCanvas.width = previewW;
+                    frameCanvas.height = previewH;
+                    frameCtx.drawImage(p.image, 0, 0, previewW, previewH);
+
+                    // Apply effects to preview
+                    const savedSettings = state.settings;
+                    state.settings = p.settings;
+                    applyEffects(frameCtx, previewW, previewH);
+                    state.settings = savedSettings;
 
                     frames.push(frameCanvas);
                 });
 
-                if(frames.length>0){
-                    mainCanvas.width=frames[0].width;
-                    mainCanvas.height=frames[0].height;
+                // Show modal
+                modal.classList.add('active');
 
-                    let frameIndex=0;
-                    if(state.gifCanvasInterval){
-                        clearInterval(state.gifCanvasInterval);
-                    }
-
-                    function drawCanvasGifFrame(){
-                        if(frames.length===0)return;
-                        ctx.drawImage(frames[frameIndex],0,0);
-                        frameIndex=(frameIndex+1)%frames.length;
-                    }
-
-                    drawCanvasGifFrame();
-                    state.gifCanvasInterval=setInterval(drawCanvasGifFrame,400);
-
-                    closeDownloadOptions();
-                    resetZoom(mainCanvas);
-                    setStatus('ready');
+                // Animate frames
+                let frameIndex = 0;
+                if(state.gifPreviewModalInterval){
+                    clearInterval(state.gifPreviewModalInterval);
                 }
+
+                function drawGifModalFrame(){
+                    if(frames.length === 0) return;
+                    ctx.drawImage(frames[frameIndex], 0, 0);
+                    frameIndex = (frameIndex + 1) % frames.length;
+                }
+
+                drawGifModalFrame();
+                state.gifPreviewModalInterval = setInterval(drawGifModalFrame, 500);
+            }
+        }
+
+        function closeGifPreview(){
+            haptic();
+            const modal = document.getElementById('gifPreviewModal');
+            modal.classList.remove('active');
+
+            // Stop animation
+            if(state.gifPreviewModalInterval){
+                clearInterval(state.gifPreviewModalInterval);
+                state.gifPreviewModalInterval = null;
             }
         }
 
