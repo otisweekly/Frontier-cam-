@@ -215,6 +215,17 @@
         .hold-flash { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100; opacity:0; pointer-events:none; transition:opacity 0.2s ease-out; font-family:'PP Neue Bit',monospace; color:#E0E0E0; font-size:28px; font-weight:700; text-align:center; text-shadow:0 0 12px rgba(224,224,224,0.6), 0 2px 4px rgba(0,0,0,0.9); }
         .hold-flash.active { opacity:1; transition:opacity 0.1s ease-in; }
 
+        /* Grey Point Picker */
+        .picker-overlay { position:absolute; display:none; z-index:110; pointer-events:none; }
+        .picker-overlay.active { display:block; pointer-events:auto; }
+        .picker-icon { width:36px; height:36px; position:absolute; cursor:move; touch-action:none; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .picker-info { position:absolute; background:rgba(0,0,0,0.85); border:3px solid #3897AF; border-radius:8px; padding:12px; font-family:'PP Neue Bit',monospace; color:#fff; font-size:14px; font-weight:700; text-align:center; min-width:120px; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); box-shadow:0 4px 12px rgba(0,0,0,0.6); pointer-events:none; }
+        .picker-color-sample { width:40px; height:40px; border:3px solid #fff; border-radius:4px; margin:0 auto 8px auto; box-shadow:0 2px 4px rgba(0,0,0,0.3); }
+        .picker-grey-percent { font-size:20px; color:#3897AF; margin-bottom:4px; }
+        .picker-mode-label { font-size:12px; color:#B3B3B3; margin-bottom:4px; cursor:pointer; pointer-events:auto; padding:4px 8px; background:rgba(255,255,255,0.1); border-radius:4px; }
+        .picker-mode-label:active { background:rgba(255,255,255,0.2); }
+        .picker-target-diff { font-size:11px; color:#FF8C00; }
+
         .fullscreen-hint { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; pointer-events:none; opacity:0; transition:opacity 0.3s ease; font-family:'PP Neue Bit',monospace; color:rgba(255,255,255,0.9); font-size:20px; font-weight:400; text-align:center; text-shadow:0 2px 6px rgba(0,0,0,0.9); }
         body.fullscreen-preview .fullscreen-hint { opacity:1; }
 
@@ -566,6 +577,17 @@
             <div class="intensity-indicator" id="intensityIndicator">100%</div>
             <div class="film-interframe" id="filmInterframe"></div>
             <div class="hold-flash" id="holdFlash">SETTINGS HELD • TAP AGAIN TO RELEASE</div>
+
+            <!-- Grey Point Picker Overlay -->
+            <div class="picker-overlay" id="pickerOverlay">
+                <img src="picker.svg" class="picker-icon" id="pickerIcon" alt="Picker">
+                <div class="picker-info" id="pickerInfo">
+                    <div class="picker-color-sample" id="pickerColorSample"></div>
+                    <div class="picker-grey-percent" id="pickerGreyPercent">--</div>
+                    <div class="picker-mode-label" id="pickerModeLabel">WHITE</div>
+                    <div class="picker-target-diff" id="pickerTargetDiff">--</div>
+                </div>
+            </div>
         </div>
         <div id="cmykControls">
             <div class="cmyk-sliders">
@@ -1269,6 +1291,240 @@
             copyBtn.addEventListener('touchcancel', () => {
                 cancelCopyHold();
             });
+        });
+
+        // Grey Point Picker System
+        const pickerState = {
+            active: false,
+            mode: 'white', // 'white', 'mid-grey', 'black'
+            isDragging: false,
+            x: 0,
+            y: 0,
+            lastSampledColor: null,
+            lastGreyPercent: null
+        };
+
+        const pickerOverlay = document.getElementById('pickerOverlay');
+        const pickerIcon = document.getElementById('pickerIcon');
+        const pickerInfo = document.getElementById('pickerInfo');
+        const pickerColorSample = document.getElementById('pickerColorSample');
+        const pickerGreyPercent = document.getElementById('pickerGreyPercent');
+        const pickerModeLabel = document.getElementById('pickerModeLabel');
+        const pickerTargetDiff = document.getElementById('pickerTargetDiff');
+        const pickerBtn = document.getElementById('pickerBtn');
+
+        function toggleGreyPicker() {
+            pickerState.active = !pickerState.active;
+
+            if (pickerState.active) {
+                // Show picker
+                pickerOverlay.classList.add('active');
+                pickerBtn.classList.add('active');
+
+                // Position picker in center of canvas
+                const canvasRect = displayCanvas.getBoundingClientRect();
+                pickerState.x = canvasRect.width / 2;
+                pickerState.y = canvasRect.height / 2;
+                updatePickerPosition();
+
+                // Sample initial position
+                sampleAndUpdate();
+            } else {
+                // Hide picker
+                pickerOverlay.classList.remove('active');
+                pickerBtn.classList.remove('active');
+                pickerState.isDragging = false;
+            }
+        }
+
+        function updatePickerPosition() {
+            pickerIcon.style.left = pickerState.x + 'px';
+            pickerIcon.style.top = pickerState.y + 'px';
+
+            // Position info panel to the right and below icon
+            pickerInfo.style.left = (pickerState.x + 45) + 'px';
+            pickerInfo.style.top = pickerState.y + 'px';
+        }
+
+        function samplePixelAtPicker() {
+            // Sample pixel at the bottom tip of the picker icon (bottom center)
+            const canvasRect = displayCanvas.getBoundingClientRect();
+
+            // Calculate pixel position on canvas (accounting for canvas size vs display size)
+            const scaleX = displayCanvas.width / canvasRect.width;
+            const scaleY = displayCanvas.height / canvasRect.height;
+
+            // Sample at bottom edge of icon (36px tall, sample at bottom center)
+            const canvasX = Math.floor((pickerState.x) * scaleX);
+            const canvasY = Math.floor((pickerState.y + 36) * scaleY);
+
+            // Ensure we're within canvas bounds
+            if (canvasX < 0 || canvasX >= displayCanvas.width ||
+                canvasY < 0 || canvasY >= displayCanvas.height) {
+                return null;
+            }
+
+            const ctx = displayCanvas.getContext('2d');
+            const pixelData = ctx.getImageData(canvasX, canvasY, 1, 1).data;
+
+            return {
+                r: pixelData[0],
+                g: pixelData[1],
+                b: pixelData[2]
+            };
+        }
+
+        function calculateGreyPercent(r, g, b) {
+            // Calculate luminance using standard formula
+            const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+            return (luminance / 255) * 100;
+        }
+
+        function getTargetForMode(mode) {
+            switch(mode) {
+                case 'white': return 95;
+                case 'mid-grey': return 50;
+                case 'black': return 5;
+                default: return 95;
+            }
+        }
+
+        function sampleAndUpdate() {
+            const color = samplePixelAtPicker();
+            if (!color) return;
+
+            pickerState.lastSampledColor = color;
+            const greyPercent = calculateGreyPercent(color.r, color.g, color.b);
+            pickerState.lastGreyPercent = greyPercent;
+
+            // Update color sample display
+            pickerColorSample.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+
+            // Update grey percentage display
+            pickerGreyPercent.textContent = greyPercent.toFixed(1) + '%';
+
+            // Update mode label
+            const modeText = pickerState.mode === 'white' ? 'WHITE' :
+                           pickerState.mode === 'mid-grey' ? 'MID-GREY' : 'BLACK';
+            pickerModeLabel.textContent = modeText;
+
+            // Calculate and show difference from target
+            const target = getTargetForMode(pickerState.mode);
+            const diff = greyPercent - target;
+            const diffSign = diff > 0 ? '+' : '';
+            pickerTargetDiff.textContent = `${diffSign}${diff.toFixed(1)}% from target`;
+        }
+
+        function calculateAdjustmentsFromSample() {
+            if (!pickerState.lastGreyPercent) return;
+
+            const greyPercent = pickerState.lastGreyPercent;
+            const target = getTargetForMode(pickerState.mode);
+            const diff = target - greyPercent;
+
+            // Calculate adjustment multiplier based on difference
+            // Positive diff means we need to brighten, negative means darken
+            const adjustStrength = Math.min(Math.abs(diff) / 50, 1.0); // Cap at 100% strength
+
+            if (pickerState.mode === 'white') {
+                // For white point: adjust highlights and brightness
+                currentSettings.brightness += diff * 0.5;
+                currentSettings.highlights += diff * 0.3;
+            } else if (pickerState.mode === 'mid-grey') {
+                // For mid-grey: adjust brightness and contrast
+                currentSettings.brightness += diff * 0.6;
+                currentSettings.contrast += diff * 0.2;
+            } else if (pickerState.mode === 'black') {
+                // For black point: adjust shadows and brightness
+                currentSettings.brightness += diff * 0.3;
+                currentSettings.shadows += diff * 0.5;
+            }
+
+            // Clamp values to valid ranges
+            currentSettings.brightness = Math.max(-100, Math.min(100, currentSettings.brightness));
+            currentSettings.contrast = Math.max(-100, Math.min(100, currentSettings.contrast));
+            currentSettings.shadows = Math.max(-100, Math.min(100, currentSettings.shadows));
+            currentSettings.highlights = Math.max(-100, Math.min(100, currentSettings.highlights));
+
+            // Apply adjustments
+            processImage();
+            updateSliders();
+        }
+
+        // Touch event handlers for picker icon
+        pickerIcon.addEventListener('touchstart', (e) => {
+            if (!pickerState.active) return;
+            e.preventDefault();
+            pickerState.isDragging = true;
+        });
+
+        pickerIcon.addEventListener('touchmove', (e) => {
+            if (!pickerState.isDragging) return;
+            e.preventDefault();
+
+            const touch = e.touches[0];
+            const canvasRect = displayCanvas.getBoundingClientRect();
+
+            // Update position relative to canvas
+            pickerState.x = touch.clientX - canvasRect.left;
+            pickerState.y = touch.clientY - canvasRect.top;
+
+            updatePickerPosition();
+            sampleAndUpdate();
+        });
+
+        pickerIcon.addEventListener('touchend', (e) => {
+            if (!pickerState.isDragging) return;
+            e.preventDefault();
+            pickerState.isDragging = false;
+
+            // Apply adjustments when user releases
+            calculateAdjustmentsFromSample();
+        });
+
+        // Mouse event handlers for picker icon (desktop)
+        pickerIcon.addEventListener('mousedown', (e) => {
+            if (!pickerState.active) return;
+            e.preventDefault();
+            pickerState.isDragging = true;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!pickerState.isDragging) return;
+
+            const canvasRect = displayCanvas.getBoundingClientRect();
+
+            // Update position relative to canvas
+            pickerState.x = e.clientX - canvasRect.left;
+            pickerState.y = e.clientY - canvasRect.top;
+
+            updatePickerPosition();
+            sampleAndUpdate();
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!pickerState.isDragging) return;
+            pickerState.isDragging = false;
+
+            // Apply adjustments when user releases
+            calculateAdjustmentsFromSample();
+        });
+
+        // Mode switching - tap on mode label to cycle through modes
+        pickerModeLabel.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            // Cycle through modes
+            if (pickerState.mode === 'white') {
+                pickerState.mode = 'mid-grey';
+            } else if (pickerState.mode === 'mid-grey') {
+                pickerState.mode = 'black';
+            } else {
+                pickerState.mode = 'white';
+            }
+
+            // Update display with new target
+            sampleAndUpdate();
         });
 
         // Mobile Debug Console - Enhanced to capture errors
