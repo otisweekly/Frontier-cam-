@@ -742,7 +742,7 @@
                         </div>
                     </div>
                     <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders.svg" style="width:32px;height:32px;" alt="Borders"></button>
-                    <button class="copy-paste-btn" onclick="toggleCopyPaste()" id="copyPasteBtn"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
+                    <button class="copy-paste-btn" id="copyPasteBtn"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
@@ -1148,6 +1148,128 @@
                 }
             }, 150);
         }
+
+        // Copy button hold-to-clear functionality
+        let copyHoldTimer = null;
+        let copyCountdownTimer = null;
+        let copyHoldStartTime = 0;
+
+        function startCopyHold() {
+            // Only enable hold-to-clear when settings are copied
+            if (!state.copiedSettings) return;
+
+            copyHoldStartTime = Date.now();
+
+            // After 300ms, start showing countdown
+            copyHoldTimer = setTimeout(() => {
+                const holdFlash = document.getElementById('holdFlash');
+                holdFlash.style.opacity = '1';
+
+                // Update countdown every 100ms
+                copyCountdownTimer = setInterval(() => {
+                    const elapsed = Date.now() - copyHoldStartTime;
+                    const remaining = Math.max(0, 2000 - elapsed);
+                    const seconds = (remaining / 1000).toFixed(1);
+
+                    if (remaining > 0) {
+                        holdFlash.textContent = `RELEASE TO CANCEL • CLEARING IN ${seconds}s`;
+                    }
+                }, 100);
+            }, 300);
+
+            // After 2000ms, clear the copied settings
+            setTimeout(() => {
+                if (copyHoldTimer !== null) { // Still holding
+                    clearCopySettings();
+                }
+            }, 2000);
+        }
+
+        function cancelCopyHold() {
+            if (copyHoldTimer !== null) {
+                clearTimeout(copyHoldTimer);
+                copyHoldTimer = null;
+            }
+            if (copyCountdownTimer !== null) {
+                clearInterval(copyCountdownTimer);
+                copyCountdownTimer = null;
+            }
+
+            const holdFlash = document.getElementById('holdFlash');
+            if (holdFlash.style.opacity === '1') {
+                holdFlash.style.opacity = '0';
+            }
+        }
+
+        function clearCopySettings() {
+            const btn = document.getElementById('copyPasteBtn');
+            const icon = document.getElementById('copyPasteIcon');
+            const holdFlash = document.getElementById('holdFlash');
+
+            // Clear the copied settings
+            state.copiedSettings = null;
+            btn.classList.remove('holding');
+            icon.src = 'Copy.svg';
+
+            // Show confirmation
+            holdFlash.textContent = 'COPIED SETTINGS CLEARED';
+            holdFlash.style.opacity = '1';
+
+            cancelCopyHold();
+
+            setTimeout(() => {
+                holdFlash.style.opacity = '0';
+            }, 1000);
+
+            console.log('📋 Copied settings cleared, button now grey');
+        }
+
+        // Setup copy button event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyBtn = document.getElementById('copyPasteBtn');
+
+            // Mouse events
+            copyBtn.addEventListener('mousedown', (e) => {
+                if (state.copiedSettings) {
+                    startCopyHold();
+                }
+            });
+
+            copyBtn.addEventListener('mouseup', (e) => {
+                const holdDuration = Date.now() - copyHoldStartTime;
+                cancelCopyHold();
+
+                // Only toggle if it was a quick click (not a hold)
+                if (holdDuration < 2000) {
+                    toggleCopyPaste();
+                }
+            });
+
+            copyBtn.addEventListener('mouseleave', () => {
+                cancelCopyHold();
+            });
+
+            // Touch events
+            copyBtn.addEventListener('touchstart', (e) => {
+                if (state.copiedSettings) {
+                    startCopyHold();
+                }
+            });
+
+            copyBtn.addEventListener('touchend', (e) => {
+                const holdDuration = Date.now() - copyHoldStartTime;
+                cancelCopyHold();
+
+                // Only toggle if it was a quick tap (not a hold)
+                if (holdDuration < 2000) {
+                    toggleCopyPaste();
+                }
+            });
+
+            copyBtn.addEventListener('touchcancel', () => {
+                cancelCopyHold();
+            });
+        });
 
         // Mobile Debug Console - Enhanced to capture errors
         const debugLogs=[];
