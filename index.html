@@ -80,7 +80,10 @@
             font-display: swap;
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-touch-callout:none; }
+        input, textarea, select { user-select:text; -webkit-user-select:text; }
+        img { -webkit-touch-callout:none; -webkit-user-select:none; pointer-events:none; }
+        button img, a img { pointer-events:none; }
         body { font-family:'PP Fuji',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#37A4A4; overflow:hidden; width:100vw; height:100vh; position:fixed; }
 
         /* UPLOAD SCREEN - Updated to match Figma */
@@ -776,7 +779,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false,doubleTapHappened:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null,autoActive:false};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false,doubleTapHappened:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null,autoActive:false,firstCopy:true};
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
@@ -1134,6 +1137,17 @@
                     btn.classList.add('holding');
                     icon.src = 'paste.svg';
                     console.log('📋 Settings copied, button now teal');
+
+                    // Show first-time tooltip
+                    if (state.firstCopy) {
+                        state.firstCopy = false;
+                        const holdFlash = document.getElementById('holdFlash');
+                        holdFlash.textContent = 'SETTINGS COPIED • HOLD BUTTON FOR 2 SECONDS TO CLEAR';
+                        holdFlash.style.opacity = '1';
+                        setTimeout(() => {
+                            holdFlash.style.opacity = '0';
+                        }, 3000);
+                    }
                 } else {
                     // Paste settings
                     state.settings = JSON.parse(JSON.stringify(state.copiedSettings));
@@ -1221,6 +1235,15 @@
 
             setTimeout(() => {
                 holdFlash.style.opacity = '0';
+
+                // Release button back to default state with animation
+                btn.style.transform = 'translateY(5px)';
+                btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
+
+                setTimeout(() => {
+                    btn.style.transform = '';
+                    btn.style.boxShadow = '';
+                }, 150);
             }, 1000);
 
             console.log('📋 Copied settings cleared, button now grey');
@@ -5440,7 +5463,32 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     const frameCtx = frameCanvas.getContext('2d', {alpha: false});
                     frameCanvas.width = previewW;
                     frameCanvas.height = previewH;
-                    frameCtx.drawImage(p.image, 0, 0, previewW, previewH);
+
+                    // Fill with black background
+                    frameCtx.fillStyle = '#000';
+                    frameCtx.fillRect(0, 0, previewW, previewH);
+
+                    // Calculate scaled dimensions to fit within canvas (contain behavior)
+                    const imgAspect = p.image.width / p.image.height;
+                    const canvasAspect = previewW / previewH;
+                    let drawW, drawH, drawX, drawY;
+
+                    if (imgAspect > canvasAspect) {
+                        // Image is wider - fit to width
+                        drawW = previewW;
+                        drawH = previewW / imgAspect;
+                        drawX = 0;
+                        drawY = (previewH - drawH) / 2;
+                    } else {
+                        // Image is taller - fit to height
+                        drawH = previewH;
+                        drawW = previewH * imgAspect;
+                        drawX = (previewW - drawW) / 2;
+                        drawY = 0;
+                    }
+
+                    // Draw image centered with letterboxing/pillarboxing
+                    frameCtx.drawImage(p.image, drawX, drawY, drawW, drawH);
 
                     // Apply effects to preview
                     const savedSettings = state.settings;
@@ -5456,18 +5504,50 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
                 // Animate frames
                 let frameIndex = 0;
+                let isPaused = false;
                 if(state.gifPreviewModalInterval){
                     clearInterval(state.gifPreviewModalInterval);
                 }
 
                 function drawGifModalFrame(){
-                    if(frames.length === 0) return;
+                    if(frames.length === 0 || isPaused) return;
                     ctx.drawImage(frames[frameIndex], 0, 0);
                     frameIndex = (frameIndex + 1) % frames.length;
                 }
 
                 drawGifModalFrame();
                 state.gifPreviewModalInterval = setInterval(drawGifModalFrame, 500);
+
+                // Add pause-on-hold functionality
+                let holdTimer = null;
+
+                function startPause(e) {
+                    e.preventDefault();
+                    holdTimer = setTimeout(() => {
+                        isPaused = true;
+                        console.log('GIF preview paused');
+                    }, 200); // 200ms before pausing
+                }
+
+                function endPause(e) {
+                    if (e) e.preventDefault();
+                    if (holdTimer) {
+                        clearTimeout(holdTimer);
+                        holdTimer = null;
+                    }
+                    if (isPaused) {
+                        isPaused = false;
+                        console.log('GIF preview resumed');
+                    }
+                }
+
+                // Add event listeners to canvas
+                canvas.addEventListener('mousedown', startPause);
+                canvas.addEventListener('mouseup', endPause);
+                canvas.addEventListener('mouseleave', endPause);
+                canvas.addEventListener('touchstart', startPause);
+                canvas.addEventListener('touchend', endPause);
+                canvas.addEventListener('touchcancel', endPause);
             }
         }
 
