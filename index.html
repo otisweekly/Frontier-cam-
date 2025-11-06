@@ -1924,12 +1924,16 @@
                             displayName: generateDisplayName('none', absoluteIndex, fileExtension),
                             image: displayImg,
                             preview: previewImg,  // Lightweight preview for instant editing
-                            original: img,
-                            originalBlobUrl: blobUrl,  // Keep reference for cleanup
+                            originalFile: file,   // CRITICAL: Store File reference, not decoded image (saves ~96MB per 24MP photo)
+                            original: null,       // Lazy-loaded on-demand
+                            originalBlobUrl: null,
                             uploadTime: new Date(),
                             settings: { ...defaultSettings },
                             fileExtension: fileExtension
                         };
+
+                        // Release the full-res image immediately - we'll reload on-demand
+                        URL.revokeObjectURL(blobUrl);
 
                         results.push(photoData);
                         if (onFileComplete) onFileComplete(photoData);
@@ -6794,6 +6798,25 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
         }
 
+        // Lazy-load original image on-demand (saves ~96MB per 24MP photo in memory)
+        async function ensureOriginalLoaded(photo){
+            if(photo.original){
+                return photo.original; // Already loaded
+            }
+
+            if(!photo.originalFile){
+                // Fallback: use display image if no original file
+                return photo.image;
+            }
+
+            // Load from File reference
+            const {img, blobUrl} = await loadImageFromBlob(photo.originalFile);
+            photo.original = img;
+            photo.originalBlobUrl = blobUrl;
+            console.log('Lazy-loaded original for:', photo.name);
+            return img;
+        }
+
         // Process image with single getImageData call (optimization)
         async function processImageOptimized(sourceImg, settings, ctx, canvas){
             canvas.width=sourceImg.width;
@@ -6912,7 +6935,8 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                     const percent=Math.round(((i+1)/photoCount)*100);
                     updateUploadProgress(percent,`Processing ${i+1}/${photoCount}...`);
 
-                    const sourceImg=p.original||p.image;
+                    // CRITICAL: Lazy-load original on-demand (only loads when needed for export)
+                    const sourceImg=await ensureOriginalLoaded(p);
 
                     // Preload LUT before applying
                     await preloadLUTForProfile(p.settings.profile);
