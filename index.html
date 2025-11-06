@@ -715,10 +715,11 @@
         </div>
 
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;">
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
+                <button class="preset-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders.svg" style="width:28px;height:28px;" alt="Borders"></button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
@@ -746,7 +747,6 @@
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
-                    <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders.svg" style="width:32px;height:32px;" alt="Borders"></button>
                     <button class="copy-paste-btn" id="copyPasteBtn" onclick="toggleCopyPaste()"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
                     <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
                     <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
