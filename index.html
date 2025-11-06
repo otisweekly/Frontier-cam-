@@ -126,6 +126,10 @@
             0%, 49% { opacity:1; box-shadow:0 0 16px #EF4444; }
             50%, 100% { opacity:0.3; box-shadow:0 0 4px #EF4444; }
         }
+        @keyframes blink-orange {
+            0%, 49% { opacity:1; box-shadow:0 0 16px #FF8C00; }
+            50%, 100% { opacity:0.3; box-shadow:0 0 4px #FF8C00; }
+        }
         @keyframes blink-orange-3x {
             0% { box-shadow:0 0 20px #FF8C00; opacity:1; }
             8% { box-shadow:0 0 12px #FF8C00; opacity:0.6; }
@@ -1237,7 +1241,7 @@
         // Canvas tap handling
         function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
-        // Single tap compare - shows original unprocessed image with orange indicator for 1600ms
+        // Single tap compare - shows original unprocessed image with orange indicator for 1s
         function singleTapCompare(){
             if(state.tapState.comparing) return;
             const canvas=document.getElementById('canvas');
@@ -1246,10 +1250,10 @@
 
             state.tapState.comparing=true;
 
-            // Show orange pulsing indicator
+            // Show orange blinking indicator
             const indicator=document.getElementById('intensityIndicator');
             indicator.style.color='#FF8C00';
-            indicator.style.animation='pulse-orange-steady 800ms ease-in-out infinite';
+            indicator.style.animation='blink-orange 600ms ease-in-out infinite';
             indicator.style.fontSize='20px';
             indicator.style.width='20px';
             indicator.style.height='20px';
@@ -1288,7 +1292,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(p.original, 0, 0);
 
-            console.log('🔍 Showing original unprocessed image with orange indicator');
+            console.log('🔍 Showing original unprocessed image with orange blinking indicator');
 
             setTimeout(()=>{
                 if(state.tapState.comparing){
@@ -1306,7 +1310,7 @@
                     indicator.style.left='';
                     indicator.style.transform='';
                 }
-            },1600); // Show for 1600ms
+            },1000); // Show for 1s
         }
 
         // End compare view (called on touchend when releasing tap)
@@ -6244,46 +6248,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 return;
             }
 
-            const autoBtn = document.getElementById('autoBtn');
-            const isActive = autoBtn.classList.contains('active');
-
-            // If already active, turn OFF and reset to defaults
-            if (isActive) {
-                console.log('🔴 AUTO: Turning off, resetting to defaults');
-                autoBtn.classList.remove('active');
-
-                // Store old values for history
-                const oldBrightness = state.settings.brightness || 0;
-                const oldContrast = state.settings.contrast || 0;
-                const oldShadows = state.settings.shadows || 0;
-                const oldHighlights = state.settings.highlights || 0;
-
-                // Reset all to 0
-                state.settings.brightness = 0;
-                state.settings.contrast = 0;
-                state.settings.shadows = 0;
-                state.settings.highlights = 0;
-
-                // Update UI
-                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = 0;
-                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = 0;
-                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = 0;
-                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = 0;
-
-                // Add to history
-                if (oldBrightness !== 0) addToHistory(`RESET BRIGHTNESS: ${oldBrightness} → 0`, 'brightness', oldBrightness, 0);
-                if (oldContrast !== 0) addToHistory(`RESET CONTRAST: ${oldContrast} → 0`, 'contrast', oldContrast, 0);
-                if (oldShadows !== 0) addToHistory(`RESET SHADOWS: ${oldShadows} → 0`, 'shadows', oldShadows, 0);
-                if (oldHighlights !== 0) addToHistory(`RESET HIGHLIGHTS: ${oldHighlights} → 0`, 'highlights', oldHighlights, 0);
-
-                updateBrightnessIndicator();
-                saveCurrentPhotoSettings(true, true);
-                deferredRender();
-                return;
-            }
-
-            // Turn ON and apply auto-adjustments
-            autoBtn.classList.add('active');
+            // Momentary button - always apply auto-adjustments (never stays down)
             console.log('🤖 AUTO: Analyzing image...');
             setStatus('processing');
 
