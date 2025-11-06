@@ -6235,11 +6235,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 7. GLOBAL CONSERVATIVE SCALING
-                // Make all adjustments 25% more conservative to prevent data loss
-                brightness = Math.round(brightness * 0.75);
-                contrast = Math.round(contrast * 0.75);
-                shadows = Math.round(shadows * 0.75);
-                highlights = Math.round(highlights * 0.75);
+                // Make all adjustments 50% more conservative to prevent data loss
+                // Professional minilabs are subtle - we should be too
+                brightness = Math.round(brightness * 0.5);
+                contrast = Math.round(contrast * 0.5);
+                shadows = Math.round(shadows * 0.5);
+                highlights = Math.round(highlights * 0.5);
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
 
