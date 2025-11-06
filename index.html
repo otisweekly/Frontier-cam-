@@ -6078,8 +6078,8 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
 
                 // ============================================================
-                // IMPROVED ALGORITHM - Professional Minilab Style
-                // Based on Fuji Frontier techniques and modern auto-levels
+                // SIMPLE MINILAB ALGORITHM - How Pro Minilabs Actually Work
+                // Fuji Frontier uses simple auto-levels + small corrections
                 // ============================================================
 
                 let brightness = 0;
@@ -6087,160 +6087,56 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 let shadows = 0;
                 let highlights = 0;
 
-                // Detect scene type for intelligent adjustment
-                const p10 = findPercentile(0.10);
-                const p90 = findPercentile(0.90);
-                const p2 = findPercentile(0.02);
-                const p98 = findPercentile(0.98);
-
-                const isLowKey = p50 < 90 && p90 < 160;      // Dark/moody image
-                const isHighKey = p50 > 165 && p10 > 95;      // Bright/airy image
-                const isBacklit = (p98 - p2) > 200 && p50 < 115; // High contrast with dark midpoint
-
-                console.log(`🎭 Scene detection: lowKey=${isLowKey}, highKey=${isHighKey}, backlit=${isBacklit}`);
-
-                // 1. AUTO-LEVELS: Intelligent black/white point clipping
-                // Clip 1% on shadows, 0.5% on highlights (professional minilab standard)
+                // STEP 1: Analyze black and white points (1% and 99% percentiles)
                 const blackPoint = p1;
-                const whitePoint = findPercentile(0.995);
-                const dynamicRange = whitePoint - blackPoint;
+                const whitePoint = p99;
+                const currentRange = whitePoint - blackPoint;
 
-                // Target: stretch to use 10-245 range (preserve some headroom)
-                const targetBlack = 10;
-                const targetWhite = 245;
-                const targetRange = targetWhite - targetBlack;
+                console.log(`📏 Range analysis: black=${blackPoint}, white=${whitePoint}, range=${currentRange}`);
 
-                // Calculate optimal black/white point adjustment
-                let autoLevelsStrength = 0;
-                if (dynamicRange < 150) {
-                    // Image has low contrast, needs stretching
-                    autoLevelsStrength = (targetRange - dynamicRange) / targetRange;
-                } else if (blackPoint > 25 || whitePoint < 235) {
-                    // Image doesn't use full range but has good contrast
-                    autoLevelsStrength = 0.4;
+                // STEP 2: Simple contrast correction if range is too narrow
+                // Target: Images should use roughly 10-240 range (230 point range)
+                const idealRange = 230;
+                const rangeDeficit = idealRange - currentRange;
+
+                if (currentRange < 180) {
+                    // Image is flat, needs contrast boost
+                    contrast = Math.min(4, Math.round(rangeDeficit / 40));
+                } else if (currentRange > 250) {
+                    // Image is too contrasty, reduce slightly
+                    contrast = Math.max(-2, Math.round((230 - currentRange) / 40));
                 }
 
-                // 2. BRIGHTNESS: Use median (p50) instead of mean for robustness
-                // Target median at 118 for film-like exposure (slightly darker than digital 128)
-                const targetMedian = isLowKey ? 100 : isHighKey ? 135 : 118;
-                const medianDelta = targetMedian - p50;
+                // STEP 3: Simple brightness correction based on median
+                // Target median: 115 (slightly darker than 128 for film look)
+                const medianError = 115 - p50;
 
-                // Scale brightness more intelligently based on how far off we are
-                if (Math.abs(medianDelta) > 50) {
-                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 10)));
-                } else if (Math.abs(medianDelta) > 25) {
-                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 14)));
-                } else {
-                    brightness = Math.round(Math.max(-10, Math.min(10, medianDelta / 18)));
+                if (Math.abs(medianError) > 20) {
+                    brightness = Math.max(-3, Math.min(3, Math.round(medianError / 15)));
                 }
 
-                // For backlit images, boost brightness more aggressively
-                if (isBacklit && brightness > 0) {
-                    brightness = Math.min(10, Math.round(brightness * 1.3));
+                // STEP 4: Shadow recovery ONLY if severely crushed
+                // Professional minilabs prioritize natural look over lifting every shadow
+                if (p5 < 20) {
+                    shadows = Math.min(3, Math.round((25 - p5) / 3));
                 }
 
-                // 3. CONTRAST: Use p10-p90 range (excludes extreme outliers)
-                const midtoneRange = p90 - p10;
-                const idealMidtoneRange = isLowKey ? 120 : isHighKey ? 100 : 140;
-
-                // Calculate contrast based on midtone distribution
-                const contrastRatio = midtoneRange / idealMidtoneRange;
-                if (contrastRatio < 0.7) {
-                    // Too flat, increase contrast
-                    contrast = Math.round(Math.min(10, (1 - contrastRatio) * 12));
-                } else if (contrastRatio > 1.3) {
-                    // Too contrasty, reduce
-                    contrast = Math.round(Math.max(-10, -((contrastRatio - 1) * 8)));
-                } else {
-                    // Good range, apply auto-levels strength instead
-                    contrast = Math.round(autoLevelsStrength * 6);
+                // STEP 5: Highlight protection ONLY if blown
+                // This is the most important - never lose highlight detail
+                if (p95 > 235) {
+                    highlights = Math.max(-4, Math.round((230 - p95) / 2));
+                } else if (p99 > 250) {
+                    highlights = Math.max(-3, Math.round((248 - p99) / 3));
                 }
 
-                // Backlit images need more contrast to separate subject
-                if (isBacklit) {
-                    contrast = Math.min(10, contrast + 2);
+                // STEP 6: Balance rule - if we're doing both shadows and highlights, reduce brightness
+                if (shadows > 0 && highlights < 0) {
+                    brightness = Math.round(brightness * 0.7);
+                    // And ensure highlights pull stronger than shadows push
+                    if (Math.abs(highlights) < shadows) {
+                        highlights = Math.max(-4, -Math.ceil(shadows * 0.8));
+                    }
                 }
-
-                // 4. SHADOWS: Intelligent shadow recovery
-                // Check if shadows are crushed (p2 < 15) or blocked (p5 < 35)
-                const shadowsCrushed = p2 < 15;
-                const shadowsBlocked = p5 < 35;
-
-                if (shadowsCrushed) {
-                    // Severe crushing, lift aggressively
-                    shadows = Math.round(Math.min(10, (20 - p2) / 1.5));
-                } else if (shadowsBlocked) {
-                    // Moderate blocking, lift moderately
-                    shadows = Math.round(Math.min(10, (40 - p5) / 4));
-                } else if (p10 < 50 && !isLowKey) {
-                    // Slightly dark shadows in normal image
-                    shadows = Math.round(Math.min(6, (55 - p10) / 8));
-                }
-
-                // Don't lift shadows in intentional low-key images
-                if (isLowKey) {
-                    shadows = Math.round(shadows * 0.3);
-                }
-
-                // Backlit images need strong shadow recovery
-                if (isBacklit) {
-                    shadows = Math.min(10, Math.max(shadows, 6));
-                }
-
-                // 5. HIGHLIGHTS: Intelligent highlight recovery
-                // PRIORITY: Preserve highlights! (Professional minilab standard)
-                // More sensitive thresholds than shadows
-                const highlightsBlown = p98 > 240;      // Was 245
-                const highlightsClipped = p95 > 220;    // Was 230
-                const highlightsHot = p90 > 200;        // Was 215
-
-                if (highlightsBlown) {
-                    // Severe clipping, pull down very aggressively
-                    highlights = Math.round(Math.max(-10, (235 - p98) / 1.2));  // Stronger
-                } else if (highlightsClipped) {
-                    // Moderate clipping, pull down aggressively
-                    highlights = Math.round(Math.max(-10, (218 - p95) / 3));    // Stronger
-                } else if (highlightsHot && !isHighKey) {
-                    // Slightly hot highlights in normal image
-                    highlights = Math.round(Math.max(-8, (198 - p90) / 6));      // Stronger
-                }
-
-                // Don't pull down highlights in intentional high-key images
-                if (isHighKey) {
-                    highlights = Math.round(highlights * 0.3);
-                }
-
-                // 6. BALANCE: Prevent over-correction and blown highlights
-                // CRITICAL: If lifting shadows, always pull highlights down to compensate
-                if (shadows > 3) {
-                    // Lifting shadows increases overall brightness, so pull highlights
-                    const highlightCompensation = Math.round(shadows * -0.6);
-                    highlights = Math.max(-10, Math.min(highlights, highlightCompensation));
-                }
-
-                // If we're lifting shadows significantly, reduce brightness
-                if (shadows > 4 && brightness > 0) {
-                    brightness = Math.round(brightness * 0.5);  // Was 0.7, now more conservative
-                }
-
-                // If we're pulling highlights significantly, be gentler with brightness
-                if (highlights < -5 && brightness < 0) {
-                    brightness = Math.round(brightness * 0.6);
-                }
-
-                // If both shadows and highlights need work, reduce contrast and brightness
-                if (shadows > 3 && highlights < -3) {
-                    contrast = Math.round(contrast * 0.5);
-                    brightness = Math.round(brightness * 0.6);
-                }
-
-                // 7. GLOBAL CONSERVATIVE SCALING
-                // Make all adjustments 50% more conservative to prevent data loss
-                // Professional minilabs are subtle - we should be too
-                brightness = Math.round(brightness * 0.5);
-                contrast = Math.round(contrast * 0.5);
-                shadows = Math.round(shadows * 0.5);
-                highlights = Math.round(highlights * 0.5);
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
 
