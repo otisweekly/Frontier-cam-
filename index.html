@@ -1714,6 +1714,64 @@
                     }
                 }
             });
+
+            // Desktop mouse drag handlers (for panning when zoomed)
+            let isMouseDragging = false;
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+
+            canvas.addEventListener('mousedown', (e) => {
+                if(zoomState.scale > 1) {
+                    isMouseDragging = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    canvas.style.cursor = 'grabbing';
+                    e.preventDefault(); // Prevent text selection while dragging
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if(isMouseDragging && zoomState.scale > 1) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+
+                    zoomState.x += deltaX;
+                    zoomState.y += deltaY;
+
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+
+                    zoomState.isPanning = true;
+                    applyTransform(canvas);
+                }
+
+                // Update cursor based on zoom state
+                if(zoomState.scale > 1 && !isMouseDragging) {
+                    canvas.style.cursor = 'grab';
+                } else if(zoomState.scale <= 1) {
+                    canvas.style.cursor = 'default';
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                if(isMouseDragging) {
+                    isMouseDragging = false;
+                    zoomState.isPanning = false;
+                    if(zoomState.scale > 1) {
+                        canvas.style.cursor = 'grab';
+                    } else {
+                        canvas.style.cursor = 'default';
+                    }
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                if(isMouseDragging) {
+                    isMouseDragging = false;
+                    zoomState.isPanning = false;
+                    canvas.style.cursor = 'default';
+                }
+            });
         }
 
         function generateDisplayName(profile,index,extension='jpg'){const styleName=profile==='none'?'Original':profile.charAt(0).toUpperCase()+profile.slice(1);const num=String(index+1).padStart(2,'0');return `Frontier_${styleName}_${num}.${extension}`;}
