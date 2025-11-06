@@ -31,6 +31,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="logo.svg">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="manifest" href="/manifest.json">
+
+    <!-- GIF encoding library -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+
     <style>
         @font-face {
             font-family: 'PP Fuji';
@@ -5346,7 +5350,137 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         async function saveAnimatedGif(){
             haptic();
             closeDownloadOptions();
-            alert('Animated GIF export is coming soon! This will create an animated GIF of all your photos with applied effects.');
+
+            // Get only actual photos (not contact sheets)
+            const photos = state.photos.filter(p => !p.isContactSheet);
+            if(photos.length === 0){
+                alert('No photos to export');
+                return;
+            }
+
+            try {
+                // Show upload progress UI
+                showUploadProgress(0, 'Preparing GIF export...');
+
+                // Create GIF encoder with optimal settings
+                const maxDimension = 800; // Keep file size reasonable
+                const gif = new GIF({
+                    workers: 2,
+                    quality: 10,
+                    width: maxDimension,
+                    height: Math.floor(maxDimension * 0.8), // Will be adjusted per photo
+                    workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+                });
+
+                // Process each photo
+                for(let i = 0; i < photos.length; i++){
+                    const p = photos[i];
+                    const percent = Math.floor((i / photos.length) * 80); // Reserve 80-100% for encoding
+                    updateUploadProgress(percent, `Processing frame ${i + 1}/${photos.length}...`);
+
+                    // Lazy-load original if needed
+                    const sourceImg = await ensureOriginalLoaded(p);
+
+                    // Calculate scaled dimensions (max 800px on longest side)
+                    let scaledW = sourceImg.width;
+                    let scaledH = sourceImg.height;
+                    const maxDim = Math.max(scaledW, scaledH);
+                    if(maxDim > maxDimension){
+                        const scale = maxDimension / maxDim;
+                        scaledW = Math.floor(scaledW * scale);
+                        scaledH = Math.floor(scaledH * scale);
+                    }
+
+                    // Create canvas for this frame
+                    const frameCanvas = document.createElement('canvas');
+                    const frameCtx = frameCanvas.getContext('2d', {alpha: false, willReadFrequently: true});
+                    frameCanvas.width = scaledW;
+                    frameCanvas.height = scaledH;
+
+                    // Draw scaled image
+                    frameCtx.drawImage(sourceImg, 0, 0, scaledW, scaledH);
+
+                    // Apply all effects
+                    await preloadLUTForProfile(p.settings.profile);
+                    const imgData = frameCtx.getImageData(0, 0, scaledW, scaledH);
+                    applyProfile(imgData, p.settings.profile);
+                    applyCMYK(imgData.data, p.settings);
+                    applyGrain(imgData.data, p.settings.grain || 0);
+                    frameCtx.putImageData(imgData, 0, 0);
+
+                    if(p.settings.bloom && p.settings.bloom !== 0){
+                        applyBloom(frameCtx, scaledW, scaledH, p.settings.bloom);
+                    }
+
+                    if(p.settings.filmBorder){
+                        await applyFilmBorder(frameCanvas, frameCtx, p.settings, {...p});
+                    }
+
+                    // Add frame to GIF (500ms delay = 2fps)
+                    gif.addFrame(frameCanvas, {delay: 500, copy: true});
+
+                    // Force memory cleanup
+                    forceCanvasRelease(frameCanvas);
+                }
+
+                // Render GIF
+                updateUploadProgress(85, 'Encoding GIF...');
+
+                gif.on('finished', async function(blob) {
+                    try {
+                        updateUploadProgress(95, 'Finalizing...');
+
+                        const filename = `frontier-animated-${Date.now()}.gif`;
+                        const file = new File([blob], filename, {type: 'image/gif'});
+
+                        // Try Web Share API first (iOS native share)
+                        if(navigator.share && navigator.canShare && navigator.canShare({files: [file]})){
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: 'Frontier Animated GIF'
+                                });
+                                hideUploadProgress();
+                                return;
+                            } catch(err){
+                                if(err.name !== 'AbortError'){
+                                    console.error('Share failed:', err);
+                                }
+                                // Fall through to download
+                            }
+                        }
+
+                        // Fallback: download
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        updateUploadProgress(100, 'Complete!');
+                        setTimeout(hideUploadProgress, 1000);
+                    } catch(err) {
+                        console.error('GIF save error:', err);
+                        hideUploadProgress();
+                        alert('Error saving GIF: ' + err.message);
+                    }
+                });
+
+                gif.on('progress', function(p) {
+                    const percent = 85 + Math.floor(p * 15); // 85-100%
+                    updateUploadProgress(percent, 'Encoding GIF...');
+                });
+
+                gif.render();
+
+            } catch(err) {
+                console.error('GIF export error:', err);
+                hideUploadProgress();
+                alert('Error creating GIF: ' + err.message);
+            }
         }
 
         async function generateAndAddContactSheet(){
