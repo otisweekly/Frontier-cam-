@@ -6777,11 +6777,51 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             await shareContactSheet(0.95);
         }
 
+        // =====================================================================
+        // MEMORY OPTIMIZATION HELPERS
+        // =====================================================================
+
+        // Force Safari to release canvas memory (iOS Safari limit: 224-448MB)
+        function forceCanvasRelease(canvas){
+            const ctx=canvas.getContext('2d');
+            if(ctx){
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+            }
+            canvas.width=1;
+            canvas.height=1;
+            if(ctx){
+                ctx.clearRect(0,0,1,1);
+            }
+        }
+
+        // Process image with single getImageData call (optimization)
+        async function processImageOptimized(sourceImg, settings, ctx, canvas){
+            canvas.width=sourceImg.width;
+            canvas.height=sourceImg.height;
+            ctx.drawImage(sourceImg,0,0);
+
+            // CRITICAL: Single getImageData call, reuse for all operations
+            const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+
+            // Apply effects to same ImageData
+            applyProfile(imgData,settings.profile);
+            applyCMYK(imgData.data,settings);
+            applyGrain(imgData.data,settings.grain||0);
+
+            // Single putImageData
+            ctx.putImageData(imgData,0,0);
+
+            // Bloom requires separate pass (uses canvas operations)
+            if(settings.bloom&&settings.bloom!==0){
+                applyBloom(ctx,canvas.width,canvas.height,settings.bloom);
+            }
+        }
+
         function generateContactSheetImage(){return new Promise(async resolve=>{const exportWidth=3200;const sheetW=exportWidth;const sheetH=exportWidth*(5/4);const padding=24;const margin=60;const logoHeight=138;const labelHeight=72;
 // Filter out contact sheets - only include actual photos
 const actualPhotos=state.photos.filter(p=>!p.isContactSheet);const photoCount=actualPhotos.length;let cols=3;if(photoCount<=3)cols=3;else if(photoCount<=8)cols=4;else if(photoCount<=15)cols=5;else cols=6;const rows=Math.ceil(photoCount/cols);const availableGridWidth=sheetW-margin*2;const availableGridHeight=sheetH-margin*2-logoHeight-padding;const thumbSizeByWidth=Math.floor((availableGridWidth-padding*(cols-1))/cols);const availableHeightForThumbs=availableGridHeight-rows*labelHeight-(rows-1)*padding;const thumbSizeByHeight=Math.floor(availableHeightForThumbs/rows);const thumbSize=Math.min(thumbSizeByWidth,thumbSizeByHeight);const sheet=document.createElement('canvas');sheet.width=sheetW;sheet.height=sheetH;const sctx=sheet.getContext('2d',{alpha:false});sctx.fillStyle='#000';sctx.fillRect(0,0,sheetW,sheetH);const logoImg=new Image();logoImg.src='logo.svg';await new Promise(resolve=>{logoImg.onload=()=>{const actualAspect=logoImg.width/logoImg.height;const logoH=logoHeight-6;const logoW=logoH*actualAspect;sctx.drawImage(logoImg,margin+5,margin+5,logoW,logoH);resolve();};});let photoIndex=0;for(let row=0;row<rows;row++){for(let col=0;col<cols;col++){const x=margin+col*(thumbSize+padding);const y=margin+logoHeight+padding+row*(thumbSize+labelHeight+padding);if(photoIndex<photoCount){const p=actualPhotos[photoIndex];const sourceImg=p.image;const tempCanvas=document.createElement('canvas');const tctx=tempCanvas.getContext('2d',{alpha:false});tempCanvas.width=sourceImg.width;tempCanvas.height=sourceImg.height;tctx.drawImage(sourceImg,0,0);const imgData=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyProfile(imgData,p.settings.profile);applyCMYK(imgData.data,p.settings);tctx.putImageData(imgData,0,0);if(p.settings.bloom!==0)applyBloom(tctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);const imgData2=tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);applyGrain(imgData2.data,p.settings.grain);tctx.putImageData(imgData2,0,0);
 // Skip borders in contact sheet export for cleaner look
-const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);tctx.clearRect(0,0,tempCanvas.width,tempCanvas.height);tempCanvas.width=0;tempCanvas.height=0;sctx.fillStyle='#666';sctx.font='24px "PP Neue Bit", monospace';sctx.textAlign='center';const filename=(p.displayName||p.name).substring(0,30);const date=p.uploadTime?p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'}):'--/--/--';sctx.fillText(`${filename}`,x+thumbSize/2,y+thumbSize+32);sctx.fillText(`${date}`,x+thumbSize/2,y+thumbSize+60);photoIndex++;}}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.95);});}
+const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let drawH=thumbSize;if(aspectRatio>1){drawH=thumbSize/aspectRatio;}else{drawW=thumbSize*aspectRatio;}const offsetX=x+(thumbSize-drawW)/2;const offsetY=y+(thumbSize-drawH)/2;sctx.drawImage(tempCanvas,offsetX,offsetY,drawW,drawH);forceCanvasRelease(tempCanvas);sctx.fillStyle='#666';sctx.font='24px "PP Neue Bit", monospace';sctx.textAlign='center';const filename=(p.displayName||p.name).substring(0,30);const date=p.uploadTime?p.uploadTime.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'2-digit'}):'--/--/--';sctx.fillText(`${filename}`,x+thumbSize/2,y+thumbSize+32);sctx.fillText(`${date}`,x+thumbSize/2,y+thumbSize+60);photoIndex++;}}}sheet.toBlob(b=>resolve(b),'image/jpeg',0.95);});}
 
         async function shareContactSheet(exportQuality = 0.95){
             try{
@@ -6861,6 +6901,10 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                 const contactSheetBlob = await generateContactSheetImage();
                 files.push(new File([contactSheetBlob],'Frontier_Contact_Sheet.jpg',{type:'image/jpeg'}));
 
+                // OPTIMIZED: Reuse single canvas instead of creating new ones
+                const tempCanvas=document.createElement('canvas');
+                const ctx=tempCanvas.getContext('2d',{alpha:false});
+
                 for(let i=0;i<indicesToExport.length;i++){
                     const idx=indicesToExport[i];
                     const p=state.photos[idx];
@@ -6868,29 +6912,27 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                     const percent=Math.round(((i+1)/photoCount)*100);
                     updateUploadProgress(percent,`Processing ${i+1}/${photoCount}...`);
 
-                    const tempCanvas=document.createElement('canvas');
-                    const ctx=tempCanvas.getContext('2d',{alpha:false});
-
                     const sourceImg=p.original||p.image;
-                    tempCanvas.width=sourceImg.width;
-                    tempCanvas.height=sourceImg.height;
-                    ctx.drawImage(sourceImg,0,0);
 
                     // Preload LUT before applying
                     await preloadLUTForProfile(p.settings.profile);
 
+                    // OPTIMIZED: Single getImageData call via helper
+                    tempCanvas.width=sourceImg.width;
+                    tempCanvas.height=sourceImg.height;
+                    ctx.drawImage(sourceImg,0,0);
+
+                    // CRITICAL: Single getImageData call, reuse for all operations
                     const imgData=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
                     applyProfile(imgData,p.settings.profile);
                     applyCMYK(imgData.data,p.settings);
+                    applyGrain(imgData.data,p.settings.grain||0); // Apply grain to same ImageData
                     ctx.putImageData(imgData,0,0);
 
+                    // Bloom requires separate pass (uses canvas operations)
                     if(p.settings.bloom&&p.settings.bloom!==0){
                         applyBloom(ctx,tempCanvas.width,tempCanvas.height,p.settings.bloom);
                     }
-
-                    const imgData2=ctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
-                    applyGrain(imgData2.data,p.settings.grain||0);
-                    ctx.putImageData(imgData2,0,0);
 
                     // Apply film border if enabled
                     if(p.settings.filmBorder){
@@ -6907,14 +6949,12 @@ const aspectRatio=tempCanvas.width/tempCanvas.height;let drawW=thumbSize;let dra
                     const filename=generateExportFilename(p,idx);
                     files.push(new File([blob],filename,{type:'image/jpeg'}));
 
-                    // Memory optimization: Clear canvas and free memory after each photo
-                    ctx.clearRect(0,0,tempCanvas.width,tempCanvas.height);
-                    tempCanvas.width=0;
-                    tempCanvas.height=0;
+                    // CRITICAL: Force Safari to release memory after EVERY photo
+                    forceCanvasRelease(tempCanvas);
 
-                    // Allow garbage collection to free memory between photos
-                    if(i%5===0&&i>0){
-                        await new Promise(r=>setTimeout(r,10));
+                    // Aggressive GC every 3 photos (iOS memory limit: 224-448MB)
+                    if(i%3===0&&i>0){
+                        await new Promise(r=>setTimeout(r,50)); // Longer pause for GC
                     }
                 }
 
