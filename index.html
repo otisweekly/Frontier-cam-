@@ -1149,12 +1149,9 @@
                         }, 3000);
                     }
                 } else {
-                    // Paste settings
+                    // Paste settings (keep them copied for multiple pastes)
                     state.settings = JSON.parse(JSON.stringify(state.copiedSettings));
-                    state.copiedSettings = null;
-                    btn.classList.remove('holding');
-                    icon.src = 'Copy.svg';
-                    console.log('📋 Settings pasted, button now grey');
+                    console.log('📋 Settings pasted, staying in paste mode');
 
                     // Update UI and render
                     updateUIFromSettings();
