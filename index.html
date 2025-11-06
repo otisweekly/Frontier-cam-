@@ -6078,8 +6078,8 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log(`📊 Image stats: avg=${avgLum.toFixed(1)}, p1=${p1}, p5=${p5}, p50=${p50}, p95=${p95}, p99=${p99}, range=${range}`);
 
                 // ============================================================
-                // SIMPLE MINILAB ALGORITHM - How Pro Minilabs Actually Work
-                // Fuji Frontier uses simple auto-levels + small corrections
+                // MINIMAL CORRECTION - Subtle Professional Minilab Style
+                // Small steps, lean underexposed, preserve character
                 // ============================================================
 
                 let brightness = 0;
@@ -6094,48 +6094,40 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
                 console.log(`📏 Range analysis: black=${blackPoint}, white=${whitePoint}, range=${currentRange}`);
 
-                // STEP 2: Simple contrast correction if range is too narrow
-                // Target: Images should use roughly 10-240 range (230 point range)
-                const idealRange = 230;
-                const rangeDeficit = idealRange - currentRange;
-
-                if (currentRange < 180) {
-                    // Image is flat, needs contrast boost
-                    contrast = Math.min(4, Math.round(rangeDeficit / 40));
-                } else if (currentRange > 250) {
-                    // Image is too contrasty, reduce slightly
-                    contrast = Math.max(-2, Math.round((230 - currentRange) / 40));
+                // STEP 2: Tiny contrast correction - max ±2
+                if (currentRange < 150) {
+                    // Extremely flat
+                    contrast = Math.min(2, Math.round((180 - currentRange) / 60));
                 }
 
-                // STEP 3: Simple brightness correction based on median
-                // Target median: 115 (slightly darker than 128 for film look)
-                const medianError = 115 - p50;
+                // STEP 3: Minimal brightness - lean underexposed, max ±1
+                // Target median: 108 (darker, film-like)
+                // Only correct if extremely off (>35 points)
+                const medianError = 108 - p50;
 
-                if (Math.abs(medianError) > 20) {
-                    brightness = Math.max(-3, Math.min(3, Math.round(medianError / 15)));
+                if (Math.abs(medianError) > 35) {
+                    brightness = Math.max(-1, Math.min(1, Math.round(medianError / 25)));
                 }
 
-                // STEP 4: Shadow recovery ONLY if severely crushed
-                // Professional minilabs prioritize natural look over lifting every shadow
-                if (p5 < 20) {
-                    shadows = Math.min(3, Math.round((25 - p5) / 3));
+                // STEP 4: Shadow recovery ONLY if crushed to black - max +2
+                if (p5 < 12) {
+                    shadows = Math.min(2, Math.round((15 - p5) / 4));
                 }
 
-                // STEP 5: Highlight protection ONLY if blown
-                // This is the most important - never lose highlight detail
-                if (p95 > 235) {
-                    highlights = Math.max(-4, Math.round((230 - p95) / 2));
-                } else if (p99 > 250) {
-                    highlights = Math.max(-3, Math.round((248 - p99) / 3));
+                // STEP 5: Highlight protection - max -2
+                // Trigger earlier to preserve more highlight detail
+                if (p95 > 228) {
+                    highlights = Math.max(-2, Math.round((223 - p95) / 4));
+                } else if (p99 > 243) {
+                    highlights = Math.max(-2, Math.round((240 - p99) / 5));
                 }
 
-                // STEP 6: Balance rule - if we're doing both shadows and highlights, reduce brightness
-                if (shadows > 0 && highlights < 0) {
-                    brightness = Math.round(brightness * 0.7);
-                    // And ensure highlights pull stronger than shadows push
-                    if (Math.abs(highlights) < shadows) {
-                        highlights = Math.max(-4, -Math.ceil(shadows * 0.8));
-                    }
+                // STEP 6: If doing any shadow lift, always pull highlights stronger
+                if (shadows > 0) {
+                    const compensate = -Math.max(2, shadows + 1);
+                    highlights = Math.min(highlights, compensate);
+                    // Kill any positive brightness
+                    brightness = Math.min(0, brightness);
                 }
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
