@@ -1242,11 +1242,11 @@
         function handleCanvasTap(e){const footer=document.querySelector('.edit-footer');if(footer&&(e.target===footer||footer.contains(e.target))){return;}const targetId=e.target.id;const targetEvent=e;state.tapState.count++;if(state.tapState.timer)clearTimeout(state.tapState.timer);if(state.tapState.count===1){state.tapState.timer=setTimeout(()=>{if(targetId==='canvasContainer'){cycleCanvasBackground(targetEvent);}state.tapState.count=0;},300);}else if(state.tapState.count===2){clearTimeout(state.tapState.timer);doubleTapZoom(targetEvent);state.tapState.count=0;}}
 
         // Single tap compare - shows original unprocessed image with orange indicator for 1s
-        function singleTapCompare(){
+        async function singleTapCompare(){
             if(state.tapState.comparing) return;
             const canvas=document.getElementById('canvas');
             const p=state.photos[state.currentIndex];
-            if(!p||!p.original) return;
+            if(!p) return;
 
             state.tapState.comparing=true;
 
@@ -1265,14 +1265,17 @@
             indicator.textContent='';
             indicator.classList.add('active');
 
+            // Lazy-load original if needed
+            const originalImg = await ensureOriginalLoaded(p);
+
             // Set canvas to original image dimensions (without borders)
-            canvas.width = p.original.width;
-            canvas.height = p.original.height;
+            canvas.width = originalImg.width;
+            canvas.height = originalImg.height;
 
             // Update display size to fit container while maintaining aspect ratio
             const maxW = window.innerWidth - 30;
             const maxH = window.innerHeight - 330 - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab') || '0');
-            const imageAspect = p.original.width / p.original.height;
+            const imageAspect = originalImg.width / originalImg.height;
             const containerAspect = maxW / maxH;
             let displayW, displayH;
 
@@ -1290,7 +1293,7 @@
 
             const ctx=canvas.getContext('2d',{alpha:false});
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(p.original, 0, 0);
+            ctx.drawImage(originalImg, 0, 0);
 
             console.log('🔍 Showing original unprocessed image with orange blinking indicator');
 
