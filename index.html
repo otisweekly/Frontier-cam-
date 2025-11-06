@@ -774,7 +774,7 @@
     <!-- <div id="mobileDebug"></div> -->
 
     <script>
-        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false,doubleTapHappened:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null};
+        const state={photos:[],currentIndex:0,activeControl:null,settings:{profile:'none',profileIntensity:0,bloom:0,grain:0,cyan:0,magenta:0,yellow:0,black:0,brightness:0,contrast:0,shadows:0,highlights:0,filmBorder:false},renderPending:false,tapState:{count:0,timer:null,comparing:false,doubleTapHappened:false},previewState:{zoomed:false,tapCount:0,timer:null},contactSheet:{selectMode:false,selected:[],mode:'navigation'},canvasBackground:'grey',history:[],historyIndex:-1,download:{active:false,cancelling:false,mediaRecorder:null,type:null},upload:{active:false,cancelling:false},intensityTapState:{tapCounter:0,timer:null,startX:0,startY:0},swipeState:{startX:0,startY:0,currentX:0,currentY:0,swiping:false},fullscreenPreview:false,usePreview:false,previewDebounceTimer:null,holdSettings:false,holdDirty:false,holdRegenerateTimer:null,contactSheetRegenerateTimer:null,downloadPreviewRegenerateTimer:null,cmykLinked:false,moreMenuJustOpened:false,navMenuJustOpened:false,copiedSettings:null,autoActive:false};
 
         // Film border cache - keyed by "borderType-preset-version"
         // Increment BORDER_VERSION when text rendering changes (opacity, tracking, blur, etc.)
@@ -1690,15 +1690,15 @@
                         if(state.tapState.count===1){
                             state.tapState.timer=setTimeout(()=>{
                                 // Single tap to view original - only if double tap didn't happen
-                                if(!state.panelJustClosed&&!zoomState.justZoomed&&!state.tapState.doubleTapHappened){
+                                if(!zoomState.justZoomed&&!state.tapState.doubleTapHappened){
                                     console.log('Single tap detected, showing original');
                                     singleTapCompare();
                                 }else{
-                                    console.log('Single tap ignored (panel just closed, just zoomed, or double tap happened)');
+                                    console.log('Single tap ignored (just zoomed or double tap happened)');
                                 }
                                 state.tapState.count=0;
                                 state.tapState.doubleTapHappened=false;
-                            },450); // Longer delay to prevent double-tap interference
+                            },400); // Delay to prevent double-tap interference
                         }else if(state.tapState.count===2){
                             clearTimeout(state.tapState.timer);
                             state.tapState.doubleTapHappened=true; // Block single tap from firing
@@ -6416,7 +6416,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
         }
 
-        function adjustBrightness(channel,delta){haptic();const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
+        function adjustBrightness(channel,delta){haptic();if(state.autoActive){state.autoActive=false;const autoBtn=document.getElementById('autoBtn');if(autoBtn){autoBtn.classList.remove('active');}console.log('🔓 AUTO: Released due to manual adjustment');}const max=10,min=-10;const oldValue=state.settings[channel]||0;const newValue=Math.max(min,Math.min(max,(state.settings[channel]||0)+delta));state.settings[channel]=newValue;document.getElementById(channel+'Value').querySelector('.cmyk-value-number').textContent=state.settings[channel];if(oldValue!==newValue){addToHistory(`${channel.toUpperCase()}: ${oldValue} → ${newValue}`,channel,oldValue,newValue);}updateBrightnessIndicator();saveCurrentPhotoSettings(true,true);enablePreviewMode();deferredRender();}
 
         function updateBrightnessIndicator(){const brightnessToggle=document.getElementById('brightnessToggle');const hasSettings=state.settings.brightness!==0||state.settings.contrast!==0||state.settings.shadows!==0||state.settings.highlights!==0;if(hasSettings){brightnessToggle.classList.add('has-settings');}else{brightnessToggle.classList.remove('has-settings');}}
 
@@ -6431,8 +6431,56 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 return;
             }
 
-            // Momentary button - always apply auto-adjustments (never stays down)
-            console.log('🤖 AUTO: Analyzing image...');
+            const autoBtn = document.getElementById('autoBtn');
+
+            // Toggle behavior: if already active, release and reset to zero
+            if (state.autoActive) {
+                console.log('🔓 AUTO: Releasing and resetting to zero');
+                state.autoActive = false;
+                autoBtn.classList.remove('active');
+
+                // Store old values for history
+                const oldBrightness = state.settings.brightness || 0;
+                const oldContrast = state.settings.contrast || 0;
+                const oldShadows = state.settings.shadows || 0;
+                const oldHighlights = state.settings.highlights || 0;
+
+                // Reset to zero
+                state.settings.brightness = 0;
+                state.settings.contrast = 0;
+                state.settings.shadows = 0;
+                state.settings.highlights = 0;
+
+                // Update UI
+                document.getElementById('brightnessValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('contrastValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('shadowsValue').querySelector('.cmyk-value-number').textContent = 0;
+                document.getElementById('highlightsValue').querySelector('.cmyk-value-number').textContent = 0;
+
+                // Add to history
+                if (oldBrightness !== 0) {
+                    addToHistory(`AUTO RELEASE BRIGHTNESS: ${oldBrightness} → 0`, 'brightness', oldBrightness, 0);
+                }
+                if (oldContrast !== 0) {
+                    addToHistory(`AUTO RELEASE CONTRAST: ${oldContrast} → 0`, 'contrast', oldContrast, 0);
+                }
+                if (oldShadows !== 0) {
+                    addToHistory(`AUTO RELEASE SHADOWS: ${oldShadows} → 0`, 'shadows', oldShadows, 0);
+                }
+                if (oldHighlights !== 0) {
+                    addToHistory(`AUTO RELEASE HIGHLIGHTS: ${oldHighlights} → 0`, 'highlights', oldHighlights, 0);
+                }
+
+                updateBrightnessIndicator();
+                saveCurrentPhotoSettings(true, true);
+                await deferredRender();
+
+                console.log('✅ AUTO released and reset to zero');
+                return;
+            }
+
+            // Apply auto-adjustments and stay active
+            console.log('🤖 AUTO: Analyzing image and staying active...');
             setStatus('processing');
 
             try {
@@ -6576,12 +6624,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 saveCurrentPhotoSettings(true, true);
                 await deferredRender();
 
-                console.log('✅ AUTO adjustment complete');
+                // Set button active and update state
+                state.autoActive = true;
+                autoBtn.classList.add('active');
+
+                console.log('✅ AUTO adjustment complete and staying active');
                 setStatus('ready');
 
             } catch (err) {
                 console.error('❌ AUTO adjustment failed:', err);
                 setStatus('ready');
+                state.autoActive = false;
+                autoBtn.classList.remove('active');
                 alert('Auto-adjustment failed. Please try manually adjusting the sliders.');
             }
         }
