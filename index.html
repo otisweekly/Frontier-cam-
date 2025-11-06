@@ -6188,19 +6188,21 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 5. HIGHLIGHTS: Intelligent highlight recovery
-                // Check if highlights are blown (p98 > 245) or clipped (p95 > 230)
-                const highlightsBlown = p98 > 245;
-                const highlightsClipped = p95 > 230;
+                // PRIORITY: Preserve highlights! (Professional minilab standard)
+                // More sensitive thresholds than shadows
+                const highlightsBlown = p98 > 240;      // Was 245
+                const highlightsClipped = p95 > 220;    // Was 230
+                const highlightsHot = p90 > 200;        // Was 215
 
                 if (highlightsBlown) {
-                    // Severe clipping, pull down aggressively
-                    highlights = Math.round(Math.max(-10, (240 - p98) / 1.5));
+                    // Severe clipping, pull down very aggressively
+                    highlights = Math.round(Math.max(-10, (235 - p98) / 1.2));  // Stronger
                 } else if (highlightsClipped) {
-                    // Moderate clipping, pull down moderately
-                    highlights = Math.round(Math.max(-10, (228 - p95) / 4));
-                } else if (p90 > 215 && !isHighKey) {
+                    // Moderate clipping, pull down aggressively
+                    highlights = Math.round(Math.max(-10, (218 - p95) / 3));    // Stronger
+                } else if (highlightsHot && !isHighKey) {
                     // Slightly hot highlights in normal image
-                    highlights = Math.round(Math.max(-6, (210 - p90) / 8));
+                    highlights = Math.round(Math.max(-8, (198 - p90) / 6));      // Stronger
                 }
 
                 // Don't pull down highlights in intentional high-key images
@@ -6208,21 +6210,36 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     highlights = Math.round(highlights * 0.3);
                 }
 
-                // 6. BALANCE: Prevent over-correction in opposite directions
-                // If we're lifting shadows significantly, be gentler with brightness
-                if (shadows > 5 && brightness > 0) {
-                    brightness = Math.round(brightness * 0.7);
+                // 6. BALANCE: Prevent over-correction and blown highlights
+                // CRITICAL: If lifting shadows, always pull highlights down to compensate
+                if (shadows > 3) {
+                    // Lifting shadows increases overall brightness, so pull highlights
+                    const highlightCompensation = Math.round(shadows * -0.6);
+                    highlights = Math.max(-10, Math.min(highlights, highlightCompensation));
+                }
+
+                // If we're lifting shadows significantly, reduce brightness
+                if (shadows > 4 && brightness > 0) {
+                    brightness = Math.round(brightness * 0.5);  // Was 0.7, now more conservative
                 }
 
                 // If we're pulling highlights significantly, be gentler with brightness
                 if (highlights < -5 && brightness < 0) {
-                    brightness = Math.round(brightness * 0.7);
+                    brightness = Math.round(brightness * 0.6);
                 }
 
-                // If both shadows and highlights need work, reduce contrast boost
-                if (shadows > 4 && highlights < -4 && contrast > 0) {
-                    contrast = Math.round(contrast * 0.6);
+                // If both shadows and highlights need work, reduce contrast and brightness
+                if (shadows > 3 && highlights < -3) {
+                    contrast = Math.round(contrast * 0.5);
+                    brightness = Math.round(brightness * 0.6);
                 }
+
+                // 7. GLOBAL CONSERVATIVE SCALING
+                // Make all adjustments 25% more conservative to prevent data loss
+                brightness = Math.round(brightness * 0.75);
+                contrast = Math.round(contrast * 0.75);
+                shadows = Math.round(shadows * 0.75);
+                highlights = Math.round(highlights * 0.75);
 
                 console.log(`🎯 AUTO adjustments: brightness=${brightness}, contrast=${contrast}, shadows=${shadows}, highlights=${highlights}`);
 
