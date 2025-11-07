@@ -152,7 +152,7 @@
         @keyframes indicatorGlow { 0%, 100% { box-shadow:0 0 8px rgba(56,151,175,0.8), 0 0 2px rgba(56,151,175,1); } 50% { box-shadow:0 0 16px rgba(56,151,175,1), 0 0 24px rgba(56,151,175,0.8), 0 0 4px rgba(56,151,175,1); } }
         .upload-label { font-size:11px; font-weight:600; color:#EEEDF0; letter-spacing:1px; margin-bottom:12px; text-align:center; }
         .upload-btn { width:min(400px, 85vw); height:70px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:24px; font-weight:700; color:#000; display:flex; align-items:center; justify-content:space-between; padding:0 20px; box-shadow:0 8px 0 #222222, inset 0 2px 0 rgba(255,255,255,0.3); transition:all 0s; -webkit-tap-highlight-color:transparent; font-family:'PP Neue Bit', monospace; }
-        .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .upload-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 4px 8px rgba(0,0,0,0.2); }
         #fileInput { display:none; }
         @media (pointer: coarse) { .upload-btn { touch-action:manipulation; } }
 
@@ -173,20 +173,20 @@
         .edit-status-light.red.active { animation:blink-red 800ms ease-in-out infinite; }
 
         .gallery-icon { position:fixed; top:calc(15px + env(safe-area-inset-top)); left:15px; width:40px; height:40px; background:#D4CEC8; border:3px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:150; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
-        .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222 !important; }
+        .gallery-icon.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .gallery-icon.active svg line { stroke:#fff !important; }
-        .gallery-icon:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .gallery-icon:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .gallery-icon svg { width:20px; height:20px; }
         .gallery-icon svg line { stroke:#000; }
 
         .top-controls { position:fixed; top:calc(15px + env(safe-area-inset-top)); right:10px; display:flex; gap:6px; z-index:150; touch-action:manipulation; }
         .top-controls .settings-btn { position:relative; width:40px; height:40px; padding:5px; background:#D4CEC8; border:3px solid #000; border-radius:4px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:none; cursor:pointer; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; }
         .top-controls .settings-btn img { width:100%; height:100%; object-fit:contain; }
-        .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222 !important; }
+        .top-controls .settings-btn.active { background:#000 !important; transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         .top-controls .settings-btn.active img { filter:brightness(0) invert(1); }
-        #holdBtn.active { background:#6355B5 !important; box-shadow:0 3px 0 #222222 !important; }
+        #holdBtn.active { background:#6355B5 !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3) !important; }
         #holdBtn.active img { filter:brightness(0) invert(1) !important; }
-        .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .top-controls .settings-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding-top:calc(78px + env(safe-area-inset-top) + 8px); padding-left:15px; padding-right:15px; padding-bottom:calc(230px + env(safe-area-inset-bottom, 0px) + 15px); overflow:hidden; position:relative; transition:all 0.3s ease; min-height:0; touch-action:none; background:#4A4A4A; z-index:1; }
         .canvas-container.cmyk-open { padding-top:calc(78px + env(safe-area-inset-top) + 140px); padding-bottom:15px; }
@@ -237,7 +237,7 @@
 
         .background-toggle-bar { position:fixed; bottom:calc(230px + env(safe-area-inset-bottom, 20px) + 20px); left:0; right:0; background:#6A6A6A; padding:8px 15px; display:none; align-items:center; justify-content:center; gap:8px; z-index:149; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1); touch-action:manipulation; }
         .bg-toggle-btn { width:40px; height:40px; border:3px solid #000; border-radius:4px; cursor:pointer; transition:all 0s; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); position:relative; }
-        .bg-toggle-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #222222; }
+        .bg-toggle-btn:active { transform:translateY(4px); box-shadow:0 2px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.2); }
         .bg-toggle-btn.active::after { content:''; position:absolute; top:-3px; right:-3px; width:12px; height:12px; background:#3897AF; border:2px solid #fff; border-radius:50%; box-shadow:0 0 6px rgba(56,151,175,0.8); animation:indicatorGlow 2s ease-in-out infinite; }
         .bg-toggle-btn.white { background:#fff; }
         .bg-toggle-btn.grey { background:#4A4A4A; }
@@ -258,14 +258,14 @@
         #navDialog.just-opened { pointer-events:none !important; }
         #navDialog.just-opened .nav-dialog-btn { pointer-events:none !important; }
         .nav-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
-        .nav-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .nav-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         #moreDialog { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(2,1fr); column-gap:8px; row-gap:16px; min-height:150px; }
         #moreDialog.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         #moreDialog.just-opened { pointer-events:none !important; }
         #moreDialog.just-opened .more-dialog-btn { pointer-events:none !important; }
         .more-dialog-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; display:flex; align-items:center; justify-content:center; text-align:center; padding:6px; line-height:1.2; pointer-events:auto; }
-        .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .more-dialog-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         #intensityControls { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; min-height:150px; display:flex; align-items:center; justify-content:center; }
         #intensityControls.active { transform:translateY(0); opacity:1; pointer-events:auto; }
         #downloadOptions { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; pointer-events:none; touch-action:manipulation; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; min-height:150px; }
@@ -274,7 +274,7 @@
         .download-card-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:20px; font-weight:700; color:#fff; text-align:center; margin-bottom:4px; }
         .download-preview { width:100%; aspect-ratio:10/8; background:#4A4A4A; border:2px solid #222; border-radius:4px; object-fit:cover; }
         .download-card-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; text-align:center; padding:8px 16px; line-height:1; pointer-events:auto; width:100%; }
-        .download-card-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .download-card-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         /* GIF Preview Modal */
         .gif-preview-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:200; display:none; flex-direction:column; opacity:0; transition:opacity 0.3s ease; }
@@ -284,13 +284,13 @@
         .gif-preview-canvas { max-width:100%; max-height:100%; width:auto; height:auto; background:#000; object-fit:contain; }
         .gif-preview-logo { width:160px; height:auto; }
         .gif-close-btn { background:#1a1a1a; border:3px solid #000; border-radius:4px; width:44px; height:44px; font-family:'PP Neue Bit',monospace; font-size:20px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; color:#B3B3B3; display:flex; align-items:center; justify-content:center; line-height:1; flex-shrink:0; }
-        .gif-close-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .gif-close-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .gif-preview-footer { padding:16px 24px; padding-bottom:calc(16px + env(safe-area-inset-bottom, 0px)); background:#000; z-index:201; }
         .gif-preview-credit { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#B3B3B3; }
 
         .intensity-slider-container { display:flex; align-items:center; gap:10px; justify-content:center; }
         .intensity-value-display { background:#4A4A4A; border:3px solid #000; border-radius:4px; height:54px; padding:0 25px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); min-width:140px; }
-        .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .intensity-value-display:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .intensity-value-number { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:32px; font-weight:700; color:#fff; line-height:1; }
         .intensity-value-label { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:11px; color:#999; margin-top:2px; letter-spacing:1px; }
         .intensity-buttons { display:flex; gap:6px; }
@@ -314,32 +314,32 @@
         .progress-bar-fill { height:100%; background:#3897AF; transition:width 0.3s ease; box-shadow:inset 0 1px 0 rgba(255,255,255,0.3); position:relative; z-index:1; }
         .progress-text { position:absolute; top:50%; left:15px; right:15px; transform:translateY(-50%); font-family:'PP Neue Bit',monospace; font-size:20px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; z-index:2; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,0.5); }
         .progress-cancel { background:#B3B3B3; border:3px solid #000; border-radius:4px; width:44px; height:44px; font-family:'PP Neue Bit',monospace; font-size:20px; font-weight:700; cursor:pointer; transition:all 0s; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; display:flex; align-items:center; justify-content:center; }
-        .progress-cancel:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .progress-cancel:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         .footer-bottom { width:100%; }
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
         .nav-btn { width:80px; min-width:80px; max-width:80px; height:57px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:none; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-        .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222 !important; cursor:not-allowed; pointer-events:none; }
+        .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5) !important; cursor:not-allowed; pointer-events:none; }
         .nav-btn.disabled img { opacity:0.25; }
         .borders-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:none; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-        .borders-btn.active { background:#CA9240; color:#000; transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .borders-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .borders-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .borders-btn.active { background:#CA9240; color:#000; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .borders-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .borders-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .borders-btn img { filter:brightness(0); }
         .borders-btn.active img { filter:brightness(0); }
         .copy-paste-btn { width:57px; min-width:57px; max-width:57px; height:57px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; font-size:18px; font-family:'PP Neue Bit',monospace; font-weight:700; color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:none; display:flex; align-items:center; justify-content:center; will-change:transform, box-shadow; position:relative; flex-shrink:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .copy-paste-btn.holding { background:#8CBABB; color:#000; }
-        .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .copy-paste-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .copy-paste-btn.holding:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .copy-paste-btn img { filter:brightness(0); }
         .copy-paste-btn.holding img { filter:brightness(0); }
         #downloadBtn { font-size:20px; }
         .nav-btn.gallery { background:#B3B3B3; border-color:#000; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); }
-        .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .nav-btn.gallery:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .nav-btn.gallery svg { width:24px; height:24px; }
-        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; height:57px; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:0 8px; transition:none; will-change:transform, box-shadow; gap:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-        .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .photo-counter { font-family:'PP Neue Bit','PP Fuji',monospace; min-width:66px; flex:1; height:57px; text-align:center; display:flex; flex-direction:row; align-items:center; justify-content:center; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; padding:0 8px; transition:none; will-change:transform, box-shadow; gap:6px; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+        .photo-counter:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.15); }
 
         .photo-counter > div { display:flex; flex-direction:column; align-items:center; flex:1; }
         .photo-counter .contact-icon { height:28px; width:28px; margin:0; object-fit:contain; flex-shrink:0; }
@@ -360,14 +360,14 @@
         .preset-buttons { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; min-height:57px; }
         .profile-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; min-height:57px; }
         .preset-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; text-align:center; line-height:1.2; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:6px; color:#000; position:relative; }
-        .preset-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .preset-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .preset-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .preset-btn.active { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
+        .preset-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .preset-btn.active:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
 
         .slider-btn { min-height:57px; background:#B3B3B3; border:3px solid #000; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; font-size:35px; font-weight:700; color:#000; }
-        .slider-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; transition:all 0s; }
-        .slider-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .slider-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .slider-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; user-select:none; -webkit-user-select:none; transition:all 0s; }
+        .slider-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .slider-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .slider-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
 
@@ -376,9 +376,9 @@
         #brightnessControls { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; }
         #brightnessControls.active { transform:translateY(0); opacity:1; }
         .brightness-auto-btn, .cmyk-link-btn { width:36px; height:36px; background:#B3B3B3; border:3px solid #000; border-radius:4px; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; padding:5px; align-self:center; }
-        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222; }
-        .brightness-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222; background:#F2FFCE; }
-        .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222; background:#ACC0D5; }
+        .brightness-auto-btn:active, .cmyk-link-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .brightness-auto-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#F2FFCE; }
+        .cmyk-link-btn.active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); background:#ACC0D5; }
         .brightness-auto-btn img, .cmyk-link-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
         .brightness-auto-btn.active img, .cmyk-link-btn.active img { filter:brightness(0); }
         #historyPanel { position:fixed; top:calc(78px + env(safe-area-inset-top)); left:0; right:0; background:#6A6A6A; padding:10px; padding-bottom:18px; box-shadow:inset 0 2px 0 rgba(0,0,0,0.3), inset 0 3px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3); border-bottom:3px solid rgba(0,0,0,0.5); z-index:148; transform:translateY(calc(-100% - 78px - env(safe-area-inset-top))); transition:transform 0.3s ease, opacity 0.3s ease; opacity:0; touch-action:manipulation; max-height:calc(100vh - 78px - env(safe-area-inset-top) - 230px - env(safe-area-inset-bottom, 20px) - 20px); overflow-y:auto; display:flex; flex-direction:column; }
@@ -389,7 +389,7 @@
         #guidePanel .guide-logo { position:fixed; top:calc(env(safe-area-inset-top, 0px) + 20px); left:20px; width:160px; height:auto; z-index:251; }
         .guide-content { max-width:800px; margin:0 auto; font-family:'PP Neue Bit',monospace; font-size:34px; line-height:1.1; color:#3897AF; }
         #guidePanel .guide-close { position:fixed; top:calc(env(safe-area-inset-top, 0px) + 20px); right:20px; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; cursor:pointer; z-index:251; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); color:#fff; font-family:'PP Neue Bit',monospace; }
-        #guidePanel .guide-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        #guidePanel .guide-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .guide-section { margin-bottom:30px; }
         .guide-section h3 { font-family:'PP Neue Bit',monospace; font-size:38px; margin:0 0 15px 0; color:#3897AF; text-transform:uppercase; }
         .guide-section p { font-family:'PP Neue Bit',monospace; font-size:34px; line-height:1.1; color:#999; margin:0 0 15px 0; }
@@ -402,17 +402,17 @@
         .history-item.undone { opacity:0.5; }
         .history-item-text { flex:1; font-weight:700; }
         .history-item-btn { width:32px; height:32px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; box-shadow:0 4px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; margin-left:6px; }
-        .history-item-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222; }
+        .history-item-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .history-item-btn img { width:20px; height:20px; }
         .history-clear-all { margin-top:10px; padding:12px; background:#D4CEC8; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:16px; font-weight:700; cursor:pointer; text-align:center; color:#000; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); transition:all 0s; }
-        .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #222222; }
+        .history-clear-all:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .history-done-btn { margin-top:10px; padding:14px; padding-bottom:calc(14px + env(safe-area-inset-bottom,0px)); background:#000; border:3px solid #000; border-radius:6px; font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; font-weight:700; cursor:pointer; text-align:center; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; }
-        .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .history-done-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5); }
         .cmyk-sliders { display:grid; grid-template-columns:1fr 1fr 36px 1fr 1fr; gap:8px; align-items:start; }
         .brightness-sliders { display:grid; grid-template-columns:1fr 1fr 36px 1fr 1fr; gap:8px; align-items:start; }
         .cmyk-slider { display:flex; flex-direction:column; gap:4px; align-items:stretch; }
-        .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; transition:all 0s; }
-        .cmyk-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .cmyk-value { font-family:'PP Neue Bit','PP Fuji',monospace; min-height:57px; background:linear-gradient(180deg, #E8F0E8 0%, #F0F8F0 100%); border:3px solid #000; border-radius:6px 6px 0 0; font-size:26px; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 8px 0 #222222, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8); color:#000; cursor:pointer; line-height:1; transition:all 0s; }
+        .cmyk-value:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .cmyk-value-number { width:100%; text-align:center; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .cmyk-value-label { font-size:10px; font-weight:700; color:#666; letter-spacing:0.5px; line-height:1; pointer-events:none; user-select:none; -webkit-user-select:none; }
         .cmyk-color-bar { height:10px; border-radius:0 0 3px 3px; border:2px solid rgba(0,0,0,0.2); }
@@ -426,7 +426,7 @@
         .cmyk-color-bar.highlights { background:#000; }
         .cmyk-arrows { display:flex; gap:4px; }
         .cmyk-arrow-btn { flex:1; height:48px; background:#B3B3B3; border:3px solid #000; border-radius:6px; font-size:26px; cursor:pointer; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; display:flex; align-items:center; justify-content:center; font-weight:700; color:#000; }
-        .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .cmyk-arrow-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
 
         #contactSheetView { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:9999; flex-direction:column; overflow-y:auto; }
         #contactSheetView.active { display:flex; }
@@ -434,14 +434,14 @@
         .contact-sheet-header-top { display:flex; justify-content:space-between; align-items:center; width:100%; position:relative; }
         .contact-sheet-logo { width:160px; height:auto; }
         .contact-sheet-close { position:relative; width:40px; height:40px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; }
-        .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .contact-sheet-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
         .contact-sheet-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:0 15px; }
         .contact-sheet-btn { font-family:'PP Neue Bit','PP Fuji',monospace; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; font-size:16px; font-weight:700; cursor:pointer; padding:8px 16px; height:44px; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; white-space:nowrap; display:flex; align-items:center; justify-content:center; }
-        .contact-sheet-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .contact-sheet-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-btn.add-btn { padding:8px 16px; font-size:16px; }
-        .contact-sheet-btn.select-mode { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222; }
-        .contact-sheet-btn.select-mode:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .contact-sheet-btn.select-mode { background:#000; color:#fff; transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
+        .contact-sheet-btn.select-mode:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .contact-sheet-title { display:none; }
         .contact-sheet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:15px; padding:15px; padding-bottom:calc(90px + env(safe-area-inset-bottom,0px)); }
         .contact-sheet-item { background:#1a1a1a; border:2px solid #333; border-radius:4px; overflow:hidden; cursor:pointer; transition:all 0s; position:relative; }
@@ -454,7 +454,7 @@
         .contact-sheet-filename { display:flex; align-items:center; justify-content:space-between; gap:6px; color:#fff; font-weight:700; margin-bottom:2px; }
         .contact-sheet-filename-text { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:left; }
         .contact-sheet-edit-btn { width:24px; height:24px; background:#D4CEC8; border:2px solid #000; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0s; box-shadow:0 4px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3); }
-        .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222; }
+        .contact-sheet-edit-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.2); }
         .contact-sheet-edit-btn svg { width:14px; height:14px; }
         .contact-sheet-datetime { font-size:16px; color:#999; text-align:left; }
         .contact-sheet-selection-info { font-family:'PP Neue Bit','PP Fuji',monospace; font-size:18px; color:#666; text-align:left; font-weight:700; padding:0; }
@@ -467,13 +467,6 @@
             .control-tab { font-size:8px; padding:6px 4px; }
             .preset-btn { font-size:8px; padding:8px 3px; }
             .contact-sheet-grid { grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
-        }
-
-        /* Desktop layout - larger nav buttons, compact photo counter */
-        @media (pointer: fine) and (min-width: 768px) {
-            .nav-btn { width:120px; min-width:120px; max-width:120px; }
-            .nav-btn img { width:40px !important; height:40px !important; }
-            .photo-counter { flex:0; min-width:100px; max-width:100px; }
         }
 
         /* Standalone mode (installed as web app) - reduce bottom padding but keep top safe area for notch */
@@ -497,13 +490,13 @@
         .guide-header-top { display:flex; justify-content:space-between; align-items:center; width:100%; padding-bottom:15px; }
         .guide-logo { width:160px; height:auto; z-index:1; }
         .guide-modal-close { position:relative !important; width:40px; height:40px; padding:0; background:linear-gradient(180deg, #707070 0%, #505050 100%); border:3px solid #3A3A3A; border-radius:4px; cursor:pointer; color:#fff; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:all 0s; display:flex; align-items:center; justify-content:center; z-index:2; flex-shrink:0; }
-        .guide-modal-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
+        .guide-modal-close:active { transform:translateY(5px); box-shadow:0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .guide-modal-close img { width:20px; height:20px; object-fit:contain; filter:brightness(0) invert(1); }
 
         .guide-chapters { padding:10px 24px calc(env(safe-area-inset-bottom, 20px) + 80px) 24px; overflow-y:auto; flex:1; display:none; position:relative; }
         .guide-chapters.active { display:block; }
         .guide-chapter-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:26px; font-weight:700; cursor:pointer; box-shadow:0 8px 0 #222, inset 0 1px 0 rgba(255,255,255,0.2); color:#000; padding:16px; margin-bottom:16px; width:100%; text-align:left; display:block; }
-        .guide-chapter-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222; }
+        .guide-chapter-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222, inset 0 3px 5px rgba(0,0,0,0.3); }
         .guide-chapters-credit { font-family:'PP Neue Bit',monospace; font-size:24px; font-weight:700; color:#B3B3B3; position:fixed; bottom:calc(env(safe-area-inset-bottom, 20px) + 16px); left:24px; z-index:10001; display:none; }
         .guide-chapters.active .guide-chapters-credit { display:block; }
 
@@ -521,7 +514,7 @@
         .guide-progress { font-family:'PP Neue Bit',monospace; font-size:22px; color:#fff; }
         .guide-nav { display:flex; gap:12px; }
         .guide-btn { font-family:'PP Neue Bit',monospace; background:#B3B3B3; border:3px solid #000; border-radius:4px; font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0s; color:#000; padding:10px 20px; }
-        .guide-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222; }
+        .guide-btn:active { transform:translateY(3px); box-shadow:0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3); }
         .guide-btn.primary { background:#3897AF; color:#fff; }
         .guide-btn:disabled { opacity:0.5; cursor:not-allowed; }
     </style>
@@ -551,7 +544,7 @@
             Fullscreen hint (disabled)
         </div>
 
-        <button class="gallery-icon" id="navBtn" onclick="toggleNavMenu(event)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';">
+        <button class="gallery-icon" id="navBtn" onclick="toggleNavMenu(event)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.3)';">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                 <line x1="4" y1="6" x2="20" y2="6"/>
                 <line x1="4" y1="12" x2="20" y2="12"/>
@@ -559,12 +552,12 @@
             </svg>
         </button>
         <div class="top-controls">
-            <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
-            <button class="settings-btn" id="holdBtn" onclick="toggleHold()" title="Hold" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img id="holdIcon" src="Unlocked.svg" alt="Hold"></button>
-            <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
-            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
-            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
-            <button class="settings-btn" id="downloadBtn" onclick="toggleDownloadOptions()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
+            <button class="settings-btn" id="clearBtn" onclick="resetSettings()" title="Clear" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Clear.svg" alt="Clear"></button>
+            <button class="settings-btn" id="holdBtn" onclick="toggleHold()" title="Hold" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img id="holdIcon" src="Unlocked.svg" alt="Hold"></button>
+            <button class="settings-btn" id="intensityBtn" onclick="toggleIntensitySlide()" title="Intensity" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Intensity.svg" alt="Intensity"></button>
+            <button class="settings-btn" id="cmykToggle" onclick="toggleCMYK()" title="Color" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="CMYK.svg" alt="CMYK"></button>
+            <button class="settings-btn" id="brightnessToggle" onclick="toggleBrightness()" title="Brightness" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Brightness.svg" alt="Brightness"></button>
+            <button class="settings-btn" id="downloadBtn" onclick="toggleDownloadOptions()" title="Download" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';"><img src="Download.svg" alt="Download"></button>
         </div>
         <div id="downloadProgress">
             <div class="progress-content">
@@ -590,8 +583,8 @@
                     </div>
                     <div class="cmyk-color-bar cyan"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('cyan',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('cyan',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('cyan',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('cyan',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <div class="cmyk-slider">
@@ -601,8 +594,8 @@
                     </div>
                     <div class="cmyk-color-bar magenta"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('magenta',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <button class="cmyk-link-btn" id="linkBtn" onclick="toggleCMYLink()"><img src="Default_Unlinked.svg" alt="LINK"></button>
@@ -613,8 +606,8 @@
                     </div>
                     <div class="cmyk-color-bar yellow"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('yellow',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('yellow',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('yellow',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('yellow',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <div class="cmyk-slider">
@@ -624,8 +617,8 @@
                     </div>
                     <div class="cmyk-color-bar density"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustCMYK('black',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
             </div>
@@ -639,8 +632,8 @@
                     </div>
                     <div class="cmyk-color-bar brightness"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('brightness',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <div class="cmyk-slider">
@@ -650,8 +643,8 @@
                     </div>
                     <div class="cmyk-color-bar contrast"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('contrast',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <button class="brightness-auto-btn" id="autoBtn" onclick="autoAdjustLevels()"><img id="autoIcon" src="auto-off.svg" alt="AUTO"></button>
@@ -662,8 +655,8 @@
                     </div>
                     <div class="cmyk-color-bar shadows"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('shadows',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
                 <div class="cmyk-slider">
@@ -673,44 +666,44 @@
                     </div>
                     <div class="cmyk-color-bar highlights"></div>
                     <div class="cmyk-arrows">
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
-                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                        <button class="cmyk-arrow-btn" onclick="adjustBrightness('highlights',1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
                     </div>
                 </div>
             </div>
         </div>
         <div id="historyPanel">
             <div class="history-list" id="historyList"></div>
-            <button class="history-clear-all" onclick="clearAllHistory()" ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';">CLEAR ALL</button>
-            <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
+            <button class="history-clear-all" onclick="clearAllHistory()" ontouchstart="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #222222, inset 0 2px 3px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.3)';">CLEAR ALL</button>
+            <button class="history-done-btn" onclick="toggleHistoryPanel()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1)';">DONE</button>
         </div>
         <div id="navDialog">
-            <button class="nav-dialog-btn" onclick="backToUpload()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EXIT</button>
-            <button class="nav-dialog-btn" onclick="openGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
-            <button class="nav-dialog-btn" onclick="startNewOrder()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">NEW ORDER</button>
+            <button class="nav-dialog-btn" onclick="backToUpload()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">EXIT</button>
+            <button class="nav-dialog-btn" onclick="openGuide()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">GUIDE</button>
+            <button class="nav-dialog-btn" onclick="startNewOrder()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 1px 0 rgba(255,255,255,0.2)';">NEW ORDER</button>
         </div>
         <div id="intensityControls">
             <div class="intensity-slider-container">
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:22px;height:22px;" alt="-"></button>
                 <div class="intensity-value-display" id="intensityValue" onclick="editIntensityCounter()">
                     <div class="intensity-value-number">0</div>
                     <div class="intensity-value-label">INTENSITY</div>
                 </div>
-                <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
+                <button class="intensity-arrow-btn" onclick="adjustIntensity(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:22px;height:22px;" alt="+"></button>
             </div>
         </div>
         <div id="downloadOptions">
             <div class="download-card">
                 <canvas class="download-preview" id="downloadPreviewCurrent" onclick="previewInCanvas('current')" style="cursor:pointer;"></canvas>
-                <button class="download-card-btn" onclick="saveCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE CURRENT</button>
+                <button class="download-card-btn" onclick="saveCurrentPhoto()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE CURRENT</button>
             </div>
             <div class="download-card">
                 <canvas class="download-preview" id="downloadPreviewSheet" onclick="previewInCanvas('sheet')" style="cursor:pointer;"></canvas>
-                <button class="download-card-btn" onclick="saveAll()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE ALL</button>
+                <button class="download-card-btn" onclick="saveAll()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE ALL</button>
             </div>
             <div class="download-card">
                 <canvas class="download-preview" id="downloadPreviewGif" onclick="previewInCanvas('gif')" style="cursor:pointer;"></canvas>
-                <button class="download-card-btn" onclick="saveAnimatedGif()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE GIF</button>
+                <button class="download-card-btn" onclick="saveAnimatedGif()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';">SAVE GIF</button>
             </div>
         </div>
 
@@ -729,41 +722,41 @@
         </div>
 
         <div class="edit-footer">
-            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div class="profile-buttons" id="photoProfiles" style="display:grid;grid-template-columns:57px 1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+                <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders-off.svg" style="width:32px;height:32px;" alt="Borders" id="borderIcon"></button>
                 <button class="preset-btn" onclick="setProfile('supra', this)">SUPRA</button>
                 <button class="preset-btn" onclick="setProfile('chrome', this)">CHROME</button>
                 <button class="preset-btn" onclick="setProfile('xxx', this)">XXX</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                    <button class="slider-btn" onclick="adjustBloom(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
+                    <button class="slider-btn" onclick="adjustBloom(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
                     <div class="slider-value" id="bloomValueBig" onclick="editCounter('bloom')">
                         <div class="slider-value-number">0</div>
                         <div class="slider-value-label">BLOOM</div>
                     </div>
-                    <button class="slider-btn" onclick="adjustBloom(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
+                    <button class="slider-btn" onclick="adjustBloom(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:4px;">
-                    <button class="slider-btn" onclick="adjustGrain(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
+                    <button class="slider-btn" onclick="adjustGrain(-1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Minus.svg" style="width:28px;height:28px;" alt="-"></button>
                     <div class="slider-value" id="grainValueBig" onclick="editCounter('grain')">
                         <div class="slider-value-number">0</div>
                         <div class="slider-value-label">GRAIN</div>
                     </div>
-                    <button class="slider-btn" onclick="adjustGrain(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
+                    <button class="slider-btn" onclick="adjustGrain(1)" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.2)';"><img src="Plus.svg" style="width:28px;height:28px;" alt="+"></button>
                 </div>
             </div>
             <div class="footer-bottom">
                 <div class="nav-controls">
-                    <div class="photo-counter" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8)';">
+                    <div class="photo-counter" onclick="toggleContactSheetView()" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #000, inset 0 3px 5px rgba(0,0,0,0.15)';" ontouchend="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 0 #000, inset 0 2px 4px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.8)';">
                         <img src="Contact.svg" class="contact-icon" alt="Contact Sheet">
                         <div>
                             <div class="photo-counter-number" id="photoCounter">1/36</div>
                         </div>
                     </div>
-                    <button class="borders-btn" onclick="toggleFilmBorder()" id="filmBorderBtn"><img src="borders-off.svg" style="width:32px;height:32px;" alt="Borders" id="borderIcon"></button>
-                    <button class="copy-paste-btn" id="copyPasteBtn" onclick="toggleCopyPaste()"><img id="copyPasteIcon" src="copy-off.svg" style="width:28px;height:28px;" alt="Copy"></button>
-                    <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
-                    <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
+                    <button class="copy-paste-btn" id="copyPasteBtn" onclick="toggleCopyPaste()"><img id="copyPasteIcon" src="Copy.svg" style="width:28px;height:28px;" alt="Copy"></button>
+                    <button id="prevBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow Left.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Previous"></button>
+                    <button id="nextBtn" class="nav-btn" ontouchstart="this.style.transform='translateY(5px)';this.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';" ontouchend="this.style.transform='';this.style.boxShadow='';"><img src="Arrow right.svg" style="width:32px;height:32px;filter:brightness(0) invert(1);" alt="Next"></button>
                 </div>
             </div>
         </div>
@@ -1144,7 +1137,7 @@
 
             // Add pressed state
             btn.style.transform = 'translateY(5px)';
-            btn.style.boxShadow = '0 3px 0 #222222';
+            btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
 
             // Wait for press animation, then spring back up with new state
             setTimeout(() => {
@@ -1155,7 +1148,7 @@
                     // Copy settings
                     state.copiedSettings = JSON.parse(JSON.stringify(state.settings));
                     btn.classList.add('holding');
-                    icon.src = 'copy-on.svg';
+                    icon.src = 'paste.svg';
                     console.log('📋 Settings copied, button now teal');
 
                     // Show first-time tooltip
@@ -1242,7 +1235,7 @@
             // Clear the copied settings
             state.copiedSettings = null;
             btn.classList.remove('holding');
-            icon.src = 'copy-off.svg';
+            icon.src = 'Copy.svg';
 
             // Show confirmation
             holdFlash.textContent = 'COPIED SETTINGS CLEARED';
@@ -1255,7 +1248,7 @@
 
                 // Release button back to default state with animation
                 btn.style.transform = 'translateY(5px)';
-                btn.style.boxShadow = '0 3px 0 #222222';
+                btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
 
                 setTimeout(() => {
                     btn.style.transform = '';
@@ -2322,7 +2315,7 @@
                 btn.addEventListener('mousedown', (e) => {
                     if (btn.classList.contains('disabled')) return;
                     btn.style.transform = 'translateY(5px)';
-                    btn.style.boxShadow = '0 3px 0 #222222';
+                    btn.style.boxShadow = '0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.5)';
                 });
 
                 btn.addEventListener('mouseup', (e) => {
@@ -2946,10 +2939,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         function applyEffects(ctx,w,h,skipGrain=false){
             console.log('🌾 applyEffects called - skipGrain:', skipGrain, 'grain value:', state.settings.grain);
             // Step 1: Apply LUT-based film emulation (sync using preloaded LUT)
-            // LUTs now include baked-in improvements:
-            //   - 10% contrast reduction
-            //   - Global luminosity boost
-            //   - SUPRA: Warmth + grey preservation
             const imgData=ctx.getImageData(0,0,w,h);
             applyProfile(imgData, state.settings.profile);
 
@@ -2958,7 +2947,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
             // Step 2.5: Apply brightness/contrast/shadows/highlights adjustments
             applyBrightness(imgData.data,state.settings);
-
             ctx.putImageData(imgData,0,0);
 
             // Step 3: Apply bloom
@@ -3155,9 +3143,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
-                // Note: SUPRA color corrections are now baked into the LUT itself
-                // No need for post-processing adjustments
-
                 // Apply black & white conversion for XXX preset
                 if (preset.blackAndWhite) {
                     applyBlackAndWhite(imageData);
@@ -3241,108 +3226,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 pixels[i] = lum;
                 pixels[i + 1] = lum;
                 pixels[i + 2] = lum;
-            }
-        }
-
-        // SUPRA color correction: Lifted blacks, Desaturated blues/greens, Blues→Teal
-        function applySupraColorCorrection(imageData) {
-            const pixels = imageData.data;
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                let r = pixels[i];
-                let g = pixels[i + 1];
-                let b = pixels[i + 2];
-
-                // Calculate brightness for highlight detection
-                const brightness = (r + g + b) / 3;
-
-                // 0. LIFTED BLACKS: Film-style black lift with subtle warmth
-                // Lift affects dark pixels (< 60) with smooth falloff
-                if (brightness < 60) {
-                    const shadowStrength = (60 - brightness) / 60; // 1.0 at black, 0.0 at 60
-                    const liftAmount = shadowStrength * 20; // Max lift of 20 at pure black
-
-                    // Lift with balanced warmth (not too red, but still warm)
-                    r = r + liftAmount * 0.98; // Balanced red
-                    g = g + liftAmount * 0.97; // Full green
-                    b = b + liftAmount * 0.82; // Less blue (warmth)
-                }
-
-                // 1. DESATURATE & SHIFT BLUES: Reduce blue saturation, shift toward teal
-                // Detect blue-dominant pixels with smooth gradation
-                if (b > r && b > g) {
-                    const blueStrength = (b - Math.max(r, g)) / 255; // 0-1 how much more blue
-
-                    // Pull blue channel down significantly (reduces saturation)
-                    const blueReduction = blueStrength * 45; // Reduce blue intensity
-                    b = Math.max(r, b - blueReduction);
-
-                    // Add subtle green for teal shift (less than before to avoid over-saturation)
-                    const greenBoost = blueStrength * 12; // Reduced from 25
-                    g = Math.min(255, g + greenBoost);
-
-                    // Optionally boost red slightly to further reduce blue dominance
-                    const redBoost = blueStrength * 5;
-                    r = Math.min(255, r + redBoost);
-                }
-
-                // 2. DESATURATE GREENS: Subtle desaturation
-                // Detect green-dominant pixels with gradual falloff
-                if (g > r && g > b && g > 100) {
-                    const greenStrength = (g - Math.max(r, b)) / 255;
-                    const desatAmount = greenStrength * 0.15; // 15% desaturation (subtle)
-                    const gray = brightness;
-
-                    r = r + (gray - r) * desatAmount;
-                    g = g + (gray - g) * desatAmount;
-                    b = b + (gray - b) * desatAmount;
-                }
-
-                // 3. HIGHLIGHTS → GREEN: Make bright blues more green
-                // Detect bright pixels with significant blue - smooth transition starting at 140
-                if (brightness > 140 && b > 100) {
-                    const highlightStrength = Math.min(1, (brightness - 140) / 115); // Smoother 140-255 range
-                    const blueAmount = b / 255;
-                    const greenAdd = highlightStrength * blueAmount * 22;
-                    const blueReduce = highlightStrength * blueAmount * 12;
-                    g = Math.min(255, g + greenAdd);
-                    b = Math.max(0, b - blueReduce);
-                }
-
-                // 4. YELLOWS → ORANGE: Reduce yellow strength, shift toward warmer orange
-                // Detect warm/yellow pixels (high R+G, low B) with smooth threshold
-                const warmth = r + g - b;
-                if (warmth > 180 && r > 100 && g > 90 && b < 150) {
-                    const yellowStrength = Math.min(g, r) / 255;
-                    const warmthFactor = Math.min(1, (warmth - 180) / 120); // Smooth transition
-                    // Reduce green slightly (reduces yellow intensity)
-                    g = g * (1 - yellowStrength * warmthFactor * 0.08);
-                    // Boost red slightly (shifts toward orange)
-                    r = Math.min(255, r + yellowStrength * warmthFactor * 8);
-                }
-
-                // 5. GLOBAL WARMTH: Add stronger overall warmth to counter blue
-                // BUT preserve neutral greys (detect when R, G, B are similar)
-                const maxChannel = Math.max(r, g, b);
-                const minChannel = Math.min(r, g, b);
-                const saturation = maxChannel > 0 ? (maxChannel - minChannel) / maxChannel : 0;
-
-                // Only apply warmth to colorful pixels (saturation > 0.15)
-                // Neutral greys (low saturation) are preserved
-                const warmthStrength = brightness / 255; // Stronger in brighter areas
-                const colorfulness = Math.max(0, Math.min(1, (saturation - 0.05) / 0.15)); // 0 at sat=0.05, 1 at sat=0.20
-
-                // Add more warmth with smooth falloff, scaled by colorfulness
-                r = Math.min(255, r + 6 * warmthStrength * colorfulness);  // Only on colorful pixels
-                b = Math.max(0, b - 5 * warmthStrength * colorfulness);    // Only on colorful pixels
-
-                // Stronger midtone warmth boost (peaks around brightness 128)
-                const midtoneBoost = 1 - Math.abs(brightness - 128) / 128;
-                r = Math.min(255, r + 3 * midtoneBoost * colorfulness);    // Only on colorful pixels
-
-                pixels[i] = Math.round(r);
-                pixels[i + 1] = Math.round(g);
-                pixels[i + 2] = Math.round(b);
             }
         }
 
@@ -3530,38 +3413,6 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 d[i] = toneCurve[d[i]];       // R
                 d[i+1] = toneCurve[d[i+1]];   // G
                 d[i+2] = toneCurve[d[i+2]];   // B
-            }
-        }
-
-        // Global luminosity - soft, luminous highlight glow for all images
-        function applyGlobalLuminosity(d) {
-            for (let i = 0; i < d.length; i += 4) {
-                const r = d[i];
-                const g = d[i + 1];
-                const b = d[i + 2];
-                const brightness = (r + g + b) / 3;
-
-                // Gentle lift to highlights and upper midtones
-                if (brightness > 100) {
-                    const luminosityStrength = (brightness - 100) / 155; // 0-1 range from 100-255
-                    const lift = luminosityStrength * 6; // Max +6 in brightest areas
-                    d[i] = Math.min(255, r + lift);
-                    d[i + 1] = Math.min(255, g + lift);
-                    d[i + 2] = Math.min(255, b + lift);
-                }
-            }
-        }
-
-        // Global contrast reduction - reduces contrast by 10% on all presets
-        function applyGlobalContrastReduction(d) {
-            const contrastReduction = 0.10; // 10% reduction
-            const midpoint = 128; // Mid-gray
-
-            for (let i = 0; i < d.length; i += 4) {
-                // Move each channel 10% closer to midpoint
-                d[i] = d[i] + (midpoint - d[i]) * contrastReduction;         // R
-                d[i + 1] = d[i + 1] + (midpoint - d[i + 1]) * contrastReduction; // G
-                d[i + 2] = d[i + 2] + (midpoint - d[i + 2]) * contrastReduction; // B
             }
         }
 
@@ -4922,7 +4773,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const imageData = ctx.getImageData(0, 0, w, h);
             const pixels = imageData.data;
             const tempData = new Uint8ClampedArray(pixels);
-            const strength = int * 0.12; // Scale sharpening strength (reduced for softer look)
+            const strength = int * 0.15; // Scale sharpening strength
 
             for (let y = 1; y < h - 1; y++) {
                 for (let x = 1; x < w - 1; x++) {
@@ -5027,7 +4878,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log('🌾 Grain skipped (intensity < 1)');
                 return;
             }
-            const strength = int * 12 * 0.65; // Reduced for softer, more refined look
+            const strength = int * 12 * 0.753; // Increased by 15% (0.655 * 1.15)
             console.log('🌾 Applying grain with strength:', strength);
             // Process every pixel - step by 4 (RGBA)
             for (let i = 0; i < d.length; i += 4) {
@@ -5072,8 +4923,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Selecting new profile - add active class IMMEDIATELY
                 if(buttonElement)buttonElement.classList.add('active');
                 state.settings.profile=p;
-                // SUPRA default intensity is 30, all others default to 0
-                state.settings.profileIntensity=(p==='supra') ? 30 : 0;
+                state.settings.profileIntensity=0;
 
                 // Preload borders in background for new preset
                 preloadBordersInBackground(p);
@@ -7207,7 +7057,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                         selectBtn.style.display='block';
                         selectBtn.textContent='SELECT';
                         selectBtn.style.transform='translateY(5px)';
-                        selectBtn.style.boxShadow='0 3px 0 #222222';
+                        selectBtn.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
                     }
                     if(deleteBtn) deleteBtn.style.display='none';
                 }else{
@@ -7232,7 +7082,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     saveBtn.style.color='#fff';
                     saveBtn.classList.add('select-mode');
                     saveBtn.style.transform='translateY(5px)';
-                    saveBtn.style.boxShadow='0 3px 0 #222222';
+                    saveBtn.style.boxShadow='0 3px 0 #222222, inset 0 3px 5px rgba(0,0,0,0.3)';
                     if(deleteBtn) deleteBtn.style.display='none';
                 }else{
                     // Has selection: SAVE X IMAGES button in turquoise, show DELETE button
