@@ -2949,6 +2949,9 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const imgData=ctx.getImageData(0,0,w,h);
             applyProfile(imgData, state.settings.profile);
 
+            // Step 1.5: Reduce contrast globally by 10% on all presets
+            applyGlobalContrastReduction(imgData.data);
+
             // Step 2: Apply CMYK color adjustments
             applyCMYK(imgData.data,state.settings);
 
@@ -3544,6 +3547,19 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     d[i + 1] = Math.min(255, g + lift);
                     d[i + 2] = Math.min(255, b + lift);
                 }
+            }
+        }
+
+        // Global contrast reduction - reduces contrast by 10% on all presets
+        function applyGlobalContrastReduction(d) {
+            const contrastReduction = 0.10; // 10% reduction
+            const midpoint = 128; // Mid-gray
+
+            for (let i = 0; i < d.length; i += 4) {
+                // Move each channel 10% closer to midpoint
+                d[i] = d[i] + (midpoint - d[i]) * contrastReduction;         // R
+                d[i + 1] = d[i + 1] + (midpoint - d[i + 1]) * contrastReduction; // G
+                d[i + 2] = d[i + 2] + (midpoint - d[i + 2]) * contrastReduction; // B
             }
         }
 
