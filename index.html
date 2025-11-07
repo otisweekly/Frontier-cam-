@@ -3327,16 +3327,23 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 5. GLOBAL WARMTH: Add stronger overall warmth to counter blue
-                // This creates a unified warm feel across the entire image
-                const warmthStrength = brightness / 255; // Stronger in brighter areas
+                // BUT preserve neutral greys (detect when R, G, B are similar)
+                const maxChannel = Math.max(r, g, b);
+                const minChannel = Math.min(r, g, b);
+                const saturation = maxChannel > 0 ? (maxChannel - minChannel) / maxChannel : 0;
 
-                // Add more warmth with smooth falloff
-                r = Math.min(255, r + 6 * warmthStrength);  // Increased red (was 4)
-                b = Math.max(0, b - 5 * warmthStrength);    // More blue reduction (was 3)
+                // Only apply warmth to colorful pixels (saturation > 0.15)
+                // Neutral greys (low saturation) are preserved
+                const warmthStrength = brightness / 255; // Stronger in brighter areas
+                const colorfulness = Math.max(0, Math.min(1, (saturation - 0.05) / 0.15)); // 0 at sat=0.05, 1 at sat=0.20
+
+                // Add more warmth with smooth falloff, scaled by colorfulness
+                r = Math.min(255, r + 6 * warmthStrength * colorfulness);  // Only on colorful pixels
+                b = Math.max(0, b - 5 * warmthStrength * colorfulness);    // Only on colorful pixels
 
                 // Stronger midtone warmth boost (peaks around brightness 128)
                 const midtoneBoost = 1 - Math.abs(brightness - 128) / 128;
-                r = Math.min(255, r + 3 * midtoneBoost);    // Increased (was 2)
+                r = Math.min(255, r + 3 * midtoneBoost * colorfulness);    // Only on colorful pixels
 
                 pixels[i] = Math.round(r);
                 pixels[i + 1] = Math.round(g);
