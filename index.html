@@ -3247,20 +3247,20 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Calculate brightness for highlight detection
                 const brightness = (r + g + b) / 3;
 
-                // 0. LIFTED BLACKS: Film-style black lift with warmer tone
+                // 0. LIFTED BLACKS: Film-style black lift with subtle warmth
                 // Lift affects dark pixels (< 60) with smooth falloff
                 if (brightness < 60) {
                     const shadowStrength = (60 - brightness) / 60; // 1.0 at black, 0.0 at 60
                     const liftAmount = shadowStrength * 20; // Max lift of 20 at pure black
 
-                    // Lift with warm tone (more red/green, much less blue)
-                    r = r + liftAmount * 1.05; // Slightly more red
-                    g = g + liftAmount * 0.98; // Full green
-                    b = b + liftAmount * 0.75; // Much less blue (warmer blacks)
+                    // Lift with balanced warmth (not too red, but still warm)
+                    r = r + liftAmount * 0.98; // Balanced red
+                    g = g + liftAmount * 0.97; // Full green
+                    b = b + liftAmount * 0.82; // Less blue (warmth)
                 }
 
                 // 1. DESATURATE & SHIFT BLUES: Reduce blue saturation, shift toward teal
-                // Detect blue-dominant pixels
+                // Detect blue-dominant pixels with smooth gradation
                 if (b > r && b > g) {
                     const blueStrength = (b - Math.max(r, g)) / 255; // 0-1 how much more blue
 
@@ -3278,7 +3278,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 2. DESATURATE GREENS: Subtle desaturation
-                // Detect green-dominant pixels
+                // Detect green-dominant pixels with gradual falloff
                 if (g > r && g > b && g > 100) {
                     const greenStrength = (g - Math.max(r, b)) / 255;
                     const desatAmount = greenStrength * 0.15; // 15% desaturation (subtle)
@@ -3290,9 +3290,9 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 3. HIGHLIGHTS → GREEN: Make bright blues more green
-                // Detect bright pixels with significant blue
-                if (brightness > 160 && b > 100) {
-                    const highlightStrength = (brightness - 160) / 95; // 0-1 in range 160-255
+                // Detect bright pixels with significant blue - smooth transition starting at 140
+                if (brightness > 140 && b > 100) {
+                    const highlightStrength = Math.min(1, (brightness - 140) / 115); // Smoother 140-255 range
                     const blueAmount = b / 255;
                     const greenAdd = highlightStrength * blueAmount * 22;
                     const blueReduce = highlightStrength * blueAmount * 12;
@@ -3301,15 +3301,28 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 }
 
                 // 4. YELLOWS → ORANGE: Reduce yellow strength, shift toward warmer orange
-                // Detect warm/yellow pixels (high R+G, low B)
+                // Detect warm/yellow pixels (high R+G, low B) with smooth threshold
                 const warmth = r + g - b;
-                if (warmth > 200 && r > 120 && g > 100 && b < 150) {
+                if (warmth > 180 && r > 100 && g > 90 && b < 150) {
                     const yellowStrength = Math.min(g, r) / 255;
+                    const warmthFactor = Math.min(1, (warmth - 180) / 120); // Smooth transition
                     // Reduce green slightly (reduces yellow intensity)
-                    g = g * (1 - yellowStrength * 0.08);
+                    g = g * (1 - yellowStrength * warmthFactor * 0.08);
                     // Boost red slightly (shifts toward orange)
-                    r = Math.min(255, r + yellowStrength * 8);
+                    r = Math.min(255, r + yellowStrength * warmthFactor * 8);
                 }
+
+                // 5. GLOBAL WARMTH: Add subtle overall warmth to all tones
+                // This creates a unified warm feel across the entire image
+                const warmthStrength = brightness / 255; // Stronger in brighter areas
+
+                // Add warmth with smooth falloff
+                r = Math.min(255, r + 4 * warmthStrength);  // Add red
+                b = Math.max(0, b - 3 * warmthStrength);    // Subtract blue
+
+                // Subtle midtone warmth boost (peaks around brightness 128)
+                const midtoneBoost = 1 - Math.abs(brightness - 128) / 128;
+                r = Math.min(255, r + 2 * midtoneBoost);
 
                 pixels[i] = Math.round(r);
                 pixels[i + 1] = Math.round(g);
