@@ -3143,6 +3143,12 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
+                // Apply SUPRA-specific color corrections
+                if (profileId === 'supra') {
+                    applySupraColorCorrection(imageData);
+                    console.log('✅ Applied SUPRA color correction');
+                }
+
                 // Apply black & white conversion for XXX preset
                 if (preset.blackAndWhite) {
                     applyBlackAndWhite(imageData);
@@ -3226,6 +3232,54 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 pixels[i] = lum;
                 pixels[i + 1] = lum;
                 pixels[i + 2] = lum;
+            }
+        }
+
+        // SUPRA color correction: Blues→Teal, Green highlights, Yellows→Orange
+        function applySupraColorCorrection(imageData) {
+            const pixels = imageData.data;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                let r = pixels[i];
+                let g = pixels[i + 1];
+                let b = pixels[i + 2];
+
+                // Calculate brightness for highlight detection
+                const brightness = (r + g + b) / 3;
+
+                // 1. BLUES → TEAL: Shift blues toward cyan/teal by adding green
+                // Detect blue-dominant pixels (blue > red AND blue > green)
+                if (b > r && b > g) {
+                    const blueStrength = (b - Math.max(r, g)) / 255; // 0-1 how much more blue
+                    const greenBoost = blueStrength * 18; // Add green to make it teal
+                    g = Math.min(255, g + greenBoost);
+                }
+
+                // 2. HIGHLIGHTS → GREEN: Make bright blues more green
+                // Detect bright pixels with significant blue
+                if (brightness > 160 && b > 100) {
+                    const highlightStrength = (brightness - 160) / 95; // 0-1 in range 160-255
+                    const blueAmount = b / 255;
+                    const greenAdd = highlightStrength * blueAmount * 22;
+                    const blueReduce = highlightStrength * blueAmount * 12;
+                    g = Math.min(255, g + greenAdd);
+                    b = Math.max(0, b - blueReduce);
+                }
+
+                // 3. YELLOWS → ORANGE: Reduce yellow strength, shift toward warmer orange
+                // Detect warm/yellow pixels (high R+G, low B)
+                const warmth = r + g - b;
+                if (warmth > 200 && r > 120 && g > 100 && b < 150) {
+                    const yellowStrength = Math.min(g, r) / 255;
+                    // Reduce green slightly (reduces yellow intensity)
+                    g = g * (1 - yellowStrength * 0.08);
+                    // Boost red slightly (shifts toward orange)
+                    r = Math.min(255, r + yellowStrength * 8);
+                }
+
+                pixels[i] = Math.round(r);
+                pixels[i + 1] = Math.round(g);
+                pixels[i + 2] = Math.round(b);
             }
         }
 
