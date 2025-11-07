@@ -3259,21 +3259,22 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     b = b + liftAmount * 0.75; // Much less blue (warmer blacks)
                 }
 
-                // 1. DESATURATE BLUES: Move blues toward gray
+                // 1. DESATURATE & SHIFT BLUES: Reduce blue saturation, shift toward teal
                 // Detect blue-dominant pixels
                 if (b > r && b > g) {
                     const blueStrength = (b - Math.max(r, g)) / 255; // 0-1 how much more blue
-                    const desatAmount = blueStrength * 0.35; // 35% desaturation
-                    const gray = brightness;
 
-                    // Move toward gray (desaturate)
-                    r = r + (gray - r) * desatAmount;
-                    g = g + (gray - g) * desatAmount;
-                    b = b + (gray - b) * desatAmount;
+                    // Pull blue channel down significantly (reduces saturation)
+                    const blueReduction = blueStrength * 45; // Reduce blue intensity
+                    b = Math.max(r, b - blueReduction);
 
-                    // THEN shift remaining blues toward teal (stronger than before)
-                    const greenBoost = blueStrength * 25; // Increased from 18 to 25
+                    // Add subtle green for teal shift (less than before to avoid over-saturation)
+                    const greenBoost = blueStrength * 12; // Reduced from 25
                     g = Math.min(255, g + greenBoost);
+
+                    // Optionally boost red slightly to further reduce blue dominance
+                    const redBoost = blueStrength * 5;
+                    r = Math.min(255, r + redBoost);
                 }
 
                 // 2. DESATURATE GREENS: Subtle desaturation
