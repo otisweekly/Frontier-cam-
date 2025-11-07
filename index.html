@@ -2617,7 +2617,7 @@ if(state.settings.filmBorder){
 
 // Apply grain AFTER border (if enabled) so it affects both photo and border
 const imgData2=offscreenCtx.getImageData(0,0,offscreenCanvas.width,offscreenCanvas.height),d2=imgData2.data;
-applyGrain(d2,state.settings.grain);
+applyGrain(d2,state.settings.grain,offscreenCanvas.width,offscreenCanvas.height);
 offscreenCtx.putImageData(imgData2,0,0);
 
 // Now copy the fully processed image to visible canvas in one operation
@@ -2652,7 +2652,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             if(!skipGrain){
                 console.log('🌾 Calling applyGrain with intensity:', state.settings.grain);
                 const imgData2=ctx.getImageData(0,0,w,h),d2=imgData2.data;
-                applyGrain(d2,state.settings.grain);
+                applyGrain(d2,state.settings.grain,w,h);
                 ctx.putImageData(imgData2,0,0);
                 console.log('🌾 Grain putImageData complete');
             } else {
@@ -4506,24 +4506,80 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
         }
 
         function applyVHSDamage(d,w,h){for(let y=0;y<h;y++){if(Math.random()<0.0002){const glitchType=Math.random();if(glitchType<0.3){const shift=Math.floor((Math.random()-0.5)*3);for(let x=0;x<w;x++){const i=(y*w+x)*4;if(shift!==0){const srcX=Math.max(0,Math.min(w-1,x-shift));const srcI=(y*w+srcX)*4;d[i]=d[srcI];d[i+1]=d[srcI+1];d[i+2]=d[srcI+2];}}}else if(glitchType<0.6){const brightness=Math.random()*20-10;for(let x=0;x<w;x++){const i=(y*w+x)*4;d[i]=Math.max(0,Math.min(255,d[i]+brightness));d[i+1]=Math.max(0,Math.min(255,d[i+1]+brightness));d[i+2]=Math.max(0,Math.min(255,d[i+2]+brightness));}}else{const blockiness=Math.floor(Math.random()*8)+4;for(let x=0;x<w;x+=blockiness){const i=(y*w+x)*4;const avgR=d[i],avgG=d[i+1],avgB=d[i+2];for(let bx=0;bx<blockiness&&x+bx<w;bx++){const bi=(y*w+(x+bx))*4;d[bi]=avgR;d[bi+1]=avgG;d[bi+2]=avgB;}}}}}}
-        function applyGrain(d, int) {
+        function applyGrain(d, int, w, h) {
             console.log('🌾 applyGrain called with intensity:', int);
             if (int < 1) {
                 console.log('🌾 Grain skipped (intensity < 1)');
                 return;
             }
-            const strength = int * 12 * 0.753; // Increased by 15% (0.655 * 1.15)
-            console.log('🌾 Applying grain with strength:', strength);
-            // Process every pixel - step by 4 (RGBA)
-            for (let i = 0; i < d.length; i += 4) {
-                const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
-                const lumFactor = 1 + (255 - lum) / 255 * 0.3;
-                const n = (Math.random() - 0.5) * strength * lumFactor;
-                d[i] = Math.max(0, Math.min(255, d[i] + n));
-                d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + n));
-                d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + n));
+
+            // If width/height not provided, fall back to simple per-pixel grain
+            if (!w || !h) {
+                const strength = int * 12 * 0.753;
+                for (let i = 0; i < d.length; i += 4) {
+                    const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
+                    const lumFactor = 1 + (255 - lum) / 255 * 0.3;
+                    const n = (Math.random() - 0.5) * strength * lumFactor;
+                    d[i] = Math.max(0, Math.min(255, d[i] + n));
+                    d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + n));
+                    d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + n));
+                }
+                return;
             }
-            console.log('🌾 Grain applied successfully');
+
+            // Portra 400 style grain: larger particles, luminance-dependent
+            const strength = int * 10 * 0.8;
+            const grainSize = 2.5; // Larger grain particles (was 1 with per-pixel)
+            console.log('🌾 Applying film grain with strength:', strength, 'grain size:', grainSize);
+
+            // Create grain map at coarser resolution
+            const grainW = Math.ceil(w / grainSize);
+            const grainH = Math.ceil(h / grainSize);
+            const grainMap = new Float32Array(grainW * grainH);
+
+            // Generate random grain values
+            for (let i = 0; i < grainMap.length; i++) {
+                grainMap[i] = (Math.random() - 0.5) * 2; // -1 to 1
+            }
+
+            // Apply grain to image with bilinear interpolation
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const i = (y * w + x) * 4;
+
+                    // Get luminance for this pixel
+                    const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
+
+                    // Film-like grain: more in shadows, less in highlights
+                    const lumFactor = 1.0 + (200 - lum) / 255 * 0.5;
+
+                    // Get grain value using bilinear interpolation
+                    const gx = x / grainSize;
+                    const gy = y / grainSize;
+                    const gx0 = Math.floor(gx);
+                    const gy0 = Math.floor(gy);
+                    const gx1 = Math.min(gx0 + 1, grainW - 1);
+                    const gy1 = Math.min(gy0 + 1, grainH - 1);
+                    const fx = gx - gx0;
+                    const fy = gy - gy0;
+
+                    const g00 = grainMap[gy0 * grainW + gx0];
+                    const g10 = grainMap[gy0 * grainW + gx1];
+                    const g01 = grainMap[gy1 * grainW + gx0];
+                    const g11 = grainMap[gy1 * grainW + gx1];
+
+                    const g0 = g00 * (1 - fx) + g10 * fx;
+                    const g1 = g01 * (1 - fx) + g11 * fx;
+                    const grain = g0 * (1 - fy) + g1 * fy;
+
+                    const n = grain * strength * lumFactor;
+
+                    d[i] = Math.max(0, Math.min(255, d[i] + n));
+                    d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + n));
+                    d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + n));
+                }
+            }
+            console.log('🌾 Film grain applied successfully');
         }
 
         function toggleControl(c){}
