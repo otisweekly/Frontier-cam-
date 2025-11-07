@@ -118,89 +118,87 @@ class HybridLUTGenerator:
 
     def apply_daylight_refinement(self, rgb):
         """
-        Apply daylight scan characteristics on top of base LUT
-        Based on 534 daylight scans (~5213K)
-        - Clean highlights
-        - Lifted shadows and blacks for luminous feel
-        - Soft, glowing tonality
+        SUPRA: Cool, neutral Fuji Superia daylight consumer film
+        - Very lifted shadows (no dark blacks)
+        - Soft, low contrast
+        - Slight cool/neutral tone
         """
         r, g, b = rgb
 
         # Get luminance
         lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-        # LIFT shadows - lighten/brighten dark areas
-        if lum < 0.35:
-            shadow_amount = (0.35 - lum) / 0.35
-            # Strong lift to lighten shadows and blacks
-            lift = 0.12 * shadow_amount  # Much stronger to really brighten shadows
+        # MASSIVE shadow lift - Superia has very lifted blacks
+        if lum < 0.4:
+            shadow_amount = (0.4 - lum) / 0.4
+            # Huge lift for that consumer film look
+            lift = 0.18 * shadow_amount
             r = r + lift
-            g = g + lift * 0.96
-            b = b + lift * 0.94
+            g = g + lift * 0.98
+            b = b + lift * 1.02  # Slight cool lift
 
-        # Very subtle highlights
-        if lum > 0.7:
-            highlight_amount = (lum - 0.7) / 0.3
-            r = r + 0.004 * highlight_amount
-            g = g + 0.003 * highlight_amount
-            b = b + 0.002 * highlight_amount
+        # Compress/soften highlights (reduce contrast)
+        if lum > 0.65:
+            highlight_amount = (lum - 0.65) / 0.35
+            compress = -0.015 * highlight_amount  # Pull highlights down slightly
+            r = r + compress
+            g = g + compress
+            b = b + compress
 
-        # Subtle midtone warmth
-        if 0.35 <= lum <= 0.7:
-            mid_amount = 1.0 - abs(lum - 0.5) / 0.2
-            r = r + 0.006 * mid_amount
-            g = g + 0.003 * mid_amount
+        # Very neutral midtones (consumer film characteristic)
+        if 0.4 <= lum <= 0.65:
+            mid_amount = 1.0 - abs(lum - 0.5) / 0.15
+            # Tiny bit of warmth but stay neutral
+            r = r + 0.003 * mid_amount
+            g = g + 0.002 * mid_amount
+            b = b - 0.001 * mid_amount  # Slight cool to keep neutral
 
-        # Minimal overall boost - keep it subtle
-        r = r + 0.005
-        g = g + 0.004
-        b = b + 0.003
+        # Overall slight brightness boost
+        r = r + 0.01
+        g = g + 0.01
+        b = b + 0.01
 
         return np.clip([r, g, b], 0, 1)
 
     def apply_tungsten_refinement(self, rgb):
         """
-        Apply tungsten scan characteristics on top of base LUT
-        Based on 38 tungsten scans (~3927K)
-        - Warm amber shift
-        - Golden midtones
-        - Soft, luminous rendering
+        CHROME: Warm, saturated slide/chrome film
+        - Lifted shadows (but warmer than SUPRA)
+        - Rich, warm golden tones
+        - Higher saturation
         """
         r, g, b = rgb
 
         # Get luminance
         lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-        # Subtle warm shift
-        r = r + 0.012
-        g = g + 0.008
-        b = b - 0.003
+        # Strong warm shadow lift (different from SUPRA's cool lift)
+        if lum < 0.35:
+            shadow_amount = (0.35 - lum) / 0.35
+            # Warm lifted blacks (chrome characteristic)
+            r = r + 0.15 * shadow_amount
+            g = g + 0.12 * shadow_amount
+            b = b + 0.08 * shadow_amount
 
-        # Warmth in midtones (skin tone range)
-        if 0.2 <= lum <= 0.6:
-            mid_amount = 1.0 - abs(lum - 0.4) / 0.2
-            r = r + 0.010 * mid_amount
-            g = g + 0.006 * mid_amount
+        # Compress highlights slightly (reduce contrast)
+        if lum > 0.7:
+            highlight_amount = (lum - 0.7) / 0.3
+            compress = -0.01 * highlight_amount
+            r = r + compress * 0.5  # Less compression on reds
+            g = g + compress
+            b = b + compress * 1.5  # More on blues
 
-        # Subtle highlights
-        if lum > 0.6:
-            highlight_amount = (lum - 0.6) / 0.4
-            r = r + 0.008 * highlight_amount
-            g = g + 0.005 * highlight_amount
-            b = b + 0.003 * highlight_amount
+        # Strong warm golden midtones (chrome signature)
+        if 0.35 <= lum <= 0.7:
+            mid_amount = 1.0 - abs(lum - 0.5) / 0.2
+            r = r + 0.025 * mid_amount  # Strong warm
+            g = g + 0.015 * mid_amount
+            b = b - 0.008 * mid_amount  # Pull away from blue
 
-        # LIFT shadows - lighten/brighten dark areas (warm)
-        if lum < 0.25:
-            shadow_amount = (0.25 - lum) / 0.25
-            # Strong lift to lighten shadows
-            r = r + 0.10 * shadow_amount
-            g = g + 0.08 * shadow_amount
-            b = b + 0.06 * shadow_amount
-
-        # Minimal overall boost
-        r = r + 0.006
-        g = g + 0.005
-        b = b + 0.004
+        # Overall warm shift (distinct from SUPRA)
+        r = r + 0.020
+        g = g + 0.012
+        b = b - 0.005
 
         return np.clip([r, g, b], 0, 1)
 
