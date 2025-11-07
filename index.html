@@ -3235,7 +3235,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             }
         }
 
-        // SUPRA color correction: Blues→Teal, Green highlights, Yellows→Orange
+        // SUPRA color correction: Lifted blacks, Blues→Teal, Green highlights, Yellows→Orange
         function applySupraColorCorrection(imageData) {
             const pixels = imageData.data;
 
@@ -3246,6 +3246,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
                 // Calculate brightness for highlight detection
                 const brightness = (r + g + b) / 3;
+
+                // 0. LIFTED BLACKS: Film-style black lift with subtle warmth
+                // Lift affects dark pixels (< 60) with smooth falloff
+                if (brightness < 60) {
+                    const shadowStrength = (60 - brightness) / 60; // 1.0 at black, 0.0 at 60
+                    const liftAmount = shadowStrength * 20; // Max lift of 20 at pure black
+
+                    // Lift with slight warmth (more red/green, less blue)
+                    r = r + liftAmount * 1.0;  // Full lift for red
+                    g = g + liftAmount * 0.95; // Slightly less for green
+                    b = b + liftAmount * 0.85; // Even less for blue (adds warmth)
+                }
 
                 // 1. BLUES → TEAL: Shift blues toward cyan/teal by adding green
                 // Detect blue-dominant pixels (blue > red AND blue > green)
