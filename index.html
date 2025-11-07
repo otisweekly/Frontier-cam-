@@ -3324,6 +3324,16 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 const midtoneBoost = 1 - Math.abs(brightness - 128) / 128;
                 r = Math.min(255, r + 2 * midtoneBoost);
 
+                // 6. LUMINOSITY: Soft, luminous highlight glow for film-like quality
+                // Gentle lift to highlights and upper midtones
+                if (brightness > 100) {
+                    const luminosityStrength = (brightness - 100) / 155; // 0-1 range from 100-255
+                    const lift = luminosityStrength * 6; // Max +6 in brightest areas
+                    r = Math.min(255, r + lift);
+                    g = Math.min(255, g + lift);
+                    b = Math.min(255, b + lift);
+                }
+
                 pixels[i] = Math.round(r);
                 pixels[i + 1] = Math.round(g);
                 pixels[i + 2] = Math.round(b);
@@ -4874,7 +4884,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             const imageData = ctx.getImageData(0, 0, w, h);
             const pixels = imageData.data;
             const tempData = new Uint8ClampedArray(pixels);
-            const strength = int * 0.15; // Scale sharpening strength
+            const strength = int * 0.12; // Scale sharpening strength (reduced for softer look)
 
             for (let y = 1; y < h - 1; y++) {
                 for (let x = 1; x < w - 1; x++) {
@@ -4979,7 +4989,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log('🌾 Grain skipped (intensity < 1)');
                 return;
             }
-            const strength = int * 12 * 0.753; // Increased by 15% (0.655 * 1.15)
+            const strength = int * 12 * 0.715; // Reduced by 5% for softer look
             console.log('🌾 Applying grain with strength:', strength);
             // Process every pixel - step by 4 (RGBA)
             for (let i = 0; i < d.length; i += 4) {
