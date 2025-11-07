@@ -5915,6 +5915,10 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
         function adjustIntensity(delta){
             haptic();
+            // Ensure profileIntensity is a number (fix for undefined/null cases)
+            if(typeof state.settings.profileIntensity !== 'number' || isNaN(state.settings.profileIntensity)){
+                state.settings.profileIntensity = 0;
+            }
             const oldIntensity=state.settings.profileIntensity;
             const newIntensity=Math.max(-5,Math.min(5,state.settings.profileIntensity+delta));
             state.settings.profileIntensity=newIntensity;
