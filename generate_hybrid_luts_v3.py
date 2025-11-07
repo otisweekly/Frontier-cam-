@@ -222,23 +222,11 @@ class HybridLUTGenerator:
                     g = g_idx / (size - 1)
                     b = b_idx / (size - 1)
 
-                    # Apply base LUT (800T film emulation)
-                    rgb_base = self.apply_base_lut(r, g, b, base_data, base_size)
+                    # Start from neutral (skip base LUT for now - too strong)
+                    # Apply daylight scan refinements directly
+                    rgb_refined = self.apply_daylight_refinement([r, g, b])
 
-                    # Convert to linear for proper color math
-                    r_lin = self.srgb_to_linear(rgb_base[0])
-                    g_lin = self.srgb_to_linear(rgb_base[1])
-                    b_lin = self.srgb_to_linear(rgb_base[2])
-
-                    # Convert back to sRGB for refinement
-                    r_srgb = self.linear_to_srgb(r_lin)
-                    g_srgb = self.linear_to_srgb(g_lin)
-                    b_srgb = self.linear_to_srgb(b_lin)
-
-                    # Apply daylight scan refinements
-                    rgb_refined = self.apply_daylight_refinement([r_srgb, g_srgb, b_srgb])
-
-                    # Convert back to linear for output
+                    # Convert to linear for output
                     r_out = self.srgb_to_linear(rgb_refined[0])
                     g_out = self.srgb_to_linear(rgb_refined[1])
                     b_out = self.srgb_to_linear(rgb_refined[2])
@@ -267,23 +255,11 @@ class HybridLUTGenerator:
                     g = g_idx / (size - 1)
                     b = b_idx / (size - 1)
 
-                    # Apply base LUT (Technicolor film emulation)
-                    rgb_base = self.apply_base_lut(r, g, b, base_data, base_size)
+                    # Start from neutral (skip base LUT - too strong)
+                    # Apply tungsten scan refinements directly
+                    rgb_refined = self.apply_tungsten_refinement([r, g, b])
 
-                    # Convert to linear
-                    r_lin = self.srgb_to_linear(rgb_base[0])
-                    g_lin = self.srgb_to_linear(rgb_base[1])
-                    b_lin = self.srgb_to_linear(rgb_base[2])
-
-                    # Convert back to sRGB for refinement
-                    r_srgb = self.linear_to_srgb(r_lin)
-                    g_srgb = self.linear_to_srgb(g_lin)
-                    b_srgb = self.linear_to_srgb(b_lin)
-
-                    # Apply tungsten scan refinements
-                    rgb_refined = self.apply_tungsten_refinement([r_srgb, g_srgb, b_srgb])
-
-                    # Convert back to linear for output
+                    # Convert to linear for output
                     r_out = self.srgb_to_linear(rgb_refined[0])
                     g_out = self.srgb_to_linear(rgb_refined[1])
                     b_out = self.srgb_to_linear(rgb_refined[2])
