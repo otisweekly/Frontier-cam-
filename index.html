@@ -318,7 +318,7 @@
 
         .footer-bottom { width:100%; }
         .nav-controls { display:flex; align-items:stretch; gap:8px; min-height:57px; width:100%; }
-        .nav-btn { width:80px; min-width:80px; max-width:80px; height:57px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:none; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+        .nav-btn { flex:1; min-width:60px; height:57px; background:#000; border:3px solid #000; border-radius:4px; cursor:pointer; color:#fff; font-size:22px; box-shadow:0 8px 0 #222222, inset 0 1px 0 rgba(255,255,255,0.1); transition:none; display:flex; align-items:center; justify-content:center; font-weight:700; will-change:transform, box-shadow; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
         .nav-btn:active { transform:translateY(5px); box-shadow:0 3px 0 #222222; }
         .nav-btn.disabled { transform:translateY(5px) !important; box-shadow:0 3px 0 #222222 !important; cursor:not-allowed; pointer-events:none; }
         .nav-btn.disabled img { opacity:0.25; }
@@ -5027,7 +5027,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log('🌾 Grain skipped (intensity < 1)');
                 return;
             }
-            const strength = int * 12 * 0.65; // Reduced for softer, more refined look
+            const strength = int * 12 * 0.5525; // Reduced by 15% for less noise
             console.log('🌾 Applying grain with strength:', strength);
             // Process every pixel - step by 4 (RGBA)
             for (let i = 0; i < d.length; i += 4) {
@@ -5072,8 +5072,8 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Selecting new profile - add active class IMMEDIATELY
                 if(buttonElement)buttonElement.classList.add('active');
                 state.settings.profile=p;
-                // SUPRA default intensity is 30, all others default to 0
-                state.settings.profileIntensity=(p==='supra') ? 30 : 0;
+                // All presets default to intensity 0
+                state.settings.profileIntensity=0;
 
                 // Preload borders in background for new preset
                 preloadBordersInBackground(p);
