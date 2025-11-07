@@ -2954,6 +2954,10 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
 
             // Step 2.5: Apply brightness/contrast/shadows/highlights adjustments
             applyBrightness(imgData.data,state.settings);
+
+            // Step 2.6: Apply global luminosity (soft, luminous look for all images)
+            applyGlobalLuminosity(imgData.data);
+
             ctx.putImageData(imgData,0,0);
 
             // Step 3: Apply bloom
@@ -3319,27 +3323,17 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                     r = Math.min(255, r + yellowStrength * warmthFactor * 8);
                 }
 
-                // 5. GLOBAL WARMTH: Add subtle overall warmth to all tones
+                // 5. GLOBAL WARMTH: Add stronger overall warmth to counter blue
                 // This creates a unified warm feel across the entire image
                 const warmthStrength = brightness / 255; // Stronger in brighter areas
 
-                // Add warmth with smooth falloff
-                r = Math.min(255, r + 4 * warmthStrength);  // Add red
-                b = Math.max(0, b - 3 * warmthStrength);    // Subtract blue
+                // Add more warmth with smooth falloff
+                r = Math.min(255, r + 6 * warmthStrength);  // Increased red (was 4)
+                b = Math.max(0, b - 5 * warmthStrength);    // More blue reduction (was 3)
 
-                // Subtle midtone warmth boost (peaks around brightness 128)
+                // Stronger midtone warmth boost (peaks around brightness 128)
                 const midtoneBoost = 1 - Math.abs(brightness - 128) / 128;
-                r = Math.min(255, r + 2 * midtoneBoost);
-
-                // 6. LUMINOSITY: Soft, luminous highlight glow for film-like quality
-                // Gentle lift to highlights and upper midtones
-                if (brightness > 100) {
-                    const luminosityStrength = (brightness - 100) / 155; // 0-1 range from 100-255
-                    const lift = luminosityStrength * 6; // Max +6 in brightest areas
-                    r = Math.min(255, r + lift);
-                    g = Math.min(255, g + lift);
-                    b = Math.min(255, b + lift);
-                }
+                r = Math.min(255, r + 3 * midtoneBoost);    // Increased (was 2)
 
                 pixels[i] = Math.round(r);
                 pixels[i + 1] = Math.round(g);
@@ -3531,6 +3525,25 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 d[i] = toneCurve[d[i]];       // R
                 d[i+1] = toneCurve[d[i+1]];   // G
                 d[i+2] = toneCurve[d[i+2]];   // B
+            }
+        }
+
+        // Global luminosity - soft, luminous highlight glow for all images
+        function applyGlobalLuminosity(d) {
+            for (let i = 0; i < d.length; i += 4) {
+                const r = d[i];
+                const g = d[i + 1];
+                const b = d[i + 2];
+                const brightness = (r + g + b) / 3;
+
+                // Gentle lift to highlights and upper midtones
+                if (brightness > 100) {
+                    const luminosityStrength = (brightness - 100) / 155; // 0-1 range from 100-255
+                    const lift = luminosityStrength * 6; // Max +6 in brightest areas
+                    d[i] = Math.min(255, r + lift);
+                    d[i + 1] = Math.min(255, g + lift);
+                    d[i + 2] = Math.min(255, b + lift);
+                }
             }
         }
 
@@ -4996,7 +5009,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 console.log('🌾 Grain skipped (intensity < 1)');
                 return;
             }
-            const strength = int * 12 * 0.715; // Reduced by 5% for softer look
+            const strength = int * 12 * 0.65; // Reduced for softer, more refined look
             console.log('🌾 Applying grain with strength:', strength);
             // Process every pixel - step by 4 (RGBA)
             for (let i = 0; i < d.length; i += 4) {
@@ -5041,7 +5054,8 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
                 // Selecting new profile - add active class IMMEDIATELY
                 if(buttonElement)buttonElement.classList.add('active');
                 state.settings.profile=p;
-                state.settings.profileIntensity=0;
+                // SUPRA default intensity is 30, all others default to 0
+                state.settings.profileIntensity=(p==='supra') ? 30 : 0;
 
                 // Preload borders in background for new preset
                 preloadBordersInBackground(p);
