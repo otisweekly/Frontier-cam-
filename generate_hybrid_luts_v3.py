@@ -129,33 +129,32 @@ class HybridLUTGenerator:
         # Get luminance
         lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-        # BOOSTED shadow/black lift for luminosity (user request)
-        if lum < 0.3:
-            shadow_amount = (0.3 - lum) / 0.3
-            # Much stronger lift in shadows/blacks
-            lift = 0.05 * shadow_amount  # Increased from 0.015
+        # LIFT shadows - lighten/brighten dark areas
+        if lum < 0.35:
+            shadow_amount = (0.35 - lum) / 0.35
+            # Strong lift to lighten shadows and blacks
+            lift = 0.12 * shadow_amount  # Much stronger to really brighten shadows
             r = r + lift
-            g = g + lift * 0.95
-            b = b + lift * 0.9  # Slight warmth, not blue
+            g = g + lift * 0.96
+            b = b + lift * 0.94
 
-        # Soft, glowing highlights (reduced contrast)
+        # Very subtle highlights
         if lum > 0.7:
             highlight_amount = (lum - 0.7) / 0.3
-            # Add gentle luminous glow
-            r = r + 0.012 * highlight_amount
-            g = g + 0.010 * highlight_amount
-            b = b + 0.008 * highlight_amount
+            r = r + 0.004 * highlight_amount
+            g = g + 0.003 * highlight_amount
+            b = b + 0.002 * highlight_amount
 
-        # Enhanced midtone warmth for Portra-like softness
-        if 0.3 <= lum <= 0.7:
+        # Subtle midtone warmth
+        if 0.35 <= lum <= 0.7:
             mid_amount = 1.0 - abs(lum - 0.5) / 0.2
-            r = r + 0.015 * mid_amount  # Increased warmth
-            g = g + 0.008 * mid_amount
+            r = r + 0.006 * mid_amount
+            g = g + 0.003 * mid_amount
 
-        # Overall luminosity boost (subtle glow across all tones)
-        r = r + 0.018
-        g = g + 0.015
-        b = b + 0.012
+        # Minimal overall boost - keep it subtle
+        r = r + 0.005
+        g = g + 0.004
+        b = b + 0.003
 
         return np.clip([r, g, b], 0, 1)
 
@@ -172,35 +171,36 @@ class HybridLUTGenerator:
         # Get luminance
         lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-        # Overall warm shift with luminosity boost
-        r = r + 0.032  # Increased warmth and brightness
-        g = g + 0.020
-        b = b - 0.008  # Less blue reduction for softer look
+        # Subtle warm shift
+        r = r + 0.012
+        g = g + 0.008
+        b = b - 0.003
 
-        # Extra warmth in midtones (skin tone range)
+        # Warmth in midtones (skin tone range)
         if 0.2 <= lum <= 0.6:
             mid_amount = 1.0 - abs(lum - 0.4) / 0.2
-            r = r + 0.022 * mid_amount
-            g = g + 0.012 * mid_amount
+            r = r + 0.010 * mid_amount
+            g = g + 0.006 * mid_amount
 
-        # Enhanced glowing highlights (more luminous)
+        # Subtle highlights
         if lum > 0.6:
             highlight_amount = (lum - 0.6) / 0.4
-            r = r + 0.028 * highlight_amount
-            g = g + 0.016 * highlight_amount
-            b = b + 0.008 * highlight_amount  # Add slight blue for glow
+            r = r + 0.008 * highlight_amount
+            g = g + 0.005 * highlight_amount
+            b = b + 0.003 * highlight_amount
 
-        # Lifted warm shadows (no crushed blacks, more luminous)
-        if lum < 0.2:
-            shadow_amount = (0.2 - lum) / 0.2
-            r = r + 0.022 * shadow_amount  # Stronger lift
-            g = g + 0.014 * shadow_amount
-            b = b + 0.008 * shadow_amount
+        # LIFT shadows - lighten/brighten dark areas (warm)
+        if lum < 0.25:
+            shadow_amount = (0.25 - lum) / 0.25
+            # Strong lift to lighten shadows
+            r = r + 0.10 * shadow_amount
+            g = g + 0.08 * shadow_amount
+            b = b + 0.06 * shadow_amount
 
-        # Overall luminosity boost
-        r = r + 0.012
-        g = g + 0.010
-        b = b + 0.008
+        # Minimal overall boost
+        r = r + 0.006
+        g = g + 0.005
+        b = b + 0.004
 
         return np.clip([r, g, b], 0, 1)
 

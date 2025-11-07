@@ -2831,11 +2831,11 @@ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(offscreenCanvas,0,0)
             try {
                 const manager = getLUTManager();
                 // Convert user range (-5 to +5) to intensity percentage
-                // -5 → 0%, 0 → 25% (default), +5 → 100%
+                // -5 → 0%, 0 → 40% (default), +5 → 100%
                 const userIntensity = state.settings.profileIntensity || 0;
                 const intensity = userIntensity <= 0
-                    ? 25 + (userIntensity * 5)   // -5 to 0 maps to 0% to 25%
-                    : 25 + (userIntensity * 15);  // 0 to +5 maps to 25% to 100%
+                    ? 40 + (userIntensity * 8)   // -5 to 0 maps to 0% to 40%
+                    : 40 + (userIntensity * 12);  // 0 to +5 maps to 40% to 100%
                 manager.applyLUTToImageData(imageData, currentLUT, intensity);
                 console.log(`✅ Applied LUT: ${profileId} at ${intensity}% intensity (user: ${userIntensity})`);
 
